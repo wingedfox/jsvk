@@ -1,0 +1,217 @@
+#virtualKeyboard {
+        height: 164px;
+        left: 110px;
+        margin: 0;
+        padding: 0;
+        position: absolute;
+        top: 110px;
+        width: 400px;
+}
+/*
+*  global overrides
+*/
+#virtualKeyboard * {
+        border: 0;
+        color: black; 
+        cursor: default;
+        margin: 0;
+        padding: 0;
+}
+#virtualKeyboard #kbHeader {
+        background: url(kb_header_bg.png) top left repeat-x;
+        height: 29px;
+        margin: 0 6px;
+        position: relative;
+        text-align: center;
+}
+#virtualKeyboard #kbHeaderLeft {
+        background: url(kb_header_bg_left.png) top left no-repeat;
+        font-family: "Trebuchet MS", "MS Trebuchet", Trebuchet, Tahoma; 
+        font-size: 13px; 
+        font-weight: bold; 
+        height: 100%;
+        left: -6px;
+        line-height: 29px;
+        padding-left: 6px;
+        position: relative;
+        text-align: left;
+}
+#virtualKeyboard #kbHeaderRight {
+        background: url(kb_header_bg_right.png) top left no-repeat;
+        display: block;
+        height: 100%;
+        position: absolute;
+        right: -12px;
+        text-decoration: none;
+        top: 0;
+        width: 29px;
+}
+#virtualKeyboard #kbHeaderRight:hover {
+        background: url(kb_header_bg_right_hover.png) top left no-repeat;
+}
+#virtualKeyboard #kbDesk {
+        background: #ECE9D8;
+        border: 1px solid #686888;
+        border-top: 0;
+        height: 134px;
+        padding: 4px 4px 0;
+        position: relative;
+        font-size: 1px;
+        overflow: hidden;
+}
+#virtualKeyboard #kbDesk.capsLock {
+        text-transform: uppercase;
+}
+#virtualKeyboard #kbDesk a.kbButton {
+        background: url(button_set.gif) 0 0 no-repeat;
+        display: block;
+        float: left;
+        height: 26px;
+        overflow: hidden;
+        padding: 0;
+        position: relative;
+        text-decoration: none;
+        width: 26px;
+        z-index: 2;
+}
+#virtualKeyboard #kbDesk a.kbButtonHover {
+        background-position: 0 -27px;
+}
+#virtualKeyboard #kbDesk a.kbButtonDown {
+        background-position: 0 -54px;
+}
+#virtualKeyboard #kbDesk a.kbButton span {
+        display: block;
+        font-family: Verdana;
+        font-size: 13px;
+        font-weight: normal;
+        height: inherit;
+        line-height: 24px;
+        overflow: visible;
+        text-align: center;
+        text-indent: -2px;
+        width: inherit;
+}
+#virtualKeyboard #kbDesk a.kbButton span.shifted {
+        font-family: Verdana;
+        font-size: 7.5pt;
+        height: 100%;
+        line-height: 1.1;
+        position: absolute;
+        right: -5px;
+        top: 0;
+        vertical-align: bottom;
+        width: 100%;
+}
+#virtualKeyboard #kbDesk a.kbButton span.normal {
+        line-height: 28px;
+        position: relative;
+        left: -4px;
+        text-indent: 0;
+}
+#virtualKeyboard #kbDesk a#kb_benter {
+        background-position: -194px 0px;
+        left: -2px;
+        margin-top: -26px;
+        position: relative;
+        float: right;
+        height: 52px;
+        width: 54px;
+        z-index: 0;
+}
+#virtualKeyboard #kbDesk a#kb_benter.kbButtonHover {
+        background-position: -194px -53px;
+}
+#virtualKeyboard #kbDesk a#kb_benter.kbButtonDown {
+        background-position: -194px -106px;
+}
+#virtualKeyboard #kbDesk a#kb_bbackspace {
+        background-position: -27px -81px;
+}
+#virtualKeyboard #kbDesk a#kb_bbackspace.kbButtonHover {
+        background-position: -27px -108px;
+}
+#virtualKeyboard #kbDesk a#kb_bbackspace.kbButtonDown {
+        background-position: -27px -135px;
+}
+#virtualKeyboard #kbDesk #kb_btab {
+        background-position: -155px -81px;
+        width: 41px;
+}
+#virtualKeyboard #kbDesk a#kb_btab.kbButtonHover {
+        background-position: -155px -108px;
+}
+#virtualKeyboard #kbDesk a#kb_btab.kbButtonDown {
+        background-position: -155px -135px;
+}
+#virtualKeyboard #kbDesk a#kb_bcaps {
+        background-position: -107px -81px;
+        width: 48px;
+}
+#virtualKeyboard #kbDesk a#kb_bcaps.kbButtonHover {
+        background-position: -107px -108px;
+}
+#virtualKeyboard #kbDesk a#kb_bcaps.kbButtonDown {
+        background-position: -107px -135px;
+}
+#virtualKeyboard #kbDesk a#kb_bshift_left,
+#virtualKeyboard #kbDesk a#kb_bshift_right {
+        background-position: -54px -81px;
+        width: 52px;
+}
+#virtualKeyboard #kbDesk a#kb_bshift_left.kbButtonHover,
+#virtualKeyboard #kbDesk a#kb_bshift_right.kbButtonHover {
+        background-position: -54px -108px;
+}
+#virtualKeyboard #kbDesk a#kb_bshift_left.kbButtonDown,
+#virtualKeyboard #kbDesk a#kb_bshift_right.kbButtonDown {
+        background-position: -54px -135px;
+}
+#virtualKeyboard #kbDesk a#kb_bdel {
+        background-position: 0 -81px;
+}
+#virtualKeyboard #kbDesk a#kb_bdel.kbButtonHover {
+        background-position: 0 -108px;
+}
+#virtualKeyboard #kbDesk a#kb_bdel.kbButtonDown {
+        background-position: 0 -135px;
+}
+#virtualKeyboard #kbDesk a#kb_bspace {
+        background-position: -27px 0;
+        left: 90px;
+        width: 166px;
+}
+#virtualKeyboard #kbDesk a#kb_bspace.kbButtonHover {
+        background-position: -27px -27px;
+}
+#virtualKeyboard #kbDesk a#kb_bspace.kbButtonDown {
+        background-position: -27px -54px;
+}
+#virtualKeyboard #kb_notice {
+        bottom: 4px;
+        cursor: default;
+        height:24px; 
+        font-family: Small Fonts; 
+        font-size: 9px; 
+        left: 0; 
+        line-height: 1;
+        position: absolute; 
+        text-align: left; 
+        width:90px; 
+}
+#virtualKeyboard #kb_langselector {
+        bottom: 4px;
+        cursor: default;
+        font-family: Tahoma, Verdana, Arial, sans-serif; 
+        font-size: 11px;
+        height: 24px; 
+        line-height: 1;
+        position: absolute;
+        right: 0;
+        width: 135px; 
+}
+#virtualKeyboard #kb_langselector select {
+        border: 1px solid;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+        font-size: 11px;
+}
