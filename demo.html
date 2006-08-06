@@ -4,8 +4,11 @@
 <title>Virtual Keyboard</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
 
-<script type="text/javascript" src="ArrayExtensions.js"></script>
-<script type="text/javascript" src="DOMextensions.js"></script>
+<script type="text/javascript" src="extensions/objectextensions.js"></script>
+<script type="text/javascript" src="extensions/arrayextensions.js"></script>
+<script type="text/javascript" src="extensions/helpers.js"></script>
+<script type="text/javascript" src="extensions/domextensions.js"></script>
+<script type="text/javascript" src="extensions/documentselection.js"></script>
 <script type="text/javascript" src="ddi/ddi.js"></script>
 <script type="text/javascript" src="ddi/Plugins/ddi.plugin.fixNoMouseSelect.js"></script>
 <script type="text/javascript" src="ddi/Plugins/ddi.plugin.moveIT.js"></script>
@@ -24,26 +27,6 @@
 <input name="testb" id="testb" type="text" value="Текст" size="35" />
 <input type="button" value="Keyboard" onclick="VirtualKeyboard.show('testb');" />
 </form>
-<div id="div">asdfasdfasfd</div>
-<p id="p">asdfasdfasdf</p>
-<textarea id="t">asdfasdfasdf</textarea>
-<input type="button" onclick="sSel(this.value)" value="div" />
-<input type="button" onclick="sSel(this.value)" value="p" />
-<input type="button" onclick="sSel(this.value)" value="t" />
-<script type="text/javascript">
-//document.body.onmousedown = function(){sSel('t')};
-function sSel (el) {
-//  el = document.getElementById(el);
-//window.status = (getSelectionStart(document.body)+" "+getSelectionStart(el))
-/*
-  oRange = document.body.createTextRange();
-  oRange.moveToElementText(el);
-  oRange.moveStart("character", 0);
-  oRange.moveEnd("character", oRange.text.length);
-  oRange.select();
-*/
-  }
-</script>
 <br />
 <br />
 <br />

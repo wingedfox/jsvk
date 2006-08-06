@@ -320,10 +320,10 @@ var VirtualKeyboard = new function () {
       case 'shift' :
         return;
       case 'backs':
-        deleteAtCursor(attachedInput, false);
+        DocumentSelection.deleteAtCursor(attachedInput, false);
         break;
       case 'del':
-        deleteAtCursor(attachedInput, true);
+        DocumentSelection.deleteAtCursor(attachedInput, true);
         break;
       case 'space':
         chr = " ";
