@@ -19,7 +19,6 @@
  * @author Ilya Lebedev <ilya@lebedev.net>
  * @version $Rev$
  * @modified Yuriy Nasretdinov
- * @modified WingedFox
  * @lastchange $Author$ $Date$
  */
 
@@ -33,10 +32,25 @@ var VirtualKeyboard = new function () {
   /*
   *  ID prefix
   *
-  *  @type string
+  *  @type String
   *  @access private
   */
-  var idPrefix = 'kb_';
+  var idPrefix = 'kb_b';
+  /*
+  *  Keyboard keys mapping, as on the keyboard
+  *
+  *  @type Array
+  *  @access private
+  */
+  var keymap = [192,49,50,51,52,53,54,55,56,57,48,109,61,220,8, // ~ to BS
+                9,81,87,69,82,84,89,85,73,79,80,219,221,13,     // TAB to ENTER
+                20,65,83,68,70,71,72,74,75,76,59,222,           // CAPS to '
+                16,90,88,67,86,66,78,77,188,190,191,16,         // SHIFT to SHIFT
+                32,46];                                         // SPACE, Delete
+//                17,18,32,18,17,                                 // CTRL to CTRL
+//                46];                                            // Delete
+
+  
   /*
   *  CSS classes will be used to style buttons
   *
@@ -75,12 +89,29 @@ var VirtualKeyboard = new function () {
   */
   var layout = {};
   /*
-  *  Keyboard container
+  *  Shortcuts to the nodes
   *
-  *  @type HTMLDivElement
+  *  @type Object
   *  @access private
   */
-  var keyboard = null;
+  var nodes = {
+    keyboard : null,    // Keyboard container @type HTMLDivElement
+    desk : null,        // Keyboard desk @type HTMLDivElement
+    langbox : null,     // Layout selector @type HTMLSelectElement
+    curKey : null       // Stores current pressed key @type HTMLAElement
+  }
+  /*
+  *  Stores flags state
+  *
+  *  @type Object
+  *  @access private
+  */
+  var flags = {
+    isOpen : false,     // virtual keyboard open state
+    shift : false,      // Shift
+    caps : false,       // CapsLock
+    kbd_shift : false  // real shift
+  }
   /*
   *  Keyboard center coordinates
   *
@@ -88,41 +119,10 @@ var VirtualKeyboard = new function () {
   *  @access private
   */
   var keyboard_coords = {'x':0,'y':0};
-  /*
-  *  Keyboard desk
-  *
-  *  @type HTMLDivElement
-  *  @access private
-  */
-  var desk = null;
-  /*
-  *  Layout selector
-  *
-  *  @type HTMLSelectElement
-  *  @access private
-  */
-  var langbox = null;
-  /*
-  *  Shift state
-  *
-  *  @type Boolean
-  *  @access private
-  */
-  var shift = false;
-  /*
-  *  Capslock state
-  *
-  *  @type Boolean
-  *  @access private
-  */
-  var capslock = false;
-  /*
-  *  Stores current pressed key
-  *
-  *  @type HTMLAElement
-  *  @access private
-  */
-  var curKey = null;
+
+  /**************************************************************************
+  **  KEYBOARD LAYOUT
+  **************************************************************************/
   /*
   *  Remove layout from the list
   *
@@ -183,25 +183,28 @@ var VirtualKeyboard = new function () {
   *  @access public
   */
   this.switchLayout = function (code) {
-    if (desk == null || 'string' != typeof code || !layout.hasOwnProperty(code) || code == lang) return false;
+    if (nodes.desk == null || 'string' != typeof code || !layout.hasOwnProperty(code) || code == lang) return false;
     /*
     *  we will use old but quick innerHTML
     */
     var btns = "", i;
     for (i=0, aL = layout[code].alpha.length; i<aL; i++) {
-      btns += "<a href=\"#\" id=\""+idPrefix+"b"+(parseInt(layout[code].alpha[i])?i:layout[code].alpha[i])+"\" class=\""+cssClasses['buttonUp']+"\""+
-              ">"+(parseInt(layout[code].alpha[i])?"<span>"+String.fromCharCode(layout[code].alpha[i])+"</span>"
-                                                    :"")+"</a>";
+      btns +=  "<div id=\""+idPrefix+(parseInt(layout[code].alpha[i])?i:layout[code].alpha[i])
+              +"\" class=\""+cssClasses['buttonUp']
+              +"\"><a href=\"#\""
+              +">"+(parseInt(layout[code].alpha[i])?"<span>"+String.fromCharCode(layout[code].alpha[i])+"</span>"
+                                                   :"")+"</a></div>";
     }
-    desk.innerHTML = btns;
+    nodes.desk.innerHTML = btns;
+
     /*
     *  add shiftable elements
     */
     for (i in layout[code].diff) {
       if (parseInt(i) != NaN && layout[code].diff[i] instanceof Array) {
         for (var k=0, sL = layout[code].diff[i].length; k<sL; k++) {
-          desk.childNodes[parseInt(i)+k].innerHTML += "<span class=\""+cssClasses['buttonShifted']+"\">"+String.fromCharCode(layout[code].diff[i][k])+"</span>";
-          desk.childNodes[parseInt(i)+k].firstChild.className = cssClasses['buttonNormal'];
+          nodes.desk.childNodes[parseInt(i)+k].firstChild.innerHTML += "<span class=\""+cssClasses['buttonShifted']+"\">"+String.fromCharCode(layout[code].diff[i][k])+"</span>";
+          nodes.desk.childNodes[parseInt(i)+k].firstChild.firstChild.className = cssClasses['buttonNormal'];
         }
       }
     }
@@ -215,22 +218,19 @@ var VirtualKeyboard = new function () {
   *
   */
   this.toggleShift = function (force) {
-    if (!shift && !force) return;
+    if (!flags.shift && !force) return;
     for (var i in layout[lang].diff) {
       if (parseInt(i) != NaN && layout[lang].diff[i] instanceof Array) {
         for (var k=0, sL = layout[lang].diff[i].length; k<sL; k++) {
-          desk.childNodes[parseInt(i)+k].appendChild(desk.childNodes[parseInt(i)+k].firstChild);
-          desk.childNodes[parseInt(i)+k].firstChild.className = cssClasses['buttonNormal'];
-          desk.childNodes[parseInt(i)+k].lastChild.className = cssClasses['buttonShifted'];
+          /*
+          *  swap symbols and its CSS classes
+          */
+          nodes.desk.childNodes[parseInt(i)+k].firstChild.appendChild(nodes.desk.childNodes[parseInt(i)+k].firstChild.firstChild);
+          nodes.desk.childNodes[parseInt(i)+k].firstChild.firstChild.className = cssClasses['buttonNormal'];
+          nodes.desk.childNodes[parseInt(i)+k].firstChild.lastChild.className = cssClasses['buttonShifted'];
         }
       }
     }
-  
-//    if (!kb_shift) {
-//      kb_notice('&#1085;&#1072;&#1078;&#1084;&#1080;&#1090;&#1077; &#1085;&#1072; Shift, &#1095;&#1090;&#1086;&#1073;&#1099; &#1086;&#1090;&#1087;&#1091;&#1089;&#1090;&#1080;&#1090;&#1100; &#1077;&#1075;&#1086;');
-//    } else {
-//      kb_notice('');
-//    }
   }
   /*
   *  Update layout selector
@@ -240,9 +240,9 @@ var VirtualKeyboard = new function () {
   *  access private
   */
   var updateLangList = function () {
-    if (langbox == null) return false;
-    var osel = langbox.selected;
-    langbox.options.length = 0;
+    if (nodes.langbox == null) return false;
+    var osel = nodes.langbox.selected;
+    nodes.langbox.options.length = 0;
     for (var i in layout) {
       if (!layout.hasOwnProperty(i)) continue;
       /*
@@ -250,76 +250,33 @@ var VirtualKeyboard = new function () {
       */
       var t = document.createElement('span');
       t.innerHTML = layout[i].name;
-      langbox.options[langbox.options.length] = new Option(t.firstChild.nodeValue, i, i==osel);
+      nodes.langbox.options[nodes.langbox.options.length] = new Option(t.firstChild.nodeValue, i, i==osel);
     }
     return true;
   }
-/***************************************************************************************
-** GLOBAL EVENT HANDLERS
-***************************************************************************************/
+  /***************************************************************************************
+  ** GLOBAL EVENT HANDLERS
+  ***************************************************************************************/
   /*
-  *  Method keeps keyboard in the visible area of document
+  *  Do the key clicks, caught from both virtual and real keyboards
   *
-  *  @param {Event} scroll event
-  *  @access protected
+  *  @param {HTMLInputElement} key on the virtual keyboard
+  *  @access private
   */
-  var _scrollHandler_ = function(e) {
-    if (keyboard && keyboard.style.visibility == 'visible') {
-      var x = getClientCenterX(), y = getClientCenterY();
-      keyboard.style.left = ((parseInt(keyboard.style.left) + x - keyboard_coords.x)) + 'px';
-      keyboard.style.top = (parseInt(keyboard.style.top) + y - keyboard_coords.y) + 'px';
-      keyboard_coords = {'x': x, 'y': y};
-      return false;
-    }
-  }
-  /*
-  *  Captures some keyboard events
-  *
-  *  @param {Event} keydown
-  *  @access protected
-  */
-  var _keydownHandler_ = function(e) {
-    e = e || window.event;
-    switch (e.keyCode) {
-      case 16: //shift
-        document.getElementById(idPrefix+'bshift_left').fireEvent('onmouseover');
-        document.getElementById(idPrefix+'bshift_left').fireEvent('onmousedown');
-        document.getElementById(idPrefix+'bshift_left').fireEvent('onmouseout');
-        break; 
-      case 20://caps lock
-        document.getElementById(idPrefix+'bcaps').fireEvent('onmousedown');
-        document.getElementById(idPrefix+'bcaps').fireEvent('onmouseup');
-        document.getElementById(idPrefix+'bcaps').fireEvent('onmouseout');
-        break;
-      case 115:
-        if (e.altKey) break;
-      case 27:
-        VirtualKeyboard.close();
-        return false;
-    }
-  }
-  /*
-  *  Handle clicks on the buttons, actually used with mouseup event
-  *
-  *  @param {Event} mouseup event
-  *  @access protected
-  */
-  var _btnClick_ = function (e) {
-    /*
-    *  either pressed key or something new
-    */
-    var el = curKey || getParent(e.srcElement||e.target,'a');
-    /*
-    *  reset to prevent duplicate clicks
-    */
-    if (!el || el.id.indexOf(idPrefix)<0) return;
-    var chr;
-    switch (el.id.substr(4,5)) {
-      case 'caps' :
-        if (curKey == getParent(e.srcElement||e.target,'a')) el.className += ' '+cssClasses['buttonHover'];
-      case 'shift' :
+  var _keyClicker_ = function (key) {
+    var chr = "";
+    switch (key) {
+      case "caps" :
         return;
-      case 'backs':
+      case "shift" :
+      case "shift_left" :
+      case "shift_right" :
+        /*
+        *  toggle the keyboard shift state
+        */
+        self.toggleShift(true);
+        return;
+      case 'backspace':
         DocumentSelection.deleteAtCursor(attachedInput, false);
         break;
       case 'del':
@@ -332,59 +289,182 @@ var VirtualKeyboard = new function () {
         chr = "\t";
         break;
       case 'enter':
-        chr = "\r\n";
+        chr = "\n";
         break;
       default:
-        chr = el.firstChild.firstChild.nodeValue;
-        if (shift ^ capslock)
-          chr = chr.toUpperCase();
+        var el = document.getElementById(idPrefix+key);
+        chr = el.firstChild.firstChild.firstChild.nodeValue;
+        /*
+        *  do uppercase if either caps or shift clicked, not both
+        */
+        if (flags.shift ^ flags.caps) chr = chr.toUpperCase();
+        /*
+        *  reset shift state, if clicked on the letter button
+        */
+        if (!flags.kbd_shift && flags.shift && el.firstChild == el.lastChild) {
+          document.getElementById(idPrefix+'shift_left').fireEvent('onmousedown');
+        }
         break;
     }
     if (chr) DocumentSelection.insertAtCursor(attachedInput,chr);
-      el.className = el.className.replace(new RegExp("\\b"+cssClasses['buttonDown']+"\\b","g"),"");
-    if (curKey)
-      curKey.className = curKey.className.replace(new RegExp("\\b"+cssClasses['buttonHover']+"\\b","g"),"");
-    curKey = null;
+
+  }
+  /*
+  *  Method keeps keyboard in the visible area of document
+  *
+  *  @param {Event} scroll event
+  *  @access protected
+  */
+  var _scrollHandler_ = function(e) {
+    if (nodes.keyboard && nodes.keyboard.style.visibility == 'visible') {
+      var x = getClientCenterX(), y = getClientCenterY();
+      nodes.keyboard.style.left = ((parseInt(nodes.keyboard.style.left) + x - keyboard_coords.x)) + 'px';
+      nodes.keyboard.style.top = (parseInt(nodes.keyboard.style.top) + y - keyboard_coords.y) + 'px';
+      keyboard_coords = {'x': x, 'y': y};
+      return false;
+    }
+  }
+  /*
+  *  Captures some keyboard events
+  *
+  *  @param {Event} keydown
+  *  @access protected
+  */
+  var _keydownHandler_ = function(e) {
+    /*
+    *  it's global event handler. do not process event, if keyboard is closed
+    */
+    if (!flags.isOpen) return;
+    e = e || window.event;
+    switch (e.keyCode) {
+      case 16: //shift
+        if (e.type == 'keydown' && flags.kbd_shift) return;
+        /*
+        *  kbd_shift flag is used to fix shift key pressed, while keyboard does autoswitch it
+        */
+        flags.kbd_shift = e.type == 'keydown';
+        document.getElementById(idPrefix+'shift_left').fireEvent('onmousedown');
+        return false;
+      case 20://caps lock
+        if (e.type != 'keydown') return;
+        document.getElementById(idPrefix+'caps').fireEvent('onmousedown');
+        return;
+      case 115:
+        if (e.altKey) break;
+      case 27:
+        VirtualKeyboard.close();
+        return false;
+    }
+    if (keymap.indexOf(e.keyCode)>-1) {
+     if (e.type == 'keydown')
+       nodes.desk.childNodes[keymap.indexOf(e.keyCode)].fireEvent('onmousedown')
+     else 
+       nodes.desk.childNodes[keymap.indexOf(e.keyCode)].fireEvent('onmouseup')
+    }
+    /*
+    *  prevent keyboard from typing real letters
+    */
+    e.returnValue = false;
+    if (e.preventDefault) e.preventDefault();
+    return false;
+//    _keyClicker(keymap[keymap.indexOf(e.keyCode)]);
+  }
+  /*
+  *  Handle clicks on the buttons, actually used with mouseup event
+  *
+  *  @param {Event} mouseup event
+  *  @access protected
+  */
+  var _btnClick_ = function (e) {
+    /*
+    *  either a pressed key or something new
+    */
+    var el = nodes.curKey || getParent(e.srcElement||e.target,'div');
+    /*
+    *  skip invalid nodes
+    */
+    if (!el || el.id.indexOf(idPrefix)<0) return; 
+    var key = el.id.substring(idPrefix.length);
+    switch (key) {
+      case "caps":
+      case "shift_left":
+      case "shift_right":
+        return;
+      default:
+       nodes.curKey.className = nodes.curKey.className.replace(new RegExp("\\s*\\b"+cssClasses['buttonDown']+"\\b","g"),"");
+//       nodes.curKey = null;
+    }
   }
   /*
   *  Handle mousedown event
   *
   *  Method is used to set 'pressed' button state and toggle shift, if needed
+  *  Additionally, it is used by keyboard wrapper to forward keyboard events to the virtual keyboard
   *
   *  @param {Event} mouseup event
   *  @access protected
   */
   var _btnMousedown_ = function (e) { 
-    var el = getParent(e.srcElement||e.target, 'a'); 
-    if (!el) return;
-    el.className = cssClasses['buttonUp']+' '+cssClasses['buttonDown'];
-
-    if (el.id.indexOf(idPrefix+'bshift') == 0) { 
-      self.toggleShift(true);
-      shift = !shift;
-      if (!shift) {
-        document.getElementById(idPrefix+'bshift_left').className = document.getElementById(idPrefix+'bshift_right').className = cssClasses['buttonUp'];
-        el.className += ' '+cssClasses['buttonHover'];
-      } else
-        document.getElementById('kb_bshift_left').className = document.getElementById('kb_bshift_right').className = cssClasses['buttonUp']+' '+cssClasses['buttonDown'];
-    }
-    switch (el.id.substr(4,5)) {
-      case 'caps' :
-        if (!(capslock = !capslock)) el.className = cssClasses['buttonUp'];
-        //if (!kb_shift) // change state of CapsLock led
-      case 'shift' :
-        var p = getParent(el,'id','kbDesk');
-        if (!p) return;
-        if (capslock ^ !shift)
-          p.className = p.className.replace(new RegExp("\\b"+cssClasses['capslock']+"\\b","g"),"");
-        else 
-          p.className += ' '+cssClasses['capslock'];
+    var el = getParent(e.srcElement||e.target, 'div'); 
+    /*
+    *  skip invalid buttons
+    */
+    if (!el || el.id.indexOf(idPrefix)<0) return;
+    var key = el.id.substring(idPrefix.length);
+    switch (key) {
+      case "caps":
+        var cp = document.getElementById(idPrefix+'caps');
+        if (flags.caps = (!flags.caps))
+          cp.className += ' '+cssClasses['buttonDown'];
+        else
+          cp.className = cp.className.replace (new RegExp("\\s*\\b"+cssClasses['buttonDown']+"\\b","g"),'');
+        /*
+        *  start personal clicker
+        */
+        _keyClicker_(key);
+        break;
+      case "shift_left":
+      case "shift_right":
+        /*
+        *  if event came from both keyboard and mouse - skip it
+        */
+        if (e.shiftKey && flags.shift) break;
+        var s1 = document.getElementById(idPrefix+'shift_left'),
+            s2 = document.getElementById(idPrefix+'shift_right');
+        /*
+        *  update keys state
+        *  shift is toggled in the following cases:
+        *  1. keyboard shift is pressed, virtual is not
+        *  2. keyboard shift is released
+        *  3. keyboard shift is not pressed, vitrual is pressed
+        *  4. keyboard shift is not pressed, virtual is released
+        */
+        if ((flags.shift = (!flags.shift | flags.kbd_shift)))
+          s1.className = s2.className = s1.className+" "+cssClasses['buttonDown'];
+        else
+          s1.className = s2.className = s1.className.replace (new RegExp("\\s*\\b"+cssClasses['buttonDown']+"\\b","g"),'');
+        /*
+        *  start personal clicker, in case if Shift is not pressed
+        */
+        if ((e.shiftKey || flags.shift)) _keyClicker_(key);
+        break;
+      /*
+      *  any real pressed key
+      */
+      default:
+        el.className += ' '+cssClasses['buttonDown'];
+        nodes.curKey = el;
+        _keyClicker_(key);
         return;
     }
     /*
-    *  save pointer
+    *  do uppercase transformation
     */
-    curKey = el;
+    if (flags.caps ^ !flags.shift)
+      nodes.desk.className = nodes.desk.className.replace(new RegExp("\\s*\\b"+cssClasses['capslock']+"\\b","g"),"");
+    else 
+      nodes.desk.className += ' '+cssClasses['capslock'];
+
   }
   /*
   *  Handle mouseout event
@@ -395,14 +475,34 @@ var VirtualKeyboard = new function () {
   *  @access protected
   */
   var _btnMouseout_ = function (e) { 
-    var el = getParent(e.srcElement||e.target, 'a'); 
-    if (!el && !(el=curKey)) return;
-      el.className = el.className.replace(new RegExp("\\b"+cssClasses['buttonHover']+"\\b","g"),"");
-    if (curKey && curKey.id.indexOf(idPrefix+'bcaps') != 0)
-      curKey.className = cssClasses['buttonUp'];
+    /*
+    *  either pressed key or something new
+    */
+    var el = getParent(e.srcElement||e.target,'div');
+
+    /*
+    *  skip invalid nodes
+    */
+    if (!el || el.id.indexOf(idPrefix)<0) return; 
+
+    var cn = el.className.replace(new RegExp("\\s*\\b"+cssClasses['buttonHover']+"\\b","g"),"");
+    /*
+    *  hard-to-avoid IE bug cleaner. if 'hover' state is get removed, button looses it's 'down' state
+    *  should be applied for every button, needed to save 'pressed' state on mouseover/out
+    */
+    if (el.id.indexOf('shift')>-1) {
+      /*
+      *  both shift keys should be blurred
+      */
+      var s1 = document.getElementById(idPrefix+'shift_left'),
+          s2 = document.getElementById(idPrefix+'shift_right');
+      s1.className = s2.className = cn;
+    } else {
+      el.className = cn;
+    }
   }
   /*
-  *  Handle mouseout event
+  *  Handle mouseover event
   *
   *  Method is used to remove 'pressed' button state
   *
@@ -410,9 +510,18 @@ var VirtualKeyboard = new function () {
   *  @access protected
   */
   var _btnMouseover_ = function (e) { 
-    var el = getParent(e.srcElement||e.target, 'a'); 
+    var el = getParent(e.srcElement||e.target, 'div'); 
     if (!el) return;
     el.className += ' '+cssClasses['buttonHover'];
+    nodes.curKey = el;
+    /*
+    *  both shift keys should be highlighted
+    */
+    if (el.id.indexOf('shift')>-1) {
+      var s1 = document.getElementById(idPrefix+'shift_left'),
+          s2 = document.getElementById(idPrefix+'shift_right');
+      s1.className = s2.className = el.className;
+    }
   }
   /*
   *  blocks link behavior
@@ -454,23 +563,33 @@ var VirtualKeyboard = new function () {
   */
   self.show = function (input){
     if (input && !self.attachInput(input)) return false;
-    if (!keyboard || !document.body || attachedInput == null) return false;
-    if (!keyboard.offsetParent) document.body.appendChild(keyboard);
-    keyboard.style.visibility = 'visible';
+    if (!nodes.keyboard || !document.body || attachedInput == null) return false;
+    if (!nodes.keyboard.offsetParent) document.body.appendChild(nodes.keyboard);
+    nodes.keyboard.style.visibility = 'visible';
     var x = getClientCenterX(),
         y = getClientCenterY();
-    keyboard.style.left = (x-keyboard.clientWidth/2) + 'px';
-    keyboard.style.top = (y-keyboard.clientHeight/2) + 'px';
+    nodes.keyboard.style.left = (x-nodes.keyboard.clientWidth/2) + 'px';
+    nodes.keyboard.style.top = (y-nodes.keyboard.clientHeight/2) + 'px';
     keyboard_coords = {'x': x, 'y': y};
+
+    /*
+    *  set open flag, for the internal checks
+    */
+    flags.isOpen = true;
+
     return true;
   }
   /*
   * Закрытие клавиатуры
   */
   self.close = function () {
-    if (!keyboard) return false;
-    keyboard.style.visibility = 'hidden';
+    if (!nodes.keyboard) return false;
+    nodes.keyboard.style.visibility = 'hidden';
     attachedInput = null;
+    /*
+    *  keyboard is closed, no more keyboard-related stuff processing
+    */
+    flags.isOpen = false;
 //    capslock = false;
 //    shift = false;
 //    toggle
@@ -482,31 +601,30 @@ var VirtualKeyboard = new function () {
   *  @access public
   */
   __construct = function() {
-    keyboard = document.createElement("DIV");
-    keyboard.id = "virtualKeyboard";
-    keyboard.style.visibility = 'hidden';
+    nodes.keyboard = document.createElement("DIV");
+    nodes.keyboard.id = "virtualKeyboard";
+    nodes.keyboard.style.visibility = 'hidden';
 
-    keyboard.innerHTML = 
+    nodes.keyboard.innerHTML = 
      '<div id="kbHeader"><div id="kbHeaderLeft">Virtual Keyboard'+
       '<a href="#" id="kbHeaderRight" onclick="VirtualKeyboard.close(); return false;" alt="Close">&nbsp;</a></div></div>'+
      '<div id="kbDesk"></div>'+
-     '<div id="'+idPrefix+'notice">&nbsp;</div>'+
-     '<div id="'+idPrefix+'langselector">&#1071;&#1079;&#1099;&#1082;: <select name="select" onchange="VirtualKeyboard.switchLayout(this.value)"></select></div>';
+     '<div id="kb_langselector">&#1071;&#1079;&#1099;&#1082;: <select name="select" onchange="VirtualKeyboard.switchLayout(this.value)"></select></div>';
     /*
     *  reference to keyboard desk
     */
-    desk = keyboard.childNodes[1];
+    nodes.desk = nodes.keyboard.childNodes[1];
     /*
     *  reference to layout selector
     */
-    langbox = keyboard.lastChild.lastChild;
+    nodes.langbox = nodes.keyboard.lastChild.lastChild;
 
-    keyboard.attachEvent('onmousedown', _btnMousedown_);
-    keyboard.attachEvent('onmouseup', _btnClick_);
-    keyboard.attachEvent('onmouseover', _btnMouseover_);
-    keyboard.attachEvent('onmouseout', _btnMouseout_);
-    keyboard.attachEvent('onclick', _blockLink_);
-    keyboard.attachEvent('ondragstart', _blockLink_);
+    nodes.keyboard.attachEvent('onmousedown', _btnMousedown_);
+    nodes.keyboard.attachEvent('onmouseup', _btnClick_);
+    nodes.keyboard.attachEvent('onmouseover', _btnMouseover_);
+    nodes.keyboard.attachEvent('onmouseout', _btnMouseout_);
+    nodes.keyboard.attachEvent('onclick', _blockLink_);
+    nodes.keyboard.attachEvent('ondragstart', _blockLink_);
 
     //Перемещение окна
     __DDI__.setPlugin('fixNoMouseSelect');
@@ -514,19 +632,19 @@ var VirtualKeyboard = new function () {
     __DDI__.setPlugin('adjustZIndex');
     __DDI__.setPlugin('fixDragInMz');
     __DDI__.setPlugin('fixDragInIE');
-    if (keyboard) {
-            keyboard.alwaysOnTop = true;
+    if (nodes.keyboard) {
+            nodes.keyboard.alwaysOnTop = true;
             // Required, it's just blank event handler to initialize library
-            keyboard.__onDragStart = function (e) {
+            nodes.keyboard.__onDragStart = function (e) {
                     if (e.__target.id != 'virtualKeyboard') return;
                     e.__dataTransfer.effectAllowed = 'none';
             }
             // Disallow any drag effects, if any...
-            keyboard.__onDrag = function (e) {
+            nodes.keyboard.__onDrag = function (e) {
                     return false;
             }
             // Initializes move.
-            keyboard.__onMoveStart = function (e) {
+            nodes.keyboard.__onMoveStart = function (e) {
               //Window could be dragged using header bar only.
               var p = e.__target;
               while (p.offsetParent) {
@@ -537,7 +655,7 @@ var VirtualKeyboard = new function () {
               return false;
             }
             // Checks constraits and tells moveIT plugin how it can move window
-            keyboard.__onMove = function (e) {
+            nodes.keyboard.__onMove = function (e) {
               var r = {'x' : {'move' : true,
                               'min' : getBodyScrollLeft()+5,
                               'max' : (getClientWidth()+getBodyScrollLeft()-25)
@@ -559,6 +677,7 @@ var VirtualKeyboard = new function () {
     *  attach key capturer
     */
     document.attachEvent('onkeydown', _keydownHandler_);
+    document.attachEvent('onkeyup', _keydownHandler_);
   }
   /*
   *  call the constructor

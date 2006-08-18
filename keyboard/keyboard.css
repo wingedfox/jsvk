@@ -62,25 +62,29 @@
 #virtualKeyboard #kbDesk.capsLock {
         text-transform: uppercase;
 }
-#virtualKeyboard #kbDesk a.kbButton {
-        background: url(button_set.gif) 0 0 no-repeat;
-        display: block;
+#virtualKeyboard #kbDesk div.kbButton {
         float: left;
         height: 26px;
         overflow: hidden;
         padding: 0;
         position: relative;
-        text-decoration: none;
         width: 26px;
         z-index: 2;
 }
-#virtualKeyboard #kbDesk a.kbButtonHover {
+#virtualKeyboard #kbDesk div.kbButton a {
+        background: url(button_set.gif) 0 0 no-repeat;
+        display: block;
+        height: 100%;
+        text-decoration: none;
+        width: 100%;
+}
+#virtualKeyboard #kbDesk div.kbButtonHover a {
         background-position: 0 -27px;
 }
-#virtualKeyboard #kbDesk a.kbButtonDown {
+#virtualKeyboard #kbDesk div.kbButtonDown a {
         background-position: 0 -54px;
 }
-#virtualKeyboard #kbDesk a.kbButton span {
+#virtualKeyboard #kbDesk div.kbButton span {
         display: block;
         font-family: Verdana;
         font-size: 13px;
@@ -92,7 +96,7 @@
         text-indent: -2px;
         width: inherit;
 }
-#virtualKeyboard #kbDesk a.kbButton span.shifted {
+#virtualKeyboard #kbDesk div.kbButton span.shifted {
         font-family: Verdana;
         font-size: 7.5pt;
         height: 100%;
@@ -103,13 +107,13 @@
         vertical-align: bottom;
         width: 100%;
 }
-#virtualKeyboard #kbDesk a.kbButton span.normal {
+#virtualKeyboard #kbDesk div.kbButton span.normal {
         line-height: 28px;
         position: relative;
         left: -4px;
         text-indent: 0;
 }
-#virtualKeyboard #kbDesk a#kb_benter {
+#virtualKeyboard #kbDesk div#kb_benter {
         background-position: -194px 0px;
         left: -2px;
         margin-top: -26px;
@@ -119,85 +123,85 @@
         width: 54px;
         z-index: 0;
 }
-#virtualKeyboard #kbDesk a#kb_benter.kbButtonHover {
+#virtualKeyboard #kbDesk div#kb_benter a {
+        background-position: -194px 0px;
+}
+#virtualKeyboard #kbDesk div#kb_benter.kbButtonHover a {
         background-position: -194px -53px;
 }
-#virtualKeyboard #kbDesk a#kb_benter.kbButtonDown {
+#virtualKeyboard #kbDesk div#kb_benter.kbButtonDown a {
         background-position: -194px -106px;
 }
-#virtualKeyboard #kbDesk a#kb_bbackspace {
+#virtualKeyboard #kbDesk div#kb_bbackspace a {
         background-position: -27px -81px;
 }
-#virtualKeyboard #kbDesk a#kb_bbackspace.kbButtonHover {
+#virtualKeyboard #kbDesk div#kb_bbackspace.kbButtonHover a {
         background-position: -27px -108px;
 }
-#virtualKeyboard #kbDesk a#kb_bbackspace.kbButtonDown {
+#virtualKeyboard #kbDesk div#kb_bbackspace.kbButtonDown a {
         background-position: -27px -135px;
 }
-#virtualKeyboard #kbDesk #kb_btab {
-        background-position: -155px -81px;
+#virtualKeyboard #kbDesk div#kb_btab {
         width: 41px;
 }
-#virtualKeyboard #kbDesk a#kb_btab.kbButtonHover {
+#virtualKeyboard #kbDesk div#kb_btab a {
+        background-position: -155px -81px;
+}
+#virtualKeyboard #kbDesk div#kb_btab.kbButtonHover a {
         background-position: -155px -108px;
 }
-#virtualKeyboard #kbDesk a#kb_btab.kbButtonDown {
+#virtualKeyboard #kbDesk div#kb_btab.kbButtonDown a {
         background-position: -155px -135px;
 }
-#virtualKeyboard #kbDesk a#kb_bcaps {
-        background-position: -107px -81px;
+#virtualKeyboard #kbDesk div#kb_bcaps {
         width: 48px;
 }
-#virtualKeyboard #kbDesk a#kb_bcaps.kbButtonHover {
+#virtualKeyboard #kbDesk div#kb_bcaps a {
+        background-position: -107px -81px;
+}
+#virtualKeyboard #kbDesk div#kb_bcaps.kbButtonHover a {
         background-position: -107px -108px;
 }
-#virtualKeyboard #kbDesk a#kb_bcaps.kbButtonDown {
+#virtualKeyboard #kbDesk div#kb_bcaps.kbButtonDown a {
         background-position: -107px -135px;
 }
-#virtualKeyboard #kbDesk a#kb_bshift_left,
-#virtualKeyboard #kbDesk a#kb_bshift_right {
-        background-position: -54px -81px;
+#virtualKeyboard #kbDesk div#kb_bshift_left,
+#virtualKeyboard #kbDesk div#kb_bshift_right {
         width: 52px;
 }
-#virtualKeyboard #kbDesk a#kb_bshift_left.kbButtonHover,
-#virtualKeyboard #kbDesk a#kb_bshift_right.kbButtonHover {
+#virtualKeyboard #kbDesk div#kb_bshift_left a,
+#virtualKeyboard #kbDesk div#kb_bshift_right a {
+        background-position: -54px -81px;
+}
+#virtualKeyboard #kbDesk div#kb_bshift_left.kbButtonHover a,
+#virtualKeyboard #kbDesk div#kb_bshift_right.kbButtonHover a {
         background-position: -54px -108px;
 }
-#virtualKeyboard #kbDesk a#kb_bshift_left.kbButtonDown,
-#virtualKeyboard #kbDesk a#kb_bshift_right.kbButtonDown {
+#virtualKeyboard #kbDesk div#kb_bshift_left.kbButtonDown a,
+#virtualKeyboard #kbDesk div#kb_bshift_right.kbButtonDown a {
         background-position: -54px -135px;
 }
-#virtualKeyboard #kbDesk a#kb_bdel {
+#virtualKeyboard #kbDesk div#kb_bdel a {
         background-position: 0 -81px;
 }
-#virtualKeyboard #kbDesk a#kb_bdel.kbButtonHover {
+#virtualKeyboard #kbDesk div#kb_bdel.kbButtonHover a {
         background-position: 0 -108px;
 }
-#virtualKeyboard #kbDesk a#kb_bdel.kbButtonDown {
+#virtualKeyboard #kbDesk div#kb_bdel.kbButtonDown a {
         background-position: 0 -135px;
 }
-#virtualKeyboard #kbDesk a#kb_bspace {
-        background-position: -27px 0;
+#virtualKeyboard #kbDesk div#kb_bspace {
         left: 90px;
         width: 166px;
 }
-#virtualKeyboard #kbDesk a#kb_bspace.kbButtonHover {
+#virtualKeyboard #kbDesk div#kb_bspace a {
+        background-position: -27px 0;
+}
+#virtualKeyboard #kbDesk div#kb_bspace.kbButtonHover a {
         background-position: -27px -27px;
 }
-#virtualKeyboard #kbDesk a#kb_bspace.kbButtonDown {
+#virtualKeyboard #kbDesk div#kb_bspace.kbButtonDown a {
         background-position: -27px -54px;
-}
-#virtualKeyboard #kb_notice {
-        bottom: 4px;
-        cursor: default;
-        height:24px; 
-        font-family: Small Fonts; 
-        font-size: 9px; 
-        left: 0; 
-        line-height: 1;
-        position: absolute; 
-        text-align: left; 
-        width:90px; 
 }
 #virtualKeyboard #kb_langselector {
         bottom: 4px;
