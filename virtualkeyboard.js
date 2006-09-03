@@ -97,7 +97,7 @@ var VirtualKeyboard = new function () {
   var nodes = {
     keyboard : null,    // Keyboard container @type HTMLDivElement
     desk : null,        // Keyboard desk @type HTMLDivElement
-    langbox : null     // Layout selector @type HTMLSelectElement
+    langbox : null      // Layout selector @type HTMLSelectElement
   }
   /*
   *  Stores flags state
@@ -106,11 +106,12 @@ var VirtualKeyboard = new function () {
   *  @access private
   */
   var flags = {
-    isOpen : false,     // virtual keyboard open state
-    shift : false,      // Shift
-    caps : false,       // CapsLock
-    kbd_shift : false,  // real shift
-    skip_keyup : false  // used to skip letter type, when keyboard key is released
+    isOpen : false,      // virtual keyboard open state
+    shift : false,       // Shift
+    caps : false,        // CapsLock
+    kbd_shift : false,   // real shift
+    skip_keyup : false,  // used to skip letter type, when keyboard key is released
+    blockRealKey : false // used to block input, when it converted to virtual
   }
   /*
   *  Keyboard center coordinates
@@ -302,7 +303,10 @@ var VirtualKeyboard = new function () {
         *  reset shift state, if clicked on the letter button
         */
         if (!flags.kbd_shift && flags.shift && el.firstChild == el.lastChild) {
-          document.getElementById(idPrefix+'shift_left').fireEvent('onmousedown');
+          /*
+          *  we need firstChild here and on other places to be sure that we point to 'a' node
+          */
+          document.getElementById(idPrefix+'shift_left').firstChild.fireEvent('onmousedown');
         }
         break;
     }
@@ -361,9 +365,7 @@ var VirtualKeyboard = new function () {
             if (keymap.indexOf(e.keyCode)>-1) {
               nodes.desk.childNodes[keymap.indexOf(e.keyCode)].firstChild.fireEvent('onmouseup')
               nodes.desk.childNodes[keymap.indexOf(e.keyCode)].firstChild.fireEvent('onmousedown');
-              e.returnValue = false;
-              if (e.preventDefault) e.preventDefault();
-              return false;
+              flags.blockRealKey = true;
             }
         }
         break;
@@ -384,9 +386,13 @@ var VirtualKeyboard = new function () {
         break;
       case 'keypress' :
         /*
-        *  fix Mozilla behavior, on keypress it return e.keyCode == 0 for alphanumeric keys
+        *  flag is set only when virtual key passed to input target
         */
-        if (!e.keyCode) {
+        if (flags.blockRealKey) {
+          /*
+          *  reset flag
+          */
+          flags.blockRealKey = false;
           e.returnValue = false;
           if (e.preventDefault) e.preventDefault();
           return false;
@@ -414,13 +420,16 @@ var VirtualKeyboard = new function () {
       case "caps":
       case "shift_left":
       case "shift_right":
-        return;
+        break;
       default:
         el.className = el.className.replace(new RegExp("\\s*\\b"+cssClasses['buttonDown']+"\\b","g"),"");
+        /*
+        *  mouse event captures 'mouseup' to have better response
+        *  but real keyboard uses mouseup event to 'release' virtual key w/o real keypress
+        */
         if (!flags.skip_keyup) _keyClicker_(key);
-        flags.skip_keyup = false;
-
     }
+    flags.skip_keyup = false;
   }
   /*
   *  Handle mousedown event
