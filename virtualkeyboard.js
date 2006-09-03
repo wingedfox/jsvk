@@ -302,7 +302,7 @@ var VirtualKeyboard = new function () {
         /*
         *  reset shift state, if clicked on the letter button
         */
-        if (!flags.kbd_shift && flags.shift && el.firstChild == el.lastChild) {
+        if (!flags.kbd_shift && flags.shift && el.firstChild.firstChild == el.firstChild.lastChild) {
           /*
           *  we need firstChild here and on other places to be sure that we point to 'a' node
           */
@@ -310,7 +310,14 @@ var VirtualKeyboard = new function () {
         }
         break;
     }
-    if (chr) DocumentSelection.insertAtCursor(attachedInput,chr);
+    if (chr) {
+      /*
+      *  use behavior of real keyboard - replace selected text with new input
+      */
+      if (DocumentSelection.getStart(attachedInput) != DocumentSelection.getEnd(attachedInput))
+        DocumentSelection.deleteAtCursor(attachedInput);
+      DocumentSelection.insertAtCursor(attachedInput,chr);
+    }
 
   }
   /*
@@ -469,8 +476,10 @@ var VirtualKeyboard = new function () {
         *  if event came from both keyboard and mouse - skip it
         */
         if (e.shiftKey && flags.shift) break;
+        if (e.shiftKey && flags.shift) break;
         var s1 = document.getElementById(idPrefix+'shift_left'),
-            s2 = document.getElementById(idPrefix+'shift_right');
+            s2 = document.getElementById(idPrefix+'shift_right'),
+            ofs = flags.shift;
         /*
         *  update keys state
         *  shift is toggled in the following cases:
@@ -486,7 +495,7 @@ var VirtualKeyboard = new function () {
         /*
         *  start personal clicker, in case if Shift is not pressed
         */
-        if ((e.shiftKey || flags.shift)) _keyClicker_(key);
+        if (ofs != flags.shift) _keyClicker_(key);
         break;
       /*
       *  any real pressed key
