@@ -220,3 +220,14 @@
         font-family: Tahoma, Verdana, Arial, sans-serif;
         font-size: 11px;
 }
+/*
+*  Checkbox enables keys translation
+*/
+#virtualKeyboard label.kbTranslatorLabel {
+        bottom: 0;
+        left: 5px;
+        position: absolute;
+}
+#virtualKeyboard label.kbTranslatorLabel input {
+        vertical-align: baseline;
+}

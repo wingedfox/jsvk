@@ -106,12 +106,13 @@ var VirtualKeyboard = new function () {
   *  @access private
   */
   var flags = {
-    isOpen : false,      // virtual keyboard open state
-    shift : false,       // Shift
-    caps : false,        // CapsLock
-    kbd_shift : false,   // real shift
-    skip_keyup : false,  // used to skip letter type, when keyboard key is released
-    blockRealKey : false // used to block input, when it converted to virtual
+    isOpen : false,       // virtual keyboard open state
+    shift : false,        // Shift
+    caps : false,         // CapsLock
+    kbd_shift : false,    // real shift
+    skip_keyup : false,   // used to skip letter type, when keyboard key is released
+    blockRealKey : false, // used to block input, when it converted to virtual
+    translateKeys : false // when true - translate real keys to virtual letters
   }
 
   /**************************************************************************
@@ -185,7 +186,7 @@ var VirtualKeyboard = new function () {
     for (i=0, aL = layout[code].alpha.length; i<aL; i++) {
       btns +=  "<div id=\""+idPrefix+(parseInt(layout[code].alpha[i])?i:layout[code].alpha[i])
               +"\" class=\""+cssClasses['buttonUp']
-              +"\"><a href=\"#\""
+              +"\"><a href=\"#"+i+"\""
               +">"+(parseInt(layout[code].alpha[i])?"<span>"+String.fromCharCode(layout[code].alpha[i])+"</span>"
                                                    :"")+"</a></div>";
     }
@@ -203,6 +204,20 @@ var VirtualKeyboard = new function () {
       }
     }
     lang = code;
+    /*
+    *  restore capslock state
+    */
+    var caps = document.getElementById(idPrefix+'caps');
+    if (caps) {
+      /*
+      *  1st click is to reset state and 2nd to restore original
+      */
+      caps.firstChild.fireEvent('onmousedown');
+      caps.firstChild.fireEvent('onmousedown');
+    }
+    /*
+    *  restore shift state
+    */
     self.toggleShift();
   }
   /*
@@ -247,6 +262,9 @@ var VirtualKeyboard = new function () {
       nodes.langbox.options[nodes.langbox.options.length] = new Option(t.firstChild.nodeValue, i, i==osel);
     }
     return true;
+  }
+  var setNextLang = function () {
+
   }
   /***************************************************************************************
   ** GLOBAL EVENT HANDLERS
@@ -347,8 +365,17 @@ var VirtualKeyboard = new function () {
             VirtualKeyboard.close();
             return false;
           default:
-            if (keymap.indexOf(e.keyCode)>-1) {
+            /*
+            *  skip keypress if alt or ctrl pressed and key translation allowed
+            */
+            if (flags.translateKeys && keymap.indexOf(e.keyCode)>-1 && !e.altKey && !e.ctrlKey) {
+              /*
+              *  mouseup needed to insert the key
+              */
               nodes.desk.childNodes[keymap.indexOf(e.keyCode)].firstChild.fireEvent('onmouseup')
+              /*
+              *  then mousedown, to show pressed state
+              */
               nodes.desk.childNodes[keymap.indexOf(e.keyCode)].firstChild.fireEvent('onmousedown');
               flags.blockRealKey = true;
             }
@@ -422,7 +449,7 @@ var VirtualKeyboard = new function () {
   *  Method is used to set 'pressed' button state and toggle shift, if needed
   *  Additionally, it is used by keyboard wrapper to forward keyboard events to the virtual keyboard
   *
-  *  @param {Event} mouseup event
+  *  @param {Event} mousedown event
   *  @access protected
   */
   var _btnMousedown_ = function (e) { 
@@ -601,7 +628,16 @@ var VirtualKeyboard = new function () {
   self.show = function (input){
     if (input && !self.attachInput(input)) return false;
     if (!nodes.keyboard || !document.body || attachedInput == null) return false;
-    if (!nodes.keyboard.offsetParent) document.body.appendChild(nodes.keyboard);
+    /*
+    *  check pass means that node is not attached to the body
+    */
+    if (!nodes.keyboard.offsetParent) {
+      document.body.appendChild(nodes.keyboard);
+      /*
+      *  add event listener personally to the checkbox
+      */
+      document.getElementById('virtualKeyboardTranslator').attachEvent('onclick',function(e){flags.translateKeys = (e.srcElement||e.target).checked});
+    }
     /*
     *  special, for IE
     */
@@ -645,10 +681,11 @@ var VirtualKeyboard = new function () {
     nodes.keyboard.style.visibility = 'hidden';
 
     nodes.keyboard.innerHTML = 
-     '<div id="kbHeader"><div id="kbHeaderLeft">Virtual Keyboard'+
-      '<a href="#" id="kbHeaderRight" onclick="VirtualKeyboard.close(); return false;" alt="Close">&nbsp;</a></div></div>'+
-     '<div id="kbDesk"></div>'+
-     '<div id="kb_langselector">&#1071;&#1079;&#1099;&#1082;: <select name="select" onchange="VirtualKeyboard.switchLayout(this.value)"></select></div>';
+      '<div id="kbHeader"><div id="kbHeaderLeft">Virtual Keyboard'
+      +'<a href="#" id="kbHeaderRight" onclick="VirtualKeyboard.close(); return false;" alt="Close">&nbsp;</a></div></div>'
+     +'<div id="kbDesk"></div>'
+     +'<label class="kbTranslatorLabel" for="virtualKeyboardTranslator"><input type="checkbox" id="virtualKeyboardTranslator" />A->Z</label>'
+     +'<div id="kb_langselector">&#1071;&#1079;&#1099;&#1082;: <select name="select" onchange="VirtualKeyboard.switchLayout(this.value)"></select></div>';
     /*
     *  reference to keyboard desk
     */
