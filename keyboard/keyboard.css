@@ -1,9 +1,10 @@
 #virtualKeyboard {
+        behavior: url(keyboard/ie-fixed.htc);
         height: 164px;
         left: 110px;
         margin: 0;
         padding: 0;
-        position: absolute;
+        position: fixed;
         top: 110px;
         width: 400px;
 }

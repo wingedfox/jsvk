@@ -113,13 +113,6 @@ var VirtualKeyboard = new function () {
     skip_keyup : false,  // used to skip letter type, when keyboard key is released
     blockRealKey : false // used to block input, when it converted to virtual
   }
-  /*
-  *  Keyboard center coordinates
-  *
-  *  @type Object
-  *  @access private
-  */
-  var keyboard_coords = {'x':0,'y':0};
 
   /**************************************************************************
   **  KEYBOARD LAYOUT
@@ -319,21 +312,6 @@ var VirtualKeyboard = new function () {
       DocumentSelection.insertAtCursor(attachedInput,chr);
     }
 
-  }
-  /*
-  *  Method keeps keyboard in the visible area of document
-  *
-  *  @param {Event} scroll event
-  *  @access protected
-  */
-  var _scrollHandler_ = function(e) {
-    if (nodes.keyboard && nodes.keyboard.style.visibility == 'visible') {
-      var x = getClientCenterX(), y = getClientCenterY();
-      nodes.keyboard.style.left = ((parseInt(nodes.keyboard.style.left) + x - keyboard_coords.x)) + 'px';
-      nodes.keyboard.style.top = (parseInt(nodes.keyboard.style.top) + y - keyboard_coords.y) + 'px';
-      keyboard_coords = {'x': x, 'y': y};
-      return false;
-    }
   }
   /*
   *  Captures some keyboard events
@@ -624,12 +602,14 @@ var VirtualKeyboard = new function () {
     if (input && !self.attachInput(input)) return false;
     if (!nodes.keyboard || !document.body || attachedInput == null) return false;
     if (!nodes.keyboard.offsetParent) document.body.appendChild(nodes.keyboard);
-    nodes.keyboard.style.visibility = 'visible';
+    /*
+    *  special, for IE
+    */
+    setTimeout(function(){nodes.keyboard.style.visibility = 'visible'},1);
     var x = getClientCenterX(),
         y = getClientCenterY();
     nodes.keyboard.style.left = (x-nodes.keyboard.clientWidth/2) + 'px';
     nodes.keyboard.style.top = (y-nodes.keyboard.clientHeight/2) + 'px';
-    keyboard_coords = {'x': x, 'y': y};
 
     /*
     *  set open flag, for the internal checks
@@ -728,10 +708,6 @@ var VirtualKeyboard = new function () {
             }
     }
 
-    /*
-    *  attach scroll capturer
-    */
-    window.attachEvent('onscroll', _scrollHandler_);
     /*
     *  attach key capturer
     */
