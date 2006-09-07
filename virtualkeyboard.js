@@ -68,26 +68,39 @@ var VirtualKeyboard = new function () {
   /*
   *  current layout
   *
-  *  @type String
+  *  @type Object
   *  @access public
   */
-  var lang = '';
+  var lang = {'code' : null,
+              'lyt' : null
+             };
   /*
   *  Available layouts
   *
   *  Array contains layout, it's 'shifted' difference and name
   *  Structure:
-  *   <lang_code> : { 'name' : String,
-  *                   'alpha' : Array, // key codes
-  *                   'diff' : Object { <start2> : Array, // array of symbols, could not be taken with toUpperCase
-  *                                     <start2> : Array,
-  *                                   }
-  *                 }
+  *   [
+  *    ['alpha' : Array, // key codes
+  *     'diff' : Object { <start1> : Array, // array of symbols, could not be taken with toUpperCase
+  *                       <start2> : Array,
+  *                     }
+  *    ].name=<layout_code>,
+  *    {...}
+  *   ].name = <lang_code>
   *
   *  @type Object
   *  @access private
   */
-  var layout = {};
+  var layout = [];
+  /*
+  *  toString overload method for the layouts and languages
+  *
+  *  @type function
+  *  @access protected
+  */
+  var layoutToString = function () {
+    return this.name;
+  }
   /*
   *  Shortcuts to the nodes
   *
@@ -136,7 +149,7 @@ var VirtualKeyboard = new function () {
       /*
       *  it was used before
       */
-      if (lang == code) this.switchLayout(i);
+      if (lang.code == code) this.switchLayout(i);
       updateLangList();
       return true;
     }
@@ -158,14 +171,53 @@ var VirtualKeyboard = new function () {
   *  @access public
   */
   this.addLayout = function(code, name, alpha, diff, override) {
-    if ('string' == typeof code && ('undefined' == typeof layout[code] || override) &&
-        (alpha instanceof Array) && (diff instanceof Object)) {
-      layout[code] = {'name' : name,
-                        'alpha' : alpha,
-                        'diff' : diff
-                       }
+    if ('string' == typeof code && (alpha instanceof Array) && (diff instanceof Object)) {
+      var code = code.toUpperCase();
+      var pos = layout.indexOf(code);
+      /*
+      *  add language, if it does not exists
+      */
+      if (pos < 0) {
+        var lng = [];
+        /*
+        *  overload toString, for the search/
+        */
+        lng.toString = layoutToString;
+        lng.valueOf = layoutToString;
+        /*
+        *  name for lookup/sorting
+        */
+        lng.name = code;
+
+        pos = layout.length;
+        layout[pos] = lng;
+      }
+      var pos_lt = layout[pos].indexOf(name);
+      /*
+      *  add layout, if it does not exists
+      */
+      if (pos_lt<0) {
+        var lt = {};
+        /*
+        *  overload toString, for the search/
+        */
+        lt.toString = layoutToString;
+        lt.valueOf = layoutToString;
+        lt.name = name;
+        pos_lt = layout[pos].length;
+        layout[pos][pos_lt] = lt;
+      }
+      layout[pos][pos_lt] = {'alpha' : alpha,
+                             'diff' : diff
+                            };
+      /*
+      *  sort things...
+      */
+      layout.sort();
+      layout[pos].sort();
+
       updateLangList();
-      if (!lang) self.switchLayout(code);
+      if (lang.code == null) self.switchLayout(code);
       return true;
     }
     return false;
@@ -173,64 +225,84 @@ var VirtualKeyboard = new function () {
   /*
   *  Set current layout
   *
+  *  @param {String} language code
   *  @param {String} layout code
   *  @return {Boolean} change state
   *  @access public
   */
-  this.switchLayout = function (code) {
-    if (nodes.desk == null || 'string' != typeof code || !layout.hasOwnProperty(code) || code == lang) return false;
+  this.switchLayout = function (code, name) {
+    if (nodes.desk == null || 'string' != typeof code || layout.indexOf(code)<0 || code == lang.code) return false;
+    /*
+    *  name to index conversion
+    */
+    code = layout.indexOf(code);
+    name = layout[code].indexOf(name);
+    if (!layout[code][name]) name=0;
     /*
     *  we will use old but quick innerHTML
     */
     var btns = "", i;
-    for (i=0, aL = layout[code].alpha.length; i<aL; i++) {
-      btns +=  "<div id=\""+idPrefix+(parseInt(layout[code].alpha[i])?i:layout[code].alpha[i])
+    /*
+    *  if name is not defined, get the first one
+    */
+//    if (null == name) { for (i in layout[code]) if (layout[code].hasOwnProperty(i)) name = i}
+    /*
+    *  die, if layout does not exists
+    */
+    if ('undefined' == typeof (layout[code][name])) return false;
+
+    var lyt = layout[code][name];
+    for (i=0, aL = lyt.alpha.length; i<aL; i++) {
+      btns +=  "<div id=\""+idPrefix+(parseInt(lyt.alpha[i])?i:lyt.alpha[i])
               +"\" class=\""+cssClasses['buttonUp']
               +"\"><a href=\"#"+i+"\""
-              +">"+(parseInt(layout[code].alpha[i])?"<span>"+String.fromCharCode(layout[code].alpha[i])+"</span>"
-                                                   :"")+"</a></div>";
+              +">"+(parseInt(lyt.alpha[i])?"<span>"+String.fromCharCode(lyt.alpha[i])+"</span>"
+                                          :"")+"</a></div>";
     }
     nodes.desk.innerHTML = btns;
 
     /*
     *  add shiftable elements
     */
-    for (i in layout[code].diff) {
-      if (parseInt(i) != NaN && layout[code].diff[i] instanceof Array) {
-        for (var k=0, sL = layout[code].diff[i].length; k<sL; k++) {
-          nodes.desk.childNodes[parseInt(i)+k].firstChild.innerHTML += "<span class=\""+cssClasses['buttonShifted']+"\">"+String.fromCharCode(layout[code].diff[i][k])+"</span>";
+    for (i in lyt.diff) {
+      if (parseInt(i) != NaN && lyt.diff[i] instanceof Array) {
+        for (var k=0, sL = lyt.diff[i].length; k<sL; k++) {
+          nodes.desk.childNodes[parseInt(i)+k].firstChild.innerHTML += "<span class=\""+cssClasses['buttonShifted']+"\">"+String.fromCharCode(lyt.diff[i][k])+"</span>";
           nodes.desk.childNodes[parseInt(i)+k].firstChild.firstChild.className = cssClasses['buttonNormal'];
         }
       }
     }
-    lang = code;
+    lang.code = layout[code];
+    lang.lyt = lyt;
     /*
     *  restore capslock state
     */
     var caps = document.getElementById(idPrefix+'caps');
-    if (caps) {
-      /*
-      *  1st click is to reset state and 2nd to restore original
-      */
-      caps.firstChild.fireEvent('onmousedown');
-      caps.firstChild.fireEvent('onmousedown');
+    if (caps && flags.caps) {
+      caps.className += ' '+cssClasses['buttonDown'];
     }
     /*
     *  restore shift state
     */
-    self.toggleShift();
+    var shift = document.getElementById(idPrefix+'shift_left');
+    if (shift && flags.shift) {
+      shift.className += ' '+cssClasses['buttonDown'];
+      shift = document.getElementById(idPrefix+'shift_right');
+      shift.className += ' '+cssClasses['buttonDown'];
+      this.toggleShift();
+   }
   }
   /*
   *  Toggle Shift keys
   *
-  *  @param {Boolean} optional, forces shift state toggle
-  *
+  *  @access private
   */
   this.toggleShift = function (force) {
-    if (!flags.shift && !force) return;
-    for (var i in layout[lang].diff) {
-      if (parseInt(i) != NaN && layout[lang].diff[i] instanceof Array) {
-        for (var k=0, sL = layout[lang].diff[i].length; k<sL; k++) {
+    var lng = layout[layout.indexOf(lang.code)],
+        diff = lng[lng.indexOf(lang.lyt)].diff;
+    for (var i in diff) {
+      if (parseInt(i) != NaN && diff[i] instanceof Array) {
+        for (var k=0, sL = diff[i].length; k<sL; k++) {
           /*
           *  swap symbols and its CSS classes
           */
@@ -250,19 +322,24 @@ var VirtualKeyboard = new function () {
   */
   var updateLangList = function () {
     if (nodes.langbox == null) return false;
-    var osel = nodes.langbox.selected;
+    var osel = lang.code;
     nodes.langbox.options.length = 0;
-    for (var i in layout) {
-      if (!layout.hasOwnProperty(i)) continue;
+    for (var i=0,lL=layout.length; i<lL; i++) {
       /*
       *  trick to decode possible HTML entities
       */
       var t = document.createElement('span');
-      t.innerHTML = layout[i].name;
-      nodes.langbox.options[nodes.langbox.options.length] = new Option(t.firstChild.nodeValue, i, i==osel);
+      t.innerHTML = String(layout[i]);
+      nodes.langbox.options[nodes.langbox.options.length] = new Option(t.firstChild.nodeValue, t.firstChild.nodeValue, t.firstChild.nodeValue==osel);
     }
+    nodes.langbox.value = lang.code;
     return true;
   }
+  /*
+  *  Used to rotate langs
+  *
+  *  @access private
+  */
   var setNextLang = function () {
 
   }
@@ -286,7 +363,7 @@ var VirtualKeyboard = new function () {
         /*
         *  toggle the keyboard shift state
         */
-        self.toggleShift(true);
+        self.toggleShift();
         return;
       case 'backspace':
         DocumentSelection.deleteAtCursor(attachedInput, false);
@@ -349,7 +426,16 @@ var VirtualKeyboard = new function () {
     switch (e.type) {
       case 'keydown' :
         switch (e.keyCode) {
+          case 17:
+          case 18:
+
           case 16: //shift
+            /*
+            *  ctrl+shift - switch languages
+            */
+            if (e.ctrlKey) {
+              
+            }
             if (flags.kbd_shift) return;
             /*
             *  kbd_shift flag is used to fix shift key pressed, while keyboard does autoswitch it
@@ -480,7 +566,6 @@ var VirtualKeyboard = new function () {
         /*
         *  if event came from both keyboard and mouse - skip it
         */
-        if (e.shiftKey && flags.shift) break;
         if (e.shiftKey && flags.shift) break;
         var s1 = document.getElementById(idPrefix+'shift_left'),
             s2 = document.getElementById(idPrefix+'shift_right'),
@@ -636,7 +721,7 @@ var VirtualKeyboard = new function () {
       /*
       *  add event listener personally to the checkbox
       */
-      document.getElementById('virtualKeyboardTranslator').attachEvent('onclick',function(e){flags.translateKeys = (e.srcElement||e.target).checked});
+      document.getElementById('virtualKeyboardTranslator').attachEvent('onchange',function(e){flags.translateKeys = (e.srcElement||e.target).checked;});
     }
     /*
     *  special, for IE
@@ -757,7 +842,7 @@ var VirtualKeyboard = new function () {
   */
   __construct();
 }
-VirtualKeyboard.addLayout('ru','&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081;', 
+VirtualKeyboard.addLayout('ru','&#1049;&#1062;&#1059;&#1050;&#1045;&#1053;&#1043;', 
                             [1105, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, 92,
                             'backspace',
                             'tab',
@@ -773,7 +858,7 @@ VirtualKeyboard.addLayout('ru','&#1056;&#1091;&#1089;&#1089;&#1082;&#1080;&#1081
                             { '1' : [33, 34, 8470, 59, 37, 58, 63, 42, 40, 41, 95, 43, 47],
                               '51': [44]
                             });
-VirtualKeyboard.addLayout('en', 'English',
+VirtualKeyboard.addLayout('en', 'QWERTY',
                             [96, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, 92,
                             'backspace',
                             'tab',
