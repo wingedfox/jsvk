@@ -123,9 +123,11 @@ var VirtualKeyboard = new function () {
     shift : false,        // Shift
     caps : false,         // CapsLock
     kbd_shift : false,    // real shift
+    kbd_caps : false,     // real capslock
     skip_keyup : false,   // used to skip letter type, when keyboard key is released
     blockRealKey : false, // used to block input, when it converted to virtual
-    translateKeys : false // when true - translate real keys to virtual letters
+    translateKeys : false,// when true - translate real keys to virtual letters
+    new_lang : false      // used to prevent language switch on auto-repeat
   }
 
   /**************************************************************************
@@ -172,7 +174,16 @@ var VirtualKeyboard = new function () {
   */
   this.addLayout = function(code, name, alpha, diff, override) {
     if ('string' == typeof code && (alpha instanceof Array) && (diff instanceof Object)) {
-      var code = code.toUpperCase();
+      /*
+      *  trick to decode possible HTML entities
+      */
+      var span = document.createElement('span');
+      span.innerHTML = code;
+      code = span.firstChild.nodeValue.toUpperCase();
+      span.innerHTML = name;
+      name = span.firstChild.nodeValue;
+
+
       var pos = layout.indexOf(code);
       /*
       *  add language, if it does not exists
@@ -183,7 +194,6 @@ var VirtualKeyboard = new function () {
         *  overload toString, for the search/
         */
         lng.toString = layoutToString;
-        lng.valueOf = layoutToString;
         /*
         *  name for lookup/sorting
         */
@@ -202,14 +212,12 @@ var VirtualKeyboard = new function () {
         *  overload toString, for the search/
         */
         lt.toString = layoutToString;
-        lt.valueOf = layoutToString;
         lt.name = name;
         pos_lt = layout[pos].length;
         layout[pos][pos_lt] = lt;
       }
-      layout[pos][pos_lt] = {'alpha' : alpha,
-                             'diff' : diff
-                            };
+      layout[pos][pos_lt].alpha = alpha;
+      layout[pos][pos_lt].diff = diff;
       /*
       *  sort things...
       */
@@ -217,7 +225,8 @@ var VirtualKeyboard = new function () {
       layout[pos].sort();
 
       updateLangList();
-      if (lang.code == null) self.switchLayout(code);
+      if (lang.code == null) self.setNextLang(code);
+      updateLayoutList();
       return true;
     }
     return false;
@@ -231,25 +240,30 @@ var VirtualKeyboard = new function () {
   *  @access public
   */
   this.switchLayout = function (code, name) {
-    if (nodes.desk == null || 'string' != typeof code || layout.indexOf(code)<0 || code == lang.code) return false;
+    if (nodes.desk == null                             // no keyboard initialized
+        || (code!=null && layout.indexOf(code)<0       // code == null means current language
+           && code == lang.code)                       // or if current and new langs are equal
+        || !(code=code?code:lang.code)                 // even if code == null, it should have a valid value
+        || (name!=null && layout[layout.indexOf(code)].indexOf(name)<0  // name == null means current layout
+           && name == lang.lyt))                       // or if current and new layouts are equal
+      return false;
     /*
     *  name to index conversion
     */
     code = layout.indexOf(code);
-    name = layout[code].indexOf(name);
-    if (!layout[code][name]) name=0;
+    name = layout[code].indexOf(name==null?lang.lyt:name);
     /*
-    *  we will use old but quick innerHTML
+    * if layout still could not be found - use first found one
     */
-    var btns = "", i;
-    /*
-    *  if name is not defined, get the first one
-    */
-//    if (null == name) { for (i in layout[code]) if (layout[code].hasOwnProperty(i)) name = i}
+    if (!layout[code][name]) name=0; 
     /*
     *  die, if layout does not exists
     */
     if ('undefined' == typeof (layout[code][name])) return false;
+    /*
+    *  we will use old but quick innerHTML
+    */
+    var btns = "", i;
 
     var lyt = layout[code][name];
     for (i=0, aL = lyt.alpha.length; i<aL; i++) {
@@ -325,23 +339,75 @@ var VirtualKeyboard = new function () {
     var osel = lang.code;
     nodes.langbox.options.length = 0;
     for (var i=0,lL=layout.length; i<lL; i++) {
-      /*
-      *  trick to decode possible HTML entities
-      */
-      var t = document.createElement('span');
-      t.innerHTML = String(layout[i]);
-      nodes.langbox.options[nodes.langbox.options.length] = new Option(t.firstChild.nodeValue, t.firstChild.nodeValue, t.firstChild.nodeValue==osel);
+      nodes.langbox.options[nodes.langbox.options.length] = new Option(layout[i], layout[i], layout[i]==osel);
     }
     nodes.langbox.value = lang.code;
     return true;
   }
+  var updateLayoutList = function () {
+    if (nodes.lytbox == null) return false;
+    var osel = lang.name;
+    nodes.lytbox.options.length = 0;
+    var lyt = layout[layout.indexOf(lang.code)];
+    for (var i=0,lL=lyt.length; i<lL; i++) {
+      nodes.lytbox.options[nodes.lytbox.options.length] = new Option(lyt[i], lyt[i], lyt[i]==osel);
+    }
+    nodes.lytbox.value = lang.code;
+    return true;
+  }
   /*
-  *  Used to rotate langs
+  *  Used to rotate langs (or set prefferred one, if legal code is specified)
   *
+  *  @param {String} optional language code
   *  @access private
   */
-  var setNextLang = function () {
+  this.setNextLang = function (lng) {
+    var osel;
+    if ((osel = layout.indexOf(lng))<0) {
+      /*
+      *  if no such language, just switch to next one
+      */
+      osel = layout.indexOf(lang.code);
+      osel++;
+      if (osel > layout.length-1) osel = 0;
+    }
+    /*
+    *  no need to switch to the same language
+    */
+    if (lang.code == layout[osel]) return false;
 
+    self.switchLayout(layout[osel],0);
+    nodes.langbox.options[osel].selected = true;
+    updateLayoutList()
+//    self.setNextLayout(layout[osel][0]);
+  }
+  /*
+  *  Used to rotate lang layouts
+  *
+  *  @param {String} optional layout code
+  *  @access private
+  */
+  this.setNextLayout = function (lng) {
+//    alert(2)
+    var osel, lyt = layout[layout.indexOf(lang.code)];
+
+    if ((osel = lyt.indexOf(lng))<0) {
+      /*
+      *  if no such language, just switch to next one
+      */
+      osel = lyt.indexOf(lang.lyt);
+      osel++;
+      if (osel > lyt.length-1) osel = 0;
+    }
+    /*
+    *  no need to switch to the same language
+    */
+//    alert(lang.lyt)
+    if (lang.lyt == lyt[osel]) return false;
+
+//    alert(lyt[osel]+" "+osel)
+    self.switchLayout(null,lyt[osel]);
+    nodes.lytbox.options[osel].selected = true;
   }
   /***************************************************************************************
   ** GLOBAL EVENT HANDLERS
@@ -386,7 +452,7 @@ var VirtualKeyboard = new function () {
         /*
         *  do uppercase if either caps or shift clicked, not both
         */
-        if (flags.shift ^ flags.caps) chr = chr.toUpperCase();
+        if (flags.shift ^ flags.caps && el.firstChild.firstChild==el.firstChild.lastChild) chr = chr.toUpperCase();
         /*
         *  reset shift state, if clicked on the letter button
         */
@@ -425,17 +491,28 @@ var VirtualKeyboard = new function () {
     */
     switch (e.type) {
       case 'keydown' :
+        /*
+        *  switch languages
+        */
+        var s = "";
+        for(var i in e) {
+          if ('function' != typeof e[i] && i.indexOf('DOM_')<0
+          && i != i.toUpperCase()
+          ) s+=i+":"+e[i]+"\n";
+        }
+        if (e.shiftKey && e.ctrlKey && !e.altKey && !flags.new_lang) {
+          flags.new_lang = true;
+          self.setNextLang();
+        }
+        /*
+        *  switch layouts
+        */
+        if (e.shiftKey && e.altKey && !e.ctrlKey && !flags.new_lang) {
+          flags.new_lang = true;
+          self.setNextLayout();
+        }
         switch (e.keyCode) {
-          case 17:
-          case 18:
-
           case 16: //shift
-            /*
-            *  ctrl+shift - switch languages
-            */
-            if (e.ctrlKey) {
-              
-            }
             if (flags.kbd_shift) return;
             /*
             *  kbd_shift flag is used to fix shift key pressed, while keyboard does autoswitch it
@@ -472,6 +549,10 @@ var VirtualKeyboard = new function () {
         }
         break;
       case 'keyup' :
+        /*
+        *  reset flag, language can be switched on the next keypress
+        */
+        flags.new_lang = false;
         if (keymap.indexOf(e.keyCode)>-1) {
           /*
           *  skip unwanted letter creation
@@ -777,7 +858,7 @@ var VirtualKeyboard = new function () {
       +'<a href="#" id="kbHeaderRight" onclick="VirtualKeyboard.close(); return false;" alt="Close">&nbsp;</a></div></div>'
      +'<div id="kbDesk"></div>'
      +'<label class="kbTranslatorLabel" for="virtualKeyboardTranslator"><input type="checkbox" id="virtualKeyboardTranslator" />A->Z</label>'
-     +'<div id="kb_langselector">&#1071;&#1079;&#1099;&#1082;: <select name="select" onchange="VirtualKeyboard.switchLayout(this.value)"></select></div>';
+     +'<div id="kb_langselector"><select onchange="VirtualKeyboard.setNextLang(this.value)"></select><select onchange="VirtualKeyboard.setNextLayout(this.value)"></select></div>';
     /*
     *  reference to keyboard desk
     */
@@ -785,7 +866,8 @@ var VirtualKeyboard = new function () {
     /*
     *  reference to layout selector
     */
-    nodes.langbox = nodes.keyboard.lastChild.lastChild;
+    nodes.langbox = nodes.keyboard.lastChild.firstChild;
+    nodes.lytbox = nodes.keyboard.lastChild.lastChild;
 
     nodes.keyboard.attachEvent('onmousedown', _btnMousedown_);
     nodes.keyboard.attachEvent('onmouseup', _btnClick_);
@@ -849,7 +931,7 @@ var VirtualKeyboard = new function () {
   */
   __construct();
 }
-VirtualKeyboard.addLayout('ru','&#1049;&#1062;&#1059;&#1050;&#1045;&#1053;&#1043;', 
+VirtualKeyboard.addLayout('ru','&#1049;&#1062;&#1059;&#1050;&#1045;&#1053;', 
                             [1105, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, 92,
                             'backspace',
                             'tab',
@@ -864,6 +946,23 @@ VirtualKeyboard.addLayout('ru','&#1049;&#1062;&#1059;&#1050;&#1045;&#1053;&#1043
                             'space'],
                             { '1' : [33, 34, 8470, 59, 37, 58, 63, 42, 40, 41, 95, 43, 47],
                               '51': [44]
+                            });
+VirtualKeyboard.addLayout('ru','&#1103;&#1046;&#1077;&#1088;&#1090;&#1099;', 
+                            [1102,49,50,51,52,53,54,55,56,57,48,45,61,1101,
+                            'backspace',
+                            'tab',
+                            1103,1078,1077,1088,1090,1099,1091,1080,1086,1087,1096,1097,
+                            'enter',
+                            'caps',
+                            1072,1089,1076,1092,1075,1095,1081,1082,1083,59,39,
+                            'shift_left',
+                            1079,1093,1094,1074,1073,1085,1084,44,46,47,
+                            'shift_right',
+                            'del',
+                            'space'],
+                            { '1' : [33, 1098, 1066, 36, 37, 1105, 1025, 42, 40, 41, 95, 43],
+                              '39': [58, 34],
+                              '49': [60, 62, 63]
                             });
 VirtualKeyboard.addLayout('en', 'QWERTY',
                             [96, 49, 50, 51, 52, 53, 54, 55, 56, 57, 48, 45, 61, 92,

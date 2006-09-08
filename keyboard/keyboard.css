@@ -113,6 +113,7 @@
         position: relative;
         left: -4px;
         text-indent: 0;
+        text-transform: none;
 }
 #virtualKeyboard #kbDesk div#kb_benter {
         background-position: -194px 0px;
