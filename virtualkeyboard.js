@@ -444,7 +444,11 @@ var VirtualKeyboard = new function () {
             document.getElementById(idPrefix+'shift_left').firstChild.fireEvent('onmousedown');
             return false;
           case 20://caps lock
-            if (e.type != 'keydown') return;
+            if (flags.kbd_caps) return;
+            /*
+            *  prevent CAPS from auto-switch
+            */
+            flags.kbd_caps = true;
             document.getElementById(idPrefix+'caps').firstChild.fireEvent('onmousedown');
             return;
           case 27:
@@ -479,6 +483,9 @@ var VirtualKeyboard = new function () {
           case 16: //shift
             flags.kbd_shift = false;
             document.getElementById(idPrefix+'shift_left').firstChild.fireEvent('onmousedown');
+            return false;
+          case 20: //caps
+            flags.kbd_caps = false;
             return false;
         }
         break;
