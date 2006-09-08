@@ -907,12 +907,12 @@ var VirtualKeyboard = new function () {
             // Checks constraits and tells moveIT plugin how it can move window
             nodes.keyboard.__onMove = function (e) {
               var r = {'x' : {'move' : true,
-                              'min' : getBodyScrollLeft()+5,
-                              'max' : (getClientWidth()+getBodyScrollLeft()-25)
+                              'min' : 5,
+                              'max' : getClientWidth()-25
                              },
                        'y' : { 'move' : true,
-                               'min' : getBodyScrollTop()+5,
-                               'max' : (getClientHeight()+getBodyScrollTop()-25)
+                               'min' : 5,
+                               'max' : getClientHeight()-25
                              }
                       };
               return r;
