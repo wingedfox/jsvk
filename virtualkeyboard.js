@@ -29,6 +29,7 @@
 */
 var VirtualKeyboard = new function () {
   var self = this;
+  this.$VERSION$ = " $HeadURL$ ".match(/\/[^.]*[./]([^\/]+)\/[\w.\s$]+$/)[1]+"-build."+(" $Rev$ ".replace(/\D/g,""));
   /*
   *  ID prefix
   *
@@ -905,7 +906,7 @@ var VirtualKeyboard = new function () {
     nodes.keyboard.style.visibility = 'hidden';
 
     nodes.keyboard.innerHTML = 
-      '<div id="kbHeader"><div id="kbHeaderLeft">Virtual Keyboard'
+      '<div id="kbHeader"><div id="kbHeaderLeft">Virtual Keyboard / '+self.$VERSION$
       +'<a href="#" id="kbHeaderRight" onclick="VirtualKeyboard.close(); return false;" alt="Close">&nbsp;</a></div></div>'
      +'<div id="kbDesk"></div>'
      +'<label class="kbTranslatorLabel" for="virtualKeyboardTranslator"><input type="checkbox" id="virtualKeyboardTranslator" />A->Z</label>'
