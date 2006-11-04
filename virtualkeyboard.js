@@ -138,8 +138,7 @@ var VirtualKeyboard = new function () {
   *  @access public
   */
   var lang = {'code' : null,
-              'lyt' : null,
-              'dk' : null
+              'lyt' : null
              };
   /*
   *  Available layouts
@@ -367,7 +366,7 @@ var VirtualKeyboard = new function () {
         }
       }
     }
-    lang.code = layout[code];
+    lang.code = layout[code].name;
     lang.lyt = lyt;
     /*
     *  restore capslock state
@@ -521,7 +520,13 @@ var VirtualKeyboard = new function () {
         self.toggleShift();
         return;
       case 'backspace':
-        DocumentSelection.deleteAtCursor(attachedInput, false);
+        /*
+        *  is char is in the buffer, or selection made, made decision at __charProcessor
+        */
+        if (DocumentSelection.getSelection(attachedInput))
+          chr = "\x08";
+        else
+          DocumentSelection.deleteAtCursor(attachedInput, false);
         break;
       case 'del':
         DocumentSelection.deleteAtCursor(attachedInput, true);
@@ -557,13 +562,16 @@ var VirtualKeyboard = new function () {
       /*
       *  use behavior of real keyboard - replace selected text with new input
       */
+      chr = __charProcessor(chr, DocumentSelection.getSelection(attachedInput));
       if (DocumentSelection.getStart(attachedInput) != DocumentSelection.getEnd(attachedInput))
         DocumentSelection.deleteAtCursor(attachedInput);
-      DocumentSelection.insertAtCursor(attachedInput,chr);
+      DocumentSelection.insertAtCursor(attachedInput,chr[0]);
+      if (chr[1]) 
+        DocumentSelection.setRange(attachedInput,-1,0,true);
       /*
       *  check for right-to-left languages
       */
-      if (chr.charCodeAt (0) > 0x5b0 && chr.charCodeAt (0) < 0x6ff)
+      if (chr[0].charCodeAt (0) > 0x5b0 && chr[0].charCodeAt (0) < 0x6ff)
         attachedInput.dir = "rtl";
     }
 
@@ -962,7 +970,35 @@ var VirtualKeyboard = new function () {
    *  @scope private
    */
   var __charProcessor = function (char, buf) {
-
+    var res = [];
+    if (isFunction(lang.lyt.dk)) {
+      /*
+      *  call user-supplied converter
+      */
+      res = lang.lyt.dk.call(self,char,buf);
+    } else if (char == "\x08") {
+      res = ['',0];
+    } else {
+      /*
+      *  process char in buffer first
+      *  buffer size should be exactly 1 char to don't mess with the occasional selection
+      */
+      var fc;
+      if (buf.length==1 && (fc = buf.charAt(0)) && lang.lyt.dk.indexOf(fc.charCodeAt(0))>-1) {
+        /*
+        *  dead key found, no more future processing
+        */
+        res[1] = false;
+        res[0] = deadkeys[fc][char]?deadkeys[fc][char]:char;
+      } else {
+        /*
+        *  in all other cases, process char as usual
+        */
+        res[1] = deadkeys.hasOwnProperty(char);
+        res[0] = char;
+      }
+    }
+    return res;
   }
   /**
    *  Char html constructor
@@ -981,7 +1017,7 @@ var VirtualKeyboard = new function () {
       /*
       *  if key matches agains current deadchar list
       */
-      if (lyt.dk.indexOf(chr)>-1) css = [css, cssClasses['deadkey']].join(" ");
+      if (!isFunction(lyt.dk) && lyt.dk.indexOf(chr)>-1) css = [css, cssClasses['deadkey']].join(" ");
 
       html[html.length] = "<span ";
       if (css) { 
@@ -1002,7 +1038,30 @@ var VirtualKeyboard = new function () {
    *  @constructor
    *  @access public
    */
-  __construct = function() {
+  var __construct = function() {
+    /*
+    *  process the deadkeys, to make better useable, but non-editable object
+    */
+    var dk = {};
+    for (var i=0, dL=deadkeys.length; i<dL; i++) {
+      if (!deadkeys.hasOwnProperty(i)) continue;
+      /*
+      *  got correct deadkey symbol
+      */
+      dk[deadkeys[i][0]] = {};
+      var chars = deadkeys[i][1].split(" ");
+      /*
+      *  process char:mod_char pairs
+      */
+      for (var z=0, cL=chars.length; z<cL; z++) {
+        dk[deadkeys[i][0]][chars[z].charAt(0)] = chars[z].charAt(1);
+      }
+    }
+    deadkeys = dk;
+
+    /*
+    *  create keyboard UI
+    */
     nodes.keyboard = document.createElement("DIV");
     nodes.keyboard.id = "virtualKeyboard";
     nodes.keyboard.style.visibility = 'hidden';
