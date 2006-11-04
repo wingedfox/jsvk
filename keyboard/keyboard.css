@@ -90,12 +90,8 @@
         font-family: Verdana;
         font-size: 13px;
         font-weight: normal;
-        height: inherit;
-        line-height: 24px;
         overflow: visible;
         text-align: center;
-        text-indent: -2px;
-        width: inherit;
 }
 #virtualKeyboard #kbDesk div.kbButton span.shifted {
         font-family: Verdana;
@@ -105,16 +101,20 @@
         position: absolute;
         right: -5px;
         top: 0;
+        text-transform: none;
         vertical-align: bottom;
         width: 100%;
 }
 #virtualKeyboard #kbDesk div.kbButton span.normal {
-        line-height: 28px;
-        position: relative;
-        left: -4px;
+        position: absolute;
+        bottom: 4px;
+        left: 4px;
         text-indent: 0;
-        text-transform: none;
 }
+#virtualKeyboard #kbDesk span.deadKey {
+        color: red;
+}
+
 #virtualKeyboard #kbDesk div#kb_benter {
         background-position: -194px 0px;
         left: -2px;
