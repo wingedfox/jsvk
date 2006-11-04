@@ -983,12 +983,13 @@ var VirtualKeyboard = new function () {
       *  process char in buffer first
       *  buffer size should be exactly 1 char to don't mess with the occasional selection
       */
-      var fc;
-      if (buf.length==1 && (fc = buf.charAt(0)) && lang.lyt.dk.indexOf(fc.charCodeAt(0))>-1) {
+      var fc = buf.charAt(0);
+      if ( buf.length==1 && lang.lyt.dk.indexOf(fc.charCodeAt(0))>-1 ) {
         /*
         *  dead key found, no more future processing
+        *  if new key is not an another deadkey
         */
-        res[1] = false;
+        res[1] = char != fc & lang.lyt.dk.indexOf(char.charCodeAt(0))>-1;
         res[0] = deadkeys[fc][char]?deadkeys[fc][char]:char;
       } else {
         /*
