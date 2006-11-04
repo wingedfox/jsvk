@@ -63,6 +63,59 @@ var VirtualKeyboard = new function () {
    "\u094d\u0930", "\u0930\u094d", "\u091c\u094d\u091e", "\u0924\u094d\u0930",
    "\u0915\u094d\u0937", "\u0936\u094d\u0930", "\u0644\u0627\u064b",
   ];
+  /**
+   *  Deadkeys, original and mofified characters
+   *
+   *  @see http://en.wikipedia.org/wiki/Dead_key
+   *  @see http://en.wikipedia.org/wiki/Combining_character
+   *  @type Array
+   *  @access private
+   */
+  var deadkeys = [
+    // greek tonos
+    ["\u0384", "\u03b1\u03ac \u03b5\u03ad \u03b9\u03af \u03bf\u03cc \u03b7\u03ae \u03c5\u03cd \u03c9\u03ce "+
+               "\u0391\u0386 \u0395\u0388 \u0399\u038a \u039f\u038c \u0397\u0389 \u03a5\u038e \u03a9\u038f"
+    ],
+    // greek dialytika tonos
+    ["\u0385", "\u03c5\u03b0 \u03b9\u0390"],
+    // acute accent
+    ["\xb4", "a\xe1 A\xc1 e\xe9 E\xc9 i\xed I\xcd o\xf3 O\xd3 u\xfa U\xda y\xfd Y\xdd "+
+             "c\u0107 C\u0106 l\u013a L\u0139 n\u0144 N\u0143 r\u0155 R\u0154 s\u015b S\u015a w\u1e83 W\u1e82 z\u017a Z\u0179"
+    ],
+    // diaeresis
+    ["\xa8", "a\xe4 A\xc4 e\xeb E\xcb i\xef I\xcf j\u0135 J\u0134 "+
+             "o\xf6 O\xd6 u\xfc U\xdc y\xff Y\u0178 w\u1e85 W\1e84 "+ //latin
+             "\u03c5\u03cb \u03b9\u03ca \u03a5\u03ab \u0399\u03aa"    //greek
+    ],
+    // circumflex
+    ["\x5e", "a\xe2 A\xc2 e\xea E\xca i\xee I\xce o\xf4 O\xd4 u\xfb U\xdb y\u0176 Y\u0177 "+
+             "c\u0109 C\u0108 h\u0125 H\u0124 g\u011d G\u011c s\u015d S\u015c w\0175 W\0174 "+ //latin
+             "\u0131\xee \u0130\xce " // dotless small i, capital I with dot above
+    ], 
+    // grave
+    ["\x60", "a\xe0 A\xc0 e\xe8 E\xc8 i\xec I\xcc o\xf2 O\xd2 u\xf9 U\xd9 y\u1ef3 Y\u1ef2 w\u1e81 W\u1e80"],
+    // tilde
+    ["\x7e", "a\xe3 A\xc3 o\xf5 O\xd5 u\u0169 U\\u0168 n\xf1 N\xd1 y\u1ef8 Y\1ef7"],
+    // ring above
+    ["\xb0", "a\xe5 A\xc5 u\u016f U\u016e"],
+    // caron
+    ["\u02c7", "e\u011b E\u011a "+
+               "c\u010d C\u010c d\u010f D\u010e l\u013e L\u013d n\u0148 N\u0147 "+
+               "r\u0158 R\u0158 s\u0161 S\u0160 t\u0165 T\u0164 z\u017e Z\u017d"
+    ],
+    // ogonek
+    ["\u02db", "a\u0105 A\u0104 e\u0119 E\u0118 i\u012f I\u012e c\u010b C\u010a g\u0121 G\u0120 u\u0173 U\u0172"],
+    // dot above
+    ["\u02d9", "e\u0117 E\u0116 u0131i I\u0130 z\u017c Z\u017b"],
+    // breve
+    ["\u02d8", "a\u0103 A\u0102 e\u0115 E\u0114 o\0u14f O\0u14e G\u011f g\u011e"],
+    // double acute
+    ["\u02dd", "o\u0151 O\u0150 U\u0170 u\u0171"],
+    // cedilla
+    ["\xb8", "c\xe7 C\xc7 g\u0123 G\u0122 k\u0137 K\u0136 l\u013c L\u013b "+
+             "n\u0146 N\u0145 r\u0157 R\u0156 S\u015e s\u015f T\u0162 t\u0163"
+    ]
+  ];
   /*
   *  CSS classes will be used to style buttons
   *
@@ -301,10 +354,11 @@ var VirtualKeyboard = new function () {
     *  add shiftable elements
     */
     for (i in lyt.diff) {
-      if (parseInt(i) != NaN && lyt.diff[i] instanceof Array) {
+      i = parseInt(i);
+      if (i != NaN && lyt.diff[i] instanceof Array) {
         for (var k=0, sL = lyt.diff[i].length; k<sL; k++) {
           var chr = lyt.diff[i][k];
-          var btn = document.getElementById(idPrefix+((parseInt(i)+k)));
+          var btn = document.getElementById(idPrefix+((i+k)));
           btn.firstChild.innerHTML += "<span class=\""+cssClasses['buttonShifted']+"\">"
                                      +((ligatures[chr - 0xe000])?ligatures[chr - 0xe000] // perform the lookup...
                                                                 :String.fromCharCode(chr))
@@ -1199,7 +1253,7 @@ VirtualKeyboard.addLayout('sw', 'Swedish',
 VirtualKeyboard.addLayout('tr', 'Turkish',
 [34,49,50,51,52,53,54,55,56,57,48,42,45,92,113,119,101,114,116,121,117,305,111,112,287,252,97,115,100,102,103,104,106,107,108,351,105,122,120,99,118,98,110,109,246,231,46],
 {'0': [233,33,39,9475,43,37,38,47,40,41,61,63,95,59],
-'21': [73],
+'21': [73], // is needed for IE6, at least
 '46': [58]});
 
 VirtualKeyboard.addLayout('uk', 'Ukrainian',
