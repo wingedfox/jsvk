@@ -633,6 +633,11 @@ var VirtualKeyboard = new function () {
           case 27:
             VirtualKeyboard.close();
             return false;
+          case 8:
+            /*
+            *  special IE case, really, it DOES execute 'backspace' on keydown
+            */
+            e.returnValue = false;
           default:
             /*
             *  skip keypress if alt or ctrl pressed and key translation allowed
