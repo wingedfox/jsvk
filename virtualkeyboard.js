@@ -596,12 +596,6 @@ var VirtualKeyboard = new function () {
         /*
         *  switch languages
         */
-        var s = "";
-        for(var i in e) {
-          if ('function' != typeof e[i] && i.indexOf('DOM_')<0
-          && i != i.toUpperCase()
-          ) s+=i+":"+e[i]+"\n";
-        }
         if (e.shiftKey && e.ctrlKey && !e.altKey && !flags.new_lang) {
           flags.new_lang = true;
           self.setNextLang();
