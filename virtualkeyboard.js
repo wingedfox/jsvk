@@ -317,7 +317,7 @@ var VirtualKeyboard = new function () {
   *  @access public
   */
   this.switchLayout = function (code, name) {
-    code = String(code).toUpperCase();
+    code = code?String(code).toUpperCase():'';
     if (nodes.desk == null                             // no keyboard initialized
         || (code!=null && layout.indexOf(code)<0       // code == null means current language
            && code == lang.code)                       // or if current and new langs are equal
