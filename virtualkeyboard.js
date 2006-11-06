@@ -566,8 +566,11 @@ var VirtualKeyboard = new function () {
       if (DocumentSelection.getStart(attachedInput) != DocumentSelection.getEnd(attachedInput))
         DocumentSelection.deleteAtCursor(attachedInput);
       DocumentSelection.insertAtCursor(attachedInput,chr[0]);
-      if (chr[1]) 
-        DocumentSelection.setRange(attachedInput,-1,0,true);
+
+      /*
+      *  select as much, as __charProcessor callback requested
+      */
+      DocumentSelection.setRange(attachedInput,-chr[1],0,true);
       /*
       *  check for right-to-left languages
       */
