@@ -43,13 +43,18 @@ var VirtualKeyboard = new function () {
   *  @type Array
   *  @access private
   */
-  var keymap = [192,49,50,51,52,53,54,55,56,57,48,109,61,220,8, // ~ to BS
+  var keymap = [192,49,50,51,52,53,54,55,56,57,48,189,187,220,8, // ~ to BS
                 9,81,87,69,82,84,89,85,73,79,80,219,221,13,     // TAB to ENTER
-                20,65,83,68,70,71,72,74,75,76,59,222,           // CAPS to '
+                20,65,83,68,70,71,72,74,75,76,186,222,           // CAPS to '
                 16,90,88,67,86,66,78,77,188,190,191,16,         // SHIFT to SHIFT
-                46,32];                                         // SPACE, Delete
+                46,32];                                         // Delete, SPACE
 //                17,18,32,18,17,                                 // CTRL to CTRL
 //                46];                                            // Delete
+  if (navigator.gecko) {
+    keymap[11] = 109;
+    keymap[12] = 61;
+    keymap[39] = 59;
+  }
   /*
   *  Special letter-replacements
   *
@@ -899,17 +904,30 @@ var VirtualKeyboard = new function () {
   /*
   *  Shows keyboard
   *
+  *  @param {HTMLElement, String} input element or it to bind keyboard to
+  *  @param {String} holder optional keyboard holder container, keyboard won't have drag-drop when holder is specified
   *  @return {Boolean} operation state
   *  @access public
   */
-  self.show = function (input){
+  self.show = function (input, holder){
     if (input && !self.attachInput(input)) return false;
     if (!nodes.keyboard || !document.body || attachedInput == null) return false;
+
     /*
     *  check pass means that node is not attached to the body
     */
     if (!nodes.keyboard.offsetParent) {
-      document.body.appendChild(nodes.keyboard);
+      if (!isString(holder) || !document.getElementById(holder)) {
+        document.body.appendChild(nodes.keyboard);
+        __bindDragDrop();
+        var x = getClientCenterX(),
+        y = getClientCenterY();
+        nodes.keyboard.style.left = (x-nodes.keyboard.clientWidth/2) + 'px';
+        nodes.keyboard.style.top = (y-nodes.keyboard.clientHeight/2) + 'px';
+
+      } else {
+        document.getElementById(holder).appendChild(nodes.keyboard);
+      }
       /*
       *  add event listener personally to the checkbox
       */
@@ -931,14 +949,10 @@ var VirtualKeyboard = new function () {
     *  special, for IE
     */
     setTimeout(function(){nodes.keyboard.style.visibility = 'visible'},1);
-    var x = getClientCenterX(),
-        y = getClientCenterY();
-    nodes.keyboard.style.left = (x-nodes.keyboard.clientWidth/2) + 'px';
-    nodes.keyboard.style.top = (y-nodes.keyboard.clientHeight/2) + 'px';
-
     /*
     *  set open flag, for the internal checks
     */
+
     flags.isOpen = true;
 
     return true;
@@ -1036,6 +1050,59 @@ var VirtualKeyboard = new function () {
     return html.join("");
   }
   /**
+   *  Function is used to bind drag and drop stuff to the keyboard, if needed
+   *
+   *  @scope private
+   */
+  var __bindDragDrop = function () {
+    /*
+    *  Setup engine stuff
+    */
+    __DDI__.setPlugin('fixNoMouseSelect');
+    __DDI__.setPlugin('moveIT');
+    __DDI__.setPlugin('adjustZIndex');
+    __DDI__.setPlugin('fixDragInMz');
+    __DDI__.setPlugin('fixDragInIE');
+
+    /*
+    *  bind d'n'd itself
+    */
+    nodes.keyboard.alwaysOnTop = true;
+    // Required, it's just blank event handler to initialize library
+    nodes.keyboard.__onDragStart = function (e) {
+            if (e.__target.id != 'virtualKeyboard') return;
+            e.__dataTransfer.effectAllowed = 'none';
+    }
+    // Disallow any drag effects, if any...
+    nodes.keyboard.__onDrag = function (e) {
+            return false;
+    }
+    // Initializes move.
+    nodes.keyboard.__onMoveStart = function (e) {
+      //Window could be dragged using header bar only.
+      var p = e.__target;
+      while (p.offsetParent) {
+        if (p.id == 'kbHeaderLeft') return true;
+        if (p.id == 'kbHeaderRight') return false;
+        p = p.parentNode;
+      }
+      return false;
+    }
+    // Checks constraits and tells moveIT plugin how it can move window
+    nodes.keyboard.__onMove = function (e) {
+      var r = {'x' : {'move' : true,
+                      'min' : 5,
+                      'max' : getClientWidth()-25
+                     },
+               'y' : { 'move' : true,
+                       'min' : 5,
+                       'max' : getClientHeight()-25
+                     }
+              };
+      return r;
+    }
+  }
+  /**
    *  Keyboard constructor
    *
    *  @constructor
@@ -1079,6 +1146,7 @@ var VirtualKeyboard = new function () {
     *  reference to keyboard desk
     */
     nodes.desk = nodes.keyboard.childNodes[1];
+
     /*
     *  reference to layout selector
     */
@@ -1092,48 +1160,6 @@ var VirtualKeyboard = new function () {
     nodes.keyboard.attachEvent('onclick', _blockLink_);
     nodes.keyboard.attachEvent('ondragstart', _blockLink_);
 
-    //Перемещение окна
-    __DDI__.setPlugin('fixNoMouseSelect');
-    __DDI__.setPlugin('moveIT');
-    __DDI__.setPlugin('adjustZIndex');
-    __DDI__.setPlugin('fixDragInMz');
-    __DDI__.setPlugin('fixDragInIE');
-    if (nodes.keyboard) {
-            nodes.keyboard.alwaysOnTop = true;
-            // Required, it's just blank event handler to initialize library
-            nodes.keyboard.__onDragStart = function (e) {
-                    if (e.__target.id != 'virtualKeyboard') return;
-                    e.__dataTransfer.effectAllowed = 'none';
-            }
-            // Disallow any drag effects, if any...
-            nodes.keyboard.__onDrag = function (e) {
-                    return false;
-            }
-            // Initializes move.
-            nodes.keyboard.__onMoveStart = function (e) {
-              //Window could be dragged using header bar only.
-              var p = e.__target;
-              while (p.offsetParent) {
-                if (p.id == 'kbHeaderLeft') return true;
-                if (p.id == 'kbHeaderRight') return false;
-                p = p.parentNode;
-              }
-              return false;
-            }
-            // Checks constraits and tells moveIT plugin how it can move window
-            nodes.keyboard.__onMove = function (e) {
-              var r = {'x' : {'move' : true,
-                              'min' : 5,
-                              'max' : getClientWidth()-25
-                             },
-                       'y' : { 'move' : true,
-                               'min' : 5,
-                               'max' : getClientHeight()-25
-                             }
-                      };
-              return r;
-            }
-    }
 
     /*
     *  attach key capturer
@@ -1585,14 +1611,6 @@ null,
 null
 ); 
 
-
-// #############################################################################
-
-VirtualKeyboard.addLayout('kr', '2 Beolsik',
-[96,49,50,51,52,53,54,55,56,57,48,45,61,92,12610,12616,12599,12593,12613,12635,12629,12625,12624,12628,91,93,12609,12596,12615,12601,12622,12631,12627,12623,12643,59,39,12619,12620,12618,12621,12640,12636,12641,44,46,47],
-{'0': [126,33,64,35,36,37,94,38,42,40,41,95,43,124,12611,12617,12600,12594,12614,12635,12629,12625,12626,12630,123,125],
-'35': [58,34],
-'44': [60,62,63]});
 
 // #############################################################################
 // Вспомогательные функции

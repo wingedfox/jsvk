@@ -1,12 +1,21 @@
 #virtualKeyboard {
-        behavior: url(keyboard/ie-fixed.htc);
         height: 164px;
-        left: 110px;
         margin: 0;
         padding: 0;
         position: fixed;
-        top: 110px;
         width: 400px;
+}
+body #virtualKeyboard {
+        left: 110px;
+        behavior: url(keyboard/ie-fixed.htc);
+        top: 110px;
+        position: relative;
+}
+td #virtualKeyboard, div #virtualKeyboard, p #virtualKeyboard {
+        left: 0px;
+        behavior: "";
+        top: 0px;
+        padding-bottom: 4px;
 }
 /*
 *  global overrides
