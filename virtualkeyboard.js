@@ -898,7 +898,7 @@ var VirtualKeyboard = new function () {
     */
     if (!el || !el.tagName || (el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea')) return false;
     attachedInput = el;
-    attachedInput.focus();
+//    attachedInput.focus();
     return true;
   }
   /*
