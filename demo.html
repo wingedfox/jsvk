@@ -4,9 +4,9 @@
 <title>Virtual Keyboard</title>
 <meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
 
+<script type="text/javascript" src="extensions/helpers.js"></script>
 <script type="text/javascript" src="extensions/objectextensions.js"></script>
 <script type="text/javascript" src="extensions/arrayextensions.js"></script>
-<script type="text/javascript" src="extensions/helpers.js"></script>
 <script type="text/javascript" src="extensions/domextensions.js"></script>
 <script type="text/javascript" src="extensions/documentselection.js"></script>
 <script type="text/javascript" src="ddi/ddi.js"></script>
@@ -16,6 +16,10 @@
 <script type="text/javascript" src="ddi/Plugins/ddi.plugin.fixDragInMz.js"></script>
 <script type="text/javascript" src="ddi/Plugins/ddi.plugin.fixDragInIE.js"></script>
 <script type="text/javascript" src="virtualkeyboard.js"></script>
+<script type="text/javascript" src="layouts/Latin.js"></script>
+<script type="text/javascript" src="layouts/Cyrillic.js"></script>
+<script type="text/javascript" src="layouts/East.js"></script>
+<script type="text/javascript" src="layouts/Korean.js"></script>
 <link rel="stylesheet" type="text/css" href="keyboard/keyboard.css" /><!-- исправить на путь до keyboard.css -->
 
 </head>
@@ -24,8 +28,9 @@
 <h1 align="center" style="border:0px">Demo</h1>
   <br />
 <form action="no.cgi" method="get">
-<textarea name="testb" id="testb" type="text" cols="35" rows="10" >Текст</textarea><br />
-<input type="button" value="Keyboard" onclick="VirtualKeyboard.show('testb');" />
+<textarea name="testb" id="testb" type="text" cols="85" rows="10" wrap="soft" >Текст</textarea>
+<div id="td"></div>
+<input type="button" value="Keyboard" onclick="VirtualKeyboard.show('testb'/*,'td'*/);" />
 </form>
 <br />
 <br />
