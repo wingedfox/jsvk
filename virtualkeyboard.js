@@ -37,12 +37,12 @@ var VirtualKeyboard = new function () {
   *  @access private
   */
   var idPrefix = 'kb_b';
-  /*
-  *  Keyboard keys mapping, as on the keyboard
-  *
-  *  @type Array
-  *  @access private
-  */
+  /**
+   *  Keyboard keys mapping, as on the keyboard
+   *
+   *  @type Array
+   *  @scope private
+   */
   var keymap = [192,49,50,51,52,53,54,55,56,57,48,189,187,220,8, // ~ to BS
                 9,81,87,69,82,84,89,85,73,79,80,219,221,13,     // TAB to ENTER
                 20,65,83,68,70,71,72,74,75,76,186,222,           // CAPS to '
@@ -50,24 +50,25 @@ var VirtualKeyboard = new function () {
                 46,32];                                         // Delete, SPACE
 //                17,18,32,18,17,                                 // CTRL to CTRL
 //                46];                                            // Delete
-  if (navigator.gecko) {
+  if (navigator.product && 'gecko' == navigator.product.toLowerCase()) {
     keymap[11] = 109;
     keymap[12] = 61;
     keymap[39] = 59;
   }
-  /*
-  *  Special letter-replacements
-  *
-  *  @see http://en.wikipedia.org/wiki/Complex_Text_Layout
-  *  @type Array
-  *  @access private
-  */
-  var ligatures = [ // started from 0xe000
-   "\u0638\u064b", "\u0644\u0627", "\u0644\u0625", 
-   "\u0644\u0623", "\u0644\u0622", "\u0631\u064a\u0627\u0644",
-   "\u094d\u0930", "\u0930\u094d", "\u091c\u094d\u091e", "\u0924\u094d\u0930",
-   "\u0915\u094d\u0937", "\u0936\u094d\u0930", "\u0644\u0627\u064b",
-  ];
+  /**
+   *  Keyboard mode, bitmap
+   *
+   *
+   *
+   *
+   *  @type Number
+   *  @scope private
+   */
+  var mode = 0
+     ,VK_NORMAL = 0
+     ,VK_SHIFT = 1
+     ,VK_ALT = 2
+     ,VK_CTRL = 4
   /**
    *  Deadkeys, original and mofified characters
    *
@@ -128,13 +129,14 @@ var VirtualKeyboard = new function () {
   *  @access private
   */
   var cssClasses = {
-    'buttonUp' : 'kbButton',
-    'buttonDown' : 'kbButtonDown',
-    'buttonHover' : 'kbButtonHover',
-    'buttonNormal' : 'normal',
+    'buttonUp'      : 'kbButton',
+    'buttonDown'    : 'kbButtonDown',
+    'buttonHover'   : 'kbButtonHover',
+    'buttonNormal'  : 'normal',
     'buttonShifted' : 'shifted',
-    'capslock' : 'capsLock',
-    'deadkey' : 'deadKey'
+    'buttonAlted'   : 'alted',
+    'capslock'      : 'capsLock',
+    'deadkey'       : 'deadKey'
   }
   /*
   *  current layout
@@ -197,8 +199,7 @@ var VirtualKeyboard = new function () {
     kbd_caps : false,     // real capslock
     skip_keyup : false,   // used to skip letter type, when keyboard key is released
     blockRealKey : false, // used to block input, when it converted to virtual
-    translateKeys : true, // when true - translate real keys to virtual letters
-    new_lang : false      // used to prevent language switch on auto-repeat
+    translateKeys : true  // when true - translate real keys to virtual letters
   }
 
   /**************************************************************************
@@ -231,20 +232,26 @@ var VirtualKeyboard = new function () {
     */
     return false;
   }
-  /*
-  *  Add layout to the list
-  *
-  *  @see layout
-  *  @param {String} layout code
-  *  @param {String} layout name
-  *  @param {Array} keycodes
-  *  @param {Object} differences
-  *  @param {Boolean} optional overwrite existing layout or no
-  *  @return {Boolean} addition state
-  *  @access public
-  */
-  this.addLayout = function(code, name, alpha, diff, alt, deadkeys, override) {
-    if ('string' == typeof code && (alpha instanceof Array) && (diff instanceof Object)) {
+  /**
+   *  Add layout to the list
+   *
+   *  @see layout
+   *  @param {String} layout code
+   *  @param {String} layout name
+   *  @param {Array} keycodes
+   *  @param {Object} differences for shift
+   *  @param {Object} differences for alt
+   *  @param {Array} list of the present deadkeys
+   *  @return {Boolean}
+   *  @scope public
+   */
+  this.addLayout = function(code, name, alpha, diff, alt, deadkeys) {
+      if (!isString(code)) throw new Error ('VirtualKeyboard.addLayout requires first parameter to be a string.');
+      if (!isString(name)) throw new Error ('VirtualKeyboard.addLayout requires second parameter to be a string.')
+      if (isEmpty(alt)) alt = {};
+      if (isEmpty(diff)) diff = {};
+      if (isUndefined(deadkeys)) deadkeys = [];
+
       /*
       *  trick to decode possible HTML entities
       */
@@ -253,6 +260,7 @@ var VirtualKeyboard = new function () {
       code = span.firstChild.nodeValue.toUpperCase();
       span.innerHTML = name;
       name = span.firstChild.nodeValue;
+      if (!isArray(alpha) || 47!=alpha.length) throw new Error ('VirtualKeyboard.addLayout requires 3rd parameter to be an array with 47 items. Layout code: '+code+', layout title: '+name);
 
 
       var pos = layout.indexOf(code);
@@ -274,34 +282,51 @@ var VirtualKeyboard = new function () {
         layout[pos] = lng;
       }
       var pos_lt = layout[pos].indexOf(name);
+
       /*
-      *  add layout, if it does not exists
+      *  convert layout in machine-aware form
       */
-      if (pos_lt<0) {
-        var lt = {};
-        /*
-        *  overload toString, for the search/
-        */
-        lt.toString = layoutToString;
-        lt.name = name;
-        pos_lt = layout[pos].length;
-        layout[pos][pos_lt] = lt;
+      var ca = null
+         ,cac = -1
+         ,cs = null
+         ,csc = -1
+         ,cl = layout[pos][pos_lt]
+         ,lt = []
+
+      for (var i=0, aL = alpha.length; i<aL; i++) {
+         if (diff.hasOwnProperty(i)) {
+           cs = diff[i];
+           csc = i;
+         }
+         if (alt.hasOwnProperty(i)) {
+           ca = alt[i];
+           cac = i;
+         }
+         lt[i] = [alpha[i],                                          // normal chars
+                  (csc>-1&&cs.hasOwnProperty(i-csc)?cs[i-csc]:null), // shift chars
+                  (cac>-1&&ca.hasOwnProperty(i-cac)?ca[i-cac]:null)  // alt chart
+                 ];
       }
       /*
       *  add control keys
       */
-      alpha.splice(14,0,'backspace');
-      alpha.splice(15,0,'tab');
-      alpha.splice(28,0,'enter');
-      alpha.splice(29,0,'caps');
-      alpha.splice(41,0,'shift_left');
-      alpha.splice(52,0,'shift_right');
-      alpha.splice(53,0,'del');
-      alpha.splice(54,0,'space');
-      layout[pos][pos_lt].alpha = alpha;
-      layout[pos][pos_lt].diff = diff;
-      layout[pos][pos_lt].alt = alt?alt:[];
-      layout[pos][pos_lt].dk = deadkeys?deadkeys:[];
+      lt.splice(14,0,'backspace');
+      lt.splice(15,0,'tab');
+      lt.splice(28,0,'enter');
+      lt.splice(29,0,'caps');
+      lt.splice(41,0,'shift_left');
+      lt.splice(52,0,'shift_right');
+      lt.splice(53,0,'del');
+      lt.splice(54,0,'space');
+
+      lt.dk = deadkeys;
+      /*
+      *  overload toString, for the search/
+      */
+      lt.toString = layoutToString;
+      lt.name = name;
+      pos_lt = layout[pos].length;
+      layout[pos][pos_lt] = lt;
 
       /*
       *  sort things...
@@ -310,8 +335,6 @@ var VirtualKeyboard = new function () {
       layout[pos].sort();
 
       return true;
-    }
-    return false;
   }
   /*
   *  Set current layout
@@ -346,31 +369,23 @@ var VirtualKeyboard = new function () {
     /*
     *  we will use old but quick innerHTML
     */
-    var btns = "", i;
-    
-    var lyt = layout[code][name];
-    var zcnt = 0;
-    for (i=0, aL = lyt.alpha.length; i<aL; i++) {
-      var chr = lyt.alpha[i];
-      btns +=  "<div id=\""+idPrefix+(parseInt(chr)?zcnt++:chr)
+    var btns = ""
+       ,i
+       ,lyt = layout[code][name]
+       ,zcnt = 0;
+    for (i=0, aL = lyt.length; i<aL; i++) {
+      var chr = lyt[i];
+      btns +=  "<div id=\""+idPrefix+(isArray(chr)?zcnt++:chr)
               +"\" class=\""+cssClasses['buttonUp']
               +"\"><a href=\"#"+i+"\""
-              +">"+__getCharHtmlForKey(lyt,chr,cssClasses['buttonNormal'])+"</a></div>";
+              +">"+(isArray(chr)?(__getCharHtmlForKey(lyt,chr[0],cssClasses['buttonNormal'])
+                                 +__getCharHtmlForKey(lyt,chr[1],cssClasses['buttonShifted'])
+                                 +__getCharHtmlForKey(lyt,chr[2],cssClasses['buttonAlted']))
+                                :"")
+              +"</a></div>";
     }
     nodes.desk.innerHTML = btns;
-    /*
-    *  add shiftable elements
-    */
-    for (i in lyt.diff) {
-      i = parseInt(i);
-      if (i != NaN && lyt.diff[i] instanceof Array) {
-        for (var k=0, sL = lyt.diff[i].length; k<sL; k++) {
-          var chr = lyt.diff[i][k];
-          var btn = document.getElementById(idPrefix+((i+k)));
-          btn.firstChild.innerHTML += __getCharHtmlForKey(lyt,chr,cssClasses['buttonShifted']);
-        }
-      }
-    }
+
     lang.code = layout[code].name;
     lang.lyt = lyt;
     /*
@@ -398,19 +413,21 @@ var VirtualKeyboard = new function () {
   */
   this.toggleShift = function (force) {
     var lng = layout[layout.indexOf(lang.code)],
-        diff = lng[lng.indexOf(lang.lyt)].diff;
-    for (var i in diff) {
-      if (parseInt(i) != NaN && diff[i] instanceof Array) {
-        for (var k=0, sL = diff[i].length; k<sL; k++) {
-          var btn = document.getElementById(idPrefix+(parseInt(i)+k)).firstChild;
-          /*
-          *  swap symbols and its CSS classes
-          */
-          btn.insertBefore(btn.childNodes.item(1),btn.childNodes.item(0));
-          btn.childNodes.item(0).className = btn.childNodes.item(0).className.replace(cssClasses['buttonShifted'],cssClasses['buttonNormal']);
-          btn.childNodes.item(1).className = btn.childNodes.item(1).className.replace(cssClasses['buttonNormal'],cssClasses['buttonShifted']);
+        lt = lng[lng.indexOf(lang.lyt)],
+        bi = -1;
+    for (var i=0, lL=lt.length; i<lL; i++) {
+        if (isString(lt[i])) continue;
+        bi++;
+        if (isEmpty(lt[i][1])) continue;
+        var btn = document.getElementById(idPrefix+bi).firstChild;
+        /*
+        *  swap symbols and its CSS classes
+        */
+        if (btn.childNodes.length>1) {
+            btn.insertBefore(btn.childNodes.item(1),btn.childNodes.item(0));
+            btn.childNodes.item(0).className = btn.childNodes.item(0).className.replace(cssClasses['buttonShifted'],cssClasses['buttonNormal']);
+            btn.childNodes.item(1).className = btn.childNodes.item(1).className.replace(cssClasses['buttonNormal'],cssClasses['buttonShifted']);
         }
-      }
     }
   }
   /*
@@ -579,8 +596,8 @@ var VirtualKeyboard = new function () {
       /*
       *  check for right-to-left languages
       */
-      if (chr[0].charCodeAt (0) > 0x5b0 && chr[0].charCodeAt (0) < 0x6ff)
-        attachedInput.dir = "rtl";
+//      if (chr[0].charCodeAt (0) > 0x5b0 && chr[0].charCodeAt (0) < 0x6ff)
+//        attachedInput.dir = "rtl";
     }
 
   }
@@ -602,28 +619,31 @@ var VirtualKeyboard = new function () {
     switch (e.type) {
       case 'keydown' :
         /*
-        *  switch languages
+        *  set the flags....
         */
-        if (e.shiftKey && e.ctrlKey && !e.altKey && !flags.new_lang) {
-          flags.new_lang = true;
-          self.setNextLang();
+        if (e.shiftKey) {
+            mode = mode | VK_SHIFT;
+            if (!flags.kbd_shift) {
+              document.getElementById(idPrefix+'shift_left').firstChild.fireEvent('onmousedown');
+              flags.kbd_shift = true;
+            }
         }
-        /*
-        *  switch layouts
-        */
-        if (e.shiftKey && e.altKey && !e.ctrlKey && !flags.new_lang) {
-          flags.new_lang = true;
-          self.setNextLayout();
+        if (e.altKey) {
+            mode = mode | VK_ALT;
+            if (!flags.kbd_alt) {
+//              document.getElementById(idPrefix+'alt_left').firstChild.fireEvent('onmousedown');
+              flags.kbd_shift = true;
+            }
         }
+        if (e.ctrlKey) mode = mode | VK_CTRL;
         switch (e.keyCode) {
-          case 16: //shift
-            if (flags.kbd_shift) return;
-            /*
-            *  kbd_shift flag is used to fix shift key pressed, while keyboard does autoswitch it
-            */
-            flags.kbd_shift = true;
-            document.getElementById(idPrefix+'shift_left').firstChild.fireEvent('onmousedown');
-            return false;
+          case 16:
+          case 17:
+          case 18:
+              e.returnValue = false;
+              if (e.preventDefault) e.preventDefault();
+              return false;
+              break;
           case 20://caps lock
             if (flags.kbd_caps) return;
             /*
@@ -644,36 +664,57 @@ var VirtualKeyboard = new function () {
             /*
             *  skip keypress if alt or ctrl pressed and key translation allowed
             */
-            if (flags.translateKeys && keymap.indexOf(e.keyCode)>-1 && !e.altKey && !e.ctrlKey) {
+            if (flags.translateKeys && keymap.hasOwnProperty(e.keyCode) && !e.ctrlKey) {
               /*
               *  mouseup needed to insert the key
               */
-              nodes.desk.childNodes[keymap.indexOf(e.keyCode)].firstChild.fireEvent('onmouseup')
+              nodes.desk.childNodes[keymap[e.keyCode]].firstChild.fireEvent('onmouseup')
               /*
               *  then mousedown, to show pressed state
               */
-              nodes.desk.childNodes[keymap.indexOf(e.keyCode)].firstChild.fireEvent('onmousedown');
+              nodes.desk.childNodes[keymap[e.keyCode]].firstChild.fireEvent('onmousedown');
               flags.blockRealKey = true;
             }
         }
         break;
       case 'keyup' :
         /*
+        *  switch languages
+        */
+        if (!(mode ^ (VK_SHIFT | VK_CTRL))) {
+          self.setNextLang();
+        }
+        /*
+        *  switch layouts
+        */
+        if (!(mode ^ (VK_SHIFT | VK_ALT))) {
+          self.setNextLayout();
+        }
+        /*
+        *  reset the flags....
+        */
+        if (!e.shiftKey && (mode & VK_SHIFT)) {
+            mode = mode ^ VK_SHIFT;
+            /*
+            *  say keyboard that shift is released
+            */
+            flags.kbd_shift = false;
+            document.getElementById(idPrefix+'shift_left').firstChild.fireEvent('onmousedown');
+        }
+        if (!e.altKey && (mode & VK_ALT)) mode = mode ^ VK_ALT;
+        if (!e.ctrlKey && (mode & VK_CTRL)) mode = mode ^ VK_CTRL;
+        /*
         *  reset flag, language can be switched on the next keypress
         */
-        flags.new_lang = false;
-        if (keymap.indexOf(e.keyCode)>-1) {
+        if (keymap.hasOwnProperty(e.keyCode)) {
           /*
           *  skip unwanted letter creation
           */
           flags.skip_keyup = true;
-          nodes.desk.childNodes[keymap.indexOf(e.keyCode)].firstChild.fireEvent('onmouseup')
+          nodes.desk.childNodes[keymap[e.keyCode]].firstChild.fireEvent('onmouseup')
         }
+
         switch (e.keyCode) {
-          case 16: //shift
-            flags.kbd_shift = false;
-            document.getElementById(idPrefix+'shift_left').firstChild.fireEvent('onmousedown');
-            return false;
           case 20: //caps
             flags.kbd_caps = false;
             return false;
@@ -692,6 +733,7 @@ var VirtualKeyboard = new function () {
           if (e.preventDefault) e.preventDefault();
           return false;
         }
+        break;
     }
   }
   /*
@@ -764,9 +806,9 @@ var VirtualKeyboard = new function () {
         *  if event came from both keyboard and mouse - skip it
         */
         if (e.shiftKey && flags.shift) break;
-        var s1 = document.getElementById(idPrefix+'shift_left'),
-            s2 = document.getElementById(idPrefix+'shift_right'),
-            ofs = flags.shift;
+        var s1 = document.getElementById(idPrefix+'shift_left')
+           ,s2 = document.getElementById(idPrefix+'shift_right')
+           ,ofs = flags.shift;
         /*
         *  update keys state
         *  shift is toggled in the following cases:
@@ -898,7 +940,6 @@ var VirtualKeyboard = new function () {
     */
     if (!el || !el.tagName || (el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea')) return false;
     attachedInput = el;
-//    attachedInput.focus();
     return true;
   }
   /*
@@ -968,9 +1009,6 @@ var VirtualKeyboard = new function () {
     *  keyboard is closed, no more keyboard-related stuff processing
     */
     flags.isOpen = false;
-//    capslock = false;
-//    shift = false;
-//    toggle
   }
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
@@ -1042,10 +1080,7 @@ var VirtualKeyboard = new function () {
         html[html.length] = css;
         html[html.length] = "\"";
       }
-      html[html.length] = ">";
-      html[html.length] = ligatures[chr - 0xe000]?ligatures[chr - 0xe000] // perform the lookup...
-                                                 :String.fromCharCode(chr)
-      html[html.length] = "</span>"
+      html[html.length] = ">"+String.fromCharCode(chr)+"</span>"
     }
     return html.join("");
   }
@@ -1127,8 +1162,22 @@ var VirtualKeyboard = new function () {
         dk[deadkeys[i][0]][chars[z].charAt(0)] = chars[z].charAt(1);
       }
     }
+    /*
+    *  resulting array:
+    *
+    *  { '<dead_char>' : { '<key>' : '<modification>', }
+    */
     deadkeys = dk;
 
+    /*
+    *  convert keymap array to the object, to have better typing speed
+    */
+    var tk = keymap;
+    keymap = [];
+    for (var i=0, kL=tk.length; i<kL; i++) {
+        keymap[tk[i]] = i;
+    }
+    tk = null;
     /*
     *  create keyboard UI
     */

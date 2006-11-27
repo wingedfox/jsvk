@@ -103,8 +103,9 @@ td #virtualKeyboard, div #virtualKeyboard, p #virtualKeyboard {
         text-align: center;
 }
 #virtualKeyboard #kbDesk div.kbButton span.shifted {
+        color: green;
         font-family: Verdana;
-        font-size: 7.5pt;
+        font-size: 6pt;
         height: 100%;
         line-height: 1.1;
         position: absolute;
@@ -114,10 +115,23 @@ td #virtualKeyboard, div #virtualKeyboard, p #virtualKeyboard {
         vertical-align: bottom;
         width: 100%;
 }
+#virtualKeyboard #kbDesk div.kbButton span.alted {
+        color: blue;
+        font-family: Verdana;
+        font-size: 6pt;
+        height: 100%;
+        line-height: 1.1;
+        position: absolute;
+        right: 7px;
+        top: 0px;
+        text-transform: none;
+        vertical-align: bottom;
+        width: 100%;
+}
 #virtualKeyboard #kbDesk div.kbButton span.normal {
         position: absolute;
         bottom: 4px;
-        left: 4px;
+        left: 5px;
         text-indent: 0;
 }
 #virtualKeyboard #kbDesk span.deadKey {
