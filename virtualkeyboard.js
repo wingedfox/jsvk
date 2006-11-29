@@ -29,7 +29,7 @@
 */
 var VirtualKeyboard = new function () {
   var self = this;
-  this.$VERSION$ = " $HeadURL$ ".match(/\/[^.]*[./]([^\/]+)\/[\w.\s$]+$/)[1]+"."+(" $Rev$ ".replace(/\D/g,""));
+  this.$VERSION$ = " $HeadURL$ ".match(/\/[^\.]*[\.\/]([^\/]+)\/[\w\.\s$]+$/)[1]+"."+(" $Rev$ ".replace(/\D/g,""));
   /*
   *  ID prefix
   *
@@ -464,7 +464,7 @@ var VirtualKeyboard = new function () {
       nodes.lytbox.options[nodes.lytbox.options.length] = new Option(lyt[i], lyt[i], lyt[i]==osel);
     }
     nodes.lytbox.value = lang.code;
-    nodes.lytbox.disabled = nodes.lytbox.options.length<2;
+//    nodes.lytbox.disabled = nodes.lytbox.options.length<2;
     return true;
   }
   /*
@@ -1023,14 +1023,14 @@ var VirtualKeyboard = new function () {
    *  @return {Array} new char, flag keep buffer contents
    *  @scope private
    */
-  var __charProcessor = function (char, buf) {
+  var __charProcessor = function (tchr, buf) {
     var res = [];
     if (isFunction(lang.lyt.dk)) {
       /*
       *  call user-supplied converter
       */
-      res = lang.lyt.dk.call(self,char,buf);
-    } else if (char == "\x08") {
+      res = lang.lyt.dk.call(self,tchr,buf);
+    } else if (tchr == "\x08") {
       res = ['',0];
     } else {
       /*
@@ -1043,14 +1043,14 @@ var VirtualKeyboard = new function () {
         *  dead key found, no more future processing
         *  if new key is not an another deadkey
         */
-        res[1] = char != fc & lang.lyt.dk.indexOf(char.charCodeAt(0))>-1;
-        res[0] = deadkeys[fc][char]?deadkeys[fc][char]:char;
+        res[1] = tchr != fc & lang.lyt.dk.indexOf(tchr.charCodeAt(0))>-1;
+        res[0] = deadkeys[fc][tchr]?deadkeys[fc][tchr]:tchr;
       } else {
         /*
         *  in all other cases, process char as usual
         */
-        res[1] = deadkeys.hasOwnProperty(char);
-        res[0] = char;
+        res[1] = deadkeys.hasOwnProperty(tchr);
+        res[0] = tchr;
       }
     }
     return res;
