@@ -105,11 +105,15 @@ P2PP:[
 0,0,0,0,0,0,0, // l*
 0,{'\u3145':18}, //b
 0, {'\u3145':20}, //s
-0,0,0,0,0,0,0,0]
+0,0,0,0,0,0,0,0],
+
+Ru2Kor:{'-':'\u3147','\u0430': '\u314f',	'\u0431': '\u3142',	'\u0432': '\u3157',	'\u0433': '\u3131',	'\u0434': '\u3137',	'\u0435': '\u3154',	'\u0451': '\u315b',	'\u0436': '\u3148',	'\u0437': '\u3148',	'\u0438': '\u3163',	'\u0439': '\u3163',	'\u043a': '\u3131',	'\u043b': '\u3139',	'\u043c': '\u3141',	'\u043d': '\u3134',	'\u043e': '\u3157',	'\u041e': '\u3153',	'\u043f': '\u3142',	'\u0440': '\u3139',	'\u0441': '\u3145',	'\u0442': '\u3137',	'\u0443': '\u315c',	'\u0444': '\u314d',	'\u0445': '\u314e',	'\u0446': '\u3149',	'\u0447': '\u3148',	'\u0448': '\u3145',	'\u0449': '\u3145',	'\u044a': '\u044a',	'\u044b': '\u3161',	'\u044c': '\u044c',	'\u044d': '\u3150',	'\u044e': '\u3160',	'\u044f': '\u3151'}
 }
-function parseHangul(char){
-        var code=char.charCodeAt()
-        if(code<=0x314e) return [Korean.Jamo[char][1],-1,0]
+function parseHangul(bufchar){
+	if(bufchar=='' || bufchar.length>1) return null
+  var code=bufchar.charCodeAt()
+	if(code<0x3131 || code >0xD7A3) return null // non Korean buffer
+  else if(code<0x314F && code>0x3130) return [Korean.Jamo[bufchar][1],-1,0] // consonant in buffer
         code -= 44032
         var arr=[]
         arr[0]=44032+588*(code / 588 >>0)
@@ -118,24 +122,18 @@ function parseHangul(char){
         arr[2]= code % 28
         return arr
 }
-VirtualKeyboard.addLayout('kr', '2 Beolsik',
-[96,49,50,51,52,53,54,55,56,57,48,45,61,92,12610,12616,12599,12593,12613,12635,12629,12625,12624,12628,91,93,12609,12596,12615,12601,12622,12631,12627,12623,12643,59,39,12619,12620,12618,12621,12640,12636,12641,44,46,47],
-{'0': [126,33,64,35,36,37,94,38,42,40,41,95,43,124,12611,12617,12600,12594,12614,12635,12629,12625,12626,12630,123,125],
-'35': [58,34],
-'44': [60,62,63]},
-null,
-function(char, buf){
-        var jamo=Korean.Jamo[char]
-        //debugger
-        if(buf==''){
-                if(!jamo)       return [char,0]
+
+function KoreanCharProcessor(chr, buf){
+	var jamo=Korean.Jamo[chr]
+  var CVC=parseHangul(buf)
+      if(CVC==null){
+                if(!jamo)       return [chr,0]
                 else{
-                        if(jamo[0] & 2) return [char,1] //can start a syllable
-                        else return [char,0]
+                        if(jamo[0] & 2) return [chr,1] //can start a syllable
+                        else return [chr,0]
                 }
         }else{ // full buf
-                var CVC=parseHangul(buf)
-                if(char=='\u0008'){
+                if(chr=='\u0008'){
                         if(CVC[2]) return [ String.fromCharCode( CVC[0]+CVC[1]+Korean.PP2P[CVC[2]]), 1]
                         else if(CVC[1]>-1){
                                 var VV2V=Korean.VV2V[CVC[1]/28]
@@ -145,34 +143,74 @@ function(char, buf){
                         else if(Korean.CC2C[buf])return [Korean.CC2C[buf],1]
                         else return['',0] 
                 }else if(!jamo){
-                        return [buf+char,0]
+                        return [buf+chr,0]
                 }else if(CVC[2]){ // [CVC]
                         if(jamo[0] & 2) { //[CVC] +C
-                                var P2PP = Korean.P2PP[CVC[2]][char]    
+                                var P2PP = Korean.P2PP[CVC[2]][chr]    
                                 if(P2PP) return [ String.fromCharCode( CVC[0]+CVC[1]+P2PP), 1] // [CVCC]
-                                else return [buf+char, 1] // CVC, [C]
+                                else return [buf+chr, 1] // CVC, [C]
                         }else{// [CVC] +V
-                                //debugger
                                  return [String.fromCharCode( CVC[0]+CVC[1]+Korean.PP2PC[CVC[2]][0])+
-                                 String.fromCharCode( Korean.PP2PC[CVC[2]][1]+Korean.Jamo[char][1]),
+                                 String.fromCharCode( Korean.PP2PC[CVC[2]][1]+Korean.Jamo[chr][1]),
                                  1] // CV(P) [PV]
                         }
                 }else if(CVC[1]>-1){ // [CV]
                         if(jamo[0] & 4) // [CV] +P
                                 return [String.fromCharCode(CVC[0]+CVC[1]+jamo[2]), 1] // [CVC]
                         else if(jamo[0] & 1){ // [CV]+V
-                                var V2VV = Korean.V2VV[CVC[1]/28][char]
+                                var V2VV = Korean.V2VV[CVC[1]/28][chr]
                                 if(V2VV) return [String.fromCharCode(CVC[0]+V2VV), 1] // [CVV]
-                                else return [buf+char, 0] // CV, V []
+                                else return [buf+chr, 0] // CV, V []
                         }
-                        else return [buf+char, 1] //CV [C]
+                        else return [buf+chr, 1] //CV [C]
                 }
                 else if(jamo[0] & 1) {// [C] +V 
                                 return [String.fromCharCode(Korean.Jamo[buf][1]+jamo[1]), 1]
                 }else{ //[C]+C
-                                if(buf==char && Korean.C2CC[buf]) return [Korean.C2CC[buf],1]
-                                else return [buf+char, 1]
+                                if(buf==chr && Korean.C2CC[buf]) return [Korean.C2CC[buf],1]
+                                else return [buf+chr, 1]
                 }
         }
 }
-)
+	
+VirtualKeyboard.addLayout('kr', '2 Beolsik',
+[96,49,50,51,52,53,54,55,56,57,48,45,61,92,12610,12616,12599,12593,12613,12635,12629,12625,12624,12628,91,93,12609,12596,12615,12601,12622,12631,12627,12623,12643,59,39,12619,12620,12618,12621,12640,12636,12641,44,46,47],
+{'0': [126,33,64,35,36,37,94,38,42,40,41,95,43,124,12611,12617,12600,12594,12614,12635,12629,12625,12626,12630,123,125],
+'35': [58,34],
+'44': [60,62,63]},
+null,
+KoreanCharProcessor
+        
+);
+
+VirtualKeyboard.addLayout('kr', '3Beolsik Fin.',
+[96, 12622,12614,12610,12635,12640,12625,12630,12642,12636,12619, 41, 62, 58,
+12613,12601,12629,12624,12627,12601,12599,12609,12618,12621, 40, 60, 
+12615,12596,12643,12623,12641,12596,12615,12593,12616,12610,12620,
+12609,12593,12628,12631,12636,12613,12622, 44,46, 12631],
+{0 : [126, 12594,12602,12616,12607,12606,61,34,34,39,126,59,43,92 /*]*/,
+/*16 : [*/12621,12620,12597,12608,12605,53,54,55,56,57,37,47]
+/*,30*/
+,26 : [12599,12598,12604,12603,12626,48,49,50,51,52,34]
+/*,42*/
+,37 : [12618,12612,12619,12595,63,45,34,39,46,33]
+},
+null,
+KoreanCharProcessor
+);
+
+
+
+VirtualKeyboard.addLayout('kr','Ru-Kor', 
+[1105,49,50,51,52,53,54,55,56,57,48,45,61,92,1081,1094,1091,1082,1077,1085,1075,1096,1097,1079,1093,1098,1092,1099,1074,1072,1087,1088,1086,1083,1076,1078,1101,1103,1095,1089,1084,1080,1090,1100,1073,1102,46],
+{},
+//{'1': [33,34,8470,59,37,58,63,42,40,41,95,43,47],
+//'47': [44]},
+null,
+function(chr, buf){
+	//debugger
+	return KoreanCharProcessor(Korean.Ru2Kor[chr]||chr, buf)
+}
+
+);
+// #############################################################################
