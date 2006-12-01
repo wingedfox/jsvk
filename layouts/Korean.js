@@ -107,7 +107,52 @@ P2PP:[
 0, {'\u3145':20}, //s
 0,0,0,0,0,0,0,0],
 
-Ru2Kor:{'-':'\u3147','\u0430': '\u314f',	'\u0431': '\u3142',	'\u0432': '\u3157',	'\u0433': '\u3131',	'\u0434': '\u3137',	'\u0435': '\u3154',	'\u0451': '\u315b',	'\u0436': '\u3148',	'\u0437': '\u3148',	'\u0438': '\u3163',	'\u0439': '\u3163',	'\u043a': '\u3131',	'\u043b': '\u3139',	'\u043c': '\u3141',	'\u043d': '\u3134',	'\u043e': '\u3157',	'\u041e': '\u3153',	'\u043f': '\u3142',	'\u0440': '\u3139',	'\u0441': '\u3145',	'\u0442': '\u3137',	'\u0443': '\u315c',	'\u0444': '\u314d',	'\u0445': '\u314e',	'\u0446': '\u3149',	'\u0447': '\u3148',	'\u0448': '\u3145',	'\u0449': '\u3145',	'\u044a': '\u044a',	'\u044b': '\u3161',	'\u044c': '\u044c',	'\u044d': '\u3150',	'\u044e': '\u3160',	'\u044f': '\u3151'}
+Ru2Kor:{'-':'-',
+	'\u0430': '\u314f',	'\u0410': '\u314f',
+	'\u0431': '\u3142',	'\u0411': '\u3142',	
+	'\u0432': '\u3157',	'\u0412': '\u3157',	
+	'\u0433': '\u3131',	'\u0413': '\u3131',	
+	'\u0434': '\u3137',	'\u0414': '\u3137',	
+	'\u0435': '\u3154',	'\u0415': '\u3154',	
+	'\u0451': '\u315b',	'\u0401': '\u3155',	//yo, Yo
+	'\u0436': '\u3148',	'\u0416': '\u3148',	
+	'\u0437': '\u3148',	'\u0417': '\u3148',	
+	'\u0438': '\u3163',	'\u0418': '\u3163',	
+	'\u0439': '\u3163',	'\u0419': '\u3163',	
+	'\u043a': '\u3131',	'\u041a': '\u3131',	
+	'\u043b': '\u3139',	'\u041b': '\u3139',	
+	'\u043c': '\u3141',	'\u041c': '\u3141',	
+	'\u043d': '\u3134',	'\u041d': '\u3134',	
+	'\u043e': '\u3157',	'\u041e': '\u3153',	//o, O
+	'\u043f': '\u3142',	'\u041f': '\u3142',	
+	'\u0440': '\u3139',	'\u0420': '\u3139',	
+	'\u0441': '\u3145',	'\u0421': '\u3145',	
+	'\u0442': '\u3137',	'\u0422': '\u3137',	
+	'\u0443': '\u315c',	'\u0423': '\u315c',	
+	'\u0444': '\u314d',	'\u0424': '\u314d',	
+	'\u0445': '\u314e',	'\u0425': '\u314e',	
+	'\u0446': '\u3149',	'\u0426': '\u3149',	
+	'\u0447': '\u3148',	'\u0427': '\u3148',	
+	'\u0448': '\u3145',	'\u0428': '\u3145',	
+	'\u0449': '\u3145',	'\u0429': '\u3145',	
+	'\u044a': '\u044a',	
+	'\u044b': '\u3161',	'\u042b': '\u3161',	
+	'\u044c': '\u044c',	
+	'\u044d': '\u3150',	'\u042d': '\u3150',	
+	'\u044e': '\u3160',	'\u042e': '\u3160',	
+	'\u044f': '\u3151', '\u042f': '\u3151'
+	},
+
+	
+	flags:0 //for some crosstalk
+/*
+1 -
+2 - 
+4 -
+8 -
+16 -
+
+*/
 }
 function parseHangul(bufchar){
 	if(bufchar=='' || bufchar.length>1) return null
@@ -149,10 +194,12 @@ function KoreanCharProcessor(chr, buf){
                                 var P2PP = Korean.P2PP[CVC[2]][chr]    
                                 if(P2PP) return [ String.fromCharCode( CVC[0]+CVC[1]+P2PP), 1] // [CVCC]
                                 else return [buf+chr, 1] // CVC, [C]
-                        }else{// [CVC] +V
+                        }else if(jamo[0] & 1){// [CVC] +V
                                  return [String.fromCharCode( CVC[0]+CVC[1]+Korean.PP2PC[CVC[2]][0])+
                                  String.fromCharCode( Korean.PP2PC[CVC[2]][1]+Korean.Jamo[chr][1]),
                                  1] // CV(P) [PV]
+                        }else{ // [CVC] + PP
+                        	return [buf+chr, 0]
                         }
                 }else if(CVC[1]>-1){ // [CV]
                         if(jamo[0] & 4) // [CV] +P
@@ -203,12 +250,49 @@ KoreanCharProcessor
 
 VirtualKeyboard.addLayout('kr','Ru-Kor', 
 [1105,49,50,51,52,53,54,55,56,57,48,45,61,92,1081,1094,1091,1082,1077,1085,1075,1096,1097,1079,1093,1098,1092,1099,1074,1072,1087,1088,1086,1083,1076,1078,1101,1103,1095,1089,1084,1080,1090,1100,1073,1102,46],
-{},
-//{'1': [33,34,8470,59,37,58,63,42,40,41,95,43,47],
-//'47': [44]},
+{'1': [33,34,8470,59,37,58,63,42,40,41,95,43,47],
+'46': [44]},
 null,
 function(chr, buf){
 	//debugger
+	var CVC=parseHangul(buf)
+	if(CVC==null){
+		var kor, jamo
+		if((kor= Korean.Ru2Kor[chr]) && (jamo = Korean.Jamo[kor])){
+			if(jamo[0] & 1) {// V
+				return [String.fromCharCode(50500+jamo[1]),1]
+			}
+		}
+	}else{
+		switch (chr) {
+		case '-': // -
+			return	[buf, 0]
+		case '\u044a': // tv.znak
+				if(CVC && CVC[2] && CVC[2]==4)// n->ng
+						return [String.fromCharCode(CVC[0]+CVC[1]+21), 1]
+				else return [buf, buf && 1 || 0]
+				break
+		case '\u044c': //m.znak
+				return [buf, buf && 1 || 0]
+				break
+		case '\u0445': // h
+			var pos= '\u3142\u3137\u3148\u3131'.indexOf(buf) // p t c k
+			if (pos!=-1 ) return ['\u314d\u314c\u314a\u314b'.charAt(pos), 1]
+			else if(CVC[2]) switch (CVC[2]){
+				case 1: return [String.fromCharCode(CVC[0]+CVC[1]+24), 1]
+				case 7: return [String.fromCharCode(CVC[0]+CVC[1]+25), 1]
+				case 17: return [String.fromCharCode(CVC[0]+CVC[1]+26), 1]
+				case 22: return [String.fromCharCode(CVC[0]+CVC[1]+23), 1]
+			}
+			break
+		case '\u0436': // zh
+			if(buf=='\u3148' || buf=='\u3137') return ['\u3148', 1]
+			else if(CVC[2]){
+				if(CVC[2]==22) return [buf, 1];
+				else if (CVC[2]==7) return [String.fromCharCode(CVC[0]+CVC[1]+22), 1]
+			} 
+		}
+	}
 	return KoreanCharProcessor(Korean.Ru2Kor[chr]||chr, buf)
 }
 
