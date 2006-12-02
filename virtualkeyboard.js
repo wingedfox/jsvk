@@ -463,7 +463,7 @@ var VirtualKeyboard = new function () {
     for (var i=0,lL=lyt.length; i<lL; i++) {
       nodes.lytbox.options[nodes.lytbox.options.length] = new Option(lyt[i], lyt[i], lyt[i]==osel);
     }
-    nodes.lytbox.value = lang.code;
+//    nodes.lytbox.value = lang.code;
 //    nodes.lytbox.disabled = nodes.lytbox.options.length<2;
     return true;
   }
@@ -500,7 +500,7 @@ var VirtualKeyboard = new function () {
   *  @access private
   */
   this.setNextLayout = function (lng) {
-    if ('string' == typeof lng) lng = lng.toUpperCase();
+    if ('string' == typeof lng) //lng = lng.toUpperCase();
     var osel, lyt = layout[layout.indexOf(lang.code)];
 
     if ((osel = lyt.indexOf(lng))<0) {
