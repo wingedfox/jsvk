@@ -12,6 +12,7 @@
  *******************************************************************************/
 
 var canvas = element.document.compatMode=='CSS1Compat'? element.document.documentElement : element.document.body;
+//{'top':'','bottom':'scrollTop','left':'scrollLeft','right':'scrollLeft'}
 /*
 *  return absolute coordinate for specified property
 *
@@ -19,8 +20,9 @@ var canvas = element.document.compatMode=='CSS1Compat'? element.document.documen
 *  @return {String} coordinate for the 'style'
 *  @access private
 */
-function getAbsPos(prop) {
-  return parseInt(element.style[prop])+canvas[{'top':'scrollTop','bottom':'scrollTop','left':'scrollLeft','right':'scrollLeft'}[prop]]+'px';
+function getAbsPos(p1,p2) {
+//  window.status = parseInt(element.style[p1])+" "+p2+" "+(parseInt(element.style[p1])+parseInt(canvas[p2])+'px');
+  return parseInt(element.style[p1])+parseInt(canvas[p2])+'px';
 };
 /*
 *  Event handler for 'onpropertychange'
@@ -45,10 +47,12 @@ function doPropChange(e) {
           break;
         case 'fixed' :
           element.runtimeStyle.position = 'absolute';
-          element.runtimeStyle.setExpression('top' ,'getAbsPos("top")');
-          element.runtimeStyle.setExpression('left' ,'getAbsPos("left")');
-          element.runtimeStyle.setExpression('right' ,'getAbsPos("right")');
-          element.runtimeStyle.setExpression('bottom' ,'getAbsPos("bottom")');
+//          window.status = parseInt(element.currentStyle.top)+"="+element.currentStyle.left+"="
+//                         +element.currentStyle.right+"="+element.currentStyle.bottom;
+          if (parseInt(element.currentStyle.top)) element.runtimeStyle.setExpression('top' ,'getAbsPos("top","scrollTop")');
+          if (parseInt(element.currentStyle.left)) element.runtimeStyle.setExpression('left' ,'getAbsPos("left","scrollLeft")');
+          if (parseInt(element.currentStyle.right)) element.runtimeStyle.setExpression('right' ,'getAbsPos("right","scrollLeft")');
+          if (parseInt(element.currentStyle.bottom)) element.runtimeStyle.setExpression('bottom' ,'getAbsPos("bottom","scrollTop")');
       }
       break;
   }
