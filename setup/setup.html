@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="io.js"></script>
+<script type="text/javascript" src="../extensions/helpers.js"></script>
+<script type="text/javascript" src="../extensions/arrayextensions.js"></script>
+<script type="text/javascript">
+
+  function cvt () {
+
+      var res = null
+         ,cnt = 0
+         ,tb = document.getElementById('targetkbd').tBodies[0]
+         ,ads = {}
+         ,str = ""
+         ,f = null
+         ,nl = "";
+
+      for (var i in layouts) {
+          var el = document.getElementsByName(i)[0];
+          str = "";
+          if (el.checked) {
+              res = layouts[i].getConvertedLayout();
+              if (res.normal.length == 47) tb.rows[cnt].cells[3].innerHTML = "<b style=\"color: green\">Yes</b>";
+              else                         tb.rows[cnt].cells[3].innerHTML = "<b style=\"color: red\">Error</b>";
+              if (IOsys.FileExists(addpath+layouts[i].code) && !ads[layouts[i].code]) {
+                ads[layouts[i].code] = true;
+                f = IOsys.GetFile(addpath+layouts[i].code);
+                str += f.OpenAsTextStream(1,-2).Read(f.Size());
+              }
+              if (!res.dk && IOsys.FileExists(cbkpath+layouts[i].name)) {
+                f = IOsys.GetFile(cbkpath+layouts[i].name);
+                res.dk = f.OpenAsTextStream(1,-2).Read(f.Size());
+              }
+              str += 'VirtualKeyboard.addLayout(\''+layouts[i].code+'\',\''+layouts[i].name+'\','+nl+
+                                                '['+res.normal.join(",")+']'+nl+
+                                                (res.shift?',{'+res.shift+'}'+nl:',null')+
+                                                (res.alt?',{'+res.alt+'}'+nl:',null')+
+                                                (res.dk?','+res.dk:'')+
+                                               ');\n';
+              try {
+                  var of = IOsys.OpenTextFile(gcf()+'out/layouts.js',8,true,0);
+                  of.Write(str);
+                  of.Close();
+                  tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: green\">Yes</b>";
+              } catch (e) {
+                  tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: red\">Error: "+e.description+"</b>";
+              }
+          }
+          cnt++;
+      }
+//      alert(str);
+//      document.write ('Layout ['+VK.name+'] processed. Out File: ['+VK.code+'.js]. '+VK.normal.length+' chars in the map.<br />');
+  }
+</script>
+<body >
+<p>Keyboard layouts converter</p>
+<div style="height: 400px; overflow: auto;">
+ <table id="targetkbd" border="0">
+  <thead>
+   <tr>
+    <th><input type="checkbox" onclick="var els=this.parentNode.parentNode.parentNode.parentNode.tBodies[0].getElementsByTagName('input'); for(var i in els) els[i].checked=this.checked;"</th>
+    <th>Layout Code</th>
+    <th>Layout Name</th>
+    <th>Verified</th>
+    <th>Saved</th>
+   </tr>
+  </thead>
+  <tbody>
+  </tbody>
+ </table>
+</div>
+<button onclick="cvt()">Process selected</button>
+<script type="text/javascript">
+  /**
+   *  Function returns current folder in the filesystem
+   *
+   *  @return {String}
+   *  @scope public
+   */
+  function gcf() {
+      return unescape((document.location.href.substring(document.location.href.indexOf("///")+3,
+                                                        document.location.href.lastIndexOf('/')+1)))
+  }
+
+  var curpath = gcf()                   // current location
+     ,inpath  = curpath+'in/'           // .klc files location
+     ,outpath = curpath+'../'           // target for .js file, by default -- location of virtualkeyboard.js
+     ,addpath = inpath+'addons/'        // location of addon files, to be attached to the layouts
+     ,cbkpath = addpath+'callbacks/'    // location of callback definition files, 6th param of VirtualKeyboard.addLayout
+     ,fl = IOsys.GetFolder(inpath).GetFiles()
+     ,fc = new Enumerator(fl)
+     ,tb = document.getElementById('targetkbd').tBodies[0]
+     ,tr = td = null
+     ,of
+
+  var ConverterLayout = function (file) {
+      var self = this
+         ,fs = IOsys.readString(file);
+
+         self.path = file;
+         self.code = fs.match(/^localename\t"\w+-(\w+)/mi)[1]
+         self.name = fs.match(/^kbd[^"]+\"([^"]+)/mi)[1].split(/\s-\s/)[0]
+         self.strings = fs.replace(/(.|[\r\n])+?(^\d{2})/m,"$2").replace(/(\r\n){2,}(.|[\r\n])+/m,"").split(/[\r\n]+/).filter(function(a){return a.indexOf('-1')==0?"":a});
+
+      self.getConvertedLayout = function () {
+          var fs = self.strings;
+          /*
+          *  Swap lines for MSKLC, because it save first key last
+          */
+          fs.splice(12,0,String(fs.splice(36,1)));
+          fs.splice(0,0,String(fs.splice(36,1)));
+          if (fs.length>47) fs.length = 47;
+
+          var VK = {'name' : self.name
+                   ,'code' : self.code
+                   ,'normal' : []
+                   ,'shift' : [[]]
+                   ,'alt' : [[]]
+                   ,'dk' : []
+                   }
+           
+          for (var z=0,fsL=fs.length; z<fsL; z++) {
+             var fr = fs[z].split(/\t/);
+             if (fr.length<7) continue;
+             var nc = fr[3].length>1?String.fromCharCode(parseInt(fr[3],16)):fr[3]
+                ,sc = fr[4].length>2?String.fromCharCode(parseInt(fr[4],16)):fr[4]
+                /*
+                *  6th column is optional and contains, if exists, AltGr keys
+                */
+                ,ac = fr[7]?(fr[6].length>2?String.fromCharCode(parseInt(fr[6],16)):fr[6]):null
+
+             VK.normal[VK.normal.length] = nc.charCodeAt(0);
+             /*
+             *  VirtualKeyboard asks to keep only unique symbols on one key
+             */
+             if (parseInt(sc) == -1 || sc.toLowerCase() == nc.toLowerCase()) {
+               if (VK.shift[VK.shift.length-1].length>0)
+                 VK.shift[VK.shift.length-1] = (VK.shift.length-1)+':['+VK.shift[VK.shift.length-1].join(",")+']';
+
+               VK.shift[VK.normal.length] = []
+             } else {
+               VK.shift[VK.shift.length-1].push(sc.charCodeAt(0))
+             }
+             /*
+             *  VirtualKeyboard asks to keep only unique symbols on one key
+             */
+             if (null == ac || parseInt(ac) == -1 || ac.toLowerCase() == nc.toLowerCase()) {
+               if (VK.alt[VK.alt.length-1].length>0)
+                 VK.alt[VK.alt.length-1] = (VK.alt.length-1)+':['+VK.alt[VK.alt.length-1].join(",")+']';
+
+               VK.alt[VK.normal.length] = []
+             } else {
+               VK.alt[VK.alt.length-1].push(ac.charCodeAt(0))
+             }
+            if (fr[3].indexOf('@')>-1 && VK.dk.indexOf(nc.charCodeAt(0))==-1) VK.dk[VK.dk.length] = nc.charCodeAt(0);
+            if (fr[4].indexOf('@')>-1 && VK.dk.indexOf(sc.charCodeAt(0))==-1) VK.dk[VK.dk.length] = sc.charCodeAt(0);
+            if (fr[6].indexOf('@')>-1 && VK.dk.indexOf(ac.charCodeAt(0))==-1) VK.dk[VK.dk.length] = ac.charCodeAt(0);
+          }
+          /*
+          *  close maps...
+          */
+          if (VK.shift[VK.shift.length-1].length>0)
+            VK.shift[VK.shift.length-1] = (VK.shift.length-1)+':['+VK.shift[VK.shift.length-1].join(",")+']';
+          if (VK.alt[VK.alt.length-1].length>0)
+            VK.alt[VK.alt.length-1] = (VK.alt.length-1)+':['+VK.alt[VK.alt.length-1].join(",")+']';
+         /*
+         *  finished the reading... compute things alltogether
+         */
+         VK.shift = VK.shift.filter().join(",");
+         VK.alt = VK.alt.filter().join(",");
+         VK.dk = !isEmpty(VK.dk)?'['+VK.dk.join(",")+']':'';
+         return {
+             'normal' : VK.normal.filter()
+            ,'shift'  : VK.shift
+            ,'alt'    : VK.alt
+            ,'dk'     : VK.dk
+         }
+      }
+  }
+
+  var layouts = {
+  }
+
+  for (; !fc.atEnd(); fc.moveNext()) {
+      of = fc.item();
+      if (!of.Name.match(/\.klc$/)) continue;
+      tr = tb.insertRow();
+      td = tr.insertCell();
+      td.innerHTML = "<input type=\"checkbox\" name=\""+of.Name+"\" />";
+      layouts[of.Name] = new ConverterLayout(of.Path);
+      td = tr.insertCell();
+      td.innerHTML = layouts[of.Name].code;
+      td = tr.insertCell();
+      td.innerHTML = layouts[of.Name].name;
+      td = tr.insertCell();
+      td.innerHTML = "<b style=\"color: red\">No</b>";
+      td = tr.insertCell();
+      td.innerHTML = "<b style=\"color: red\">No</b>";
+
+//      tr.innerHTML = "<td></td><td></td><td></td><td></td>"//<input type=\"checkbox\" name=\""+/*of.Name+*/"\" />"+of.Name+"</td>";
+  }
+
+
+</script>
+</body>
+</html>
