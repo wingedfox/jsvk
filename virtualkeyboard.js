@@ -915,6 +915,7 @@ var VirtualKeyboard = new function () {
   *  @return {Boolean} operation state
   *  @access public
   */
+  self.open =
   self.show = function (input, holder, kpTarget){
     if ( input && !(input = self.attachInput(input))
       || !nodes.keyboard || !document.body || nodes.attachedInput == null) return false;
@@ -948,16 +949,30 @@ var VirtualKeyboard = new function () {
     return true;
   }
   /**
-   *  Closes the keyboard
+   *  Hides the keyboard
    *  
    *  @return {Boolean}
    *  @scope public
    */
-  self.close = function () {
+  self.close =
+  self.hide = function () {
     if (!nodes.keyboard || !self.isOpen()) return false;
     nodes.keyboard.style.display = 'none';
     nodes.attachedInput = null;
     return true;
+  }
+  /*
+  *  Toggles keyboard state
+  *
+  *  @param {HTMLElement, String} input element or it to bind keyboard to
+  *  @param {String} holder keyboard holder container, keyboard won't have drag-drop when holder is specified
+  *  @param {HTMLElement} kpTarget optional target to bind key* event handlers to,
+  *                       is useful for frame and popup keyboard placement
+  *  @return {Boolean} operation state
+  *  @access public
+  */
+  self.toggle = function (input, holder, kpTarget) {
+      self.isOpen()?self.close():self.show(input, holder, kpTarget);
   }
   /**
    *  Returns true if keyboard is opened

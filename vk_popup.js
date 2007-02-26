@@ -33,7 +33,7 @@ PopupVirtualKeyboard = new function() {
      *  @return {Boolean}
      *  @scope public
      */
-    this.isOpen = function () {
+    self.isOpen = function () {
         return null!=hWnd && !hWnd.closed;
     }
     /**
@@ -50,7 +50,8 @@ PopupVirtualKeyboard = new function() {
      *  @return {Boolean} operation state
      *  @scope public
      */
-    this.show = function (target) {
+    self.open =
+    self.show = function (target) {
         if (!hWnd || hWnd.closed) {
           if (qs.vk_skin) q.skin = qs.vk_skin; 
           else if (!q.skin) q.skin = 'winxp';
@@ -65,13 +66,29 @@ PopupVirtualKeyboard = new function() {
      *
      *  @scope public
      */
-    this.close = function (target) {
+    self.close = 
+    self.hide = function (target) {
         if (!hWnd || hWnd.closed) return false;
         if (!hWnd.VirtualKeyboard.isOpen()) hWnd.VirtualKeyboard.hide();
         hWnd.close();
         hWnd = null;
     }
-    this.onload = function () {
+    /**
+     *  Toggles keyboard state
+     *
+     *  @param {HTMLElement, String} input element or it to bind keyboard to
+     *  @return {Boolean} operation state
+     *  @access public
+     */
+    self.toggle = function (input) {
+        self.isOpen()?self.close():self.open(input);
+    }
+    /**
+     *  Onload callback event, invoked from the target window when onload event fires
+     *
+     *  @scope protected
+     */
+    self.onload = function () {
         hWnd.VirtualKeyboard.show( document.getElementById(tgt)
                                   ,hWnd.document.body
                                   ,hWnd.document.body

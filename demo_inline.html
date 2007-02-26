@@ -16,7 +16,7 @@ Please, report bugs and responses at the <a href="http://bts.debugger.ru/index.p
 <form action="no.cgi" method="get">
 <textarea name="testb" id="testb" type="text" cols="85" rows="10" wrap="soft" >Текст</textarea>
 <div id="td"></div>
-<input type="button" value="Keyboard" onclick="VirtualKeyboard.isOpen()?VirtualKeyboard.close():VirtualKeyboard.show('testb','td'); return false;" />
+<input id="showkb" disabled="true" type="button" value="Keyboard" onclick="VirtualKeyboard.toggle('testb','td'); return false;" />
 </form>
 <br />
 <br />

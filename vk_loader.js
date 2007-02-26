@@ -22,3 +22,13 @@
         document.write('<scr'+'ipt defer="false" type="text/javascript" src="'+p+dpd[i]+'"></scr'+'ipt>');
     }
 })();
+VirtualKeyboard = new function () {
+  var self = this, to = null;
+  self.show = self.hide = self.toggle = self.attachInput = function () {
+     window.status = 'VirtualKeyboard is not loaded yet.';
+     if (!to) setTimeout(function(){window.status = ''},1000);
+  }
+  self.isOpen = function () {
+      return false;
+  }
+}
