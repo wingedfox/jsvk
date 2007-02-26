@@ -334,20 +334,29 @@ var VirtualKeyboard = new function () {
     */
     var btns = ""
        ,i
-       ,zcnt = 0;
-       lang = layout[code][name];
+       ,zcnt = 0
+       ,inp = document.createElement('span');
+    /*
+    *  inp is used to calculate real char width and detect combining symbols
+    *  @see __getCharHtmlForKey
+    */
+    nodes.keyboard.appendChild(inp);
+
+    lang = layout[code][name];
     for (i=0, aL = lang.length; i<aL; i++) {
       var chr = lang[i];
       btns +=  "<div id=\""+idPrefix+(isArray(chr)?zcnt++:chr)
               +"\" class=\""+cssClasses['buttonUp']
               +"\"><a href=\"#"+i+"\""
-              +">"+(isArray(chr)?(__getCharHtmlForKey(lang,chr[0],cssClasses['buttonNormal'])
-                                 +__getCharHtmlForKey(lang,chr[1],cssClasses['buttonShifted'])
-                                 +__getCharHtmlForKey(lang,chr[2],cssClasses['buttonAlted']))
+              +">"+(isArray(chr)?(__getCharHtmlForKey(lang,chr[0],cssClasses['buttonNormal'],inp)
+                                 +__getCharHtmlForKey(lang,chr[1],cssClasses['buttonShifted'],inp)
+                                 +__getCharHtmlForKey(lang,chr[2],cssClasses['buttonAlted'],inp))
                                 :"")
               +"</a></div>";
     }
     nodes.desk.innerHTML = btns;
+    nodes.keyboard.removeChild(inp);
+    inp = null;
     /*
     *  restore capslock state
     */
@@ -501,8 +510,12 @@ var VirtualKeyboard = new function () {
               break;
           default:
                   var el = document.getElementById(idPrefix+key);
-                  chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT|VK_SHIFT),2)].firstChild||
-                         el.firstChild.firstChild.firstChild).nodeValue;
+                  /*
+                  *  replace is used to strip 'nbsp' base char, when its used to display combining marks 
+                  *  @see __getCharHtmlForKey
+                  */
+                  chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT|VK_SHIFT),2)]||
+                         el.firstChild.firstChild).firstChild.nodeValue.replace(/\xa0/,"");
                   /*
                   *  do uppercase if either caps or shift clicked, not both
                   *  and only 'normal' key state is active
@@ -1031,27 +1044,38 @@ var VirtualKeyboard = new function () {
   /**
    *  Char html constructor
    *
+   *  @param {Object} lyt layout object
    *  @param {String} chr char code
    *  @param {String} css optional additional class names
+   *  @param {HTMLInputElement} i input field to test char length against
    *  @return {String} resulting html
    *  @scope private
    */
-  var __getCharHtmlForKey = function (lyt, chr, css) {
+  var __getCharHtmlForKey = function (lyt, chr, css, inp) {
       /*
       *  if char exists
       */
-      var html = [];
+      var html = []
+         ,dk = !isFunction(lyt.dk) && lyt.dk.indexOf(chr)>-1
       /*
       *  if key matches agains current deadchar list
       */
-      if (!isFunction(lyt.dk) && lyt.dk.indexOf(chr)>-1) css = [css, cssClasses['deadkey']].join(" ");
+      if (dk) css = [css, cssClasses['deadkey']].join(" ");
+      /*
+      *  this is used to detect true combining chars, like THAI CHARACTER SARA I
+      */
+      chr = (parseInt(chr)?""+String.fromCharCode(chr):"");
+      inp.innerHTML = chr;
+
+      if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr;
+
       html[html.length] = "<span ";
       if (css) { 
           html[html.length] = "class=\"";
           html[html.length] = css;
           html[html.length] = "\"";
       }
-      html[html.length] = ">"+(parseInt(chr)?String.fromCharCode(chr):"")+"</span>"
+      html[html.length] = ">"+(chr?inp.innerHTML:"")+"</span>";
     return html.join("");
   }
   /**
