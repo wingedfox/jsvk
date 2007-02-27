@@ -15,7 +15,7 @@
          ,ads = {}
          ,str = ""
          ,f = null
-         ,nl = "";
+         ,nl = "\n";
 
       for (var i in layouts) {
           var el = document.getElementsByName(i)[0];
@@ -23,7 +23,7 @@
           if (el.checked) {
               res = layouts[i].getConvertedLayout();
               if (res.normal.length == 47) tb.rows[cnt].cells[3].innerHTML = "<b style=\"color: green\">Yes</b>";
-              else                         tb.rows[cnt].cells[3].innerHTML = "<b style=\"color: red\">Error</b>";
+              else                         tb.rows[cnt].cells[3].innerHTML = "<b style=\"color: red\">Error "+res.normal.length+"</b>";
               if (IOsys.FileExists(addpath+layouts[i].code) && !ads[layouts[i].code]) {
                 ads[layouts[i].code] = true;
                 f = IOsys.GetFile(addpath+layouts[i].code);
@@ -99,10 +99,57 @@
       var self = this
          ,fs = IOsys.readString(file);
 
-         self.path = file;
-         self.code = fs.match(/^localename\t"\w+-(\w+)/mi)[1]
-         self.name = fs.match(/^kbd[^"]+\"([^"]+)/mi)[1].split(/\s-\s/)[0]
-         self.strings = fs.replace(/(.|[\r\n])+?(^\d{2})/m,"$2").replace(/(\r\n){2,}(.|[\r\n])+/m,"").split(/[\r\n]+/).filter(function(a){return a.indexOf('-1')==0?"":a});
+      self.path = file;
+      self.code = fs.match(/^localename\t"\w+-(\w+)/mi)[1]
+      self.name = fs.match(/^kbd[^"]+\"([^"]+)/mi)[1].split(/\s-\s/)[0]
+      /**
+       *   String format
+       *
+       *   HexCode \t KeyId \t CapsEnabled \t NormalKey \t ShiftKey \t
+       *
+       *   @type {String}
+       */
+      self.strings = fs.replace(/(.|[\r\n])+?(^\d{2})/m,"$2").replace(/(\r\n){2,}(.|[\r\n])+/m,"").split(/[\r\n]+/).filter(function(a){return a.indexOf('-1')==0?"":a});
+
+      var columns = fs.match(/shiftstate\s+((?:(?!layout).|[\r\n])+)/i)[1].split(/\s.+[\r\n]+/)
+         ,ligatures = fs.match(/ligature(?:[\s\r\n]|\/\/.+)+((?:(?!keyname).|[\r\n])+)/i)
+         ,map = {
+             'normal'    : 0
+            ,'shift'     : 1
+            ,'ctrl'      : 2
+            ,'shft_ctrl' : 3
+            ,'alt'       : 6
+            ,'shft_alt'  : 7
+         }
+      /*
+      *  Column values
+      *  0 - normal key state
+      *  1 - Shift
+      *  2 - Ctrl 
+      *  3 - Shift+Ctrl
+      *  6 - AltGr (Shift+Ctrl)
+      *  7 - Shift+AltGr (Shift+Ctrl+Alt)
+      *
+      *  convert them to keys
+      */
+      for (var i=columns[columns.length-1]; i>=0; i--) {
+          var q = columns[i];
+          columns[i] = false
+          if (isNumeric(q))
+              columns[q] = parseInt(i)+3 // actual column number is 3
+      }
+      if (ligatures) {
+          ligatures = ligatures[1].split(/[\r\n]+/).map(function(a){return a.split(/\t/)});
+          for (var i=ligatures.length-1,tmp={}; i>=0; i--) {
+             if (!tmp[ligatures[i][0]]) {
+                 tmp[ligatures[i][0]] = [];
+             }
+             tmp[ligatures[i][0]][ligatures[i][1]] = ligatures[i].slice(2).filter(function(a){return parseInt(a,16)});
+          }
+          ligatures = tmp
+      }
+
+
 
       self.getConvertedLayout = function () {
           var fs = self.strings;
@@ -111,6 +158,7 @@
           */
           fs.splice(12,0,String(fs.splice(36,1)));
           fs.splice(0,0,String(fs.splice(36,1)));
+
           if (fs.length>47) fs.length = 47;
 
           var VK = {'name' : self.name
@@ -122,41 +170,53 @@
                    }
            
           for (var z=0,fsL=fs.length; z<fsL; z++) {
-             var fr = fs[z].split(/\t/);
-             if (fr.length<7) continue;
-             var nc = fr[3].length>1?String.fromCharCode(parseInt(fr[3],16)):fr[3]
-                ,sc = fr[4].length>2?String.fromCharCode(parseInt(fr[4],16)):fr[4]
-                /*
-                *  6th column is optional and contains, if exists, AltGr keys
-                */
-                ,ac = fr[7]?(fr[6].length>2?String.fromCharCode(parseInt(fr[6],16)):fr[6]):null
+              var fr = fs[z].split(/\t/);
 
-             VK.normal[VK.normal.length] = nc.charCodeAt(0);
-             /*
-             *  VirtualKeyboard asks to keep only unique symbols on one key
-             */
-             if (parseInt(sc) == -1 || sc.toLowerCase() == nc.toLowerCase()) {
-               if (VK.shift[VK.shift.length-1].length>0)
-                 VK.shift[VK.shift.length-1] = (VK.shift.length-1)+':['+VK.shift[VK.shift.length-1].join(",")+']';
+              var ncc = columns[map.normal]
+                 ,scc = columns[map.shift]
+                 ,acc = columns[map.alt]
+                 ,nc = parseInt(fr[ncc],16)>0?String.fromCharCode(parseInt(fr[ncc],16)):fr[ncc]
+                 ,sc = parseInt(fr[scc],16)>0?String.fromCharCode(parseInt(fr[scc],16)):fr[scc]
+                 ,ac = parseInt(fr[acc],16)>0?String.fromCharCode(parseInt(fr[acc],16)):fr[acc]
 
-               VK.shift[VK.normal.length] = []
-             } else {
-               VK.shift[VK.shift.length-1].push(sc.charCodeAt(0))
-             }
-             /*
-             *  VirtualKeyboard asks to keep only unique symbols on one key
-             */
-             if (null == ac || parseInt(ac) == -1 || ac.toLowerCase() == nc.toLowerCase()) {
-               if (VK.alt[VK.alt.length-1].length>0)
-                 VK.alt[VK.alt.length-1] = (VK.alt.length-1)+':['+VK.alt[VK.alt.length-1].join(",")+']';
-
-               VK.alt[VK.normal.length] = []
-             } else {
-               VK.alt[VK.alt.length-1].push(ac.charCodeAt(0))
-             }
-            if (fr[3].indexOf('@')>-1 && VK.dk.indexOf(nc.charCodeAt(0))==-1) VK.dk[VK.dk.length] = nc.charCodeAt(0);
-            if (fr[4].indexOf('@')>-1 && VK.dk.indexOf(sc.charCodeAt(0))==-1) VK.dk[VK.dk.length] = sc.charCodeAt(0);
-            if (fr[6].indexOf('@')>-1 && VK.dk.indexOf(ac.charCodeAt(0))==-1) VK.dk[VK.dk.length] = ac.charCodeAt(0);
+              if ('%%' == nc) {
+                  VK.normal[VK.normal.length] = '['+Array(ligatures[fr[1]][map.normal]).join(',')+']'
+              } else {
+                  VK.normal[VK.normal.length] = nc.charCodeAt(0);
+              }
+              /*
+              *  VirtualKeyboard asks to keep only unique symbols on one key
+              *
+              *  %% indicates a presence on ligature
+              */
+              if (parseInt(sc) == -1 || (sc.toLowerCase() == nc.toLowerCase() && '%%' != sc)) {
+                  if (VK.shift[VK.shift.length-1].length>0)
+                      VK.shift[VK.shift.length-1] = (VK.shift.length-1)+':['+VK.shift[VK.shift.length-1].join(",")+']';
+                  VK.shift[VK.normal.length] = []
+              } else {
+                  if ('%%' == sc) {
+                      VK.shift[VK.shift.length-1].push('['+Array(ligatures[fr[1]][map.shift]).join(',')+']')
+                  } else {
+                      VK.shift[VK.shift.length-1].push(sc.charCodeAt(0))
+                  }
+              }
+              /*
+              *  VirtualKeyboard asks to keep only unique symbols on one key
+              */
+              if (null == ac || parseInt(ac) == -1 || (ac.toLowerCase() == nc.toLowerCase() && '%%' != sc)) {
+                  if (VK.alt[VK.alt.length-1].length>0)
+                      VK.alt[VK.alt.length-1] = (VK.alt.length-1)+':['+VK.alt[VK.alt.length-1].join(",")+']';
+                  VK.alt[VK.normal.length] = []
+              } else {
+                  if ('%%' == ac) {
+                      VK.alt[VK.alt.length-1].push('['+Array(ligatures[fr[1]][columns[map.alt]-3]).join(',')+']')
+                  } else {
+                      VK.alt[VK.alt.length-1].push(ac.charCodeAt(0))
+                  }
+              }
+              if (fr[3].indexOf('@')>-1 && VK.dk.indexOf(nc.charCodeAt(0))==-1) VK.dk[VK.dk.length] = nc.charCodeAt(0);
+              if (fr[4].indexOf('@')>-1 && VK.dk.indexOf(sc.charCodeAt(0))==-1) VK.dk[VK.dk.length] = sc.charCodeAt(0);
+              if (fr[6].indexOf('@')>-1 && VK.dk.indexOf(ac.charCodeAt(0))==-1) VK.dk[VK.dk.length] = ac.charCodeAt(0);
           }
           /*
           *  close maps...
@@ -168,6 +228,8 @@
          /*
          *  finished the reading... compute things alltogether
          */
+//         alert(VK.normal+"\n\n"+VK.shift+"\n\n"+VK.alt);
+
          VK.shift = VK.shift.filter().join(",");
          VK.alt = VK.alt.filter().join(",");
          VK.dk = !isEmpty(VK.dk)?'['+VK.dk.join(",")+']':'';
