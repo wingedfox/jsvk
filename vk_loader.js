@@ -13,7 +13,11 @@
                ,'extensions/dom/selectbox.js'
                ,'virtualkeyboard.js'
                ,'layouts/layouts.js'
-               ,'layouts/unconverted.js'
+/*
+* not used by default
+* 
+*               ,'layouts/unconverted.js'
+*/
     ];
     if (qs.vk_skin) q.skin = qs.vk_skin; 
     else if (!q.skin) q.skin = 'winxp';
