@@ -515,7 +515,7 @@ var VirtualKeyboard = new function () {
                   *  @see __getCharHtmlForKey
                   */
                   chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT|VK_SHIFT),2)]||
-                         el.firstChild.firstChild).firstChild.nodeValue.replace(/\xa0/,"");
+                         el.firstChild.firstChild).firstChild.nodeValue.replace(/\xa0/g,"");
                   /*
                   *  do uppercase if either caps or shift clicked, not both
                   *  and only 'normal' key state is active
@@ -1069,7 +1069,7 @@ var VirtualKeyboard = new function () {
       } else {
           chr = (parseInt(chr)?""+String.fromCharCode(chr):"");
           inp.innerHTML = chr;
-          if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr;
+          if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr+"\xa0";
       }
 
       html[html.length] = "<span ";
