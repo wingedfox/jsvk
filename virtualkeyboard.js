@@ -1064,10 +1064,13 @@ var VirtualKeyboard = new function () {
       /*
       *  this is used to detect true combining chars, like THAI CHARACTER SARA I
       */
-      chr = (parseInt(chr)?""+String.fromCharCode(chr):"");
-      inp.innerHTML = chr;
-
-      if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr;
+      if (isArray(chr)) {
+          inp.innerHTML = chr.map(String.fromCharCode).join("");
+      } else {
+          chr = (parseInt(chr)?""+String.fromCharCode(chr):"");
+          inp.innerHTML = chr;
+          if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr;
+      }
 
       html[html.length] = "<span ";
       if (css) { 

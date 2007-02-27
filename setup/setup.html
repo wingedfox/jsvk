@@ -175,9 +175,9 @@
               var ncc = columns[map.normal]
                  ,scc = columns[map.shift]
                  ,acc = columns[map.alt]
-                 ,nc = parseInt(fr[ncc],16)>0?String.fromCharCode(parseInt(fr[ncc],16)):fr[ncc]
-                 ,sc = parseInt(fr[scc],16)>0?String.fromCharCode(parseInt(fr[scc],16)):fr[scc]
-                 ,ac = parseInt(fr[acc],16)>0?String.fromCharCode(parseInt(fr[acc],16)):fr[acc]
+                 ,nc = fr[ncc]&&4==fr[ncc].length&&parseInt(fr[ncc],16)>0?String.fromCharCode(parseInt(fr[ncc],16)):fr[ncc]
+                 ,sc = fr[scc]&&4==fr[scc].length&&parseInt(fr[scc],16)>0?String.fromCharCode(parseInt(fr[scc],16)):fr[scc]
+                 ,ac = fr[acc]&&4==fr[acc].length&&parseInt(fr[acc],16)>0?String.fromCharCode(parseInt(fr[acc],16)):fr[acc]
 
               if ('%%' == nc) {
                   VK.normal[VK.normal.length] = '['+Array(ligatures[fr[1]][map.normal]).join(',')+']'
