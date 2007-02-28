@@ -515,7 +515,7 @@ var VirtualKeyboard = new function () {
                   *  @see __getCharHtmlForKey
                   */
                   chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT|VK_SHIFT),2)]||
-                         el.firstChild.firstChild).firstChild.nodeValue.replace(/\xa0/g,"");
+                         el.firstChild.firstChild).firstChild.nodeValue.replace("\xa0","").replace("\xa0","");
                   /*
                   *  do uppercase if either caps or shift clicked, not both
                   *  and only 'normal' key state is active
@@ -537,7 +537,10 @@ var VirtualKeyboard = new function () {
           *  use behavior of real keyboard - replace selected text with new input
           */
           if (!(chr = __charProcessor(chr, DocumentSelection.getSelection(nodes.attachedInput)))) return ret;
-          if (1 == chr[0].length && !chr[1] && '\n' != chr[0]) {
+          /*
+          *  check for .keyIdentifier is added to track Safari (all KHTML based browsers?)...
+          */
+          if (1 == chr[0].length && !chr[1] && '\n' != chr[0] && evt && !evt.keyIdentifier) {
 
               try {
                   /*
