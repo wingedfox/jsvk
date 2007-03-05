@@ -540,7 +540,7 @@ var VirtualKeyboard = new function () {
           /*
           *  check for .keyIdentifier is added to track Safari (all KHTML based browsers?)...
           */
-          if (1 == chr[0].length && !chr[1] && '\n' != chr[0] && evt && !evt.keyIdentifier) {
+          if (1 == chr[0].length && !chr[1] && chr[0].charCodeAt(0)>32 && evt && !evt.keyIdentifier) {
 
               try {
                   /*
@@ -627,6 +627,7 @@ var VirtualKeyboard = new function () {
         
         switch (e.keyCode) {
           case 8: // backspace
+          case 9: // tab
               var el = nodes.desk.childNodes[keymap[e.keyCode]];
               _keyClicker_(el.id.replace(idPrefix, ""), e);
               /*
@@ -908,17 +909,30 @@ var VirtualKeyboard = new function () {
   /*
   *  Used to attach keyboard output to specified input
   *
-  *  @param {HTMLInputElement,String} element to attach keyboard to
-  *  @return attach state
+  *  @param {Null, HTMLInputElement,String} element to attach keyboard to
+  *  @return {HTMLInputElement, Null}
   *  @access public
   */
   self.attachInput = function (el) {
-    if ('string' == typeof el) el = document.getElementById(el);
+    /*
+    *  if null is supplied, don't change the target field
+    */
+    if (null == el && !nodes.attachedInput) return null;
+    if (isString(el)) el = document.getElementById(el);
+
+    if (el == nodes.attachedInput) return nodes.attachedInput;
     /*
     *  only inputable nodes are allowed
     */
-    if (!el || !el.tagName || (el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea')) return false;
-    nodes.attachedInput = el;
+    if (!el || !el.tagName || (el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea'))
+		nodes.attachedInput = null
+	else {
+        if (!el.attachEvent) el.attachEvent = nodes.desk.attachEvent;
+        el.attachEvent('onkeydown', _keydownHandler_);
+        el.attachEvent('onkeyup', _keydownHandler_);
+        el.attachEvent('onkeypress', _keydownHandler_);
+	    nodes.attachedInput = el;
+	}
     return nodes.attachedInput;
   }
   /*
@@ -933,8 +947,7 @@ var VirtualKeyboard = new function () {
   */
   self.open =
   self.show = function (input, holder, kpTarget){
-    if ( input && !(input = self.attachInput(input))
-      || !nodes.keyboard || !document.body || nodes.attachedInput == null) return false;
+    if ( !(input = self.attachInput(nodes.attachedInput?null:input)) || !nodes.keyboard || !document.body ) return false;
     /*
     *  check pass means that node is not attached to the body
     */
@@ -946,10 +959,6 @@ var VirtualKeyboard = new function () {
         /*
         *  we'll bind event handler here
         */
-        if (!input.attachEvent) input.attachEvent = nodes.desk.attachEvent;
-        input.attachEvent('onkeydown', _keydownHandler_);
-        input.attachEvent('onkeyup', _keydownHandler_);
-        input.attachEvent('onkeypress', _keydownHandler_);
         if (!isUndefined(kpTarget) && input != kpTarget && kpTarget.appendChild) {
             if (!kpTarget.attachEvent) kpTarget.attachEvent = nodes.desk.attachEvent;
             kpTarget.attachEvent('onkeydown', _keydownHandler_);

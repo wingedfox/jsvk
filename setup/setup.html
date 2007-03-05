@@ -22,36 +22,38 @@
           str = "";
           if (el.checked) {
               res = layouts[i].getConvertedLayout();
-              if (res.normal.length == 47) tb.rows[cnt].cells[3].innerHTML = "<b style=\"color: green\">Yes</b>";
-              else                         tb.rows[cnt].cells[3].innerHTML = "<b style=\"color: red\">Error "+res.normal.length+"</b>";
-              if (IOsys.FileExists(addpath+layouts[i].code) && !ads[layouts[i].code]) {
-                ads[layouts[i].code] = true;
-                f = IOsys.GetFile(addpath+layouts[i].code);
-                str += f.OpenAsTextStream(1,-2).Read(f.Size());
-              }
-              if (!res.dk && IOsys.FileExists(cbkpath+layouts[i].name)) {
-                f = IOsys.GetFile(cbkpath+layouts[i].name);
-                res.dk = f.OpenAsTextStream(1,-2).Read(f.Size());
-              }
-              str += 'VirtualKeyboard.addLayout(\''+layouts[i].code+'\',\''+layouts[i].name+'\','+nl+
-                                                '['+res.normal.join(",")+']'+nl+
-                                                (res.shift?',{'+res.shift+'}'+nl:',null')+
-                                                (res.alt?',{'+res.alt+'}'+nl:',null')+
-                                                (res.dk?','+res.dk:'')+
-                                               ');\n';
-              try {
-                  var of = IOsys.OpenTextFile(gcf()+'out/layouts.js',8,true,0);
-                  of.Write(str);
-                  of.Close();
-                  tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: green\">Yes</b>";
-              } catch (e) {
-                  tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: red\">Error: "+e.description+"</b>";
+              if (res.normal.length == 47) {
+                  tb.rows[cnt].cells[3].innerHTML = "<b style=\"color: green\">Yes</b>";
+                  if (IOsys.FileExists(addpath+layouts[i].code) && !ads[layouts[i].code]) {
+                    ads[layouts[i].code] = true;
+                    f = IOsys.GetFile(addpath+layouts[i].code);
+                    str += f.OpenAsTextStream(1,-2).Read(f.Size());
+                  }
+                  if (!res.dk && IOsys.FileExists(cbkpath+layouts[i].name)) {
+                    f = IOsys.GetFile(cbkpath+layouts[i].name);
+                    res.dk = f.OpenAsTextStream(1,-2).Read(f.Size());
+                  }
+                  str += 'VirtualKeyboard.addLayout(\''+layouts[i].code+'\',\''+layouts[i].name+'\','+nl+
+                                                    '['+res.normal.join(",")+']'+nl+
+                                                    (res.shift?',{'+res.shift+'}'+nl:',null')+
+                                                    (res.alt?',{'+res.alt+'}'+nl:',null')+
+                                                    (res.dk?','+res.dk:'')+
+                                                   ');\n';
+                  try {
+                      var of = IOsys.OpenTextFile(gcf()+'out/layouts.js',8,true,0);
+                      of.Write(str);
+                      of.Close();
+                      tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: green\">Yes</b>";
+                  } catch (e) {
+                      tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: red\">Error: "+e.description+"</b>";
+                  }
+              } else {
+                  tb.rows[cnt].cells[3].innerHTML = "<b style=\"color: red\">Error "+res.normal.length+"</b>";
+                  tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: red\">No</b>";
               }
           }
           cnt++;
       }
-//      alert(str);
-//      document.write ('Layout ['+VK.name+'] processed. Out File: ['+VK.code+'.js]. '+VK.normal.length+' chars in the map.<br />');
   }
 </script>
 <body >

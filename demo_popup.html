@@ -1,55 +1,52 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
-<head>
-<title>Virtual Keyboard</title>
-<meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
+ <head>
+  <title>Virtual Keyboard</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
 
-<link rel="stylesheet" type="text/css" title="virtualkeyboard" href="keyboard/keyboard.css" />
-<script type="text/javascript" src="vk_popup.js" ></script>
+  <link rel="stylesheet" type="text/css" title="virtualkeyboard" href="keyboard/keyboard.css" />
+  <script type="text/javascript" src="vk_popup.js" ></script>
+ </head>
+ <body>
+  <h1 align="center">VirtualKeyboard demo page</h1>
+  <table cellpadding="0" cellspacing="0" border="0">
+   <tr>
+    <td valign="top">
+     <form action="no.cgi" method="get">
+      <div>
+       Subject:<br />
+       <input name="testa" id="testa" type="text" onfocus="PopupVirtualKeyboard.attachInput(this)"><br />
+       Text:<br />
+       <textarea name="testb" id="testb" type="text" cols="55" rows="10" wrap="soft" onfocus="PopupVirtualKeyboard.attachInput(this)"></textarea>
+       <div id="td"></div>
+       <input id="showkb" type="button" value="Keyboard" onclick="PopupVirtualKeyboard.toggle('testb','td'); return false;" />
+      </div>
+     </form>
+    </td>
+    <td valign="top">
+     <ul><strong>Alternative demo pages:</strong>
+      <li><a href="demo_inline.html">Inline keyboard</a></li>
+      <li><a href="http://iyapi.net/koreanmovies/viewtopic.php?t=32">phpBB forum mod demo</a></li>
+     </ul>
+     <ul><strong>Resources:</strong>
+      <li><a href="http://bts.debugger.ru/index.php?tasks=all&project=5">Bugtracker</a></li>
+      <li><a href="http://debugger.ru/projects/virtualkeyboard">Russian article</a></li>
+      <li><a href="http://forum.dklab.ru/js/advises/VirtualKeyboard.html">Support forum</a></li>
+      <li><a href="http://www.codeproject.com/jscript/jsvk.asp">English article @CodeProject</a></li>
+     </ul>
+     <ol><strong>How to use this demo:</strong>
+      <li>Click the 'keyboard' button below
+      <li>Click virtual buttons with mouse and the the text in the input field
+      <li>Focus another field to tell keyboard to use it as input target 
+      <li>Enter some more text with mouse, to check that keyboard switched field successfully
+      </li>Repeat steps 2-4, using keyboard, to check on-the-fly keys translation
+     </ol>
+     <ul id="sul"><strong>Supported languagues:</strong>
+       <li>Not supported for PopUp keyboard. See the <a href="demo_inline.html">Inline keyboard</a> demo
+     </ul>
+    </td>
+   </tr>
 
-</head>
-
-<body>
-<h1 align="center" style="border:0px">Demo</h1>
-Please, report bugs and responses at the <a href="http://bts.debugger.ru/index.php?tasks=all&project=5">Bugtracker</a>.
-  <br />
-<form action="no.cgi" method="get">
-<textarea name="testb" id="testb" type="text" cols="85" rows="10" wrap="soft" >Текст</textarea>
-<div id="td"></div>
-<input type="button" value="Keyboard" onclick="PopupVirtualKeyboard.isOpen()?PopupVirtualKeyboard.close():PopupVirtualKeyboard.show('testb','td'); return false;" />
-</form>
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-</body>
+  </table>
+ </body>
 </html>

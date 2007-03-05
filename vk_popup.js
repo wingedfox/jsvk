@@ -44,6 +44,19 @@ PopupVirtualKeyboard = new function() {
      */
     var tgt = null;
     /**
+     *  Attaches keyboard to the specified input field
+     *
+     *  @param {Null, HTMLInputElement,String} element to attach keyboard to
+     *  @return {HTMLInputElement, Null}
+     *  @access public
+     */
+    self.attachInput = function(el) {
+        if (hWnd && hWnd.VirtualKeyboard) {
+            return hWnd.VirtualKeyboard.attachInput(el);
+        }
+        return false
+    }
+    /**
      *  Shows keyboard
      *
      *  @param {HTMLElement, String} input element or it to bind keyboard to
