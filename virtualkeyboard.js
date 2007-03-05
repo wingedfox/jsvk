@@ -514,8 +514,8 @@ var VirtualKeyboard = new function () {
                   *  replace is used to strip 'nbsp' base char, when its used to display combining marks 
                   *  @see __getCharHtmlForKey
                   */
-                  chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT|VK_SHIFT),2)]||
-                         el.firstChild.firstChild).firstChild.nodeValue.replace("\xa0","").replace("\xa0","");
+                  mode = Math.min(mode&(VK_ALT|VK_SHIFT),2);
+                  chr = (el.firstChild.childNodes[mode].firstChild || el.firstChild.firstChild.firstChild).nodeValue.replace("\xa0","").replace("\xa0","");
                   /*
                   *  do uppercase if either caps or shift clicked, not both
                   *  and only 'normal' key state is active
