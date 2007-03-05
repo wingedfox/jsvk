@@ -158,8 +158,11 @@
           /*
           *  Swap lines for MSKLC, because it save first key last
           */
-          fs.splice(12,0,String(fs.splice(36,1)));
-          fs.splice(0,0,String(fs.splice(36,1)));
+          if (!self.strings.swapped) {
+              fs.splice(12,0,String(fs.splice(36,1)));
+              fs.splice(0,0,String(fs.splice(36,1)));
+              self.strings.swapped = true;
+          }
 
           if (fs.length>47) fs.length = 47;
 
@@ -184,7 +187,7 @@
               if ('%%' == nc) {
                   VK.normal[VK.normal.length] = '['+Array(ligatures[fr[1]][map.normal]).join(',')+']'
               } else {
-                  VK.normal[VK.normal.length] = nc.charCodeAt(0);
+                  VK.normal[VK.normal.length] = nc.length==5&&parseInt(nc,16)?parseInt(nc,16):nc.charCodeAt(0)
               }
               /*
               *  VirtualKeyboard asks to keep only unique symbols on one key
@@ -199,7 +202,7 @@
                   if ('%%' == sc) {
                       VK.shift[VK.shift.length-1].push('['+Array(ligatures[fr[1]][map.shift]).join(',')+']')
                   } else {
-                      VK.shift[VK.shift.length-1].push(sc.charCodeAt(0))
+                      VK.shift[VK.shift.length-1].push(sc.length==5&&parseInt(sc,16)?parseInt(sc,16):sc.charCodeAt(0))
                   }
               }
               /*
@@ -213,12 +216,12 @@
                   if ('%%' == ac) {
                       VK.alt[VK.alt.length-1].push('['+Array(ligatures[fr[1]][columns[map.alt]-3]).join(',')+']')
                   } else {
-                      VK.alt[VK.alt.length-1].push(ac.charCodeAt(0))
+                      VK.alt[VK.alt.length-1].push(ac.length==5&&parseInt(ac,16)?parseInt(ac,16):ac.charCodeAt(0))
                   }
               }
-              if (fr[3].indexOf('@')>-1 && VK.dk.indexOf(nc.charCodeAt(0))==-1) VK.dk[VK.dk.length] = nc.charCodeAt(0);
-              if (fr[4].indexOf('@')>-1 && VK.dk.indexOf(sc.charCodeAt(0))==-1) VK.dk[VK.dk.length] = sc.charCodeAt(0);
-              if (fr[6].indexOf('@')>-1 && VK.dk.indexOf(ac.charCodeAt(0))==-1) VK.dk[VK.dk.length] = ac.charCodeAt(0);
+              if (fr[3].indexOf('@')>-1 && VK.dk.indexOf(parseInt(nc,16))==-1) VK.dk[VK.dk.length] = parseInt(nc,16)
+              if (fr[4].indexOf('@')>-1 && VK.dk.indexOf(parseInt(sc,16))==-1) VK.dk[VK.dk.length] = parseInt(sc,16)
+              if (fr[6].indexOf('@')>-1 && VK.dk.indexOf(parseInt(ac,16))==-1) VK.dk[VK.dk.length] = parseInt(ac,16)
           }
           /*
           *  close maps...
@@ -230,7 +233,6 @@
          /*
          *  finished the reading... compute things alltogether
          */
-//         alert(VK.normal+"\n\n"+VK.shift+"\n\n"+VK.alt);
 
          VK.shift = VK.shift.filter().join(",");
          VK.alt = VK.alt.filter().join(",");
