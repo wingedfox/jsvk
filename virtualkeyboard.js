@@ -610,7 +610,7 @@ var VirtualKeyboard = new function () {
           case 8: // backspace
           case 9: // tab
               var el = nodes.desk.childNodes[keymap[e.keyCode]];
-              _keyClicker_(el.id.replace(idPrefix, ""), e);
+              _keyClicker_(el.id, e);
               /*
               *  set the class only 1 time
               */
