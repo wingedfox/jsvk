@@ -29,12 +29,12 @@
 var VirtualKeyboard = new function () {
   var self = this;
   this.$VERSION$ = " $HeadURL$ ".match(/\/[^\.]*[\.\/]([^\/]+)\/[\w\.\s$]+$/)[1]+"."+(" $Rev$ ".replace(/\D/g,""));
-  /*
-  *  ID prefix
-  *
-  *  @type String
-  *  @access private
-  */
+  /**
+   *  ID prefix
+   *
+   *  @type String
+   *  @access private
+   */
   var idPrefix = 'kb_b';
   /**
    *  Keyboard keys mapping, as on the keyboard
@@ -46,9 +46,7 @@ var VirtualKeyboard = new function () {
                 9,81,87,69,82,84,89,85,73,79,80,219,221,13,      // TAB to ENTER
                 20,65,83,68,70,71,72,74,75,76,186,222,           // CAPS to '
                 16,90,88,67,86,66,78,77,188,190,191,16,          // SHIFT to SHIFT
-                46,18,32,18];                                    // Delete, Alt, SPACE, Alt
-//                17,18,32,18,17,                                 // CTRL to CTRL
-//                46];                                            // Delete
+                46,17,18,32,18,17];                                    // Delete, Alt, SPACE, Alt
   if (navigator.product && 'gecko' == navigator.product.toLowerCase()) {
     keymap[11] = 109;
     keymap[12] = 61;
@@ -124,12 +122,12 @@ var VirtualKeyboard = new function () {
              "n\u0146 N\u0145 r\u0157 R\u0156 S\u015e s\u015f T\u0162 t\u0163"
     ]
   ]
-  /*
-  *  CSS classes will be used to style buttons
-  *
-  *  @type Object
-  *  @access private
-  */
+  /**
+   *  CSS classes will be used to style buttons
+   *
+   *  @type Object
+   *  @access private
+   */
   var cssClasses = {
     'buttonUp'      : 'kbButton',
     'buttonDown'    : 'kbButtonDown',
@@ -140,61 +138,61 @@ var VirtualKeyboard = new function () {
     'capslock'      : 'capsLock',
     'deadkey'       : 'deadKey'
   }
-  /*
-  *  current layout
-  *
-  *  @type Object
-  *  @access public
-  */
+  /**
+   *  current layout
+   *
+   *  @type Object
+   *  @access public
+   */
   var lang = null;
-  /*
-  *  Available layouts
-  *
-  *  Array contains layout, it's 'shifted' difference and name
-  *  Structure:
-  *   [
-  *    ['alpha' : Array, // key codes
-  *     'diff' : Object { <start1> : Array, // array of symbols, could not be taken with toUpperCase
-  *                       <start2> : Array,
-  *                     }
-  *    ].name=<layout_code>,
-  *    {...}
-  *   ].name = <lang_code>
-  *
-  *  @type Object
-  *  @access private
-  */
+  /**
+   *  Available layouts
+   *
+   *  Array contains layout, it's 'shifted' difference and name
+   *  Structure:
+   *   [
+   *    ['alpha' : Array, // key codes
+   *     'diff' : Object { <start1> : Array, // array of symbols, could not be taken with toUpperCase
+   *                       <start2> : Array,
+   *                     }
+   *    ].name=<layout_code>,
+   *    {...}
+   *   ].name = <lang_code>
+   *
+   *  @type Object
+   *  @access private
+   */
   var layout = {}
-  /*
-  *  Shortcuts to the nodes
-  *
-  *  @type Object
-  *  @access private
-  */
+  /**
+   *  Shortcuts to the nodes
+   *
+   *  @type Object
+   *  @access private
+   */
   var nodes = {
       keyboard : null     // Keyboard container @type HTMLDivElement
      ,desk : null         // Keyboard desk @type HTMLDivElement
      ,langbox : null      // Layout selector @type HTMLSelectElement
      ,attachedInput : null// Field, keyboard attached to
   }
-  /*
-  *  Key code to be inserted on the keypress
-  *
-  *  @type Number
-  *  @access private
-  */
+  /**
+   *  Key code to be inserted on the keypress
+   *
+   *  @type Number
+   *  @scope private
+   */
   var newKeyCode = null; 
 
   /**************************************************************************
   **  KEYBOARD LAYOUT
   **************************************************************************/
-  /*
-  *  Remove layout from the list
-  *
-  *  @param {String} layout code
-  *  @return {Boolean} removal state
-  *  @access public
-  */
+  /**
+   *  Remove layout from the list
+   *
+   *  @param {String} layout code
+   *  @return {Boolean} removal state
+   *  @access public
+   */
   this.removeLayout = function (code) {
     if (!isString(code)) return false;
     var pos = 0;
@@ -289,11 +287,11 @@ var VirtualKeyboard = new function () {
       lt.splice(41,0,'shift_left');
       lt.splice(52,0,'shift_right');
       lt.splice(53,0,'del');
-//      lt.splice(54,0,'ctrl_left');
-      lt.splice(54,0,'alt_left');
-      lt.splice(55,0,'space');
-      lt.splice(56,0,'alt_right');
-//      lt.splice(57,0,'ctrl_right');
+      lt.splice(54,0,'ctrl_left');
+      lt.splice(55,0,'alt_left');
+      lt.splice(56,0,'space');
+      lt.splice(57,0,'alt_right');
+      lt.splice(58,0,'ctrl_right');
 
       lt.dk = deadkeys;
 
@@ -373,30 +371,15 @@ var VirtualKeyboard = new function () {
       shift = document.getElementById(idPrefix+'shift_right');
       shift.className += ' '+cssClasses['buttonDown'];
       this.toggleLayoutMode();
-   }
+    }
   }
+
   /**
    *  Toggles layout mode (switch alternative key bindings) 
    *
-   *  @param {String} a1 key suffix to be checked
-   *  @param {Number} a2 keyboard mode
    *  @access private
    */
-  this.toggleLayoutMode = function (a1,a2) {
-    if (a1 && a2) {
-        /*
-        *  toggle keys, it's needed, really
-        */
-        var s1 = document.getElementById(idPrefix+a1+'_left')
-           ,s2 = document.getElementById(idPrefix+a1+'_right')
-        if (mode&a2) {
-            mode = mode ^ a2;
-            s1.className = s2.className = s1.className.replace (new RegExp("\\s*\\b"+cssClasses['buttonDown']+"\\b","g"),'');
-        } else {
-            mode = mode | a2;
-            s1.className = s2.className = s1.className+" "+cssClasses['buttonDown'];
-        }
-    }
+  this.toggleLayoutMode = function () {
     /*
     *  now, process to layout toggle 
     */
@@ -540,7 +523,7 @@ var VirtualKeyboard = new function () {
           /*
           *  check for .keyIdentifier is added to track Safari (all KHTML based browsers?)...
           */
-          if (1 == chr[0].length && !chr[1] && chr[0].charCodeAt(0)>32 && evt && !evt.keyIdentifier) {
+          if (1 == chr[0].length && !chr[1] && chr[0].charCodeAt(0)>32 && evt && !evt.keyIdentifier && !evt.ctrlKey && !evt.altKey) {
 
               try {
                   /*
@@ -623,8 +606,6 @@ var VirtualKeyboard = new function () {
     */
     switch (e.type) {
       case 'keydown' :
-        if (e.ctrlKey) mode = mode | VK_CTRL;
-        
         switch (e.keyCode) {
           case 8: // backspace
           case 9: // tab
@@ -639,12 +620,16 @@ var VirtualKeyboard = new function () {
               break;
           case 16://shift
               if (!(mode&VK_SHIFT)) {
-                  self.toggleLayoutMode('shift', VK_SHIFT);
+                  reSetDualKeys('shift', VK_SHIFT);
+                  self.toggleLayoutMode();
               }
               break;
-          case 18: //alt          
-              if (e.altKey && !(mode&VK_ALT)) {
-                  self.toggleLayoutMode('alt', VK_ALT);
+          case 17: //ctrl
+          case 18: //alt
+              if (e.altKey && e.ctrlKey && !(mode&(VK_ALT|VK_CTRL))) {
+                  reSetDualKeys('alt', VK_ALT);
+                  reSetDualKeys('ctrl', VK_CTRL);
+                  self.toggleLayoutMode();
               }
               break;
           case 20: //caps lock
@@ -661,16 +646,24 @@ var VirtualKeyboard = new function () {
               VirtualKeyboard.close();
               return false;
           default:
-              /*
-              *  skip keypress if ctrl pressed
-              */
-              if (keymap.hasOwnProperty(e.keyCode) && !e.ctrlKey) {
+              if (keymap.hasOwnProperty(e.keyCode)) {
                   var el = nodes.desk.childNodes[keymap[e.keyCode]];
                   el.className += " "+cssClasses['buttonDown'];
                   /*
                   *  assign the key code to be inserted on the keypress
                   */
-                  newKeyCode = nodes.desk.childNodes[keymap[e.keyCode]].id.replace(idPrefix, "");
+                  newKeyCode = nodes.desk.childNodes[keymap[e.keyCode]].id;
+                  if (e.altKey && e.ctrlKey) {
+                      if (e.preventDefault) e.preventDefault()
+                      /*
+                      *  this block is used to print a char when ctrl+alt pressed
+                      *  browsers does not invoke "kepress" in this case
+                      */
+                      if (e.srcElement) {
+                          _keyClicker_(nodes.desk.childNodes[keymap[e.keyCode]].id, e)
+                          newKeyCode = "";
+                      }
+                  }
               }
               break;
         }
@@ -688,13 +681,18 @@ var VirtualKeyboard = new function () {
         if (!(mode ^ (VK_SHIFT | VK_ALT))) {
             self.setNextLayout();
         }
-        if (!e.ctrlKey && (mode & VK_CTRL)) mode = mode ^ VK_CTRL;
         switch (e.keyCode) {
+            case 17:
             case 18:
-                self.toggleLayoutMode('alt', VK_ALT);
+                if (!e.ctrlKey && mode&(VK_CTRL|VK_ALT)) {
+                    reSetDualKeys('alt', VK_ALT);
+                    reSetDualKeys('ctrl', VK_CTRL);
+                    self.toggleLayoutMode();
+                }
                 break;
             case 16:
-                self.toggleLayoutMode('shift', VK_SHIFT);
+                reSetDualKeys('shift', VK_SHIFT);
+                self.toggleLayoutMode();
                 break;
             case 20:
                 return;
@@ -731,12 +729,12 @@ var VirtualKeyboard = new function () {
             nodes.desk.className = nodes.desk.className.replace(new RegExp("\\s*\\b"+cssClasses['capslock']+"\\b","g"),"");
     }
   }
-  /*
-  *  Handle clicks on the buttons, actually used with mouseup event
-  *
-  *  @param {Event} mouseup event
-  *  @access protected
-  */
+  /**
+   *  Handle clicks on the buttons, actually used with mouseup event
+   *
+   *  @param {Event} mouseup event
+   *  @access protected
+   */
   var _btnClick_ = function (e) {
     /*
     *  either a pressed key or something new
@@ -754,20 +752,22 @@ var VirtualKeyboard = new function () {
       case "shift_right":
       case "alt_left":
       case "alt_right":
+      case "ctrl_left":
+      case "ctrl_right":
           return;
     }
     el.className = el.className.replace(new RegExp("\\s*\\b"+cssClasses['buttonDown']+"\\b","g"),"");
     _keyClicker_(el.id);
   }
-  /*
-  *  Handle mousedown event
-  *
-  *  Method is used to set 'pressed' button state and toggle shift, if needed
-  *  Additionally, it is used by keyboard wrapper to forward keyboard events to the virtual keyboard
-  *
-  *  @param {Event} mousedown event
-  *  @access protected
-  */
+  /**
+   *  Handle mousedown event
+   *
+   *  Method is used to set 'pressed' button state and toggle shift, if needed
+   *  Additionally, it is used by keyboard wrapper to forward keyboard events to the virtual keyboard
+   *
+   *  @param {Event} mousedown event
+   *  @access protected
+   */
   var _btnMousedown_ = function (e) { 
     /*
     *  either pressed key or something new
@@ -778,6 +778,7 @@ var VirtualKeyboard = new function () {
     */
     if (!el || el.parentNode.id.indexOf(idPrefix)<0) return;
     el = el.parentNode;
+
     var key = el.id.substring(idPrefix.length);
     switch (key) {
       case "caps":
@@ -793,15 +794,20 @@ var VirtualKeyboard = new function () {
         *  Shift is pressed in on both keyboard and virtual keyboard, return 
         */
         if (mode&VK_SHIFT && e.shiftKey) break;
-        self.toggleLayoutMode('shift', VK_SHIFT);
+        reSetDualKeys('shift', VK_SHIFT);
+        self.toggleLayoutMode();
         break;
       case "alt_left":
       case "alt_right":
+      case "ctrl_left":
+      case "ctrl_right":
         /*
         *  Alt is pressed in on both keyboard and virtual keyboard, return 
         */
-        if (mode&VK_ALT && e.altKey) break;
-        self.toggleLayoutMode('alt', VK_ALT);
+        if (mode&VK_ALT && e.altKey || mode&VK_CTRL && e.ctrlKey) break;
+        reSetDualKeys('alt', VK_ALT);
+        reSetDualKeys('ctrl', VK_CTRL);
+        self.toggleLayoutMode();
         break;
       /*
       *  any real pressed key
@@ -822,14 +828,14 @@ var VirtualKeyboard = new function () {
     e.cancelBubble = true;
     if (e.stopPropagation) e.stopPropagation();
   }
-  /*
-  *  Handle mouseout event
-  *
-  *  Method is used to remove 'pressed' button state
-  *
-  *  @param {Event} mouseup event
-  *  @access protected
-  */
+  /**
+   *  Handle mouseout event
+   *
+   *  Method is used to remove 'pressed' button state
+   *
+   *  @param {Event} mouseup event
+   *  @access protected
+   */
   var _btnMouseout_ = function (e) { 
     /*
     *  either pressed key or something new
@@ -853,18 +859,27 @@ var VirtualKeyboard = new function () {
       var s1 = document.getElementById(idPrefix+'shift_left'),
           s2 = document.getElementById(idPrefix+'shift_right');
       s1.className = s2.className = cn;
+    } else if (el.id.indexOf('alt')>-1 || el.id.indexOf('ctrl')>-1) {
+      /*
+      *  both shift keys should be blurred
+      */
+      var s1 = document.getElementById(idPrefix+'alt_left')
+         ,s2 = document.getElementById(idPrefix+'alt_right')
+         ,s3 = document.getElementById(idPrefix+'ctrl_left')
+         ,s4 = document.getElementById(idPrefix+'ctrl_right')
+      s1.className = s2.className= s3.className= s4.className = cn;
     } else {
       el.className = cn;
     }
   }
-  /*
-  *  Handle mouseover event
-  *
-  *  Method is used to remove 'pressed' button state
-  *
-  *  @param {Event} mouseup event
-  *  @access protected
-  */
+  /**
+   *  Handle mouseover event
+   *
+   *  Method is used to remove 'pressed' button state
+   *
+   *  @param {Event} mouseup event
+   *  @access protected
+   */
   var _btnMouseover_ = function (e) { 
     /*
     *  either pressed key or something new
@@ -875,22 +890,33 @@ var VirtualKeyboard = new function () {
     */
     if (!el || el.parentNode.id.indexOf(idPrefix)<0) return;
     el = el.parentNode;
-    el.className += ' '+cssClasses['buttonHover'];
+    var cn = el.className+' '+cssClasses['buttonHover'];
     /*
     *  both shift keys should be highlighted
     */
     if (el.id.indexOf('shift')>-1) {
       var s1 = document.getElementById(idPrefix+'shift_left'),
           s2 = document.getElementById(idPrefix+'shift_right');
-      s1.className = s2.className = el.className;
+      s1.className = s2.className = cn;
+    } else if (el.id.indexOf('alt')>-1 || el.id.indexOf('ctrl')>-1) {
+      /*
+      *  both shift keys should be blurred
+      */
+      var s1 = document.getElementById(idPrefix+'alt_left')
+         ,s2 = document.getElementById(idPrefix+'alt_right')
+         ,s3 = document.getElementById(idPrefix+'ctrl_left')
+         ,s4 = document.getElementById(idPrefix+'ctrl_right')
+      s1.className = s2.className= s3.className= s4.className = cn;
+    } else {
+      el.className = cn;
     }
   }
-  /*
-  *  blocks link behavior
-  *
-  *  @param {Event} event to be blocked
-  *  @access protected
-  */
+  /**
+   *  blocks link behavior
+   *
+   *  @param {Event} event to be blocked
+   *  @access protected
+   */
   var _blockLink_ = function (e) {
     /*
     *  either pressed key or something new
@@ -906,13 +932,13 @@ var VirtualKeyboard = new function () {
   /**********************************************************
   *  MOST COMMON METHODS
   **********************************************************/
-  /*
-  *  Used to attach keyboard output to specified input
-  *
-  *  @param {Null, HTMLInputElement,String} element to attach keyboard to
-  *  @return {HTMLInputElement, Null}
-  *  @access public
-  */
+  /**
+   *  Used to attach keyboard output to specified input
+   *
+   *  @param {Null, HTMLInputElement,String} element to attach keyboard to
+   *  @return {HTMLInputElement, Null}
+   *  @access public
+   */
   self.attachInput = function (el) {
     /*
     *  if null is supplied, don't change the target field
@@ -935,16 +961,16 @@ var VirtualKeyboard = new function () {
 	}
     return nodes.attachedInput;
   }
-  /*
-  *  Shows keyboard
-  *
-  *  @param {HTMLElement, String} input element or it to bind keyboard to
-  *  @param {String} holder keyboard holder container, keyboard won't have drag-drop when holder is specified
-  *  @param {HTMLElement} kpTarget optional target to bind key* event handlers to,
-  *                       is useful for frame and popup keyboard placement
-  *  @return {Boolean} operation state
-  *  @access public
-  */
+  /**
+   *  Shows keyboard
+   *
+   *  @param {HTMLElement, String} input element or it to bind keyboard to
+   *  @param {String} holder keyboard holder container, keyboard won't have drag-drop when holder is specified
+   *  @param {HTMLElement} kpTarget optional target to bind key* event handlers to,
+   *                       is useful for frame and popup keyboard placement
+   *  @return {Boolean} operation state
+   *  @access public
+   */
   self.open =
   self.show = function (input, holder, kpTarget){
     if ( !(input = self.attachInput(nodes.attachedInput?null:input)) || !nodes.keyboard || !document.body ) return false;
@@ -986,16 +1012,16 @@ var VirtualKeyboard = new function () {
     nodes.attachedInput = null;
     return true;
   }
-  /*
-  *  Toggles keyboard state
-  *
-  *  @param {HTMLElement, String} input element or it to bind keyboard to
-  *  @param {String} holder keyboard holder container, keyboard won't have drag-drop when holder is specified
-  *  @param {HTMLElement} kpTarget optional target to bind key* event handlers to,
-  *                       is useful for frame and popup keyboard placement
-  *  @return {Boolean} operation state
-  *  @access public
-  */
+  /**
+   *  Toggles keyboard state
+   *
+   *  @param {HTMLElement, String} input element or it to bind keyboard to
+   *  @param {String} holder keyboard holder container, keyboard won't have drag-drop when holder is specified
+   *  @param {HTMLElement} kpTarget optional target to bind key* event handlers to,
+   *                       is useful for frame and popup keyboard placement
+   *  @return {Boolean} operation state
+   *  @access public
+   */
   self.toggle = function (input, holder, kpTarget) {
       self.isOpen()?self.close():self.show(input, holder, kpTarget);
   }
@@ -1011,6 +1037,31 @@ var VirtualKeyboard = new function () {
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
   //---------------------------------------------------------------------------
+  /**
+   *  Sets specified state on dual keys (like Alt, Ctrl)
+   *
+   *  @param {String} a1 key suffix to be checked
+   *  @param {Number} a2 keyboard mode
+   *  @scope private
+   */
+  var reSetDualKeys = function (a1,a2) {
+    if (a1 && a2) {
+        /*
+        *  toggle keys, it's needed, really
+        */
+        var s1 = document.getElementById(idPrefix+a1+'_left')
+           ,s2 = document.getElementById(idPrefix+a1+'_right')
+        if (mode&a2) {
+            mode = mode ^ a2;
+            s1.className = s2.className = s1.className.replace (new RegExp("\\s*\\b"+cssClasses['buttonDown']+"\\b","g"),'');
+        } else {
+            mode = mode | a2;
+            s1.className = s2.className = s1.className+" "+cssClasses['buttonDown'];
+        }
+        return true;
+    }
+    return false;
+  }
   /**
    *  Char processor
    *

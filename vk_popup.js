@@ -51,7 +51,7 @@ PopupVirtualKeyboard = new function() {
      *  @access public
      */
     self.attachInput = function(el) {
-        if (hWnd && hWnd.VirtualKeyboard) {
+        if (hWnd && !hWnd.closed && hWnd.VirtualKeyboard) {
             return hWnd.VirtualKeyboard.attachInput(el);
         }
         return false

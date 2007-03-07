@@ -24,11 +24,19 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 #virtualKeyboard #kbDesk {
         display: inline-block;
-        padding: 4px 2px 0 4px;
+        margin: 0;
+        padding: 4px 2px 0 2px;
+/*IE5.5 will ignore the rule below */
+        margin/**/:/**/ 4px 2px 0 4px;
+        padding/**/:/**/ 0;
+/*--*/
         position: relative;
         font-size: 1px;
         overflow: hidden;
+        -moz-user-select: none;
+        -khtml-user-select: none;
 }
+
 #virtualKeyboard #kbDesk.capsLock {
         text-transform: uppercase;
 }
@@ -170,22 +178,48 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 #virtualKeyboard #kbDesk div#kb_balt_left,
 #virtualKeyboard #kbDesk div#kb_balt_right {
-        width: 34px;
+		padding: 0 0 0 2px;
+        width: 32px;
 }
 #virtualKeyboard #kbDesk div#kb_balt_left {
-        padding-left: 65px;
+        margin-left: 33px;
+        padding-left: 0;
+/*IE5.5 will ignore the rule below */
+        padding-left/**/:/**/ 41px;
+        margin-left/**/:/**/ 0;
+/*--*/
 }
 #virtualKeyboard #kbDesk div#kb_balt_left a,
 #virtualKeyboard #kbDesk div#kb_balt_right a {
-        background-position: -249px 0;
+        background-position: -251px 0;
 }
 #virtualKeyboard #kbDesk div#kb_balt_left.kbButtonHover a,
 #virtualKeyboard #kbDesk div#kb_balt_right.kbButtonHover a {
-        background-position: -249px -27px;
+        background-position: -251px -27px;
 }
 #virtualKeyboard #kbDesk div#kb_balt_left.kbButtonDown a,
 #virtualKeyboard #kbDesk div#kb_balt_right.kbButtonDown a {
-        background-position: -249px -54px;
+        background-position: -251px -54px;
+}
+#virtualKeyboard #kbDesk div#kb_bctrl_left,
+#virtualKeyboard #kbDesk div#kb_bctrl_right {
+        float: left;
+        width: 32px;
+}
+#virtualKeyboard #kbDesk div#kb_bctrl_right {
+        float: right;
+}
+#virtualKeyboard #kbDesk div#kb_bctrl_left a,
+#virtualKeyboard #kbDesk div#kb_bctrl_right a {
+        background-position: -251px -81px;
+}
+#virtualKeyboard #kbDesk div#kb_bctrl_left.kbButtonHover a,
+#virtualKeyboard #kbDesk div#kb_bctrl_right.kbButtonHover a {
+        background-position: -251px -108px;
+}
+#virtualKeyboard #kbDesk div#kb_bctrl_left.kbButtonDown a,
+#virtualKeyboard #kbDesk div#kb_bctrl_right.kbButtonDown a {
+        background-position: -251px -135px;
 }
 #virtualKeyboard #kbDesk div#kb_bdel a {
         background-position: 0 -81px;
