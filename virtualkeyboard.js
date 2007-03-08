@@ -497,8 +497,7 @@ var VirtualKeyboard = new function () {
                   *  replace is used to strip 'nbsp' base char, when its used to display combining marks 
                   *  @see __getCharHtmlForKey
                   */
-                  mode = Math.min(mode&(VK_ALT|VK_SHIFT),2);
-                  chr = (el.firstChild.childNodes[mode].firstChild || el.firstChild.firstChild.firstChild).nodeValue.replace("\xa0","").replace("\xa0","");
+                  chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT|VK_SHIFT),2)].firstChild || el.firstChild.firstChild.firstChild).nodeValue.replace("\xa0","").replace("\xa0","");
                   /*
                   *  do uppercase if either caps or shift clicked, not both
                   *  and only 'normal' key state is active
@@ -951,14 +950,14 @@ var VirtualKeyboard = new function () {
     *  only inputable nodes are allowed
     */
     if (!el || !el.tagName || (el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea'))
-		nodes.attachedInput = null
-	else {
+                nodes.attachedInput = null
+        else {
         if (!el.attachEvent) el.attachEvent = nodes.desk.attachEvent;
         el.attachEvent('onkeydown', _keydownHandler_);
         el.attachEvent('onkeyup', _keydownHandler_);
         el.attachEvent('onkeypress', _keydownHandler_);
-	    nodes.attachedInput = el;
-	}
+            nodes.attachedInput = el;
+        }
     return nodes.attachedInput;
   }
   /**
