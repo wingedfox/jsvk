@@ -7,6 +7,8 @@
 <script type="text/javascript" src="../extensions/arrayextensions.js"></script>
 <script type="text/javascript">
 
+  var doCompress = true;
+
   function cvt () {
 
       var res = null
@@ -22,7 +24,7 @@
           str = "";
           if (el.checked) {
               res = layouts[i].getConvertedLayout();
-              if (res.normal.length == 47) {
+              if (res.normal.split("\x00").length == 47) {
                   tb.rows[cnt].cells[3].innerHTML = "<b style=\"color: green\">Yes</b>";
                   if (IOsys.FileExists(addpath+layouts[i].code) && !ads[layouts[i].code]) {
                     ads[layouts[i].code] = true;
@@ -33,8 +35,9 @@
                     f = IOsys.GetFile(cbkpath+layouts[i].name);
                     res.dk = f.OpenAsTextStream(1,-2).Read(f.Size());
                   }
+
                   str += 'VirtualKeyboard.addLayout(\''+layouts[i].code+'\',\''+layouts[i].name+'\','+nl+
-                                                    '['+res.normal.join(",")+']'+nl+
+                                                    res.normal+nl+
                                                     (res.shift?',{'+res.shift+'}'+nl:',null')+
                                                     (res.alt?',{'+res.alt+'}'+nl:',null')+
                                                     (res.dk?','+res.dk:'')+
@@ -44,6 +47,9 @@
                       of.Write(str);
                       of.Close();
                       tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: green\">Yes</b>";
+                      var of = IOsys.OpenTextFile(gcf()+'out/layouts.tsv',8,true,0);
+                      of.Write(layouts[i].code+"\t"+layouts[i].name+"\t"+(layouts[i].copyright.indexOf('Ilya Lebedev')==-1?layouts[i].copyright:"")+"\n");
+                      of.Close();
                   } catch (e) {
                       tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: red\">Error: "+e.description+"</b>";
                   }
@@ -54,6 +60,14 @@
           }
           cnt++;
       }
+  }
+  function compress (a) {
+      if (isArray(a)) {
+          a = a.map(String.fromCharCode).join("");
+      } else {
+          a = String.fromCharCode(a);
+      }
+      return a;
   }
 </script>
 <body >
@@ -104,6 +118,7 @@
       self.path = file;
       self.code = fs.match(/^localename\t"\w+-(\w+)/mi)[1]
       self.name = fs.match(/^kbd[^"]+\"([^"]+)/mi)[1].split(/\s-\s/)[0]
+      self.copyright = fs.match(/^copyright[^"]+\"([^"]+)/mi)[1]
       /**
        *   String format
        *
@@ -234,11 +249,14 @@
          *  finished the reading... compute things alltogether
          */
 
+         if (doCompress) VK.normal = VK.normal.filter().map(compress).join("\x00")+"\""
+         else            VK.normal = '['+VK.normal.filter().join(",")+']'
+
          VK.shift = VK.shift.filter().join(",");
          VK.alt = VK.alt.filter().join(",");
          VK.dk = !isEmpty(VK.dk)?'['+VK.dk.join(",")+']':'';
          return {
-             'normal' : VK.normal.filter()
+             'normal' : VK.normal
             ,'shift'  : VK.shift
             ,'alt'    : VK.alt
             ,'dk'     : VK.dk
