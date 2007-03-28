@@ -46,7 +46,7 @@ var VirtualKeyboard = new function () {
                 9,81,87,69,82,84,89,85,73,79,80,219,221,13,      // TAB to ENTER
                 20,65,83,68,70,71,72,74,75,76,186,222,           // CAPS to '
                 16,90,88,67,86,66,78,77,188,190,191,16,          // SHIFT to SHIFT
-                46,17,18,32,18,17];                                    // Delete, Alt, SPACE, Alt
+                46,17,18,32,18,17];                              // Delete, Ctrl, Alt, SPACE, Alt, Ctrl
   if (navigator.product && 'gecko' == navigator.product.toLowerCase()) {
     keymap[11] = 109;
     keymap[12] = 61;
@@ -653,7 +653,7 @@ var VirtualKeyboard = new function () {
                   */
                   newKeyCode = nodes.desk.childNodes[keymap[e.keyCode]].id;
                   if (e.altKey && e.ctrlKey) {
-                      if (e.preventDefault) e.preventDefault()
+                      if (e.preventDefault) e.preventDefault();
                       /*
                       *  this block is used to print a char when ctrl+alt pressed
                       *  browsers does not invoke "kepress" in this case
@@ -952,10 +952,9 @@ var VirtualKeyboard = new function () {
     if (!el || !el.tagName || (el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea'))
                 nodes.attachedInput = null
         else {
-        if (!el.attachEvent) el.attachEvent = nodes.desk.attachEvent;
-        el.attachEvent('onkeydown', _keydownHandler_);
-        el.attachEvent('onkeyup', _keydownHandler_);
-        el.attachEvent('onkeypress', _keydownHandler_);
+            EM.addEventListener(el,'keydown',_keydownHandler_);
+            EM.addEventListener(el,'keyup',_keydownHandler_);
+            EM.addEventListener(el,'keypress',_keydownHandler_);
             nodes.attachedInput = el;
         }
     return nodes.attachedInput;
@@ -985,10 +984,9 @@ var VirtualKeyboard = new function () {
         *  we'll bind event handler here
         */
         if (!isUndefined(kpTarget) && input != kpTarget && kpTarget.appendChild) {
-            if (!kpTarget.attachEvent) kpTarget.attachEvent = nodes.desk.attachEvent;
-            kpTarget.attachEvent('onkeydown', _keydownHandler_);
-            kpTarget.attachEvent('onkeyup', _keydownHandler_);
-            kpTarget.attachEvent('onkeypress', _keydownHandler_);
+            EM.addEventListener(kpTarget,'keydown', _keydownHandler_);
+            EM.addEventListener(kpTarget,'keyup', _keydownHandler_);
+            EM.addEventListener(kpTarget,'keypress', _keydownHandler_);
         }
     }
     /*
@@ -1129,7 +1127,7 @@ var VirtualKeyboard = new function () {
       if (isArray(chr)) {
           inp.innerHTML = chr.map(String.fromCharCode).join("");
       } else {
-          chr = (parseInt(chr)?""+String.fromCharCode(chr):"");
+          chr = (parseInt(chr)?""+String.fromCharCode(chr):chr);
           inp.innerHTML = chr;
           if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr+"\xa0";
       }
@@ -1186,37 +1184,36 @@ var VirtualKeyboard = new function () {
     /*
     *  create keyboard UI
     */
-    nodes.keyboard = document.createElementExt('div',{'param' : { 'id' : 'virtualKeyboard'} });
-    nodes.desk = document.createElementExt('div',{'param' : { 'id' : 'kbDesk'} });
-    nodes.keyboard.appendChild(nodes.desk);
+    nodes.keyboard = document.createElement('div');
+    nodes.keyboard.id = 'virtualKeyboard';
+    nodes.keyboard.innerHTML = "<div id=\"kbDesk\"><!-- --></div>"
+                              +"<select id=\"kb_langselector\"></select>"
+                              +"<select id=\"kb_layoutselector\"></select>"
+                              +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank">VirtualKeyboard '+self.$VERSION$+'</a><br />&copy; 2006-2007 <a href="http://debugger.ru" target="_blank">"Debugger.ru"</a></div>';
+
+    nodes.desk = nodes.keyboard.firstChild;
     /*
     *  reference to layout selector
     */
-    nodes.langbox = new Selectbox();
-    nodes.langbox.getEl().onchange = function(){self.switchLayout(this.value,0)}; 
-    nodes.langbox.getEl().id = 'kb_langselector';
-    nodes.lytbox = new Selectbox();
-    nodes.lytbox.getEl().onchange = function(){self.switchLayout(null,this.value)};
-    nodes.lytbox.getEl().id = 'kb_layoutselector';
-    nodes.keyboard.appendChild(nodes.langbox.getEl()); 
-    nodes.keyboard.appendChild(nodes.lytbox.getEl()); 
+    var el = nodes.keyboard.childNodes.item(1);
+    nodes.langbox = new Selectbox(el);
+    EM.addEventListener(el,'change', function(e){self.switchLayout(e.target.value,0)});
+
+    var el = nodes.keyboard.childNodes.item(2);
+    nodes.lytbox = new Selectbox(el);
+    EM.addEventListener(el,'change', function(e){self.switchLayout(null,e.target.value)});
+
+    nodes.keyboard.appendChild(el); 
 
     /*
     *  insert some copyright information
     */
-    var copy = document.createElementExt('div',{'param' : { 'id' : 'copyrights'
-                                                           ,'nofocus' : 'true'
-                                                           ,'innerHTML' : '<a href="http://debugger.ru/projects/virtualkeyboard" target="_blank">VirtualKeyboard '+self.$VERSION$+'</a><br />&copy; 2006-2007 <a href="http://debugger.ru" target="_blank">"Debugger.ru"</a>'
-                                                        }
-                                               }
-                                        );
-    nodes.keyboard.appendChild(copy);
-    nodes.desk.attachEvent('onmousedown', _btnMousedown_);
-    nodes.desk.attachEvent('onmouseup', _btnClick_);
-    nodes.desk.attachEvent('onmouseover', _btnMouseover_);
-    nodes.desk.attachEvent('onmouseout', _btnMouseout_);
-    nodes.desk.attachEvent('onclick', _blockLink_);
-    nodes.desk.attachEvent('ondragstart', _blockLink_);
+    EM.addEventListener(nodes.desk,'mousedown', _btnMousedown_);
+    EM.addEventListener(nodes.desk,'mouseup', _btnClick_);
+    EM.addEventListener(nodes.desk,'mouseover', _btnMouseover_);
+    EM.addEventListener(nodes.desk,'mouseout', _btnMouseout_);
+    EM.addEventListener(nodes.desk,'click', _blockLink_);
+    EM.addEventListener(nodes.desk,'dragstart', _blockLink_);
 
   }
   /*

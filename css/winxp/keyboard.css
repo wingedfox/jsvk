@@ -37,9 +37,6 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         -khtml-user-select: none;
 }
 
-#virtualKeyboard #kbDesk.capsLock {
-        text-transform: uppercase;
-}
 #virtualKeyboard #kbDesk div.kbButton {
         float: left;
         height: 26px;
@@ -53,9 +50,14 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         background: url(button_set.gif) 0 0 no-repeat;
         display: block;
         height: 100%;
+        position: relative;
         text-decoration: none;
         width: 100%;
 }
+#virtualKeyboard #kbDesk.capsLock div.kbButton span.normal {
+        text-transform: uppercase;
+}
+
 #virtualKeyboard #kbDesk div.kbButtonHover a {
         background-position: 0 -27px;
 }

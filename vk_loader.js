@@ -8,7 +8,7 @@
                ,'extensions/stringextensions.js'
                ,'extensions/regexpextensions.js'
                ,'extensions/arrayextensions.js'
-               ,'extensions/domextensions.js'
+               ,'extensions/eventmanager.js'
                ,'extensions/documentselection.js'
                ,'extensions/dom/selectbox.js'
                ,'virtualkeyboard.js'
