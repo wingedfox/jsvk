@@ -28,7 +28,7 @@
 */
 var VirtualKeyboard = new function () {
   var self = this;
-  this.$VERSION$ = " $HeadURL$ ".match(/\/[^\.]*[\.\/]([^\/]+)\/[\w\.\s$]+$/)[1]+"."+(" $Rev$ ".replace(/\D/g,""));
+  self.$VERSION$ = " $HeadURL$ ".match(/\/[^\.]*[\.\/]([^\/]+)\/[\w\.\s$]+$/)[1]+"."+(" $Rev$ ".replace(/\D/g,""));
   /**
    *  ID prefix
    *
@@ -193,7 +193,7 @@ var VirtualKeyboard = new function () {
    *  @return {Boolean} removal state
    *  @access public
    */
-  this.removeLayout = function (code) {
+  self.removeLayout = function (code) {
     if (!isString(code)) return false;
     var pos = 0;
     for (var i in layout) {
@@ -229,7 +229,7 @@ var VirtualKeyboard = new function () {
    *  @return {Boolean}
    *  @scope public
    */
-  this.addLayout = function(code, name, alpha, diff, alt, deadkeys) {
+  self.addLayout = function(code, name, alpha, diff, alt, deadkeys) {
       if (!isString(code)) throw new Error ('VirtualKeyboard.addLayout requires first parameter to be a string.');
       if (!isString(name)) throw new Error ('VirtualKeyboard.addLayout requires second parameter to be a string.')
       if (isEmpty(alt)) alt = {};
@@ -307,7 +307,7 @@ var VirtualKeyboard = new function () {
    *  @return {Boolean} change state
    *  @access public
    */
-  this.switchLayout = function (code, name) {
+  self.switchLayout = function (code, name) {
     if (null == code) code = nodes.langbox.getValue();
     if (!layout.hasOwnProperty(code) || (name && lang==layout[code][name])) return false;
     /*
@@ -370,7 +370,7 @@ var VirtualKeyboard = new function () {
       shift.className += ' '+cssClasses['buttonDown'];
       shift = document.getElementById(idPrefix+'shift_right');
       shift.className += ' '+cssClasses['buttonDown'];
-      this.toggleLayoutMode();
+      self.toggleLayoutMode();
     }
   }
 
@@ -379,7 +379,7 @@ var VirtualKeyboard = new function () {
    *
    *  @access private
    */
-  this.toggleLayoutMode = function () {
+  self.toggleLayoutMode = function () {
     /*
     *  now, process to layout toggle 
     */
@@ -415,7 +415,7 @@ var VirtualKeyboard = new function () {
   *
   *  @access private
   */
-  this.setNextLang = function () {
+  self.setNextLang = function () {
       nodes.langbox.selectNext(true);
       self.switchLayout(nodes.langbox.getValue(),null);
   }
@@ -424,7 +424,7 @@ var VirtualKeyboard = new function () {
   *
   *  @access private
   */
-  this.setNextLayout = function () {
+  self.setNextLayout = function () {
       nodes.lytbox.selectNext(true);
       self.switchLayout(nodes.langbox.getValue(),nodes.lytbox.getValue());
   }
@@ -434,7 +434,7 @@ var VirtualKeyboard = new function () {
    *  @return {Array}
    *  @scope public
    */
-  this.getLayouts = function () {
+  self.getLayouts = function () {
       var lts = [];
       for (var i in layout) {
         if (!layout.hasOwnProperty(i)) continue;
@@ -782,10 +782,13 @@ var VirtualKeyboard = new function () {
     switch (key) {
       case "caps":
         var cp = document.getElementById(idPrefix+'caps');
-        if (VK_CAPS & (mode = mode ^ VK_CAPS))
+        if (!(mode & VK_CAPS)) {
+          mode = mode | VK_CAPS;
           cp.className += ' '+cssClasses['buttonDown'];
-        else
-          cp.className = cp.className.replace (new RegExp("\\s*\\b"+cssClasses['buttonDown']+"\\b","g"),'');
+        } else {
+          mode = mode ^ VK_CAPS;
+          cp.className = cp.className.replace (new RegExp("\\s*\\b"+cssClasses['buttonDown']+"\\b","g"),'');          
+        }
         break;
       case "shift_left":
       case "shift_right":
