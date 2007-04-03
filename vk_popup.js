@@ -110,8 +110,8 @@ PopupVirtualKeyboard = new function() {
         *  set class names to add some styling to html, body
         */
         hWnd.document.body.className = hWnd.document.body.parentNode.className = 'VirtualKeyboardPopup';
-        hWnd.dialogHeight = parseInt(hWnd.dialogHeight)-hWnd.getClientHeight()+hWnd.document.body.firstChild.offsetHeight+'px';
-        hWnd.dialogWidth = parseInt(hWnd.dialogWidth)-hWnd.getClientWidth()+hWnd.document.body.firstChild.offsetWidth+'px';
+        hWnd.dialogHeight = parseInt(hWnd.dialogHeight)-hWnd.DOM.getClientHeight()+hWnd.document.body.firstChild.offsetHeight+'px';
+        hWnd.dialogWidth = parseInt(hWnd.dialogWidth)-hWnd.DOM.getClientWidth()+hWnd.document.body.firstChild.offsetWidth+'px';
         if (hWnd.sizeToContent) hWnd.sizeToContent();
         hWnd.onunload = self.close;
     }
