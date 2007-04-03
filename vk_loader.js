@@ -4,6 +4,7 @@
     var q = (function (sname){var sc=document.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?].*|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {return pq(m[3].replace(/^[^?]*\?([^#]+)/,"$1"));}}})('vk_loader.js');
     var qs = pq(document.location.search.slice(1));
     var dpd = [ 'extensions/helpers.js'
+               ,'extensions/dom.js'
                ,'extensions/objectextensions.js'
                ,'extensions/stringextensions.js'
                ,'extensions/regexpextensions.js'

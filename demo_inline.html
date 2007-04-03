@@ -15,7 +15,9 @@
      <form action="no.cgi" method="get">
       <div>
        Subject:<br />
-       <input name="testa" id="testa" type="text" onfocus="VirtualKeyboard.attachInput(this)"><br />
+       <input name="testa" id="testa" type="text" onfocus="VirtualKeyboard.attachInput(this)" /><br />
+       Password (has keyboard animation disabled):<br />
+       <input name="test_pwd" id="test_pwd" type="password" class="VK_no_animate" onfocus="VirtualKeyboard.attachInput(this)" /><br />
        Text:<br />
        <textarea name="testb" id="testb" type="text" cols="55" rows="10" wrap="soft" onfocus="VirtualKeyboard.attachInput(this)"></textarea>
        <div id="td"></div>
