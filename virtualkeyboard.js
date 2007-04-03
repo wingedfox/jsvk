@@ -516,10 +516,12 @@ var VirtualKeyboard = new function () {
                   *  reset shift state, if clicked on the letter button
                   */
                   if (!(evt && evt.shiftKey) && mode&VK_SHIFT) {
-                      /*
-                      *  we need firstChild here and on other places to be sure that we point to 'a' node
-                      */
-                      document.getElementById(idPrefix+'shift_left').firstChild.fireEvent('onmousedown');
+                      reSetDualKeys('shift', VK_SHIFT);
+                      if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT | VK_CAPS))) {
+                          if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
+                      } else {
+                          if (animate) DOM.CSS(nodes.desk).removeClass(cssClasses.capslock)
+                      }
                   }
               break;
       }
