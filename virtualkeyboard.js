@@ -304,7 +304,7 @@ var VirtualKeyboard = new function () {
       lt.splice(57,0,'alt_right');
       lt.splice(58,0,'ctrl_right');
 
-      lt.dk = deadkeys;
+      lt.dk = isArray(deadkeys)?deadkeys.map(String.fromCharCode).join(""):deadkeys;
 
       layout[code][name] = lt;
 
@@ -402,20 +402,27 @@ var VirtualKeyboard = new function () {
     for (var i=0, lL=lang.length; i<lL; i++) {
         if (isString(lang[i])) continue;
         bi++;
-        var btn = document.getElementById(idPrefix+bi).firstChild.childNodes;
+        var btn = document.getElementById(idPrefix+bi).firstChild.childNodes
+           ,c = null
         /*
         *  swap symbols and its CSS classes
         */
         if (btn.length>1) {
-            btn.item(0).className = !sh||isEmpty(lang[i][sh])?cssClasses.buttonNormal       // put in the 'active' position
-                                                             :sh&1?cssClasses.buttonShifted // swap with shift
-                                                             :cssClasses.buttonAlted  // swap with alt
-            btn.item(1).className = !sh?cssClasses.buttonShifted      // put in the 'home' position
-                                       :sh&1?cssClasses.buttonNormal  // put in the 'active' position
-                                            :cssClasses.buttonShifted // put in the 'home' position
-            btn.item(2).className = !sh?cssClasses.buttonAlted        // put in the 'home' position
-                                       :sh&1?cssClasses.buttonAlted   // put in the 'home' position
-                                            :cssClasses.buttonNormal  // put in the 'active' position
+            c = DOM.CSS(btn.item(0))
+            c.removeClass(cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted);
+            if (!sh||isEmpty(lang[i][sh])) c.addClass(cssClasses.buttonNormal)  // put in the 'active' position
+            else if (sh&1)                 c.addClass(cssClasses.buttonShifted) // swap with shift
+            else                           c.addClass(cssClasses.buttonAlted)   // swap with alt
+            c = DOM.CSS(btn.item(1))
+            c.removeClass(cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted);
+            if (!sh)       c.addClass(cssClasses.buttonShifted) // put in the 'home' position
+            else if (sh&1) c.addClass(cssClasses.buttonNormal)  // put in the 'active' position
+            else           c.addClass(cssClasses.buttonShifted) // put in the 'home' position
+            c = DOM.CSS(btn.item(2))
+            c.removeClass(cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted);
+            if (!sh)       c.addClass(cssClasses.buttonAlted)   // put in the 'home' position
+            else if (sh&1) c.addClass(cssClasses.buttonAlted)   // put in the 'home' position
+            else           c.addClass(cssClasses.buttonNormal)  // put in the 'active' position
         }
     }
   }
@@ -1101,18 +1108,18 @@ var VirtualKeyboard = new function () {
       *  buffer size should be exactly 1 char to don't mess with the occasional selection
       */
       var fc = buf.charAt(0);
-      if ( buf.length==1 && lang.dk.indexOf(fc.charCodeAt(0))>-1 ) {
+      if ( buf.length==1 && lang.dk.indexOf(fc)>-1 ) {
         /*
         *  dead key found, no more future processing
         *  if new key is not an another deadkey
         */
-        res[1] = tchr != fc & lang.dk.indexOf(tchr.charCodeAt(0))>-1;
+        res[1] = tchr != fc & lang.dk.indexOf(tchr)>-1;
         res[0] = deadkeys[fc][tchr]?deadkeys[fc][tchr]:tchr;
       } else {
         /*
         *  in all other cases, process char as usual
         */
-        res[1] = deadkeys.hasOwnProperty(tchr);
+        res[1] = lang.dk.indexOf(tchr)>-1 && deadkeys.hasOwnProperty(tchr);
         res[0] = tchr;
       }
     }
@@ -1132,22 +1139,21 @@ var VirtualKeyboard = new function () {
       /*
       *  if char exists
       */
+      chr = isArray(chr)?chr.map(String.fromCharCode).join(""):(parseInt(chr)?String.fromCharCode(chr):chr);
       var html = []
          ,dk = !isFunction(lyt.dk) && lyt.dk.indexOf(chr)>-1
+
       /*
       *  if key matches agains current deadchar list
       */
       if (dk) css = [css, cssClasses.deadkey].join(" ");
+
+      inp.innerHTML = chr;
       /*
       *  this is used to detect true combining chars, like THAI CHARACTER SARA I
+      *  NBSPs are appended on the both sides to handle ltr and rtl chars at once
       */
-      if (isArray(chr)) {
-          inp.innerHTML = chr.map(String.fromCharCode).join("");
-      } else {
-          chr = (parseInt(chr)?""+String.fromCharCode(chr):chr);
-          inp.innerHTML = chr;
-          if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr+"\xa0";
-      }
+      if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr+"\xa0";
 
       html[html.length] = "<span ";
       if (css) { 
