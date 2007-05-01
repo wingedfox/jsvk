@@ -260,14 +260,8 @@ var VirtualKeyboard = new function () {
       if (isEmpty(diff)) diff = {};
       if (isUndefined(deadkeys)) deadkeys = [];
 
-      /*
-      *  trick to decode possible HTML entities
-      */
-      var span = document.createElement('span');
-      span.innerHTML = code;
-      code = span.firstChild.nodeValue.toUpperCase();
-      span.innerHTML = name;
-      name = span.firstChild.nodeValue;
+      code = code.entityDecode().toUpperCase();
+      name = name.entityDecode();
       if (!isArray(alpha) || 47!=alpha.length) throw new Error ('VirtualKeyboard.addLayout requires 3rd parameter to be an array with 47 items, '+alpha.length+' detected. Layout code: '+code+', layout title: '+name);
 
       /*
@@ -290,7 +284,6 @@ var VirtualKeyboard = new function () {
       for (var i=0, aL = alpha.length; i<aL; i++) {
          if (diff.hasOwnProperty(i)) {
            cs = doParse(diff[i]);
-           alert(cs)
            csc = i;
          }
          if (alt.hasOwnProperty(i)) {
