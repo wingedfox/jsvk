@@ -241,6 +241,19 @@ var VirtualKeyboard = new function () {
    *  @scope public
    */
   self.addLayout = function(code, name, alpha, diff, alt, deadkeys) {
+      /**
+       *  Private function, used to convert the string to engine-aware array
+       *
+       *  @param {Array, String} s source to check&parse
+       *  @return {Array}
+       *  @scope private
+       */
+      var doParse = function(s) {
+          return (isString(s)?s.match(/\x01.+?\x02|./g).map(function(a){return a.replace(/[\x01\x02]/g,"")})
+                             :s);
+      }
+
+      alpha = doParse(alpha);
       if (!isString(code)) throw new Error ('VirtualKeyboard.addLayout requires first parameter to be a string.');
       if (!isString(name)) throw new Error ('VirtualKeyboard.addLayout requires second parameter to be a string.')
       if (isEmpty(alt)) alt = {};
@@ -255,7 +268,7 @@ var VirtualKeyboard = new function () {
       code = span.firstChild.nodeValue.toUpperCase();
       span.innerHTML = name;
       name = span.firstChild.nodeValue;
-      if (!isArray(alpha) || 47!=alpha.length) throw new Error ('VirtualKeyboard.addLayout requires 3rd parameter to be an array with 47 items. Layout code: '+code+', layout title: '+name);
+      if (!isArray(alpha) || 47!=alpha.length) throw new Error ('VirtualKeyboard.addLayout requires 3rd parameter to be an array with 47 items, '+alpha.length+' detected. Layout code: '+code+', layout title: '+name);
 
       /*
       *  add language, if it does not exists
@@ -276,11 +289,12 @@ var VirtualKeyboard = new function () {
 
       for (var i=0, aL = alpha.length; i<aL; i++) {
          if (diff.hasOwnProperty(i)) {
-           cs = diff[i];
+           cs = doParse(diff[i]);
+           alert(cs)
            csc = i;
          }
          if (alt.hasOwnProperty(i)) {
-           ca = alt[i];
+           ca = doParse(alt[i]);
            cac = i;
          }
          lt[i] = [alpha[i],                                          // normal chars
@@ -304,7 +318,12 @@ var VirtualKeyboard = new function () {
       lt.splice(57,0,'alt_right');
       lt.splice(58,0,'ctrl_right');
 
-      lt.dk = isArray(deadkeys)?deadkeys.map(String.fromCharCode).join(""):deadkeys;
+      if (isString(deadkeys))
+          lt.dk = doParse(deadkeys)
+      else if (isArray(deadkeys))
+          lt.dk = deadkeys.map(String.fromCharCode).join("")
+      else
+          lt.dk = deadkeys;
 
       layout[code][name] = lt;
 
@@ -630,38 +649,41 @@ var VirtualKeyboard = new function () {
               /*
               *  set the class only 1 time
               */
-              if (animate && !e.repeat) DOM.CSS(el).addClass(cssClasses.buttonDown);
+              if (animate && !e.getRepeat()) DOM.CSS(el).addClass(cssClasses.buttonDown);
               e.preventDefault();
 
               break;
           case 16://shift
-              if (!(mode&VK_SHIFT)) {
+              if (!e.getRepeat() && !(mode&VK_SHIFT)) {
                   reSetDualKeys('shift', VK_SHIFT);
                   self.toggleLayoutMode();
-              }
+              }   
               break;
           case 17: //ctrl
           case 18: //alt
-              if (e.altKey && e.ctrlKey && !(mode&(VK_ALT|VK_CTRL))) {
+              if (!e.getRepeat() && e.altKey && e.ctrlKey && !(mode&(VK_ALT|VK_CTRL))) {
                   reSetDualKeys('ctrl', VK_CTRL);
                   reSetDualKeys('alt', VK_ALT);
                   self.toggleLayoutMode();
               }
               break;
           case 20: //caps lock
-              var cp = document.getElementById(idPrefix+'caps');
-              if (!(mode & VK_CAPS)) {
-                  mode = mode | VK_CAPS;
-                  DOM.CSS(cp).addClass(cssClasses.buttonDown)
-              } else {
-                  mode = mode ^ VK_CAPS;
-                  DOM.CSS(cp).removeClass(cssClasses.buttonDown)
+              if (!e.getRepeat()) {
+                  var cp = document.getElementById(idPrefix+'caps');
+                  if (!(mode & VK_CAPS)) {
+                      mode = mode | VK_CAPS;
+                      DOM.CSS(cp).addClass(cssClasses.buttonDown)
+                  } else {
+                      mode = mode ^ VK_CAPS;
+                      DOM.CSS(cp).removeClass(cssClasses.buttonDown)
+                  }
               }
               break;
           case 27:
               VirtualKeyboard.close();
               return false;
           default:
+
               if (keymap.hasOwnProperty(e.keyCode)) {
                   if (!(e.altKey ^ e.ctrlKey)) {
                       var el = nodes.desk.childNodes[keymap[e.keyCode]];
@@ -738,7 +760,7 @@ var VirtualKeyboard = new function () {
     /*
     *  do uppercase transformation
     */
-    if (!e.repeat && (20 == e.keyCode || 16 == e.keyCode)) {
+    if (!e.getRepeat() && (20 == e.keyCode || 16 == e.keyCode)) {
         if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT | VK_CAPS))) {
             if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
         } else {
@@ -1139,7 +1161,7 @@ var VirtualKeyboard = new function () {
       /*
       *  if char exists
       */
-      chr = isArray(chr)?chr.map(String.fromCharCode).join(""):(parseInt(chr)?String.fromCharCode(chr):chr);
+      chr = isArray(chr)?chr.map(String.fromCharCode).join(""):(chr&&chr.length>1&&parseInt(chr)?String.fromCharCode(chr):chr);
       var html = []
          ,dk = !isFunction(lyt.dk) && lyt.dk.indexOf(chr)>-1
 

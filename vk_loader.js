@@ -34,6 +34,6 @@ VirtualKeyboard = new function () {
     else if (!q.skin) q.skin = 'winxp';
     document.write('<link rel="stylesheet" type="text/css" href="'+p+'css/'+q.skin+'/keyboard.css" />')
     for (var i=0,dL=dpd.length;i<dL;i++) {
-        document.write('<scr'+'ipt type="text/javascript" src="'+p+dpd[i]+'"></scr'+'ipt>');
+        document.write('<scr'+'ipt type="text/javascript" charset="UTF-8" src="'+p+dpd[i]+'"></scr'+'ipt>');
     }
 })();
