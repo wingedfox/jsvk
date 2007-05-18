@@ -249,7 +249,7 @@ var VirtualKeyboard = new function () {
        *  @scope private
        */
       var doParse = function(s) {
-          return (isString(s)?s.match(/\x01.+?\x02|./g).map(function(a){return a.replace(/[\x01\x02]/g,"")})
+          return (isString(s)?s.match(/\x01.+?\x02|./g).map(function(a){return a.replace(/[\x01-\x03]/g,"")})
                              :s);
       }
 
@@ -525,7 +525,11 @@ var VirtualKeyboard = new function () {
                   *  replace is used to strip 'nbsp' base char, when its used to display combining marks 
                   *  @see __getCharHtmlForKey
                   */
-                  chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT|VK_SHIFT),2)].firstChild || el.firstChild.firstChild.firstChild).nodeValue.replace("\xa0","").replace("\xa0","");
+                  try {
+                      chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT|VK_SHIFT),2)].firstChild || el.firstChild.firstChild.firstChild).nodeValue.replace("\xa0","").replace("\xa0","");
+                  } catch (err) {
+                      return;
+                  }
                   /*
                   *  do uppercase if either caps or shift clicked, not both
                   *  and only 'normal' key state is active
@@ -1154,7 +1158,9 @@ var VirtualKeyboard = new function () {
       /*
       *  if char exists
       */
-      chr = isArray(chr)?chr.map(String.fromCharCode).join(""):(chr&&chr.length>1&&parseInt(chr)?String.fromCharCode(chr):chr);
+      chr = isArray(chr)?chr.map(String.fromCharCode).join("")
+                        :(isNumber(chr)?String.fromCharCode(chr)
+                                       :chr);
       var html = []
          ,dk = !isFunction(lyt.dk) && lyt.dk.indexOf(chr)>-1
 
