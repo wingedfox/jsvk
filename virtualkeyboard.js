@@ -580,7 +580,7 @@ var VirtualKeyboard = new function () {
                                      false,            //  in boolean altKeyArg,
                                      false,            //  in boolean shiftKeyArg,
                                      false,            //  in boolean metaKeyArg,
-                                     chr[0].charCodeAt(0),chr[0].charCodeAt(0)
+                                     0,chr[0].charCodeAt(0)//,chr[0].charCodeAt(0)
                       );  
                       e.__bypass = true;
                       nodes.attachedInput.dispatchEvent(e);
@@ -680,7 +680,6 @@ var VirtualKeyboard = new function () {
               VirtualKeyboard.close();
               return false;
           default:
-
               if (keymap.hasOwnProperty(e.keyCode)) {
                   if (!(e.altKey ^ e.ctrlKey)) {
                       var el = nodes.desk.childNodes[keymap[e.keyCode]];
