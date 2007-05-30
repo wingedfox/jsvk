@@ -63,7 +63,7 @@ class VirtualKeyboardLayout {
         $str = mb_convert_encoding($str,"WINDOWS-1251", "UCS-2");
         preg_match("/^localename\\t\"\\w+-(\\w+)/mi",$str,$m);
         $this->code = $m[1];
-        preg_match("/^\?kbd[^\"]+\"([^\"]+)/mi",$str,$m);
+        preg_match("/^.*?kbd[^\"]+\"([^\"]+)/mi",$str,$m);
         $this->name = array_shift(preg_split("/\\s-\\s/",$m[1]));
         preg_match("/^copyright[^\"]+\"([^\"]+)/mi",$str,$m);
         $this->copyright = $m[1];
@@ -76,10 +76,8 @@ class VirtualKeyboardLayout {
          *   @type {String}
          */
         $this->strings = preg_split("#[\\r\\n]+#",preg_replace(array("#^.+?//SC[^\\r\\n]+[/\\s-]+#smi","#\\s+(^deadkey|^ligature|^keyname).+#smi"),"",$str));
-//        if ('Hindi Traditional' == $this->name) var_dump($this->strings);
         array_splice($this->strings,12,0,array_splice($this->strings,36,1));
         array_unshift($this->strings,array_pop(array_splice($this->strings,36,1)));
-//        if ('Hindi Traditional' == $this->name) var_dump($this->strings);
         $this->strings = array_map(create_function('$a','return preg_split("#\\t+#",$a);'),$this->strings);
       
         preg_match("/shiftstate\\s+((?:(?!layout).|[\\r\\n])+)/i",$str,$m);
