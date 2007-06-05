@@ -1,4 +1,3 @@
-/*
 VirtualKeyboard.addLayout('AL','Albanian',
 '\\1234567890-=]qwertzuiopç@asdfghjklë[yxcvbnm,./'
 ,{0:'|!"#$%^&*()_+}',25:'\'',36:'{',44:';:?'},{1:'~ˇ^˘°˛`˙´˝¨¸¤\\|',24:'÷×',27:'đĐ[]',33:'łŁ$ß',40:'@{}§<>'},'ˇ^˘°˛˙´˝¨¸');
@@ -83,11 +82,9 @@ VirtualKeyboard.addLayout('MV','Divehi Typewriter',
 VirtualKeyboard.addLayout('NL','Dutch',
 '@1234567890/°<qwertyuiop¨*asdfghjkl+´zxcvbnm,.-'
 ,{0:'§!"#$%&_()\'?~>',24:'^|',35:'±`',44:';:='},{0:'¬¹²³¼½¾£{}',11:'\\¸',16:'€¶',27:'ß',37:'«»¢',43:'µ',45:'·'},'~¸¨´');
-*/
 VirtualKeyboard.addLayout('BT','Dzongkha',
 '༛༡1༢2༣3༤4༥5༦6ེ༧7༨8༩9༠0༔-།=ཀྈཁྉག࿇ངིྃ༚ུ༜ོ༝ཅ༞ཆ༟ཇ[ཉ'
 ,{0:'༄!༅@༆#',8:'$',10:'%༈༁ཻ༸&༴*༼(༽)ཿ_༑+ྐྑྒྔ྄ྀཽྂ༗ྕ༘ྖ༙ྗ༾ྙ'},{0:'123456༜789-=ྈྉ',31:'ྃ༚༛༝༞༟[]'});
-/*
 VirtualKeyboard.addLayout('EE','Estonian',
 'ˇ1234567890+´\'qwertyuiopüõasdfghjklöäzxcvbnm,.-'
 ,{0:'~!"#¤%&/()=?`*',44:';:_'},{2:'@£$€',7:'{[]}\\',13:'½',16:'€',25:'§',27:'š',36:'^ž'},'ˇ~´^');
@@ -311,7 +308,7 @@ flags:0 //for some crosstalk
 4 -w
 8 -
 16 -
-/*
+*/
 }
 function parseHangul(bufchar){
         if(bufchar=='' || bufchar.length>1) return null
@@ -430,7 +427,7 @@ VirtualKeyboard.addLayout('KR','Ru-Kor',
 /*              case '\u044c': //m.znak
                                 return [buf, buf && 1 || 0]
                                 break
-*
+*/
                 case '\u0445': // h
                         var pos= '\u3142\u3137\u3148\u3131'.indexOf(buf) // p t c k
                         if (pos!=-1 ) return ['\u314d\u314c\u314a\u314b'.charAt(pos), 1]
@@ -673,4 +670,3 @@ VirtualKeyboard.addLayout('UZ','Uzbek Cyrillic',
 VirtualKeyboard.addLayout('VN','Vietnamese',
 '`ăâêộ̀̉̃́đ-₫\\qwertyuiopươasdfghjkl;\'zxcvbnm,./'
 ,{0:'~',11:'_+|',35:':"',44:'<>?'},{1:'123456789',12:'=',24:'[]'});
-*/
