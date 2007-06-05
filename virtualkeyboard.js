@@ -51,16 +51,11 @@ var VirtualKeyboard = new function () {
    *  @type Array
    *  @scope private
    */
-  var keymap = [192,49,50,51,52,53,54,55,56,57,48,189,187,220,8, // ~ to BS
+  var keymap = [192,49,50,51,52,53,54,55,56,57,48,109,61,220,8,  // ~ to BS
                 9,81,87,69,82,84,89,85,73,79,80,219,221,13,      // TAB to ENTER
-                20,65,83,68,70,71,72,74,75,76,186,222,           // CAPS to '
+                20,65,83,68,70,71,72,74,75,76,59,222,            // CAPS to '
                 16,90,88,67,86,66,78,77,188,190,191,16,          // SHIFT to SHIFT
                 46,17,18,32,18,17];                              // Delete, Ctrl, Alt, SPACE, Alt, Ctrl
-  if (navigator.product && 'gecko' == navigator.product.toLowerCase()) {
-    keymap[11] = 109;
-    keymap[12] = 61;
-    keymap[39] = 59;
-  }
   /**
    *  Keyboard mode, bitmap
    *
@@ -636,12 +631,13 @@ var VirtualKeyboard = new function () {
     /*
     *  differently process different events
     */
+    var keyCode = e.getKeyCode();
     switch (e.type) {
       case 'keydown' :
-        switch (e.keyCode) {
+        switch (keyCode) {
           case 8: // backspace
           case 9: // tab
-              var el = nodes.desk.childNodes[keymap[e.keyCode]];
+              var el = nodes.desk.childNodes[keymap[keyCode]];
               _keyClicker_(el.id, e);
               /*
               *  set the class only 1 time
@@ -680,14 +676,14 @@ var VirtualKeyboard = new function () {
               VirtualKeyboard.close();
               return false;
           default:
-              if (keymap.hasOwnProperty(e.keyCode)) {
+              if (keymap.hasOwnProperty(keyCode)) {
                   if (!(e.altKey ^ e.ctrlKey)) {
-                      var el = nodes.desk.childNodes[keymap[e.keyCode]];
+                      var el = nodes.desk.childNodes[keymap[keyCode]];
                       if (animate) DOM.CSS(el).addClass(cssClasses.buttonDown);
                       /*
                       *  assign the key code to be inserted on the keypress
                       */
-                      newKeyCode = nodes.desk.childNodes[keymap[e.keyCode]].id;
+                      newKeyCode = nodes.desk.childNodes[keymap[keyCode]].id;
                   }
                   if (e.altKey && e.ctrlKey) {
                       e.preventDefault();
@@ -696,7 +692,7 @@ var VirtualKeyboard = new function () {
                       *  browsers does not invoke "kepress" in this case
                       */
                       if (e.srcElement) {
-                          _keyClicker_(nodes.desk.childNodes[keymap[e.keyCode]].id, e)
+                          _keyClicker_(nodes.desk.childNodes[keymap[keyCode]].id, e)
                           newKeyCode = "";
                       }
                   }
@@ -717,7 +713,7 @@ var VirtualKeyboard = new function () {
         if (!(mode ^ (VK_SHIFT | VK_ALT))) {
             self.setNextLayout();
         }
-        switch (e.keyCode) {
+        switch (keyCode) {
             case 17:
             case 18:
                 if (!e.ctrlKey && mode&(VK_CTRL|VK_ALT)) {
@@ -733,8 +729,8 @@ var VirtualKeyboard = new function () {
             case 20:
                 return;
             default:
-                if (animate && keymap.hasOwnProperty(e.keyCode)) {
-                    DOM.CSS(nodes.desk.childNodes[keymap[e.keyCode]]).removeClass(cssClasses.buttonDown);
+                if (animate && keymap.hasOwnProperty(keyCode)) {
+                    DOM.CSS(nodes.desk.childNodes[keymap[keyCode]]).removeClass(cssClasses.buttonDown);
                 }
         }
         break;
@@ -756,7 +752,7 @@ var VirtualKeyboard = new function () {
     /*
     *  do uppercase transformation
     */
-    if (!e.getRepeat() && (20 == e.keyCode || 16 == e.keyCode)) {
+    if (!e.getRepeat() && (20 == keyCode || 16 == keyCode)) {
         if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT | VK_CAPS))) {
             if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
         } else {
@@ -852,7 +848,7 @@ var VirtualKeyboard = new function () {
       */
       default:
         if (animate) DOM.CSS(el).addClass(cssClasses.buttonDown)
-        return;
+        break;
     }
     /*
     *  do uppercase transformation
@@ -867,18 +863,19 @@ var VirtualKeyboard = new function () {
     e.stopPropagation();
   }
   /**
-   *  Handle mouseout event
+   *  Handle mouseout and mouseover events
    *
    *  Method is used to remove 'pressed' button state
    *
    *  @param {Event} mouseup event
    *  @access protected
    */
-  var _btnMouseout_ = function (e) { 
+  var _btnMouseInOut_ = function (e) { 
     /*
     *  either pressed key or something new
     */
-    var el = DOM.getParent(e.srcElement||e.target, 'a'); 
+    var el = DOM.getParent(e.srcElement||e.target, 'a')
+       ,mtd = {'mouseover': 'addClass', 'mouseout' : 'removeClass'};
     /*
     *  skip invalid nodes
     */
@@ -895,71 +892,19 @@ var VirtualKeyboard = new function () {
       */
       var s1 = document.getElementById(idPrefix+'shift_left'),
           s2 = document.getElementById(idPrefix+'shift_right');
-      s1.className = DOM.CSS(s2).removeClass(cssClasses.buttonHover);
+      s1.className = DOM.CSS(s2)[mtd[e.type]](cssClasses.buttonHover);
     } else if (el.id.indexOf('alt')>-1 || el.id.indexOf('ctrl')>-1) {
       /*
-      *  both shift keys should be blurred
+      *  both alt and ctrl keys should be blurred
       */
       var s1 = document.getElementById(idPrefix+'alt_left')
          ,s2 = document.getElementById(idPrefix+'alt_right')
          ,s3 = document.getElementById(idPrefix+'ctrl_left')
          ,s4 = document.getElementById(idPrefix+'ctrl_right')
-      s1.className = s2.className= s3.className= DOM.CSS(s4).removeClass(cssClasses.buttonHover);
+      s1.className = s2.className= s3.className= DOM.CSS(s4)[mtd[e.type]](cssClasses.buttonHover);
     } else {
-      if (animate) DOM.CSS(el).removeClass(cssClasses.buttonHover);
+      if (animate) DOM.CSS(el)[mtd[e.type]](cssClasses.buttonHover);
     }
-  }
-  /**
-   *  Handle mouseover event
-   *
-   *  Method is used to remove 'pressed' button state
-   *
-   *  @param {Event} mouseup event
-   *  @access protected
-   */
-  var _btnMouseover_ = function (e) { 
-    /*
-    *  either pressed key or something new
-    */
-    var el = DOM.getParent(e.srcElement||e.target, 'a'); 
-    /*
-    *  skip invalid nodes
-    */
-    if (!el || el.parentNode.id.indexOf(idPrefix)<0) return;
-    el = el.parentNode;
-    /*
-    *  both shift keys should be highlighted
-    */
-    if (el.id.indexOf('shift')>-1) {
-      var s1 = document.getElementById(idPrefix+'shift_left'),
-          s2 = document.getElementById(idPrefix+'shift_right');
-      s1.className = DOM.CSS(s2).addClass(cssClasses.buttonHover);
-    } else if (el.id.indexOf('alt')>-1 || el.id.indexOf('ctrl')>-1) {
-      /*
-      *  both shift keys should be blurred
-      */
-      var s1 = document.getElementById(idPrefix+'alt_left')
-         ,s2 = document.getElementById(idPrefix+'alt_right')
-         ,s3 = document.getElementById(idPrefix+'ctrl_left')
-         ,s4 = document.getElementById(idPrefix+'ctrl_right')
-      s1.className = s2.className= s3.className= DOM.CSS(s4).addClass(cssClasses.buttonHover);
-    } else {
-      if (animate) DOM.CSS(el).addClass(cssClasses.buttonHover);
-    }
-  }
-  /**
-   *  blocks link behavior
-   *
-   *  @param {Event} event to be blocked
-   *  @access protected
-   */
-  var _blockLink_ = function (e) {
-    /*
-    *  either pressed key or something new
-    */
-    var el = DOM.getParent(e.srcElement||e.target, 'a'); 
-    if (!el) return;
-
     e.preventDefault();
     e.stopPropagation();
   }
@@ -974,6 +919,10 @@ var VirtualKeyboard = new function () {
    *  @access public
    */
   self.attachInput = function (el) {
+    /*
+    *  force IME hide on field switch
+    */
+    self.IME.hide();
     /*
     *  if null is supplied, don't change the target field
     */
@@ -1000,6 +949,15 @@ var VirtualKeyboard = new function () {
     else 
         animate = true;
     return nodes.attachedInput;
+  }
+  /**
+   *  Returns the attached input node
+   *
+   *  @return {HTMLInputElement, Null}
+   *  @scope public
+   */
+  self.getAttachedInput = function (el) {
+      return nodes.attachedInput;
   }
   /**
    *  Shows keyboard
@@ -1166,7 +1124,7 @@ var VirtualKeyboard = new function () {
       /*
       *  if key matches agains current deadchar list
       */
-      if (dk) css = [css, cssClasses.deadkey].join(" ");
+      if (dk) css = css+" "+cssClasses.deadkey;
 
       inp.innerHTML = chr;
       /*
@@ -1253,14 +1211,137 @@ var VirtualKeyboard = new function () {
     */
     EM.addEventListener(nodes.desk,'mousedown', _btnMousedown_);
     EM.addEventListener(nodes.desk,'mouseup', _btnClick_);
-    EM.addEventListener(nodes.desk,'mouseover', _btnMouseover_);
-    EM.addEventListener(nodes.desk,'mouseout', _btnMouseout_);
-    EM.addEventListener(nodes.desk,'click', _blockLink_);
-    EM.addEventListener(nodes.desk,'dragstart', _blockLink_);
+    EM.addEventListener(nodes.desk,'mouseover', _btnMouseInOut_);
+    EM.addEventListener(nodes.desk,'mouseout', _btnMouseInOut_);
+    EM.addEventListener(nodes.desk,'dragstart', EM.preventDefaultAction);
 
   }
   /*
   *  call the constructor
   */
   __construct();
+}
+/**
+ *  Simple IME thing, using to show input tips, supplied by the callback
+ *
+ *  Usage: just call VirtualKeyboard.IME.show(suggestionlist); to show the suggestions
+ *
+ *  @scope public
+ */
+VirtualKeyboard.IME = new function () {
+    var self = this;
+    var html = "<div id=\"VirtualKeyboardIME\"><div class=\"right\"><!--!--></div><div class=\"left\"></div><div id=\"IME_c\"><br clear=\"both\" /></div></div>";
+    var ime = null;
+    var chars = "";
+    var page = 0;
+    var sg = [];
+    var target = null;
+
+    /**
+     *  Shows the IME tooltip
+     *
+     *  @param {Array} s optional array of the suggestions
+     *  @scope public
+     */
+    self.show = function (s) {
+        target = VirtualKeyboard.getAttachedInput();
+        if (s) self.setSuggestions(s);
+        if (target && ime && sg.length>0) {
+                EM.addEventListener(target,'blur', keepSelection);
+                self.updatePosition(target);
+                ime.style.display = "block";
+        }
+    }
+    /**
+     *  Hides IME
+     *
+     *  @scope public
+     */
+    self.hide = function () {
+        if (ime) ime.style.display = "none";
+        EM.removeEventListener(target,'blur', keepSelection);
+        target = null;
+    }
+    /**
+     *  Updates position of the IME tooltip
+     *
+     *  @scope public
+     */
+    self.updatePosition = function () {
+        ime.style.width = target.clientWidth+'px';
+        var xy = DOM.getOffset(target);
+        ime.style.left = xy.x+'px';
+        var xy = DocumentSelection.getSelectionOffset(target);
+        ime.style.top = xy.y+xy.h+'px';
+    }
+    /**
+     *  Imports suggestions and applies them
+     *
+     *  @scope public
+     */
+    self.setSuggestions = function (arr) {
+        if (!isArray(arr)) return false;
+        sg = arr;
+        page = 0;
+        showPage();
+    }
+    /**
+     *  Shows the next page of suggestions
+     *
+     *  @scope public
+     */
+    self.nextPage = function () {
+         page = Math.max(Math.min(page+1,(Math.ceil(sg.length/10))-1),0);
+         showPage();
+         return false;
+    }
+    /**
+     *  Shows the previous page of suggestions
+     *
+     *  @scope public
+     */
+    self.prevPage = function () {
+         page = Math.max(page-1,0);
+         showPage();
+         return false;
+    }
+    /**
+     *  Returns the current page number
+     *
+     *  @return {Number} page number
+     *  @scope public
+     */
+    self.getPage = function () {
+         return page;
+    }
+    /**
+     *  Shows currently selected page in the IME tooltip
+     *
+     *  @scope private
+     */
+    var showPage = function () {
+        for (var i=0,p=page*10,s=[]; i<10 && !isUndefined(sg[p+i]); i++) {
+            s[s.length] = "<b>"+i+"</b>"+": "+sg[p+i];
+        }
+        ime.childNodes[2].innerHTML = s.join("; ")+"<br clear=\"both\" />";
+    }
+    var keepSelection = function() {
+        DocumentSelection.setRange(target,DocumentSelection.getStart(this),DocumentSelection.getEnd(this));
+        this.focus();
+    }
+    /**
+     *  Just the constructor
+     */
+    var _construct = function () {
+        var el = document.createElement('div');
+        el.innerHTML = html;
+        ime = el.firstChild;
+        ime.style.display = 'none';
+        ime.childNodes[0].appendChild(document.createComment(""));
+        ime.childNodes[1].appendChild(document.createComment(""));
+        ime.childNodes[0].onmousedown = self.nextPage;
+        ime.childNodes[1].onmousedown = self.prevPage;
+        document.body.appendChild(ime);
+    }
+    EM.addEventListener(window,'domload',_construct);
 }
