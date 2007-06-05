@@ -274,3 +274,44 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         cursor: normal;
         outline: 0;
 }
+
+/**
+ *
+ *  Styles for the IME field
+ *
+ */
+#VirtualKeyboardIME {
+   background: #fff;
+   border:1px solid #333;
+   position: absolute;
+   width: 200px;
+}
+#VirtualKeyboardIME #IME_c {
+   border: 1px solid #333;
+   border-top: 0;
+   border-bottom: 0;
+   height: 21px;
+   line-height: 21px;
+   margin: 0 12px;
+   padding: 0 3px;
+}
+#VirtualKeyboardIME div.left {
+   border-bottom: 10px solid #fff;
+   border-left: 0px solid black;
+   border-right: 10px solid #000;
+   border-top: 10px solid #fff;
+   position: absolute;
+   left: 1px;
+   font-size: 1px;
+   overflow: hidden;
+}
+#VirtualKeyboardIME div.right {
+   border-bottom: 10px solid #fff;
+   border-left: 10px solid #000;
+   border-right: 0px solid black;
+   border-top: 10px solid #fff;
+   float: right;
+   position: absolute;
+   right: 1px;
+   overflow: hidden;
+}
