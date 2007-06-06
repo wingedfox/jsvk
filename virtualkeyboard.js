@@ -920,10 +920,6 @@ var VirtualKeyboard = new function () {
    */
   self.attachInput = function (el) {
     /*
-    *  force IME hide on field switch
-    */
-    self.IME.hide();
-    /*
     *  if null is supplied, don't change the target field
     */
     if (null == el && !nodes.attachedInput) return null;
@@ -931,16 +927,25 @@ var VirtualKeyboard = new function () {
 
     if (el == nodes.attachedInput) return nodes.attachedInput;
     /*
+    *  force IME hide on field switch
+    */
+    self.IME.hide();
+    /*
     *  only inputable nodes are allowed
     */
-    if (!el || !el.tagName || (el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea'))
-                nodes.attachedInput = null
-        else {
-            EM.addEventListener(el,'keydown',_keydownHandler_);
-            EM.addEventListener(el,'keyup',_keydownHandler_);
-            EM.addEventListener(el,'keypress',_keydownHandler_);
-            nodes.attachedInput = el;
-        }
+    EM.removeEventListener(nodes.attachedInput,'keydown',_keydownHandler_);
+    EM.removeEventListener(nodes.attachedInput,'keypress',_keydownHandler_);
+    EM.removeEventListener(nodes.attachedInput,'keyup',_keydownHandler_);
+    EM.removeEventListener(nodes.attachedInput,'mousedown',self.IME.hide);
+    if (!el || !el.tagName || (el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea')) {
+        nodes.attachedInput = null
+    } else {
+        EM.addEventListener(el,'keydown',_keydownHandler_);
+        EM.addEventListener(el,'keyup',_keydownHandler_);
+        EM.addEventListener(el,'keypress',_keydownHandler_);
+        EM.addEventListener(el,'mousedown',self.IME.hide);
+        nodes.attachedInput = el;
+    }
     /*
     *  set keyboard animation for the current field
     */
@@ -1269,6 +1274,7 @@ VirtualKeyboard.IME = new function () {
     self.hide = function () {
         if (ime) ime.style.display = "none";
         EM.removeEventListener(target,'blur', keepSelection);
+        if (target) DocumentSelection.deleteAtCursor(target);
         target = null;
     }
     /**
