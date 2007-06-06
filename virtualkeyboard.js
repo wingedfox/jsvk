@@ -1005,6 +1005,13 @@ var VirtualKeyboard = new function () {
   self.close =
   self.hide = function () {
     if (!nodes.keyboard || !self.isOpen()) return false;
+    /*
+    *  force IME hide
+    */
+    if (self.IME.isOpen()) {
+        self.IME.hide();
+        return;
+    }
     nodes.keyboard.style.display = 'none';
     nodes.attachedInput = null;
     return true;
@@ -1247,9 +1254,11 @@ VirtualKeyboard.IME = new function () {
         target = VirtualKeyboard.getAttachedInput();
         if (s) self.setSuggestions(s);
         if (target && ime && sg.length>0) {
-                EM.addEventListener(target,'blur', keepSelection);
-                self.updatePosition(target);
-                ime.style.display = "block";
+            EM.addEventListener(target,'blur', keepSelection);
+            self.updatePosition(target);
+            ime.style.display = "block";
+        } else {
+            self.hide();
         }
     }
     /**
@@ -1315,13 +1324,27 @@ VirtualKeyboard.IME = new function () {
          return page;
     }
     /**
+     *  Returns char by its number in the suggestions array
+     *
+     *  @param {Number} n char number in the current page
+     *  @return {String} char
+     *  @scope public
+     */
+    self.getChar = function (n) {
+         n = --n<0?9:n;
+         return sg[self.getPage()*10+n]
+    }
+    self.isOpen = function () {
+         return 'block' == ime.style.display;
+    }
+    /**
      *  Shows currently selected page in the IME tooltip
      *
      *  @scope private
      */
     var showPage = function () {
         for (var i=0,p=page*10,s=[]; i<10 && !isUndefined(sg[p+i]); i++) {
-            s[s.length] = "<b>"+i+"</b>"+": "+sg[p+i];
+            s[s.length] = "<b>"+((i+1)%10)+"</b>"+": "+sg[p+i];
         }
         ime.childNodes[2].innerHTML = s.join("; ")+"<br clear=\"both\" />";
     }
