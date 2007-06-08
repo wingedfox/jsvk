@@ -1287,7 +1287,6 @@ VirtualKeyboard.IME = new function () {
     self.updatePosition = function () {
         ime.style.width = '50px';
         var dt = ime.offsetWidth - ime.childNodes[2].clientWidth;
-        window.status = dt
         ime.style.width = ime.childNodes[2].scrollWidth+dt+'px';
         var xy = DOM.getOffset(target);
         ime.style.left = xy.x+'px';
@@ -1304,6 +1303,7 @@ VirtualKeyboard.IME = new function () {
         sg = arr;
         page = 0;
         showPage();
+        self.updatePosition(target);
     }
     /**
      *  Returns suggestion list
