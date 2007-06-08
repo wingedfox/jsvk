@@ -696,6 +696,8 @@ var VirtualKeyboard = new function () {
                           newKeyCode = "";
                       }
                   }
+              } else {
+                  self.IME.hide();
               }
               break;
         }
@@ -1242,7 +1244,7 @@ var VirtualKeyboard = new function () {
  */
 VirtualKeyboard.IME = new function () {
     var self = this;
-    var html = "<div id=\"VirtualKeyboardIME\"><div class=\"right\"><!--!--></div><div class=\"left\"></div><div id=\"IME_c\"><br clear=\"both\" /></div></div>";
+    var html = "<div id=\"VirtualKeyboardIME\"><div class=\"right\"><!--!--></div><div class=\"left\"></div><div class=\"IMEContent\"><br clear=\"both\" /></div></div>";
     var ime = null;
     var chars = "";
     var page = 0;
@@ -1260,8 +1262,8 @@ VirtualKeyboard.IME = new function () {
         if (s) self.setSuggestions(s);
         if (target && ime && sg.length>0) {
             EM.addEventListener(target,'blur', keepSelection);
-            self.updatePosition(target);
             ime.style.display = "block";
+            self.updatePosition(target);
         } else {
             self.hide();
         }
@@ -1283,7 +1285,10 @@ VirtualKeyboard.IME = new function () {
      *  @scope public
      */
     self.updatePosition = function () {
-        ime.style.width = target.clientWidth+'px';
+        ime.style.width = '50px';
+        var dt = ime.offsetWidth - ime.childNodes[2].clientWidth;
+        window.status = dt
+        ime.style.width = ime.childNodes[2].scrollWidth+dt+'px';
         var xy = DOM.getOffset(target);
         ime.style.left = xy.x+'px';
         var xy = DocumentSelection.getSelectionOffset(target);
@@ -1299,6 +1304,14 @@ VirtualKeyboard.IME = new function () {
         sg = arr;
         page = 0;
         showPage();
+    }
+    /**
+     *  Returns suggestion list
+     *
+     *  @scope public
+     */
+    self.getSuggestions = function (arr) {
+        return sg;
     }
     /**
      *  Shows the next page of suggestions

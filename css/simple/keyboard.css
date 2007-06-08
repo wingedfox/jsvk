@@ -286,14 +286,16 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
    position: absolute;
    width: 200px;
 }
-#VirtualKeyboardIME #IME_c {
+#VirtualKeyboardIME div.IMEContent {
    border: 1px solid #333;
    border-top: 0;
    border-bottom: 0;
    height: 21px;
    line-height: 21px;
    margin: 0 12px;
+   overflow: auto;
    padding: 0 3px;
+   white-space: nowrap;
 }
 #VirtualKeyboardIME div.left {
    border-bottom: 10px solid #fff;
