@@ -198,11 +198,11 @@ class VirtualKeyboardLayout {
         $VK['dk'] = join("",$VK['dk']);
 
 
-        $add = realpath($this->root.$this->addon.$VK['code']);
+        $add = realpath($this->root.$this->addon.$VK['code'].'.js');
         if (file_exists($add)) {
             $VK['addon'] = file_get_contents($add);
         }
-        $add = realpath($this->root.$this->addon.$this->callback.$VK['name']);
+        $add = realpath($this->root.$this->addon.$this->callback.$VK['name'].'.js');
         if (file_exists($add)) {
             $VK['callback'] = file_get_contents($add);
         }

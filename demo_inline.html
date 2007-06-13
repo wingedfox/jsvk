@@ -47,12 +47,19 @@
       <li>Enter some more text with mouse, to check that keyboard switched field successfully
       </li>Repeat steps 2-4, using keyboard, to check on-the-fly keys translation
      </ol>
-     <ol id="sul"><strong>Supported languagues:</strong>
+     <ol id="sul"><strong>Supported languagues:</strong><br /><em>Links are persistent</em>
      </ol>
      <script type="text/javascript">
-         window.onload=function(){
-             document.getElementById('sul').innerHTML += "<li>"+VirtualKeyboard.getLayouts().join("</li><li>")+"</li>";
-         }
+         EM.addEventListener(window,'domload',function(){
+             var el = document.getElementById('sul')
+                ,lt = VirtualKeyboard.getLayouts()
+                ,dl = window.location.href.replace(/[?#].+/,"")
+             for (var i=0,lL=lt.length; i<lL; i++) {
+                 var cl = lt[i].split("\xa0-\xa0");
+                 lt[i] = "<a href=\""+dl+"?vk_layout="+cl[0]+"_"+cl[1]+"\" onclick=\"VirtualKeyboard.switchLayout('"+cl[0]+"','"+cl[1]+"');return false;\" >"+lt[i]+"</a>"
+             }
+             el.innerHTML += "<li>"+lt.join("</li><li>")+"</li>";
+         });
      </script>
     </td>
    </tr>

@@ -22,18 +22,18 @@ VirtualKeyboard = new function () {
                ,'extensions/eventmanager.js'
                ,'extensions/documentselection.js'
                ,'extensions/dom/selectbox.js'
-               ,'virtualkeyboard.js'
-               ,'layouts/layouts.js'
 /*
 * not used by default
 * 
 *               ,'layouts/unconverted.js'
 */
     ];
-    if (qs.vk_skin) q.skin = qs.vk_skin; 
-    else if (!q.skin) q.skin = 'winxp';
+    q.skin = qs.vk_skin || q.skin || 'winxp';
+    q.layout = qs.vk_layout || q.layout || null;
     document.write('<link rel="stylesheet" type="text/css" href="'+p+'css/'+q.skin+'/keyboard.css" />')
     for (var i=0,dL=dpd.length;i<dL;i++) {
         document.write('<scr'+'ipt type="text/javascript" charset="UTF-8" src="'+p+dpd[i]+'"></scr'+'ipt>');
     }
+    document.write('<scr'+'ipt type="text/javascript" charset="UTF-8" src="'+p+'virtualkeyboard.js?layout='+q.layout+'"></scr'+'ipt>');
+    document.write('<scr'+'ipt type="text/javascript" charset="UTF-8" src="'+p+'layouts/layouts.js"></scr'+'ipt>');
 })();

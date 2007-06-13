@@ -24,13 +24,13 @@
               res = layouts[i].getConvertedLayout();
               if (res.normal.length == 47) {
                   tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: green\">Yes</b>";
-                  if (IOsys.FileExists(addpath+layouts[i].code) && !ads[layouts[i].code]) {
+                  if (IOsys.FileExists(addpath+layouts[i].code+'.js') && !ads[layouts[i].code]) {
                     ads[layouts[i].code] = true;
-                    f = IOsys.GetFile(addpath+layouts[i].code);
+                    f = IOsys.GetFile(addpath+layouts[i].code+'.js');
                     str += f.OpenAsTextStream(1,-2).Read(f.Size());
                   }
-                  if (!res.dk && IOsys.FileExists(cbkpath+layouts[i].name)) {
-                    f = IOsys.GetFile(cbkpath+layouts[i].name);
+                  if (!res.dk && IOsys.FileExists(cbkpath+layouts[i].name+'.js')) {
+                    f = IOsys.GetFile(cbkpath+layouts[i].name+'.js');
                     res.dk = f.OpenAsTextStream(1,-2).Read(f.Size());
                   }
                   str += 'VirtualKeyboard.addLayout(\''+layouts[i].code+'\',\''+layouts[i].name+'\','+nl+

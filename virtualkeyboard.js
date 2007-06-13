@@ -30,6 +30,15 @@ var VirtualKeyboard = new function () {
   var self = this;
   self.$VERSION$ = " $HeadURL$ ".match(/\/[^\.]*[\.\/]([^\/]+)\/[\w\.\s$]+$/)[1]+"."+(" $Rev$ ".replace(/\D/g,""));
   /**
+   *  Some configurable stuff
+   *
+   *  @type Object
+   *  @scope private
+   */
+  var options = {
+     'layout' : {'code':null,'name':null}
+  }
+  /**
    *  ID prefix
    *
    *  @type String
@@ -548,11 +557,10 @@ var VirtualKeyboard = new function () {
           *  use behavior of real keyboard - replace selected text with new input
           */
           if (!(chr = __charProcessor(chr, DocumentSelection.getSelection(nodes.attachedInput)))) return ret;
-          /*
-          *  check for .keyIdentifier is added to track Safari (all KHTML based browsers?)...
-          */
-          if (1 == chr[0].length && !chr[1] && chr[0].charCodeAt(0)>32 && evt && !evt.keyIdentifier && !evt.ctrlKey && !evt.altKey) {
-
+          if (1 == chr[0].length         // if only single symbol exists
+            && !chr[1]                   // if no selection required
+            && evt && !evt.keyIdentifier // check for Safari (all KHTML based browsers?)...
+            && !evt.ctrlKey && !evt.altKey) {
               try {
                   /*
                   *  IE allows to rewrite the key code
@@ -986,7 +994,6 @@ var VirtualKeyboard = new function () {
         if (isString(holder)) holder = document.getElementById(holder);
         if (!holder.appendChild) return false;
         holder.appendChild(nodes.keyboard);
-        self.switchLayout(nodes.langbox.getValue(), nodes.lytbox.getValue())
         /*
         *  we'll bind event handler here
         */
@@ -1157,6 +1164,29 @@ var VirtualKeyboard = new function () {
     return html.join("");
   }
   /**
+   *  Handler for the 'domload' event
+   *
+   *  @scope protected
+   */
+  var __init = function () {
+    /*
+    *  set some options
+    */
+    var opts = getScriptQuery('virtualkeyboard.js');
+    if (opts.layout) {
+        opts.layout = opts.layout.split("_");
+        options.layout.code = opts.layout[0];
+        options.layout.name = opts.layout[1];
+    }
+    /*
+    *  perform initialization...
+    */
+    self.switchLayout(options.layout.code,options.layout.name);
+    if (!lang) {
+        self.switchLayout(nodes.langbox.getValue(), nodes.lytbox.getValue());
+    }
+  }
+  /**
    *  Keyboard constructor
    *
    *  @access public
@@ -1228,6 +1258,7 @@ var VirtualKeyboard = new function () {
     EM.addEventListener(nodes.desk,'mouseover', _btnMouseInOut_);
     EM.addEventListener(nodes.desk,'mouseout', _btnMouseInOut_);
     EM.addEventListener(nodes.desk,'dragstart', EM.preventDefaultAction);
+    EM.addEventListener(window,'domload', __init);
 
   }
   /*
@@ -1235,6 +1266,12 @@ var VirtualKeyboard = new function () {
   */
   __construct();
 }
+/**
+ *  Container for the custom language IMEs, don't mess with the window object
+ *
+ *  @type {Object}
+ */
+VirtualKeyboard.Langs = {};
 /**
  *  Simple IME thing, using to show input tips, supplied by the callback
  *
@@ -1278,6 +1315,7 @@ VirtualKeyboard.IME = new function () {
         EM.removeEventListener(target,'blur', keepSelection);
         if (target) DocumentSelection.deleteAtCursor(target);
         target = null;
+        sg=[];
     }
     /**
      *  Updates position of the IME tooltip
@@ -1291,7 +1329,7 @@ VirtualKeyboard.IME = new function () {
         var xy = DOM.getOffset(target);
         ime.style.left = xy.x+'px';
         var xy = DocumentSelection.getSelectionOffset(target);
-        ime.style.top = xy.y+xy.h+'px';
+        ime.style.top = xy.y-xy.h-xy.h/4+'px';
     }
     /**
      *  Imports suggestions and applies them

@@ -66,9 +66,9 @@ PopupVirtualKeyboard = new function() {
     self.open =
     self.show = function (target) {
         if (!hWnd || hWnd.closed) {
-          if (qs.vk_skin) q.skin = qs.vk_skin; 
-          else if (!q.skin) q.skin = 'winxp';
-          hWnd = (window.showModelessDialog||window.open)(p+"vk_popup.html?vk_skin="+q.skin,window.showModelessDialog?window:"_blank","status=0,title=0,dependent=yes,resizable=no,scrollbars=no,width=500,height=500");
+          q.skin = qs.vk_skin || q.skin || 'winxp';
+          q.layout = qs.vk_layout || q.layout || null;
+          hWnd = (window.showModelessDialog||window.open)(p+"vk_popup.html?vk_skin="+q.skin+"&layout="+q.layout,window.showModelessDialog?window:"_blank","status=0,title=0,dependent=yes,resizable=no,scrollbars=no,width=500,height=500");
           tgt = target;
           return true;
         }
