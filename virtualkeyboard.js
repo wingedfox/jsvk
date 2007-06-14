@@ -1352,10 +1352,12 @@ VirtualKeyboard.IME = new function () {
     /**
      *  Returns suggestion list
      *
+     *  @param {Number} idx optional index in the suggestions array
+     *  @return {String, Array} all suggestions, or one by its index
      *  @scope public
      */
-    self.getSuggestions = function (arr) {
-        return sg;
+    self.getSuggestions = function (idx) {
+        return isNumber(idx)?sg[idx]:sg;
     }
     /**
      *  Shows the next page of suggestions

@@ -37,13 +37,13 @@ VirtualKeyboard.Langs.Chinese = new function () {
                         return[str,0]
                     }
                 } else if ((arr = (PYArr[chr] || []).concat(PYincomplete[chr] || [])).length) { //nih
-                    str=VirtualKeyboard.IME.getSuggestions()[0]
+                    str=VirtualKeyboard.IME.getSuggestions(0)
                     VirtualKeyboard.IME.setSuggestions(arr)
                     return [str+chr,1]
                 } else { // ni,
-                    str=VirtualKeyboard.IME.getSuggestions()[0]
+                    str=VirtualKeyboard.IME.getSuggestions(0)
                     VirtualKeyboard.IME.hide()
-                    return [str/*+chr*/,0]
+                    return [str+(chr.charCodeAt()==10? '': chr),0]
                 }
             }
         }
