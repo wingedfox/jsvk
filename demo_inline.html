@@ -4,7 +4,6 @@
   <title>Virtual Keyboard</title>
   <meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
 
-  <link rel="stylesheet" type="text/css" title="virtualkeyboard" href="keyboard/keyboard.css" />
   <script type="text/javascript" src="vk_loader.js" ></script>
  </head>
  <body><!-- test -->
@@ -20,8 +19,9 @@
        <input name="test_pwd" id="test_pwd" type="password" class="VK_no_animate" onfocus="VirtualKeyboard.attachInput(this)" /><br />
        Text:<br />
        <textarea name="testb" id="testb" type="text" cols="55" rows="10" wrap="soft" onfocus="VirtualKeyboard.attachInput(this)"></textarea>
-       <div id="td"></div>
        <br />
+       <br />
+       <div id="td"></div>
        <br />
        <input id="showkb" type="button" value="Keyboard" onclick="VirtualKeyboard.toggle('testb','td'); return false;" />
       </div>

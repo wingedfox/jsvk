@@ -1259,6 +1259,7 @@ var VirtualKeyboard = new function () {
     EM.addEventListener(nodes.desk,'mouseout', _btnMouseInOut_);
     EM.addEventListener(nodes.desk,'dragstart', EM.preventDefaultAction);
     EM.addEventListener(window,'domload', __init);
+    EM.addEventListener(window,'unload', self.close);
 
   }
   /*
@@ -1287,6 +1288,7 @@ VirtualKeyboard.IME = new function () {
     var page = 0;
     var sg = [];
     var target = null;
+    var targetWindow = window.dialogArguments||window.opener||window.top;
 
     /**
      *  Shows the IME tooltip
@@ -1296,6 +1298,8 @@ VirtualKeyboard.IME = new function () {
      */
     self.show = function (s) {
         target = VirtualKeyboard.getAttachedInput();
+//        alert(target+" "+DOM.getParent(target,'body'))
+        DOM.getParent(target,'body').appendChild(ime);
         if (s) self.setSuggestions(s);
         if (target && ime && sg.length>0) {
             EM.addEventListener(target,'blur', keepSelection);
@@ -1328,8 +1332,10 @@ VirtualKeyboard.IME = new function () {
         ime.style.width = ime.childNodes[2].scrollWidth+dt+'px';
         var xy = DOM.getOffset(target);
         ime.style.left = xy.x+'px';
-        var xy = DocumentSelection.getSelectionOffset(target);
-        ime.style.top = xy.y-xy.h-xy.h/4+'px';
+        ime.style.top = xy.y+target.offsetHeight+'px';
+//        var xy = DocumentSelection.getSelectionOffset(target);
+//        window.status += xy.y+"="+xy.h+" "
+//        ime.style.top = xy.y-xy.h-xy.h/4+'px';
     }
     /**
      *  Imports suggestions and applies them
@@ -1413,15 +1419,14 @@ VirtualKeyboard.IME = new function () {
      *  Just the constructor
      */
     var _construct = function () {
-        var el = document.createElement('div');
+        var el = targetWindow.document.createElement('div');
         el.innerHTML = html;
         ime = el.firstChild;
         ime.style.display = 'none';
-        ime.childNodes[0].appendChild(document.createComment(""));
-        ime.childNodes[1].appendChild(document.createComment(""));
+        ime.childNodes[0].appendChild(targetWindow.document.createComment(""));
+        ime.childNodes[1].appendChild(targetWindow.document.createComment(""));
         ime.childNodes[0].onmousedown = self.nextPage;
         ime.childNodes[1].onmousedown = self.prevPage;
-        document.body.appendChild(ime);
     }
     EM.addEventListener(window,'domload',_construct);
 }

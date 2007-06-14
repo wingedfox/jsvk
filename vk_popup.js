@@ -24,9 +24,6 @@ PopupVirtualKeyboard = new function() {
      *  @type {String}
      */
     var p = (function (sname){var sc = document.getElementsByTagName('script'),sr = new RegExp('^(.*/|)('+sname+')([#?]|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return m[1];if (m[1].indexOf("/")==0) return m[1];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+(?=\w:)/,"");}}return null;})('vk_popup.js');
-    var pq = function (q) {if ('string'!=typeof q || q.length<2) return {};q = q.split("&");for (var z=0,qL=q.length,rs={},kv,rkv;z<qL;z++){kv=q[z].split("=");kv[0]=kv[0].replace(/[{}\[\]]*$/,"");rkv = rs[kv[0]];kv[1]=unescape(kv[1]?kv[1].replace("+"," "):"");if (rkv)if ('array'==typeof(rkv))rs[kv[0]][rs[kv[0]].length]=kv[1];else rs[kv[0]]=[rs[kv[0]],kv[1]];else rs[kv[0]]=kv[1];}return rs}
-    var q = (function (sname){var sc=document.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?].*|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {return pq(m[3].replace(/^[^?]*\?([^#]+)/,"$1"));}}})('vk_popup.js');
-    var qs = pq(document.location.search.slice(1));
     /**
      *  Tells, if the keyboard is open
      * 
@@ -66,9 +63,7 @@ PopupVirtualKeyboard = new function() {
     self.open =
     self.show = function (target) {
         if (!hWnd || hWnd.closed) {
-          q.skin = qs.vk_skin || q.skin || 'winxp';
-          q.layout = qs.vk_layout || q.layout || null;
-          hWnd = (window.showModelessDialog||window.open)(p+"vk_popup.html?vk_skin="+q.skin+"&layout="+q.layout,window.showModelessDialog?window:"_blank","status=0,title=0,dependent=yes,resizable=no,scrollbars=no,width=500,height=500");
+          hWnd = (window.showModelessDialog||window.open)(p+"vk_popup.html",window.showModelessDialog?window:"_blank","status=0,title=0,dependent=yes,resizable=no,scrollbars=no,width=500,height=500");
           tgt = target;
           return true;
         }
@@ -117,10 +112,4 @@ PopupVirtualKeyboard = new function() {
     }
     if (window.attachEvent) window.attachEvent('onunload', self.close);
     else if (window.addEventListener) window.addEventListener('unload', self.close, false);
-
-    var p = (function (sname){var sc = document.getElementsByTagName('script'),sr = new RegExp('^(.*/|)('+sname+')([#?]|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return m[1];if (m[1].indexOf("/")==0) return m[1];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.pathname.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+(?=\w:)/,"");}}return null;})('vk_popup.js');
-    var dpd = ['/extensions/documentselection.js'];
-    for (var i=0,dL=dpd.length;i<dL;i++) {
-        document.write('<scr'+'ipt defer="false" type="text/javascript" src="'+p+dpd[i]+'"></scr'+'ipt>');
-    }
 }
