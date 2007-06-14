@@ -70,22 +70,22 @@ VirtualKeyboard.Langs.Chinese = new function () {
      */
     self.processChar = function (chr, buf) {
         var num, str, arr
-            if (chr=='\u0008') { // backspace
-                if (buf && (str=buf.slice(0,-1))) {
-                    VirtualKeyboard.IME.show((PYArr[str] || []).concat(PYincomplete[str] || []));
-                    return [str,str.length]
-                } else {
-                    VirtualKeyboard.IME.hide()
-                    return ['',0] //total delete; some other cases
-                }
-            } else { //non backspace
-                str=buf+chr
-                arr = (PYArr[str] || []).concat(PYincomplete[str] || [])
-                if (arr.length) { // miao
-                    VirtualKeyboard.IME.show(arr)
-                    return [str, str.length]
-                } else if(VirtualKeyboard.IME.getSuggestions().length) { // not a part of a syllable
-                    if (isFinite(num=parseInt(chr))) { // miao3
+        if (chr=='\u0008') { // backspace
+            if (buf && (str=buf.slice(0,-1))) {
+                VirtualKeyboard.IME.show((PYArr[str] || []).concat(PYincomplete[str] || []));
+                return [str,str.length]
+            } else {
+                VirtualKeyboard.IME.hide()
+                return ['',0] //total delete; some other cases
+            }
+        } else { //non backspace
+            str=buf+chr
+            arr = (PYArr[str] || []).concat(PYincomplete[str] || [])
+            if (arr.length) { // miao
+                VirtualKeyboard.IME.show(arr)
+                return [str, str.length]
+            } else if(VirtualKeyboard.IME.getSuggestions().length) { // not a part of a syllable
+                if (isFinite(num=parseInt(chr))) { // miao3
                     str = VirtualKeyboard.IME.getChar(num);
                     if (!str) { //miao9 - no such variant
                         return[buf,buf.length]
@@ -94,13 +94,13 @@ VirtualKeyboard.Langs.Chinese = new function () {
                         return[str,0]
                     }
                 } else if ((arr = (PYArr[chr] || []).concat(PYincomplete[chr] || [])).length) { //nih
-                    str=VirtualKeyboard.IME.getSuggestions()[0]
+                    str=VirtualKeyboard.IME.getSuggestions(0)
                     VirtualKeyboard.IME.setSuggestions(arr)
                     return [str+chr,1]
                 } else { // ni,
-                    str=VirtualKeyboard.IME.getSuggestions()[0]
+                    str=VirtualKeyboard.IME.getSuggestions(0)
                     VirtualKeyboard.IME.hide()
-                    return [str,0]
+                    return [str+(chr.charCodeAt()==10? '': chr),0]
                 }
             }
         }
