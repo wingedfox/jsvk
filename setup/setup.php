@@ -154,7 +154,7 @@ function getLayoutList () {
          $saved = false;
          for ($i=0;$i<sizeof($kbdl);$i++) {
             $kl = & new VirtualKeyboardLayout($kbdl[$i]);
-            $cname = urlencode($kl->name);
+            $cname = str_replace(".","_",urlencode($kl->name));
             $cls = $i%2?"even":"odd";
             $checked = isset($_POST[$cname])?'checked="true"':"";
             $saved = isset($_POST[$cname])
