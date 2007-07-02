@@ -109,4 +109,4 @@ VirtualKeyboard.Langs.KR = new function () {
             }
         }
     }
-}
+};
