@@ -55,10 +55,9 @@ VirtualKeyboard.addLayout('CA','Canadian French',
 VirtualKeyboard.addLayout('CA','Canadian Multilingual Standard',
 '/1234567890-=àqwertyuiop^çasdfghjkl;èzxcvbnm,.é'
 ,{0:'\\!@#$%?&*()_+',24:'¨',35:':',44:'\'"'},{0:'|',4:'¤',7:'{}[]',12:'¬',16:'€',24:'`~',35:'°',37:'«»',44:'<>'},'^¨`~');
-VirtualKeyboard.Langs.Chinese = new function () {
+VirtualKeyboard.Langs.CN = new function () {
     var self = this;
-    var PYArr={}
-    var PYincomplete={}
+    self.INPArr = [];
     /**
      *  Callback to process keyboard input in the current IME style
      *
@@ -72,7 +71,7 @@ VirtualKeyboard.Langs.Chinese = new function () {
         var num, str, arr
         if (chr=='\u0008') { // backspace
             if (buf && (str=buf.slice(0,-1))) {
-                VirtualKeyboard.IME.show((PYArr[str] || []).concat(PYincomplete[str] || []));
+                VirtualKeyboard.IME.show(self.INPArr[str] || []);
                 return [str,str.length]
             } else {
                 VirtualKeyboard.IME.hide()
@@ -80,9 +79,9 @@ VirtualKeyboard.Langs.Chinese = new function () {
             }
         } else { //non backspace
             str=buf+chr
-            arr = (PYArr[str] || []).concat(PYincomplete[str] || [])
+            arr = self.INPArr[str] || []
             if (arr.length) { // miao
-                VirtualKeyboard.IME.show(arr)
+                VirtualKeyboard.IME.show((typeof arr =='string')? self.INPArr[str]=arr.split('') : arr)
                 return [str, str.length]
             } else if(VirtualKeyboard.IME.getSuggestions().length) { // not a part of a syllable
                 if (isFinite(num=parseInt(chr))) { // miao3
@@ -93,12 +92,12 @@ VirtualKeyboard.Langs.Chinese = new function () {
                         VirtualKeyboard.IME.hide();
                         return[str,0]
                     }
-                } else if ((arr = (PYArr[chr] || []).concat(PYincomplete[chr] || [])).length) { //nih
-                    str=VirtualKeyboard.IME.getSuggestions(0)
-                    VirtualKeyboard.IME.setSuggestions(arr)
+                } else if ((arr = self.INPArr[chr] || []).length) { //nih
+                    str=VirtualKeyboard.IME.getSuggestions()[0]
+                    VirtualKeyboard.IME.setSuggestions((typeof arr =='string')? self.INPArr[str]=arr.split('') : arr)
                     return [str+chr,1]
                 } else { // ni,
-                    str=VirtualKeyboard.IME.getSuggestions(0)
+                    str=VirtualKeyboard.IME.getSuggestions()[0]
                     VirtualKeyboard.IME.hide()
                     return [str+(chr.charCodeAt()==10? '': chr),0]
                 }
@@ -106,42 +105,52 @@ VirtualKeyboard.Langs.Chinese = new function () {
         }
         return [buf+chr,0] //non-chinese talk
     }
-    /**
-     *  Simple constructor, converts raw chineese IME data to the machine-aware format
-     *
+};
+VirtualKeyboard.addLayout('CN','Chinese Cangjie',
+'`1234567890-=\\手田水口廿卜山戈人心[]日尸木火土竹十大中;\'重難金女月弓一,./'
+,{0:'~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?'},null,{'load' : function () {
+     /*
+     *  List of the chinese IME suggestions
      */
-    var _construct = function() {
-       /*
-        *  List of the chinese IME suggestions
-        */
-        var chineseArr="的	de,di;一	yi;是	shi;不	bu;了	le,liao;人	ren;我	wo;在	zai;有	you;他	ta,tuo;这	zhe,zhei;中	zhong;大	da,dai;来	lai;上	shang;国	guo;个	ge;到	dao;说	shuo,shui;们	men;为	wei;子	zi;和	he,huo,hu;你	ni;地	di,de;出	chu;道	dao;也	ye;时	shi;年	nian;得	de,dei;就	jiu;那	na,nei,nuo;要	yao;下	xia;以	yi;生	sheng;会	hui,kuai;自	zi;着	zhe,zhao,zhuo;去	qu;之	zhi;过	guo;家	jia,jie;学	xue;对	dui;可	ke;她	ta;里	li;后	hou;小	xiao;么	me/mo,yao;心	xin;多	duo;天	tian;而	er;能	neng;好	hao;都	dou,du;然	ran;没	mei,mo;日	ri;于	yu;起	qi;还	hai,huan;发	fa;成	cheng;事	shi;只	zhi;作	zuo;当	dang;想	xiang;看	kan;文	wen;无	wu,mo;开	kai;手	shou;十	shi;用	yong;主	zhu;行	xing,hang,heng;方	fang;又	you;如	ru;前	qian;所	suo;本	ben;见	jian,xian;经	jing;头	tou;面	mian;公	gong;同	tong;三	san;已	yi;老	lao;从	cong;动	dong;两	liang;长	chang,zhang;知	zhi;民	min;样	yang;现	xian;分	fen;将	jiang;外	wai;但	dan;身	shen;些	xie;与	yu;高	gao;意	yi;进	jin;把	ba;法	fa;此	ci;实	shi;回	hui;二	er;理	li;美	mei;点	dian;月	yue;明	ming;其	qi,ji;种	zhong;声	sheng;全	quan;工	gong;己	ji;话	hua,huo;儿	er,r,ren;者	zhe;向	xiang;情	qing;部	bu;正	zheng;名	ming;定	ding;女	nü;问	wen;力	li;机	ji;给	gei,ji;等	deng;几	ji;很	hen;业	ye;最	zui;间	jian,gan;新	xin;什	shen,shi;打	da;便	bian,pian;位	wei;因	yin;重	zhong,chong;被	bei,pi;走	zou;电	dian;四	si;第	di;门	men;相	xiang;次	ci;东	dong;政	zheng;海	hai;口	kou;使	shi;教	jiao;西	xi;再	zai;平	ping;真	zhen;听	ting;世	shi;气	qi;信	xin;北	bei;少	shao;关	guan;并	bing;内	nei;加	jia;化	hua;由	you;却	que;代	dai;军	jun;产	chan;入	ru;先	xian;山	shan;五	wu;太	tai;水	shui;万	wan,mo;市	shi;眼	yan;体	ti;别	bie;处	chu;总	zong;才	cai;场	chang;师	shi;书	shu;比	bi;住	zhu;员	yuan;九	jiu;笑	xiao;性	xing;通	tong;目	mu;华	hua;报	bao;立	li;马	ma;命	ming;张	zhang;活	huo;难	nan;神	shen;数	shu,shuo;件	jian;安	an;表	biao;原	yuan;车	che,ju;白	bai,bo;应	ying;路	lu;期	qi,ji;叫	jiao;死	si;常	chang;提	ti,di;感	gan;金	jin;何	he;更	geng;反	fan,ban;合	he,ge;放	fang;做	zuo;系	xi,ji;计	ji;或	huo;司	si;利	li;受	shou;光	guang;王	wang;果	guo;亲	qin,qing;界	jie,ga;及	ji;今	jin;京	jing;务	wu;制	zhi;解	jie,xie;各	ge;任	ren;至	zhi;清	qing;物	wu;台	tai;象	xiang;记	ji;边	bian;共	gong;风	feng;战	zhan;干	gan;接	jie;它	ta;许	xu,hu;八	ba;特	te;觉	jue,jiao;望	wang;直	zhi;服	fu;毛	mao;林	lin;题	ti;建	jian;南	nan,na;度	du,duo;统	tong;色	se,shai;字	zi;请	qing;交	jiao;爱	ai;让	rang;认	ren;算	suan;论	lun;百	bai,bo;吃	chi,qi;义	yi;科	ke;怎	zen;元	yuan;社	she;术	shu,zhu;结	jie;六	liu;功	gong;指	zhi;思	si,sai;非	fei;流	liu;每	mei;青	qing;管	guan;夫	fu;连	lian;远	yuan;资	zi;队	dui;跟	gen;带	dai;花	hua;快	kuai;条	tiao;院	yuan;变	bian;联	lian;言	yan;权	quan;往	wang;展	zhan;该	gai;领	ling;传	chuan,zhuan;近	jin;留	liu;红	hong,gong;治	zhi;决	jue;周	zhou;保	bao;达	da,ta;办	ban;运	yun;武	wu;半	ban;候	hou;七	qi;必	bi;城	cheng;父	fu;强	qiang,jiang;步	bu;完	wan;革	ge,ji;深	shen;区	qu,ou;即	ji;求	qiu;品	pin;士	shi;转	zhuan,zhuai;量	liang;空	kong;甚	shen;众	zhong;技	ji;轻	qing;程	cheng;告	gao,gu;江	jiang;语	yu;英	ying;基	ji;派	pai,pa;满	man;式	shi;李	li;息	xi;写	xie;呢	ne,ni;识	shi,zhi;极	ji;令	ling;黄	huang;德	de;收	shou;脸	lian;钱	qian;党	dang;倒	dao;未	wei;持	chi;取	qu;设	she;始	shi;版	ban;双	shuang;历	li;越	yue;史	shi;商	shang;千	qian;片	pian;容	rong;研	yan;像	xiang;找	zhao;友	you;孩	hai;站	zhan;广	guang,yan;改	gai;议	yi;形	xing;委	wei;早	zao;房	fang;音	yin;火	huo;际	ji;则	ze;首	shou;单	dan,chan,shan;据	ju;导	dao;影	ying;失	shi;拿	na;网	wang;香	xiang;似	si,shi;斯	si;专	zhuan;石	shi,dan;若	ruo,re;兵	bing;弟	di,ti;谁	shui,shei;校	xiao,jiao;读	du,dou;志	zhi;飞	fei;观	guan;争	zheng;究	jiu;包	bao;组	zu;造	zao;落	luo,la,lao;视	shi;济	ji;喜	xi;离	li;虽	sui;坐	zuo;集	ji;编	bian;宝	bao;谈	tan;府	fu;拉	la;黑	hei;且	qie,ju;随	sui;格	ge;尽	jin;剑	jian;讲	jiang;布	bu;杀	sha;微	wei;怕	pa;母	mu;调	diao,tiao;局	ju;根	gen;曾	ceng,zeng;准	zhun;团	tuan;段	duan;终	zhong;乐	le,yue;切	qie;级	ji;克	ke,kei;精	jing;哪	na,nei,ne;官	guan;示	shi;冲	chong;竟	jing;乎	hu;男	nan;举	ju;客	ke;证	zheng;苦	ku;照	zhao;注	zhu;费	fei;足	zu;尔	er;招	zhao;群	qun;热	re;推	tui;晚	wan;响	xiang;称	cheng,chen;兴	xing;待	dai;约	yue,yao;阳	yang;哥	ge;惊	jing;吗	ma;整	zheng;支	zhi;古	gu;汉	han;突	tu;号	hao;绝	jue;选	xuan;吧	ba;参	can,shen,cen;刊	kan;亚	ya;复	fu;伤	shang;类	lei;备	bei;欢	huan;另	ling;港	gang;势	shi;刻	ke;星	xing;断	duan;陈	chen;掌	zhang;农	nong;夜	ye;般	ban,pan,bo;念	nian;价	jia,jie;脑	nao;规	gui;底	di;故	gu;省	sheng,xing;妈	ma;刚	gang;句	ju;显	xian;消	xiao;衣	yi;陆	lu,liu;器	qi;确	que;破	po;具	ju;居	ju;批	pi;送	song;泽	ze;紧	jin;帮	bang;线	xian;存	cun;愿	yuan;奇	qi,ji;害	hai;增	zeng;杨	yang;料	liao;州	zhou;节	jie;左	zuo;装	zhuang;易	yi;著	zhu,zhe,zhao,zhuo;急	ji;久	jiu;低	di;岁	sui;需	xu;酒	jiu;河	he;初	chu;游	you;严	yan;铁	tie;族	zu;除	chu;份	fen;敢	gan;胡	hu;血	xue,xie;企	qi;仍	reng;投	tou;闻	wen;斗	dou;纪	ji;脚	jiao,jue;右	you;苏	su;标	biao;饭	fan;云	yun;病	bing;医	yi;阿	a,e;答	da;土	tu;况	kuang;境	jing;软	ruan;考	kao;娘	niang;村	cun;刀	dao;击	ji;仅	jin;查	cha,zha;引	yin;朝	chao,zhao;育	yu,yo;续	xu;独	du;罗	luo;买	mai;户	hu;护	hu;喝	he;朋	peng;供	gong;责	ze;项	xiang;背	bei;余	yu;希	xi;卫	wei;列	lie;图	tu;室	shi;乱	luan;刘	liu;爷	ye;龙	long;咱	zan;章	zhang;席	xi;错	cuo;兄	xiong;暗	an;创	chuang;排	pai;春	chun;须	xu;承	cheng;案	an;忙	mang;呼	hu;树	shu;痛	tong;沉	chen;啊	a;灵	ling;职	zhi;乡	xiang;细	xi;诉	su;态	tai;停	ting;印	yin;笔	bi;夏	xia;助	zhu;福	fu;块	kuai;冷	leng;球	qiu;姑	gu;划	hua;既	ji;质	zhi;巴	ba;致	zhi;湾	wan;演	yan;木	mu;韦	wei;怪	guai;围	wei;静	jing;旁	pang,bang;园	yuan;否	fou,pi;副	fu;辑	ji;采	cai;食	shi,si;登	deng;够	gou;赛	sai;米	mi;假	jia;较	jiao;姐	jie;楼	lou;获	huo;孙	sun;宣	xuan;穿	chuan;诗	shi;歌	ge;速	su;忽	hu;堂	tang;敌	di;试	shi;谢	xie;央	yang;怀	huai;顾	gu;验	yan;营	ying;止	zhi;姓	xing;养	yang;丽	li;属	shu,zhu;景	jing;郭	guo;依	yi;威	wei;按	an;恶	e,wu;慢	man;座	zuo;罪	zui;维	wei;渐	jian;胜	sheng;藏	cang,zang;皇	huang;街	jie;激	ji;异	yi;摘	zhai;角	jiao,jue;瞧	qiao;负	fu;施	shi;模	mo,mu;草	cao;某	mou;银	yin;露	lu,lou;阵	zhen;值	zhi;班	ban;层	ceng;修	xiu;差	cha,chai,ci,cuo;味	wei;织	zhi;药	yao;馆	guan;密	mi;亮	liang;律	lü;习	xi;田	tian;简	jian;免	mian;毒	du;归	gui;波	bo;型	xing;屋	wu;换	huan;救	jiu;寄	ji;帝	di;退	tui;洋	yang;丝	si;湖	hu;睡	shui;劳	lao;妇	fu;伯	bo,bai,ba;尼	ni;皮	pi;祖	zu;雄	xiong;婚	hun;康	kang;评	ping;追	zhui;哈	ha;络	luo,lao;店	dian;翻	fan;环	huan;礼	li;跑	pao;超	chao;叶	ye,xie;压	ya;占	zhan;均	jun;永	yong;烈	lie;奖	jiang;婆	po;赶	gan;富	fu;兰	lan;录	lu;画	hua;遇	yu;顿	dun;艺	yi;普	pu;判	pan;源	yuan;亿	yi;素	su;船	chuan;继	ji;尚	shang;嘴	zui;察	cha;雨	yu;优	you;您	nin;险	xian;烟	yan,yin;阶	jie;担	dan;散	san;板	ban;钟	zhong;访	fang;妹	mei;伸	shen;佛	fo,fu;限	xian;讨	tao;临	lin;吴	wu;摇	yao;跳	tiao;曲	qu;练	lian;构	gou;玩	wan;玉	yu;犯	fan;厂	chang;肯	ken;协	xie;幸	xing;挥	hui;效	xiao;齐	qi,zhai,zi;封	feng;温	wen;疑	yi;肉	rou;攻	gong;纸	zhi;策	ce;充	chong;顶	ding;寻	xun,xin;宁	ning;沙	sha;防	fang;抓	zhua;例	li;股	gu;卖	mai;顺	shun;警	jing;梦	meng;剧	ju;善	shan;蒙	meng;票	piao;良	liang;范	fan;坚	jian;端	duan;靠	kao;杂	za;贵	gui;怒	nu;稿	gao;拍	pai;率	lü,shuai;旧	jiu;掉	diao;啦	la;莫	mo;授	shou;守	shou;油	you;恩	en;积	ji;益	yi;县	xian;哭	ku;罢	ba,pi;庭	ting;窗	chuang;扬	yang;忘	wang;午	wu;卡	ka,qia;雪	xue;菜	cai;牌	pai;牛	niu;脱	tuo;博	bo;丈	zhang;弹	dan,tan;洲	zhou;松	song;坏	huai,pi;邓	deng;鲜	xian;短	duan;毕	bi;置	zhi;楚	chu;欧	ou;略	lüe;智	zhi;岛	dao;抗	kang;妻	qi;抱	bao;载	zai;败	bai;枪	qiang,cheng;适	shi,di;虚	xu;预	yu;睛	jing;刺	ci;爹	die;纷	fen;介	jie;括	kuo;销	xiao;降	jiang,xiang;鱼	yu;奔	ben;忍	ren;宗	zong;盘	pan;耳	er;野	ye;讯	xun;配	pei;禁	jin;索	suo;赵	zhao;默	mo;徒	tu;架	jia;灯	deng;峰	feng;状	zhuang;款	kuan;移	yi;爸	ba;托	tuo;洪	hong;升	sheng;伙	huo;订	ding;毫	hao;狐	hu;镇	zhen;床	chuang;互	hu;套	tao;旅	lü;逃	tao;骂	ma;输	shu;唱	chang;靖	jing;秘	mi,bi;词	ci;困	kun;泪	lei;熟	shu,shou;财	cai;鬼	gui;骨	gu;申	shen;欲	yu;征	zheng;私	si;舞	wu;秋	qiu;巨	ju;迎	ying;秀	xiu;搞	gao;丁	ding,zheng;吸	xi;审	shen;遍	bian;墙	qiang;朱	zhu;圣	sheng;避	bi;跃	yue;忌	ji;桌	zhuo;执	zhi;悲	bei;域	yu;晓	xiao;弄	nong,long;亡	wang;桥	qiao;辈	bei;闪	shan;隐	yin;劲	jin,jing;闹	nao;恐	kong;呀	ya;付	fu;敬	jing;监	jian;厅	ting;库	ku;震	zhen;材	cai;冰	bing;醒	xing;庆	qing;绿	lü,lu;腿	tui;述	shu;徐	xu;尊	zun;硬	ying;额	e;误	wu;借	jie;纳	na;折	zhe,she;售	shou;遗	yi,wei;暴	bao,pu;缺	que;迷	mi;鲁	lu;探	tan;货	huo;童	tong;缓	huan;伟	wei;君	jun;庄	zhuang;凡	fan;危	wei;烧	shao;彩	cai;抢	qiang;控	kong;胸	xiong;戏	xi;篇	pian;趣	qu;束	shu;谓	wei;概	gai;射	she;课	ke;洞	dong;麻	ma;杯	bei;透	tou;邮	you;荣	rong;懂	dong;拥	yong;献	xian;洗	xi,xian;休	xiu;迫	po,pai;叹	tan;狗	gou;偷	tou;阴	yin;汽	qi;拜	bai;横	heng;鼓	gu;健	jian;厚	hou;签	qian;丹	dan;洛	luo;喊	han;蓉	rong;轮	lun;岸	an;奶	nai;淡	dan;潮	chao;训	xun;圆	yuan;卷	juan,quan;释	shi;诸	zhu;妙	miao;唯	wei;夺	duo;逐	zhu;燕	yan;呆	dai,ai;测	ce;浪	lang;抽	chou;盖	gai;偏	pian;阅	yue;购	gou;途	tu;纵	zong;耶	ye;摸	mo;挂	gua;航	hang;择	ze,zhai;恨	hen;舍	she;拳	quan;竹	zhu;唐	tang;誉	yu;乘	cheng,sheng;弱	ruo;检	jian;宫	gong;仪	yi;旗	qi;含	han;袁	yuan;址	zhi;摆	bai;奥	ao;番	fan,pan;混	hun;灭	mie;握	wo;牙	ya;虑	lü;召	zhao;猛	meng;宽	kuan;盛	cheng,sheng;核	he,hu;袋	dai;绍	shao;补	bu;典	dian;圈	quan,juan;丰	feng;雅	ya;吉	ji;赞	zan;茶	cha;亦	yi;谷	gu;稳	wen;汇	hui;厉	li,lai;届	jie;迹	ji;雷	lei;序	xu;寒	han;附	fu;鸡	ji;遭	zao;挑	tiao,tao;肩	jian;忆	yi;柔	rou;戴	dai;惜	xi;隔	ge;豪	hao;诚	cheng;瑞	rui;减	jian;播	bo;麼	me,mo;针	zhen;棋	qi;竞	jing;臂	bi,bei;挺	ting;操	cao;腰	yao;狂	kuang;替	ti;梅	mei;固	gu;伦	lun;宋	song;钢	gang;诺	nuo;残	can;延	yan;虎	hu;迅	xun;灾	zai;悄	qiao;岳	yue;乔	qiao;川	chuan;仇	chou,qiu;季	ji;吹	chui;粮	liang;聚	ju;译	yi;珠	zhu;叔	shu;谋	mou;础	chu;仁	ren;损	sun;融	rong;辆	liang;净	jing;敏	min;伊	yi;仙	xian;巧	qiao;零	ling;累	lei;享	xiang;伴	ban;荡	dang;珍	zhen;勇	yong;末	mo,me;奋	fen;胆	dan;弃	qi;烦	fan;糊	hu;犹	you;税	shui;培	pei;抵	di;僧	seng;锋	feng;乃	nai;遥	yao;摩	mo,ma;坦	tan;後	hou;眉	mei;餐	can;惯	guan;凭	ping;冠	guan;抬	tai;碰	peng;币	bi;启	qi;码	ma;冒	mao;汗	han;俗	su;灰	hui;督	du;穷	qiong;颇	po;倾	qing;尖	jian;韩	han;贸	mao;仿	fang;孤	gu;飘	piao;漫	man;予	yu;紫	zi;侧	ce,zhai;沿	yan;拔	ba;袖	xiu;梁	liang;赏	shang;幕	mu;壁	bi;旦	dan;晨	chen;纯	chun;闭	bi;凉	liang;扫	sao;尤	you;炮	pao,bao;碗	wan;贴	tie;插	cha;滚	gun;缘	yuan;寺	si;贝	bei;润	run;氏	shi,zhi;冬	dong;扩	kuo;栏	lan;荒	huang;哲	zhe;逼	bi;吓	xia,he;堆	dui,zui;撞	zhuang;郎	lang;俩	lia,liang;蓝	lan;闲	xian;辛	xin;镜	jing;陪	pei;骑	qi,ji;蛋	dan;促	cu;羊	yang;宜	yi;嘛	ma;颜	yan;贫	pin;幅	fu;驻	zhu;萍	ping;污	wu;杰	jie;扑	pu;壮	zhuang;萨	sa;刑	xing;忧	you;貌	mao;狱	yu;塞	sai,se;凤	feng;孔	kong;触	chu;恋	lian;岂	qi;森	sen;繁	fan;碎	sui;津	jin;侠	xia;隆	long;迟	chi,zhi;辉	hui;狠	hen;析	xi;缩	suo;穴	xue;萧	xiao;怨	yuan;磨	mo;伏	fu;辞	ci;泥	ni;龄	ling;径	jing;鼻	bi;赖	lai;仰	yang;愤	fen;慕	mu;俄	e;映	ying;询	xun;惨	can;麦	mai;宿	su,xiu;倍	bei;粗	cu;腾	teng;稍	shao;截	jie;染	ran;乌	wu;愈	yu;岗	gang;柳	liu;铺	pu;涉	she;疾	ji;挡	dang;奉	feng;踏	ta;忠	zhong;伍	wu;躲	duo;籍	ji;努	nu;朗	lang;箱	xiang;裁	cai;帐	zhang;兼	jian;彼	bi;霞	xia;猪	zhu;悉	xi;扎	zha,za;劝	quan;薄	bao,bo;筑	zhu;俊	jun;鞋	xie;距	ju;侵	qin;欣	xin;挤	ji;媒	mei;吐	tu;魂	hun;洁	jie;枝	zhi,qi;盈	ying;阻	zu;陷	xian;甲	jia;郑	zheng;鸣	ming;倘	tang;剩	sheng;颗	ke;拖	tuo;舒	shu;惠	hui;昏	hun;振	zhen;戒	jie;丧	sang;焦	jiao;爬	pa;凌	ling;慧	hui;偶	ou;晃	huang;桃	tao;赤	chi;烂	lan;骗	pian;措	cuo;页	ye;凶	xiong;泰	tai;尸	shi;坡	po;勒	lei,le;疗	liao;塔	ta,da;尘	chen;躺	tang;殊	shu;慰	wei;坛	tan;甘	gan;咬	yao;拒	ju;彪	biao;炸	zha;井	jing;崇	chong;饮	yin;祝	zhu;汪	wang;牢	lao;桂	gui;尾	wei,yi;漂	piao;聊	liao;撒	sa;恰	qia;凝	ning;矛	mao;於	yu,wu;宾	bin;绪	xu;彭	peng;肚	du;匆	cong;描	miao;粉	fen;贼	zei;乏	fa;盾	dun;愁	chou;斜	xie;裂	lie;滑	hua;斐	fei;废	fei;寂	ji;涌	yong;详	xiang;汤	tang,shang;彻	che;玄	xuan;斤	jin;轰	hong;奸	jian;怜	lian;朵	duo;佳	jia;皆	jie;鸟	niao,diao;邦	bang;扶	fu;毁	hui;聪	cong;辩	bian;瓶	ping;饿	e;蛇	she,yi;捕	bu;搬	ban;沈	shen,chen;枫	feng;舅	jiu;幽	you;魔	mo;琴	qin;挣	zheng;聘	pin;弯	wan;墓	mu;欺	qi;悟	wu;蒋	jiang;臣	chen;返	fan;违	wei;亏	kui;丢	diu;援	yuan;赫	he;魏	wei;耐	nai;佩	pei;酸	suan;盟	meng,ming;胖	pang,pan;傻	sha;绕	rao;哼	heng,hng;秦	qin;屈	qu;辱	ru;昨	zuo;瘦	shou;暂	zan;箭	jian;署	shu;赴	fu;递	di;猜	cai;潜	qian;鸿	hong;绩	ji;耀	yao;涂	tu;割	ge;豆	dou;闷	men;亭	ting;祥	xiang;励	li;宇	yu;泛	fan;狼	lang;悔	hui;搭	da;舰	jian;浮	fu;牵	qian;符	fu;肃	su;奴	nu;爆	bao;姊	zi;幼	you;夹	jia,ga;邀	yao;疯	feng;允	yun;恼	nao;租	zu;椅	yi;尺	chi,che;侍	shi;腐	fu;颤	chan,zhan;扭	niu;菲	fei;瓦	wa;擦	ca;辣	la;奏	zou;殷	yin,yan;埋	mai,man;摔	shuai;盼	pan;吟	yin;渡	du;衫	shan;跨	kua;醉	zui;艰	jian;掩	yan;荷	he;苍	cang;旋	xuan;揭	jie;桑	sang;仗	zhang;莲	lian;钻	zuan;宏	hong;幻	huan;刃	ren;峡	xia;辽	liao;娃	wa;凯	kai;患	huan;障	zhang;丐	gai;衡	heng;猫	mao;丑	chou;涛	tao;暖	nuan;溜	liu;锅	guo;奈	nai;罚	fa;拾	shi,she;浓	nong;键	jian;脉	mai,mo;锁	suo;邻	lin;臭	chou,xiu;芳	fang;垂	chui;捉	zhuo;恢	hui;姆	mu;砍	kan;驾	jia;恭	gong;挨	ai;祸	huo;曹	cao;慈	ci;抖	dou;泉	quan;览	lan;澳	ao;脏	zang;疼	teng;铜	tong;羞	xiu;档	dang;抛	pao;苗	miao;惑	huo;肥	fei;驱	qu;窝	wo;裤	ku;估	gu;胞	bao;柄	bing;阔	kuo;杜	du;勤	qin;舟	zhou;帽	mao;玛	ma;撤	che;频	pin;禅	chan,shan;柯	ke;莱	lai;堪	kan;寸	cun;哀	ai;熊	xiong;腹	fu;尝	chang;敲	qiao;勃	bo;巡	xun;盗	dao;筹	chou;扣	kou;池	chi;浅	qian;柴	chai;埃	ai;嫁	jia;枚	mei;稀	xi;雕	diao;厌	yan;瓜	gua;寿	shou;跌	die;扯	che;董	dong;锦	jin;鉴	jian;刷	shua;趋	qu;捐	juan;傲	ao;贯	guan;殿	dian;拨	bo;逊	xun;踢	ti;赔	pei;姿	zi;迁	qian;黎	li;祭	ji;滴	di;袭	xi;慌	huang;鞭	bian;茫	mang;逢	feng;屠	tu;昆	kun;柏	bai,bo;驶	shi;咐	fu;植	zhi;惧	ju;纽	niu;捷	jie;圳	zhen;牲	sheng;踪	zong;丛	cong;漠	mo;锐	rui;喇	la;乾	qian,gan;霍	huo;湿	shi;睁	zheng;仔	zi,zai;吵	chao;悠	you;沟	gou;墨	mo;串	chuan;俱	ju;陶	tao;贡	gong;浑	hun;赢	ying;屁	pi;驰	chi;棒	bang;匹	pi;拼	pin;恒	heng;邪	xie,ye;脆	cui;糟	zao;扮	ban;贤	xian;饰	shi;偿	chang;拆	chai,ca;缠	chan;摄	she;拟	ni;滋	zi;嘿	hei;旨	zhi;闯	chuang;贺	he;翠	cui;缝	feng;饱	bao;劫	jie;抚	fu;挖	wa;册	ce;叛	pan;肖	xiao;熙	xi;炼	lian;宪	xian;庙	miao;碧	bi;盒	he;谊	yi;储	chu;冯	ping,feng;唤	huan;贪	tan;卧	wo;翼	yi;扰	rao;胁	xie;跪	gui;碑	bei;呵	he;甜	tian;洒	sa,xian;谱	pu;莎	sha,suo;娜	nuo;阁	ge;庸	yong;鹏	peng;覆	fu;玲	ling;侯	hou;抹	ma,mo;卢	lu;碍	ai;综	zong,zeng;丘	qiu;晕	yun;拦	lan;燃	ran;昌	chang;吞	tun;嫌	xian;狄	di;押	ya;舌	she;琳	lin;雾	wu;曼	man;耻	chi;柜	gui,ju;摊	tan;削	xue,xiao;戚	qi;杆	gan;岩	yan;喂	wei;扔	reng;逝	shi;诞	dan;悬	xuan;爽	shuang;崔	cui;廷	ting;凑	cou;痴	chi;盆	pen;御	yu;酷	ku;艾	ai,yi;唉	ai;姥	lao,mu;笼	long;颠	dian;姻	yin;携	xie;愧	kui;芬	fen;穆	mu;扇	shan;郁	yu;掷	zhi;怔	zheng;芯	xin;鼠	shu;纠	jiu;疆	jiang;曰	yue;傅	fu;袍	pao;唇	chun;稣	su;捧	peng;勾	gou;牧	mu;儒	ru;慨	kai;筋	jin;柱	zhu;卑	bei;咽	yan,ye;吨	dun;虫	chong;绳	sheng;厨	chu;冤	yuan;涨	zhang;皱	zhou;疲	pi;赌	du;饶	rao;矿	kuang;畅	chang;煤	mei;腕	wan;喷	pen;遣	qian;浩	hao;翁	weng;咨	zi;镖	biao;屏	ping,bing;仲	zhong;嘻	xi;吩	fen;棉	mian;孟	meng;撑	cheng;炉	lu;泄	xie,yi;葬	zang;搜	sou;添	tian;遵	zun;迪	di;伪	wei;兆	zhao;欠	qian;谅	liang;炎	yan;氛	fen;杖	zhang;瞎	xia;钓	diao;肠	chang;披	pi;剥	bao,bo;誓	shi;赚	zhuan,zuan;役	yi;泡	pao;逆	ni;矮	ai;吊	diao;填	tian;嘉	jia;烛	zhu;厦	sha,xia;夕	xi;衰	shuai,cui;液	ye;薛	xue;仆	pu;迈	mai;齿	chi;谨	jin;呈	cheng;昂	ang;抄	chao;弥	mi;渴	ke;梯	ti;疏	shu;耗	hao;瞪	deng;斥	chi;夸	kua;蒂	di;剪	jian;娶	qu;痕	hen;弗	fu;姚	yao;债	zhai;妥	tuo;璃	li;掏	tao;刹	sha,cha;晶	jing;衷	zhong;肤	fu;鹿	lu;拓	ta,tuo;卓	zhuo;症	zheng;糖	tang;钦	qin;绵	mian;哩	li;诱	you;枯	ku;歇	xie;塑	su;妨	fang;豫	yu;抑	yi;珊	shan;棍	gun;晋	jin;淋	lin;悦	yue;敦	dun,dui;艳	yan;玻	bo;砸	za;嚷	rang;盲	mang;辨	bian;葛	ge;罕	han;矩	ju;泳	yong;宅	zhai;贷	dai;膀	bang,pang;捏	nie;颈	jing,geng;践	jian;脖	bo;贾	gu,jia;轿	jiao;脾	pi;堡	bao,bu,pu;娇	jiao;浙	zhe;劣	lie;潇	xiao;赐	ci;陀	tuo;蓄	xu;坟	fen;颂	song;漏	lou;杭	hang;茅	mao;砖	zhuan;瞬	shun;鹤	he;辟	bi,pi;渔	yu;乖	guai;霸	ba;襄	xiang;炒	chao;哑	ya;浦	pu;饼	bing;牺	xi;滩	tan;钉	ding;吁	yu,xu;锡	xi;赠	zeng;哄	hong;铃	ling;顽	wan;殖	zhi,shi;鹰	ying;蔡	cai;催	cui;芙	fu;彬	bin;拚	pin,pan;轨	gui;哟	yo,yao;歉	qian;盯	ding;硕	shuo;惹	re;契	qi,qie;愚	yu;帅	shuai;惶	huang;憾	han;懒	lan;姨	yi;喘	chuan;兽	shou;陌	mo;罩	zhao;猎	lie;嵩	song;盐	yan;饥	ji;凄	qi;喉	hou;宴	yan;腔	qiang;翰	han;膝	xi;陵	ling;蜂	feng;逻	luo;劈	pi;廉	lian;裹	guo;骄	jiao;贩	fan;绘	hui;崖	ya;辰	chen;涯	ya;戈	ge;坑	keng;遮	zhe;擒	qin;蛮	man;芷	zhi;堵	du;雇	gu;挽	wan;眠	mian;吻	wen;孝	xiao;泊	bo,po;撕	si,xi;虹	hong,jiang;叙	xu;粹	cui;勉	mian;竭	jie;歪	wai;慎	shen;棵	ke;朴	pu,piao,po;械	xie;溪	xi;莉	li;斑	ban;磕	ke;寡	gua;循	xun;斩	zhan;掠	lüe;吕	lü;昔	xi;郊	jiao;爵	jue;徽	hui;磁	ci;俯	fu;谭	tan;鼎	ding;拂	fu,bi;俺	an;嫂	sao;帕	pa;嗯	ng,ńg,ňg;冻	dong;婉	wan;桐	tong;骆	luo;泼	po;匠	jiang;艇	ting;谦	qian;妓	ji;菩	pu;厕	ce,si;俘	fu;毅	yi;岭	ling;丫	ya;畏	wei;湘	xiang;桶	tong;嗓	sang;煌	huang;鲍	bao;粒	li;巷	xiang,hang;帘	lian;秃	tu;腊	la,xi;仓	cang;拐	guai;绑	bang;啥	sha;荐	jian;倪	ni;瑟	se;廊	lang;鸭	ya;蜜	mi;诊	zhen;棚	peng;掀	xian;筒	tong;媳	xi;纹	wen;秒	miao;沾	zhan;庞	pang;蹲	dun;骚	sao;歧	qi;艘	sou;芝	zhi;哗	hua;亩	mu;券	quan,xuan;趟	tang;巾	jin;淫	yin;谎	huang;寞	mo;灌	guan;篮	lan;妄	wang;搁	ge;侄	zhi;厢	xiang;叉	cha;俞	yu,shu;伐	fa;宰	zai;瞒	man;宙	zhou;肿	zhong;漆	qi;怖	bu;吾	wu;吼	hou;侨	qiao;叠	die;啸	xiao;罐	guan;肆	si;裙	qun;泣	qi;胀	zhang;赋	fu;熬	ao;趁	chen;咳	hai,ke;愉	yu;恳	ken;辜	gu;肌	ji;婴	ying;羽	yu;躬	gong;毙	bi;拘	ju;叮	ding;哇	wa;晴	qing;谜	mi,mei;淮	huai;旺	wang;逸	yi;琼	qiong;姜	jiang;呜	wu;窜	cuan;颁	ban;薪	xin;寨	zhai;尿	niao,sui;颊	jia;逮	dai;卜	bu,bo;昭	zhao;浸	jin;刮	gua,ka;宛	wan,yuan;嘱	zhu;囊	nang;寓	yu;驳	bo;倡	chang;浴	yu;咕	gu;挪	nuo;搏	bo;蓬	peng;晌	shang;渠	qu;兜	dou;喃	nan;夷	yi;沪	hu;贱	jian;魄	po,bo,tuo;舵	duo;晰	xi;僵	jiang;糕	gao;裔	yi;秩	zhi;倚	yi;塌	ta;恍	huang;钩	gou;嘲	chao;傍	bang;裕	yu;煮	zhu;乳	ru;勿	wu;竖	shu;惩	cheng;睹	du;株	zhu;绣	xiu;妖	yao;讶	ya;咖	ka,ga;纲	gang;胎	tai;滨	bin;耕	geng;嗤	chi;舱	cang;娱	yu;匪	fei;鸦	ya;胃	wei;躁	zao;狮	shi;砰	peng;妮	ni;凛	lin;龟	gui,jun,qiu;裸	luo;嫣	yan;甫	fu;窑	yao;塘	tang;纤	xian,qian;宠	chong;链	lian;拱	gong;尹	yin;掘	jue;坝	ba;狭	xia;铭	ming;淳	chun;沐	mu;馨	xin;潘	pan;甩	shuai;榜	bang;渊	yuan;羡	xian;侮	wu;卿	qing;兀	wu;喧	xuan;履	lü;猴	hou;枉	wang;衬	chen;畔	pan;凳	deng;缅	mian;弦	xian;畜	xu,chu;粞	xi;溢	yi;搂	lou;乞	qi;旬	xun;缚	fu;灿	can;舆	yu;雁	yan;倦	juan;酬	chou;韵	yun;媚	mei;堤	di;攀	pan;窃	qie;嫩	nen;遂	sui;澄	cheng,deng;侦	zhen;陕	shan;陋	lou;笨	ben;匙	shi,chi;沫	mo;耸	song;踩	cai;酱	jiang;壶	hu;啡	fei;碌	lu,liu;痒	yang;鄙	bi;壳	ke,qiao;贞	zhen;霉	mei;蠢	chun;芦	lu;胳	ge,ga;矣	yi;焰	yan;脊	ji;囚	qiu;辅	fu;账	zhang;佐	zuo;僚	liao;雀	que,qiao;撰	zhuan;耍	shua;枕	zhen;捡	jian;涵	han;逗	dou;粪	fen;朦	meng;肝	gan;蒸	zheng;滥	lan;筷	kuai;溃	kui,hui;隶	li;烤	kao;缸	gang;弓	gong;潭	tan;旷	kuang;哎	ai,ei;峻	jun;爪	zhao,zhua;怯	qie;茂	mao;芒	mang,wang;肢	zhi;稻	dao;兔	tu;圾	ji,se;喻	yu;框	kuang;缴	jiao,zhuo;蹈	dao;哨	shao;颖	ying;菊	ju;喀	ka;妆	zhuang;淹	yan;瓷	ci;淀	dian;蜡	la;嚼	jue,jiao;剂	ji;逛	guang;骤	zhou;暑	shu;襟	jin;庐	lu;苹	ping;晒	shai;悼	dao;昧	mei;拢	long;函	han;胧	long;胶	jiao;抒	shu;乒	ping;讽	feng;歹	dai;旱	han;葡	pu;惟	wei;拣	jian;耿	geng;廿	nian;桩	zhuang;乙	yi;谣	yao;坠	zhui;滞	zhi;孕	yun;诵	song;梳	shu;冈	gang;肺	fei;丸	wan;霜	shuang;汁	zhi;纱	sha;衔	xian;腻	ni;甸	dian;啤	pi;坎	kan;稼	jia;禾	he;愣	leng;脂	zhi;萄	tao;捞	lao;搅	jiao;屑	xie;伞	san;蝶	die;铸	zhu;躯	qu;稚	zhi;腥	xing;藤	teng;陡	dou;烫	tang;梨	li;哦	o,e;浆	jiang;僻	pi;坊	fang;焉	yan;隙	xi;淘	tao;垮	kua;滔	tao;酿	niang;鹅	e;兹	zi,ci;捣	dao;栋	dong;瑰	gui;敞	chang;癌	ai;缆	lan;烁	shuo;玫	mei;诈	zha;煞	sha;膜	mo;焚	fen;粘	zhan,nian;摧	cui;疫	yi;幢	zhuang,chuang;汝	ru;毯	tan;挫	cuo;纺	fang;朽	xiu;锤	chui;兑	dui;辫	bian;堕	duo;笛	di;觅	mi;蔽	bi;谐	xie;氓	mang,meng;蔑	mie;沸	fei;藉	ji,jie;卸	xie;熄	xi;扁	bian,pian;炭	tan;慷	kang;篷	peng;眨	zha;譬	pi;叨	dao,tao;蔬	shu;绸	chou;婿	xu;寥	liao;浇	jiao;乓	pang;膏	gao;膛	tang;琢	zuo,zhuo;啪	pa;淑	shu;叭	ba;弊	bi;灶	zao;醋	cu;斌	bin;奠	dian;屯	tun;膨	peng;沦	lun;缕	lü;壤	rang;冶	ye;暇	xia;揉	rou;萝	luo;翔	xiang;蛛	zhu;栗	li;荫	yin;讥	ji;葱	cong;巩	gong;粥	zhou,yu;斋	zhai;迄	qi;帜	zhi;菌	jun;铅	qian;贿	hui;绒	rong;侣	lü;锻	duan;谴	qian;汹	xiong;敷	fu;宵	xiao;讳	hui;锣	luo;撼	han;亨	heng;淌	tang;扛	kang,gang;杉	shan,sha;燥	zao;匀	yun;渺	miao;碟	die;嵌	qian;沃	wo;剖	pou;姬	ji;绰	chuo,chao;嗦	suo;绞	jiao;轴	zhou;垒	lei;噪	zao;蕴	yun;邵	shao;咋	za,ze,zha;坪	ping;佣	yong;卵	luan;昼	zhou;憋	bie;奎	kui;捂	wu;煎	jian;瞅	chou,qiu;蚀	shi;熔	rong;虾	xia,ha;谬	miu;绅	shen;镶	xiang;聋	long;募	mu;垄	long;彦	yan;翘	qiao;趴	pa;杏	xing;彰	zhang;阐	chan;讼	song;枢	shu;崭	zhan;蒲	pu;泻	xie;俭	jian;橡	xiang;溶	rong;瀑	pu;扒	ba,pa;琛	chen"
-.split(/;|\t/g)
-        var i, j, k, sub, subarr, hier
-        for (i=0, cL=chineseArr.length; i<cL; i+=2) {
-            varPY = chineseArr[i+1].split(',')
-            for (j=0, pL=varPY.length; j<pL; j++) {
-                hier = chineseArr[i]
-                if (PYArr[varPY[j]])
-                    PYArr[varPY[j]].push(hier)
-                else 
-                    PYArr[varPY[j]]=[hier]
-                for (k=1;k < varPY[j].length; k++) {
-                    sub=varPY[j].substr(0,k)
-                    if (subarr=PYincomplete[sub]) {
-                        if (subarr.length <9 && subarr[subarr.length-1] != hier)
-                            PYincomplete[sub].push(hier)
-                    } else 
-                        PYincomplete[sub]=[hier]
-                }
-            }
-        }
-        chineseArr = null;
-    }
-    _construct();
-}
-VirtualKeyboard.addLayout('CN','Chinese (Simplified) US',
-'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./'
-,{0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'},null,VirtualKeyboard.Langs.Chinese.processChar);
+     var simpList="的一是不了人我在有他这中大来上国个到说们为子和你地出道也时年得就那要下以生会自着去之过家学对可她里后小么心多天而能好都然没日于起还发成事只作当想看文无开手十用主行方又如前所本见经头面公同三已老从动两长知民样现分将外但身些与高意进把法此实回二理美点月明其种声全工己话儿者向情部正名定女问力机给等几很业最间新什打便位因重被走电四第门相次东政海口使教西再平真听世气信北少关并内加化由却代军产入先山五太水万市眼体别处总才场师书比住员九笑性通目华报立马命张活难神数件安表原车白应路期叫死常提感金何更反合放做系计或司利受光王果亲界及今京务制解各任至清物台象记边共风战干接它许八特觉望直服毛林题建南度统色字请交爱让认算论百吃义科怎元社术结六功指思非流每青管夫连远资队跟带花快条院变联言权往展该领传近留红治决周保达办运武半候七必城父强步完革深区即求品士转量空甚众技轻程告江语英基派满式李息写呢识极令黄德收脸钱党倒未持取设始版双历越史商千片容研像找友孩站广改议形委早房音火际则首单据导影失拿网香似斯专石若兵弟谁校读志飞观争究包组造落视济喜离虽坐集编宝谈府拉黑且随格尽剑讲布杀微怕母调局根曾准团段终乐切级克精哪官示冲竟乎男举客证苦照注费足尔招群热推晚响称兴待约阳哥惊吗整支古汉突号绝选吧参刊亚复伤类备欢另港势刻星断陈掌农夜般念价脑规底故省妈刚句显消衣陆器确破具居批送泽紧帮线存愿奇害增杨料州节左装易著急久低岁需酒河初游严铁族除份敢胡血企仍投闻斗纪脚右苏标饭云病医阿答土况境软考娘村刀击仅查引朝育续独罗买户护喝朋供责项背余希卫列图室乱刘爷龙咱章席错兄暗创排春须承案忙呼树痛沉啊灵职乡细诉态停印笔夏助福块冷球姑划既质巴致湾演木韦怪围静旁园否副辑采食登够赛米假较姐楼获孙宣穿诗歌速忽堂敌试谢央怀顾验营止姓养丽属景郭依威按恶慢座罪维渐胜藏皇街激异摘角瞧负施模草某银露阵值班层修差味织药馆密亮律习田简免毒归波型屋换救寄帝退洋丝湖睡劳妇伯尼皮祖雄婚康评追哈络店翻环礼跑超叶压占均永烈奖婆赶富兰录画遇顿艺普判源亿素船继尚嘴察雨优您险烟阶担散板钟访妹伸佛限讨临吴摇跳曲练构玩玉犯厂肯协幸挥效齐封温疑肉攻纸策充顶寻宁沙防抓例股卖顺警梦剧善蒙票良范坚端靠杂贵怒稿拍率旧掉啦莫授守油恩积益县哭罢庭窗扬忘午卡雪菜牌牛脱博丈弹洲松坏邓鲜短毕置楚欧略智岛抗妻抱载败枪适虚预睛刺爹纷介括销降鱼奔忍宗盘耳野讯配禁索赵默徒架灯峰状款移爸托洪升伙订毫狐镇床互套旅逃骂输唱靖秘词困泪熟财鬼骨申欲征私舞秋巨迎秀搞丁吸审遍墙朱圣避跃忌桌执悲域晓弄亡桥辈闪隐劲闹恐呀付敬监厅库震材冰醒庆绿腿述徐尊硬额误借纳折售遗暴缺迷鲁探货童缓伟君庄凡危烧彩抢控胸戏篇趣束谓概射课洞麻杯透邮荣懂拥献洗休迫叹狗偷阴汽拜横鼓健厚签丹洛喊蓉轮岸奶淡潮训圆卷释诸妙唯夺逐燕呆测浪抽盖偏阅购途纵耶摸挂航择恨舍拳竹唐誉乘弱检宫仪旗含袁址摆奥番混灭握牙虑召猛宽盛核袋绍补典圈丰雅吉赞茶亦谷稳汇厉届迹雷序寒附鸡遭挑肩忆柔戴惜隔豪诚瑞减播麼针棋竞臂挺操腰狂替梅固伦宋钢诺残延虎迅灾悄岳乔川仇季吹粮聚译珠叔谋础仁损融辆净敏伊仙巧零累享伴荡珍勇末奋胆弃烦糊犹税培抵僧锋乃遥摩坦後眉餐惯凭冠抬碰币启码冒汗俗灰督穷颇倾尖韩贸仿孤飘漫予紫侧沿拔袖梁赏幕壁旦晨纯闭凉扫尤炮碗贴插滚缘寺贝润氏冬扩栏荒哲逼吓堆撞郎俩蓝闲辛镜陪骑蛋促羊宜嘛颜贫幅驻萍污杰扑壮萨刑忧貌狱塞凤孔触恋岂森繁碎津侠隆迟辉狠析缩穴萧怨磨伏辞泥龄径鼻赖仰愤慕俄映询惨麦宿倍粗腾稍截染乌愈岗柳铺涉疾挡奉踏忠伍躲籍努朗箱裁帐兼彼霞猪悉扎劝薄筑俊鞋距侵欣挤媒吐魂洁枝盈阻陷甲郑鸣倘剩颗拖舒惠昏振戒丧焦爬凌慧偶晃桃赤烂骗措页凶泰尸坡勒疗塔尘躺殊慰坛甘咬拒彪炸井崇饮祝汪牢桂尾漂聊撒恰凝矛於宾绪彭肚匆描粉贼乏盾愁斜裂滑斐废寂涌详汤彻玄斤轰奸怜朵佳皆鸟邦扶毁聪辩瓶饿蛇捕搬沈枫舅幽魔琴挣聘弯墓欺悟蒋臣返违亏丢援赫魏耐佩酸盟胖傻绕哼秦屈辱昨瘦暂箭署赴递猜潜鸿绩耀涂割豆闷亭祥励宇泛狼悔搭舰浮牵符肃奴爆姊幼夹邀疯允恼租椅尺侍腐颤扭菲瓦擦辣奏殷埋摔盼吟渡衫跨醉艰掩荷苍旋揭桑仗莲钻宏幻刃峡辽娃凯患障丐衡猫丑涛暖溜锅奈罚拾浓键脉锁邻臭芳垂捉恢姆砍驾恭挨祸曹慈抖泉览澳脏疼铜羞档抛苗惑肥驱窝裤估胞柄阔杜勤舟帽玛撤频禅柯莱堪寸哀熊腹尝敲勃巡盗筹扣池浅柴埃嫁枚稀雕厌瓜寿跌扯董锦鉴刷趋捐傲贯殿拨逊踢赔姿迁黎祭滴袭慌鞭茫逢屠昆柏驶咐植惧纽捷圳牲踪丛漠锐喇乾霍湿睁仔吵悠沟墨串俱陶贡浑赢屁驰棒匹拼恒邪脆糟扮贤饰偿拆缠摄拟滋嘿旨闯贺翠缝饱劫抚挖册叛肖熙炼宪庙碧盒谊储冯唤贪卧翼扰胁跪碑呵甜洒谱莎娜阁庸鹏覆玲侯抹卢碍综丘晕拦燃昌吞嫌狄押舌琳雾曼耻柜摊削戚杆岩喂扔逝诞悬爽崔廷凑痴盆御酷艾唉姥笼颠姻携愧芬穆扇郁掷怔芯鼠纠疆曰傅袍唇稣捧勾牧儒慨筋柱卑咽吨虫绳厨冤涨皱疲赌饶矿畅煤腕喷遣浩翁咨镖屏仲嘻吩棉孟撑炉泄葬搜添遵迪伪兆欠谅炎氛杖瞎钓肠披剥誓赚役泡逆矮吊填嘉烛厦夕衰液薛仆迈齿谨呈昂抄弥渴梯疏耗瞪斥夸蒂剪娶痕弗姚债妥璃掏刹晶衷肤鹿拓卓症糖钦绵哩诱枯歇塑妨豫抑珊棍晋淋悦敦艳玻砸嚷盲辨葛罕矩泳宅贷膀捏颈践脖贾轿脾堡娇浙劣潇赐陀蓄坟颂漏杭茅砖瞬鹤辟渔乖霸襄炒哑浦饼牺滩钉吁锡赠哄铃顽殖鹰蔡催芙彬拚轨哟歉盯硕惹契愚帅惶憾懒姨喘兽陌罩猎嵩盐饥凄喉宴腔翰膝陵蜂逻劈廉裹骄贩绘崖辰涯戈坑遮擒蛮芷堵雇挽眠吻孝泊撕虹叙粹勉竭歪慎棵朴械溪莉斑磕寡循斩掠吕昔郊爵徽磁俯谭鼎拂俺嫂帕嗯冻婉桐骆泼匠艇谦妓菩厕俘毅岭丫畏湘桶嗓煌鲍粒巷帘秃腊仓拐绑啥荐倪瑟廊鸭蜜诊棚掀筒媳纹秒沾庞蹲骚歧艘芝哗亩券趟巾淫谎寞灌篮妄搁侄厢叉俞伐宰瞒宙肿漆怖吾吼侨叠啸罐肆裙泣胀赋熬趁咳愉恳辜肌婴羽躬毙拘叮哇晴谜淮旺逸琼姜呜窜颁薪寨尿颊逮卜昭浸刮宛嘱囊寓驳倡浴咕挪搏蓬晌渠兜喃夷沪贱魄舵晰僵糕裔秩倚塌恍钩嘲傍裕煮乳勿竖惩睹株绣妖讶咖纲胎滨耕嗤舱娱匪鸦胃躁狮砰妮凛龟裸嫣甫窑塘纤宠链拱尹掘坝狭铭淳沐馨潘甩榜渊羡侮卿兀喧履猴枉衬畔凳缅弦畜粞溢搂乞旬缚灿舆雁倦酬韵媚堤攀窃嫩遂澄侦陕陋笨匙沫耸踩酱壶啡碌痒鄙壳贞霉蠢芦胳矣焰脊囚辅账佐僚雀撰耍枕捡涵逗粪朦肝蒸滥筷溃隶烤缸弓潭旷哎峻爪怯茂芒肢稻兔圾喻框缴蹈哨颖菊喀妆淹瓷淀蜡嚼剂逛骤暑襟庐苹晒悼昧拢函胧胶抒乒讽歹旱葡惟拣耿廿桩乙谣坠滞孕诵梳冈肺丸霜汁纱衔腻甸啤坎稼禾愣脂萄捞搅屑伞蝶铸躯稚腥藤陡烫梨哦浆僻坊焉隙淘垮滔酿鹅兹捣栋瑰敞癌缆烁玫诈煞膜焚粘摧疫幢汝毯挫纺朽锤兑辫堕笛觅蔽谐氓蔑沸藉卸熄扁炭慷篷眨譬叨蔬绸婿寥浇乓膏膛琢啪淑叭弊灶醋斌奠屯膨沦缕壤冶暇揉萝翔蛛栗荫讥葱巩粥斋迄帜菌铅贿绒侣锻谴汹敷宵讳锣撼亨淌扛杉燥匀渺碟嵌沃剖姬绰嗦绞轴垒噪蕴邵咋坪佣卵昼憋奎捂煎瞅蚀熔虾谬绅镶聋募垄彦翘趴杏彰阐讼枢崭蒲泻俭橡溶瀑扒琛丌丕丙丞丬乇乍乜乩亍亓亘亟亢亥亳亵亸仂仃仄仉仑仕仝仞仟仡仨仫仳仵伉伎伛伢伣伥伧伫伲伶伺伽佃佑佗佘佚佝佞佟佤佥佧佬佯佰佴佶佻佼佾侃侈侉侏侑侔侗侥侩侪侬俅俎俏俐俑俚俜俟俣俦俨俪俫俳俸俾倌倏倔倜倥倨倩倬倭倮偃偈偌偎偕偬偻偾傀傈傣傥傧傩傺僖僦僬僭僮僳儆儇儋儡兕兖兢兮冀冁冉冕冗冢冥冫冱冼冽凇凋凫凰凵凸凹凼凿刁刂刈刍刎刖删刨刬刭刳刽刿剀剁剃剌剐剔剜剞剡剽剿劁劂劐劓劢劬劭劾勋勐勖勘勚勰勺匈匍匏匐匕匚匝匡匣匦匮匾匿卅卉卒卞卟卣卤卦卩卮卯卺厄厉厍厐厘厝厣厥厩厮厶叁叟叩叱叵叻叼叽吆吏吒吖吝吠吡吣吭吮吱吲呃呋呐呒呓呔呕呖呗呙呛呤呦呱呲呶呷呸呻咀咂咄咆咎咏咒咔咙咚咛咝咣咤咦咧咩咪咫咭咯咴咸咻咿哂哆哉哌哏哐哒哓哔哕哙哚哜哝哞哧哮哳哺哽哿唁唆唏唑唔唛唝唠唡唢唣唧唪唬唰唳唷唼唾唿啁啃啄啉啐啕啖啜啧啬啭啮啴啵啶啷啻啼啾喁喈喋喏喑喔喙喟喱喳喵喹喽喾嗄嗅嗉嗌嗍嗑嗒嗔嗖嗜嗝嗟嗡嗣嗥嗨嗪嗫嗬嗯嗲嗳嗵嗷嗽嗾嘀嘁嘈嘌嘎嘏嘘嘞嘟嘣嘤嘧嘬嘭嘶嘹噌噍噎噔噗噘噙噜噢噤噩噫噬噱噶噻噼嚅嚆嚎嚏嚓嚣嚯囔囗囝囟囡囤囫囱囵囹囿圃圄圉圊圜圩圪圬圭圮圯圹圻坂坌坍坜坞坤坨坩坫坭坯坳坶坷坻坼垃垅垆垌垓垛垠垡垢垣垤垦垧垩垫垭垱垲垴垸埂埏埒埔埕埘埙埚埝埠埤埭埯埴埸埽堀堇堋堍堑堙堞堠堰塄塍塥塬塾墀墁墅墉墒墚墟墩墼壅壑壕壬壸壹夂夔夙夤夥夭夯夼奁奂奄奕奘奚奢妁妃妊妍妒妗妞妣妤妩妪妫妯妲妾姒姗姘姝姣姹娄娅娆娈娉娌娑娓娟娠娣娥娩娲娴娼婀婊婕婢婧婪婳婵婶婷婺媛媪媲媵媸媾嫉嫒嫔嫖嫘嫜嫠嫡嫦嫫嫱嬉嬖嬗嬲嬴嬷孀孑孓孙孚孛孜孢孥孪孬孰孱孳孵孺孽宄宓宕宥宦宸寅寇寐寝寤寮寰尉尕尜尢尥尧尬尴尻屃屉屎屐屙屡屣屦屮屹屺屿岈岌岍岐岑岔岖岘岙岚岜岢岣岫岬岱岵岷岽岿峁峄峋峒峙峣峤峥峦峨峪峭崂崃崄崆崎崛崞崤崦崧崩崮崴崽崾嵇嵊嵋嵘嵚嵛嵝嵫嵬嵯嵴嶂嶙嶝嶷巅巍巛巢巫巯巳巽帆帏帑帔帖帙帚帛帧帱帷帻帼幂幄幌幔幛幞幡幺庀庇庋庑庖庚庠庥庳庵庶庹庾廑廒廓廖廛廨廪廴廾弁弈弋弑弘弛弧弩弪弭弼彀彐彖彗彘彝彡彤彳彷徂徇徉徊徕徘徙徜徨徭徵徼忉忏忐忑忒忖忝忡忤忪忭忮忱忸忻忾忿怂怃怄怅怆怊怍怏怙怛怠怡怦怩怫怵怼怿恁恂恃恕恙恚恝恣恤恧恪恫恬恸恹恺恻恽恿悃悌悍悒悖悚悛悝悫悭悮悯悱悴悸悻惆惋惕惘惚惝惦惫惬惭惮惰惴惺愀愆愍愎愕愠愦愫慊慑慝慵憎憔憝憧憨憩憬憷懈懊懋懑懔懦懵懿戆戊戋戌戍戎戕戗戛戟戡戢戤戥戬戮戯戳戽戾扃扈扉扦扪扳扼抉抟抠抡抨抻抿拄拇拈拊拌拎拗拙拧拭拮拯拴拶拷拽挈挎挚挛挜挝挞挟挠挢挦挲挹捃捅捆捋捌捍捎捝捩捭捱捶捺捻掂掇掊掎掐掖掣掬掭掮掰掳掴掸掺掼掾揄揆揍揎揖揞揠揣揩揪揲揶揸揽揾揿搀搋搌搐搓搔搛搠搡搦搪搴搽搿摁摅摈摒摞摭摹摺撂撄撅撇撖撙撩撬撮撵撷撸撺擀擂擅擎擐擗擘擞擢擤攉攒攘攥攫攮攴攵攸敉敕敖敛敝敫斓斛斟斡斧斫旃旄旆旌旎旒旖旭旮旯旰旸昀昃昊昕昙昝昱昴昵昶昽晁晏晔晖晗晟晡晤晦晷晾暄暌暝暧暨暮暹暾曙曛曜曝曦曩曳曷朊朐朔朕札杈杌杓杞杠杩杪杲杳杵杷杼枇枋枘枞枣枥枧枨枭枰枳枵枷枸柁柃柑柒柘柙柚柝柞柠柢柩柬柰柽柿栀栅栈栉栊栌栎栓栖栝栩栲栳栽栾桀桁桄桅桉桊桎桓桔桕桠桡桢桤桦桧桨桫桴桷梃梆梏梓梗梢梧梭梵梼梾梿棁棂棕棘棠棣棰棱棹棺棼椁椋椎椐椒椟椠椤椭椰椴椹椽椿楂楔楗楝楞楠楣楦楫楮楱楷楸楹榀榄榅榆榇榈榉榍榔榕榘榛榧榨榫榭榱榴榷榻槁槊槌槎槐槔槚槛槟槠槭槲槽槿樊樗樘樟樨樯樱樵樽樾橄橇橐橘橙橛橥橱橹橼檀檄檎檐檑檗檠檩檫檬欤欷欹歃歆歙歼殁殂殃殄殆殇殉殍殒殓殚殛殡殪殳殴毂毋毓毖毗毡毪毳毵毹毽氅氆氇氍氐氕氖氘氙氚氟氡氢氤氦氧氨氩氪氮氯氰氲氽汀汆汊汐汔汕汛汜汞汨汩汰汲汴汶汾沁沂沅沆沌沏沓沔沛沣沤沥沧沩沭沮沱沲沼沽泅泌泐泓泔泖泗泞泠泫泮泯泱泵泶泷泸泺泾洄洇洌洎洙洚洧洫洮洱洳洵洹洼洽浃浈浊浍浏浐浒浔浚浜浞浠浣浯浼涅涎涑涓涔涕涝涞涟涠涡涣涤涧涩涪涫涮涸涿淄淅淆淇淖淙淝淞淠淤淦淬淼渌渍渎渑渖渗渚渝渣渤渥渫渭渲湃湄湍湎湓湔湛湟湫湮溅溆溉溏溘溟溥溧溯溱溲溴溷溺溻溽滁滂滇滏滓滕滗滟滠满滢滤滦滪滹漉漓漕漤漩漪漭漯漱漳漶漾潆潋潍潞潢潦潲潴潸潺潼澈澉澌澍澎澜澡澧澶澹濂濉濑濒濞濠濡濮濯瀚瀛瀣瀵瀹灏灞灬灸灼炀炅炊炔炕炖炙炜炝炫炬炯炱炳炷炻炽烀烃烊烘烙烨烩烬烯烷烹烽焊焐焓焕焖焘焙焯焱煅煊煜煦煨煲煳煴煸煺煽熏熘熠熨熳熵熹燎燔燠燧燮燹爝爨爰爻爿牍牒牖牝牟牡牦牮牯牾牿犀犁犄犊犋犍犏犒犟犬犰犴犷犸狁狃狈狍狎狒狙狝狞狡狨狩狯狰狲狳狴狷狸狺狻猁猃猊猓猕猖猗猝猞猡猢猥猩猬猱猷猸猹猾猿獍獐獒獗獠獬獭獯獾玎玑玖玚玟玢玮玱玳玷玺珀珂珈珉珏珐珑珙珞珥珧珩珰珲琅琉琊琏琐琚琥琦琨琪琬琮琰琵琶瑁瑕瑗瑙瑚瑛瑜瑭瑶瑷瑾璀璁璇璋璎璐璜璞璧璨璩璺瓒瓞瓠瓢瓣瓤瓮瓯瓴瓿甄甍甏甑甓甙甥甬甭甯町甾畀畈畋畎畚畛畦畲畴畸畹畿疃疋疔疖疙疚疝疟疠疡疣疤疥疬疭疮疰疱疳疴疵疸疹疽痂痃痄痈痉痊痍痔痖痘痞痢痣痤痦痧痨痪痫痰痱痹痼痿瘀瘁瘃瘅瘆瘊瘌瘐瘕瘗瘘瘙瘛瘟瘠瘢瘤瘥瘩瘪瘫瘭瘰瘳瘴瘵瘸瘼瘾瘿癀癃癍癔癖癜癞癣癫癯癸皂皈皋皎皑皓皖皙皤皱皲皴皿盂盅盍盎盏盔盥盱盹眄眇眈眍眙眚眢眦眩眬眭眯眵眶眷眸眺睃睇睐睑睚睢睥睦睨睫睬睽睾睿瞀瞄瞆瞌瞍瞑瞟瞠瞢瞥瞩瞰瞳瞵瞻瞽瞿矍矗矜矢矧矫矬矶矸矽矾砀砂砉砌砑砒砗砘砚砜砝砟砣砥砦砧砩砬砭砷砹砺砻砼砾硁硅硇硌硎硐硒硖硗硙硝硪硫硭硷硼碇碉碓碘碚碛碜碡碣碥碱碲碳碴碹碾磅磉磊磋磐磔磙磬磲磴磷磺礁礅礓礞礤礴礻祀祁祃祆祈祉祎祓祗祚祛祜祟祠祢祧祯祷祺禀禄禊禚禧禳禹禺禽秆秉秕秣秤秧秫秭秸秽秾稂稃稆稔稗稞稠稷稹稽穑穗穰穸穹窀窄窆窈窍窎窒窕窖窘窟窠窥窦窨窬窭窳窿竣竦竺竽竿笃笄笆笈笊笋笏笕笙笞笠笤笥笪笫笮笱笳笸笺笾筅筇筌筏筐筘筚筛筜筝筠筢筮筱筲筵筻筼箅箍箐箓箔箕箜箝箢箦箧箨箩箪箫箬箴箸篁篆篌篑篓篙篚篝篡篥篦篪篱篼篾簇簋簌簏簖簟簦簧簪簸簿籀籁籴籼籽粑粕粜粝粟粢粤粱粲粳粼粽糁糅糇糈糌糍糗糙糜糠糨糯糸紊絮絷綦綮縻繇纂纛纟纡纣纥纨纩纫纬纭纮纰纴纶纻纼纾绀绁绂绉绊绋绌绎绐绔绖绗绚绛绠绡绢绤绥绦绨绫绬绮绯绱绲绶绷绹绺绻绽绾缀缁缂缃缄缇缈缉缊缋缌缍缎缏缑缒缔缗缙缛缜缞缟缡缢缣缤缥缦缧缨缪缫缬缭缮缯缰缱缲缳缵缶罂罄罅罔罘罟罡罨罱罴罹罾羁羌羔羚羝羟羧羯羰羲羸羹羼羿翅翊翌翎翕翟翡翥翦翩翮翱翳耄耆耋耒耔耖耘耙耜耠耢耥耦耧耨耩耪耱耵耷耽聂聃聆聍聒聩聱聿肀肄肇肋肓肘肛肜肟肪肫肭肮肱肴肷肼肽肾胂胄胍胗胙胚胛胝胤胥胨胩胪胫胬胭胯胰胱胲胴胺胼脍脎脐脒脓脔脘脞脬脯脲脶腆腈腋腌腑腓腙腚腠腧腩腭腮腱腴腺腼腽膂膈膊膑膘膣膦膪膳膺膻臀臁臃臆臊臌臜臧臬臻臼臾舀舁舂舄舐舔舛舜舡舢舣舨舫舭舯舳舴舶舷舸舻舾艄艉艋艏艚艟艨艮艴艽艿芄芈芊芋芍芎芏芑芗芘芜芟芡芤芥芨芩芪芫芭芮芰芴芸芹芽芾苁苄苇苈苊苋苌苎苑苒苓苔苕苘苛苜苞苟苠苡苣苤苧苫苯苴苷苻茁茄茆茇茈茉茌茎茏茑茔茕茗茚茛茜茧茨茬茭茯茱茳茴茵茸茹茺茼荀荃荆荇荏荑荔荙荚荛荜荞荟荠荤荥荦荧荨荩荪荬荭荮荸荻荼荽莅莆莒莓莘莛莜莞莠莨莩莪莰莳莴莶莸莹莺莼莽菀菁菅菇菏菔菖菘菝菟菠菡菥菪菰菱菸菹菽萁萃萆萋萌萎萏萑萘萜萤萦萱萸萼葆葑葙葚葜葩葫葭葳葵葶葸葺蒇蒈蒉蒌蒎蒗蒜蒡蒯蒴蒹蒺蒽蒿蓁蓊蓍蓐蓑蓓蓖蓟蓠蓣蓥蓦蓰蓼蓿蔂蔌蔓蔗蔚蔟蔫蔷蔸蔹蔺蔻蔼蕃蕈蕉蕊蕖蕙蕞蕤蕨蕰蕲蕹蕺蕻蕾薅薇薏薜薤薨薮薯薰薷薹藁藐藓藕藜藩藻藿蘅蘑蘖蘧蘩蘸蘼虍虏虐虑虔虞虢虬虮虱虺虻虼虿蚁蚂蚊蚋蚌蚍蚓蚕蚜蚝蚣蚤蚧蚨蚩蚪蚬蚯蚰蚱蚴蚵蚶蚺蛀蛄蛆蛉蛊蛎蛏蛐蛑蛔蛘蛙蛞蛟蛤蛩蛭蛰蛱蛲蛳蛴蛸蛹蛾蜀蜃蜇蜈蜉蜊蜍蜒蜓蜕蜗蜘蜚蜞蜢蜣蜥蜩蜮蜱蜴蜷蜻蜾蜿蝇蝈蝉蝌蝎蝓蝗蝙蝠蝣蝤蝥蝮蝰蝴蝻蝼蝽蝾螀螂螃螅螈螋螓螗螟螨螫螬螭螯螳螵螺螽蟀蟆蟊蟋蟏蟑蟒蟓蟛蟠蟥蟪蟮蟹蟾蠃蠊蠓蠕蠖蠛蠡蠲蠹蠼衄衅衍衙衢衩衮衲衽衾衿袂袄袅袆袈袒袜袢袤袯袱袷袼裆裈裉裎裒裘裟裢裣裥裨裰裱裳裴裼裾褂褊褐褒褓褙褚褛褡褥褪褫褰褴褶襁襞襦襻覃觃觇觊觋觌觍觎觏觐觑觖觚觜觞觥觫觯觳訇訚訾詈詹誊謇謦讠讣讦讧讪讫讬讱讴讵讷讹讻诀诂诃诅诇诋诌诎诏诐诒诓诔诖诘诙诛诜诟诠诡诣诤诧诨诩诪诫诬诮诰诲诳诶诹诼诽诿谀谂谄谆谇谌谍谏谑谒谔谕谖谗谘谙谚谛谝谞谟谠谡谤谥谧谩谪谫谮谯谰谲谳谵谶豁豇豉豌豕豚豢豮豳豸豹豺貂貅貉貊貔貘贠贬贮贰贲贳贶贻贽赀赁赂赃赅赆赇赈赉赊赍赎赑赒赓赕赗赘赙赜赝赟赡赣赦赧赪赭赳趄趑趔趱趵趸趺趼趾趿跄跆跋跎跏跖跗跚跛跞跣跤跫跬跶跷跸跹跺跻跽踅踉踊踌踔踝踞踟踣踬踮踯踱踵踹踺踽蹀蹁蹂蹄蹇蹉蹊蹋蹑蹒蹙蹦蹩蹬蹭蹯蹰蹴蹶蹼蹿躅躇躏躐躔躜躞軎轧轩轪轫轭轱轲轳轵轶轷轸轹轺轼轾辀辁辂辄辇辊辋辌辍辎辏辐辒辔辕辖辗辘辙辚迂迓迕迢迤迥迦迨迩迭迮迳迸逄逅逋逍逑逖逞逡逦逭逯逵逶逾遁遄遏遐遑遒遘遛遢遨遴遽邂邃邈邋邑邕邗邙邛邝邡邢邬邯邰邱邳邴邶邸邹邺邾郄郅郇郏郐郓郗郛郜郝郡郢郦郧郫郯郴郸郾鄂鄄鄞鄢鄣鄯鄱鄹酂酃酆酉酊酋酌酎酏酐酗酚酝酞酡酢酣酤酥酦酩酪酮酯酰酲酴酵酶酹酽酾醅醇醌醍醐醑醚醛醢醣醪醭醮醯醴醵醺釉釜銎銮鋈錾鍪鎏鏊鏖鐾鑫钅钆钇钊钋钌钍钎钏钐钑钒钔钕钖钗钘钙钚钛钜钝钞钠钡钣钤钥钧钨钪钫钬钭钮钯钰钲钳钴钵钶钷钸钹钺钼钽钾钿铀铂铄铆铇铈铉铊铋铌铍铎铏铐铑铒铓铔铕铖铗铘铙铚铛铝铞铟铠铡铢铣铤铥铦铧铨铩铪铫铬铮铯铰铱铲铳铴铵铷铹铻铼铽铿锂锃锄锆锇锈锉锊锌锍锎锏锑锒锓锔锕锖锗锘锚锛锜锝锞锟锠锢锥锧锨锩锪锫锬锭锯锰锱锲锳锴锵锶锷锸锹锺锼锽锾锿镀镁镂镃镄镅镆镈镉镊镋镌镍镎镏镐镑镒镓镔镕镗镘镙镚镛镝镞镟镠镡镢镣镤镥镦镧镨镩镪镫镬镭镮镯镰镱镲镳镴镵闩闫闬闰闱闳闵闶闸闺闼闽闾闿阀阂阃阄阆阇阈阉阊阋阌阍阎阏阑阒阓阕阖阗阘阙阚阛阜阝阡阢阪阮阱阼阽陂陇陉陔陛陟陧陨陬陲陴隅隈隋隍隗隘隧隰隳隹隼隽雉雌雍雎雏雒雠雩雯雳雹霁霄霆霈霎霏霓霖霡霪霭霰霹霾靓靛靡靥靳靴靶靼鞅鞍鞑鞒鞔鞘鞠鞣鞫鞯鞲鞴韧韨韪韫韬韭韶顷顸顼颀颃颅颉颋颌颍颎颏颐颒颓颔颕颙颚颛颞颟颡颢颥颦颧飏飐飑飒飓飔飕飖飗飙飚飧飨餍餮饔饕饣饤饦饧饨饩饪饫饬饯饲饳饴饵饷饸饹饺饻饽饾馀馁馂馃馄馅馇馈馉馊馋馌馍馎馏馐馑馒馓馔馕馗馘馥驭驮驯驲驴驵驷驸驹驺驼驽驿骀骁骃骅骇骈骉骊骋骍骎骏骐骒骓骔骕骖骘骙骛骜骝骞骟骠骡骢骣骥骦骧骰骱骶骷骸骺骼髀髁髂髅髋髌髑髓髟髡髦髫髭髯髹髻鬃鬈鬏鬓鬟鬣鬯鬲鬻魁魃魅魇魈魉魍魑鱽鱾鱿鲀鲂鲃鲄鲅鲆鲇鲈鲉鲊鲋鲌鲎鲏鲐鲑鲒鲓鲔鲕鲖鲗鲘鲙鲚鲛鲝鲞鲟鲠鲡鲢鲣鲤鲥鲦鲧鲨鲩鲪鲫鲬鲭鲮鲯鲰鲱鲲鲳鲴鲵鲶鲷鲸鲹鲺鲻鲼鲽鲾鲿鳀鳁鳂鳃鳄鳅鳆鳇鳈鳉鳊鳋鳌鳍鳎鳏鳐鳑鳒鳓鳔鳕鳖鳗鳘鳙鳚鳛鳜鳝鳞鳟鳠鳡鳢鳣鸠鸢鸤鸥鸧鸨鸩鸪鸫鸬鸮鸯鸰鸱鸲鸳鸴鸵鸶鸷鸸鸹鸺鸻鸼鸽鸾鹀鹁鹂鹃鹄鹆鹇鹈鹉鹊鹋鹌鹍鹎鹐鹑鹒鹓鹔鹕鹖鹗鹘鹙鹚鹛鹜鹝鹞鹟鹠鹡鹢鹣鹥鹦鹧鹨鹩鹪鹫鹬鹭鹯鹱鹲鹳鹴鹾麂麇麈麋麒麓麝麟麴麸麽麾黉黍黏黔黛黜黝黟黠黡黢黥黧黩黪黯黹黻黼黾鼋鼍鼐鼗鼙鼢鼬鼯鼷鼹鼽鼾齄齑龀龁龂龃龅龆龇龈龉龊龋龌龚龛龠㑩㔉㖞㛿㟆㧑㧟㨫㱩㱮㲿㶶㻏䁖䅉䇲䌷䌸䌹䌺䌼䌽䌾䍀䍁䓕䗖䙊䙓䜣䜧䞌䞍䞐䩄䯅䲞䴓䴔䴕䴖䴗䴘䴙"
+.split('')
+     var cjList="HAPI	M	AMYO	MF	NN	O	HQI	KLG	KB	OPD	YYK	L	K	DT	YM	WMGI	OL	MGLN	IVCRU	OLS	IKSI	ND	HDR	ONF	GPD	UU	YTHU	PD	ADI	OQ	HOAMI	YFIKU	SQNL	MWV	MY	VIO	HQM	OMMI	HBU	TQBU	GI	INO	YDI	JMSO	FBND	EDI	MNR	VPD	WG	HMR	NC	HI	P	NINI	MK	MBLL	IBPP	VND	JANL	BKF	EHNE	A	MD	GORU	YMF	VIHE	IHS	JLLN	RC	OHS	FSM	DUP	HQBU	YK	MKU	MT	Q	J	BQ	YG	HOMMN	YHS	NK	VR	TBLN	HSHML	DM	BLU	VMNOM	YK	MWYL	CI	BMR	MMM	SU	JKP	OO	MIKS	MOOB	LHMO	OKR	RVP	DTQ	MGBHU	CSH	LMNII	NIY	OAM	HXH	YPMM	YSM	YRBR	YTAP	YTT	QAU	EGI	YMP	JYK	WR	MM	MGWG	TGK	YRF	B	AB	TMMC	HDL	GAH	OMG	MLM	SU	IVHJR	LU	JKA	HBR	PQMB	YRNL	MYLM	NIR	JMYO	V	LSR	KS	DHN	VMOMR	HGDI	HN	HOAV	TC	ASJE	ISA	YDHML	OJ	QMN	OMLK	OYT	WK	HJWG	LDHE	GYO	LWU	WC	HNLH	ILS	DBU	IMNO	KD	MMOK	EOWY	R	OJLK	JDOK	MCW	MGB	MFJ	JBMC	RHML	PT	OMN	OYMR	LMP	FH	TK	TT	XOB	KSR	OP	LW	GISL	OIP	BKQ	YTH	OH	HGHU	U	MDM	KI	E	MS	YLB	BUAV	ODM	XRSLN	HEY	CRP	DH	GNSH	LLMB	IDS	PP	OYG	RBO	KN	HHK	PHQM	YNIB	BU	OPJ	QSLE	YT	NVSM	OMRL	NPO	EHJR	EOG	IFLWL	FVOK	OHQ	JV	QMV	MHAF	JQ	HA	IFM	RMHER	TCB	RVL	MNP	FBRLB	QAMO	IRP	C	OMNR	MLWK	HE	OMR	YSOK	OJRK	HVIF	IVJ	IRM	SMR	HDLN	BBE	FMU	MG	WD	YTD	WOLL	NHE	OIN	YRF	HEKS	HBLN	NBSHQ	HER	OHG	MIG	EQMB	HQPHH	IR	NAPO	IVSU	YKS	TC	HNK	YRI	MJ	QYTV	JP	IVOJ	HO	HQGDI	FBBHU	YBHG	JBMM	BSLE	HQU	DD	AOMBO	NKLQ	JBTJ	ITE	VMYIU	NAU	JND	IVQMB	YCK	BBKE	IVYM	IVO	HBUT	IVOP	MA	RON	IK	HDYJ	HSP	MMU	IFG	ID	VMGR	YC	MKS	QPA	WP	LMYYY	EYIU	OWYI	QMB	HJRR	QO	YKQ	YMMU	IOBO	NLO	RMAV	TJBLB	TOP	PDK	HED	NLJMU	YCE	SJTK	YMMR	DE	HOYG	STV	IVYVO	OIMBO	OQNI	YHML	HHW	VMM	EIR	IMDK	BGR	ORD	YK	KSC	YMMI	MPYLM	FQ	OLNK	JU	PH	GIHS	CK	NRLI	YLMH	JMMU	TLJ	EBCD	SK	AISL	IJE	RRR	JM	KQQNI	AMWG	JCM	TMMV	OOO	QJE	KQNOM	HDRHG	HGR	EM	IVMMR	TLBK	TCG	EHHV	0	IPM	DND	HUP	BYSM	RSP	IVRC	DNHE	OINI	TLWC	HOJWP	VLOK	BOMM	CIJ	FBRHU	OMGN	JD	QGDI	SJE	IVHNE	VIR	LLHE	EE	XMKS	GOIV	LK	YCBR	HJ	LLML	JCOR	MRMT	ONAO	QI	KE	NDYVO	YTYR	XI	SUOK	IVIK	MTHHH	HDV	AJ	HSYHS	YTA	F	NLMMF	BOLN	THBU	CWJ	QSJR	RUDI	AFHHH	HQO	OMRQ	BKK	HDA	OVIO	TCHML	QNI	MR	TKR	OMC	CNLH	IVOG	DYCK	IVJNK	GP	NO	EBHU	NSD	JCKN	PRU	VMBM	YHGR	TEHR	IFBHU	EYKL	GRTR	YUKB	RLMI	OOG	OGD	VMISB	JMGI	IVFF	IODI	QYT	WGF	BM	NLYKB	DHER	SOY	OMLN	IVTT	KLB	XKD	HOUUK	PHA	WYI	IVBGR	SSR	DAV	CWA	IMOG	WDH	HJHNE	VMHEY	HVD	PSH	VMNHE	JRHU	FDQMB	RSQL	JRLR	MMF	IML	YTAHU	HFD	WKS	FCQ	JHER	IVMYM	TJR	ARF	EYG	LNBO	RYO	NF	QSHR	SRTQ	QIF	QOG	ANAU	RHBR	HDNF	FMC	HOGDI	VMPI	NLA	MRNR	PYRF	RNVM	DKMYM	JE	JR	EE	JCIK	RMVS	VMNAU	YHGU	RAU	IKHHH	MJLN	MTC	OAHE	OOKS	FDK	HEW	ENO	RKS	ETCU	QIKS	YOLN	AHQM	VDHML	NLKD	FBRQ	LBV	YONK	HYHNE	OINP	OOLL	BYUK	QOBHU	IHPM	JROK	FHBU	VNVM	BKLN	PR	ATC	EFB	YHV	NLQU	RRIKR	MRNBG	MRDHE	BMMC	SJR	QPP	YTK	EEQ	LEVIF	QLLB	VMIJ	KLND	MFP	KMNR	JQMR	GCWA	DNSH	FDYJ	ILIL	TSL	KM	IGYHV	APHH	TJKA	NSP	NO	OHPM	UNI	MBMBL	EMCW	EMNR	LSH	EYSD	MTCH	OVHQO	YSOOK	NLOMD	OCSH	MJOK	JRB	HBT	OYLM	ONHS	QHNE	LSSJ	YJ	VMSU	BGIL	KR	TKSC	DMMF	NVHE	MMI	KMOB	SOK	NLMNR	HOMR	G	IMRHU	GYTU	KQNO	JKYS	VIAV	DDI	SH	QU	OE	DAM	NL	JJB	YIB	VMJNK	KHLMI	WLNI	NYK	IS	QIS	RAPV	BB	OTC	QMBO	MMBO	LPB	OMD	KKLB	SLM	MNLN	WHEY	JMIG	HRU	YKLN	CKSL	IKP	RHBU	YTAJ	ITLB	XCTA	RHU	AYTA	OULN	QLMY	QKA	HHMBO	NNQO	JVD	PYV	RHFD	DEDI	KNIB	EBHU	RNLR	SMF	SJRC	VVH	VMW	IVHMY	KIP	OYRN	HPSL	HHQU	MUHE	BMKS	IFMRW	GDK	IMOII	MGIJE	VJR	ILN	AIMVU	HJBO	AU	MGOK	EYCN	EJMC	D	QS	PEG	WQS	QBNSD	YBYHS	WMMU	MFR	MWLN	KQRSJ	BD	OIAV	NOMRT	PRNIN	JTCO	FD	ORYE	KQYCK	VBM	DFDV	TKHK	0	JMAM	JCMVH	IVGDI	MRNO	YDL	PHP	FBRG	XHROK	IVIPM	IVHHI	LBK	PMF	MUMBO	NMOMM	TBRR	YLM	VHQM	TOLL	MMBB	SHLB	AYRF	YDNL	OYHV	IHMV	QJV	MCP	PAWE	IOOG	WLLMY	VMOG	EKQL	BHQM	TIMS	HAMG	HOGGN	EHSK	SUT	QYCB	NBG	BUOGF	NBO	YSOPD	DTAK	TAJ	TMD	OVAV	MBRMR	NLKQ	OJBM	MGILG	SMMI	OLOH	TQM	RJD	VMRC	TVMI	NVJRR	JPHU	YRBU	HOLQ	SIM	W	HLSA	NAHU	QMWYI	LLSM	EDHE	MNG	SMIG	XQNBK	IEOK	JKMR	YBLB	YAV	ETQ	VVM	EJRB	BUHJM	TBKS	VSM	OHA	SP	DHE	IFBM	KIOG	VHPA	ILE	IVMFJ	YHRR	ROMR	VMHER	IYR	HWSMM	MGMF	IFU	RMPRU	GOSHR	RJ	XMGI	YR	GPIM	INE	MNF	LNK	EEV	GOMJ	JMRW	TMM	NMME	MUW	YWLB	PUMBO	TN	TCA	FQLN	EMHF	ON	QMVIF	HYCR	VMVFD	FBR	RYPB	JBOF	MLBY	OIKU	OFP	NLOMM	FWK	NLOLL	QAM	TBOK	DHE	OVL	IVYHS	VJD	OLWL	OLLN	NLAV	IVDI	LLOA	RMK	XQBOU	RMLMO	TW	VMKVC	DPI	MGMMU	MGI	KHSU	MH	YMB	JKSC	GTJ	QBKQ	YKOK	YKLL	GGDI	EABT	PKNIO	OBO	MOK	VMHVP	HDB	YIHU	MNMBO	SMDI	JMN	EFH	NLYHS	QHLO	OMNN	BHNE	JNYK	LLLO	TKYMR	DDNI	SRLN	TGTR	TBMO	MWMMF	IAV	TESU	LEG	YTUMB	HGRLY	KND	LMBO	VEP	HDYRB	QHA	YIOJ	LA	QYAJ	RQYT	TAK	QBBE	JDI	ELW	WKP	HDRC	TCBT	BMI	RRIK	WLGI	INKG	JCHWK	QNSH	YVP	OJ	YMY	MBSM	TBD	LLHHJ	HQ	BCRU	JIBI	JK	NCWJ	EILL	DCI	GMF	ENL	NMTQ	OKMRT	PPJ	WLJBM	DDNYO	SKNO	WHER	ORA	PYSU	QYHN	JLV	QPRU	JIKQ	BOOK	DOSU	YHJR	YPTC	NNMBO	BUQMB	DBLN	CKNIN	VMCSH	OLL	QHJR	XCFB	NLHEQ	NWM	KJT	SIP	JMMF	HYBT	SJ	WGNIN	IVNJ	MWSU	DDMMF	JBVIF	GOK	WFIK	HOGYO	KRD	FMN	UHEJ	LMIK	GFNO	HDNIN	CKAU	QHP	ETC	HT	OF	IVMN	YRBU	KHHVO	OVJBC	ID	MVNM	KSMI	YSOHV	YLMO	RRNVM	JQOMN	RAA	YTQMB	HDPH	IVSMR	WD	EBU	YIF	BODH	HI	BBB	LWL	CRNO	HOMYM	HDI	OTNIQ	HDF	SS	YHVL	HDNHS	QYRB	MN	RNHE	JLWL	YHSB	GGCW	HJD	EG	YSRJ	RMHK	SUP	YAD	QKNI	LYP	GIRM	APHU	MGT	YV	DHKL	LYKQ	LSO	NLNSP	NMKS	LSYLB	MNP	RMVH	ODI	TROK	LIBT	MMN	IKQ	MBMMV	DDH	IME	MWAHM	IK	VMNME	BYAV	YIJC	HOOMD	TWDI	MRMLK	JRMBO	IVRMK	OTA	VMOB	QHML	OGR	YLMO	ATCE	OUDK	YFD	NWMA	QBCD	OPBO	YTWG	VMBME	OQS	SKR	IG	HNI	NMSU	FJPU	BDHHH	QOSU	QJCM	BPUK	EI	HHSB	GOSJE	DL	IVWB	DAIU	HHDI	IVWD	EBMR	IJCC	DMF	YHDS	LWNL	TBD	PTHG	QBQ	JBIK	EHGU	OD	YHA	RE	KHPR	OOMN	NLB	EOMN	HQMQJ	DTLC	GTJE	ONKQ	MAND	HOMM	BY	EHER	RIHR	TJCR	JQOP	UMMJ	VNHS	EFF	EJJB	IVLLL	WRBO	FQSU	HDEQ	IVJKA	VFH	ROG	KDI	YMSO	TLPF	RD	EBON	EIAV	QLW	TGBT	OHSB	LSCRU	BOPI	YOMD	VMOO	SJNL	QTAK	QGG	HYYHN	QEQ	PAV	OMJR	FQQ	H	ILR	FCYMR	HDLP	NMNIM	DOMM	JRR	OIK	YSOTC	OINR	GRHV	GYLM	QWLI	HBK	HDW	EAPP	XMF	QSMG	MVDH	0	SHR	KHNDT	XJTBU	ISBT	DYVO	OPYHV	VMSHR	LY	TBC	WFQU	QJ	MHOG	GR	HUBO	TOD	YLNC	COR	HDNSP	ES	0	SLW	YYLC	MBW	ININ	JTCY	NLODI	EPYM	YTWA	QLMO	HSB	PN	NHD	JIWTC	PTA	NLMRB	YRBO	IVIHS	MGUMB	IMIHR	QHDW	0	XCJ	DTMC	YTRHU	SJB	QNKG	QRRD	BMWV	KHMG	QOA	DOWY	WJR	OOP	JD	OVBK	IVTKR	MNIJ	NKHYM	YPHU	YNJ	JF	PFB	OMU	HKLL	LLL	OKN	HDND	RNO	FDIAV	SEOOO	IVEQ	MGHJD	YFE	IVTMD	MRUU	OMM	QRBO	MBLMI	KQMOB	IMNSD	OYOK	OSK	OU	MMVS	MBOII	WVIF	YRND	OFQ	TENH	MGOHH	NBKS	DJ	KW	BAM	YIT	FMBO	FDJRB	KHIKU	XHDCR	GYTR	QHPM	OCWA	XCHEJ	NHS	YBOU	IDQ	GAM	HOVIE	AHBU	YEOIV	PWJO	OGHN	BMUI	QIR	MRTTC	HLB	ISR	MRNVM	ABU	EMJ	OCOR	KF	YEBU	JCKS	DEMBO	OPMO	FK	JJQS	HHBO	OYHS	NDHVO	MFHNK	EAWE	NINN	YPVIF	OBON	ECR	QIKK	LLW	EID	FBRBO	TAKB	SJG	AM	AMMV	VMPU	LSDH	IMYRF	QSM	IKU	FPRU	MRJNU	BOYR	QHJX	EYCV	VMVNO	GDI	BO	ELSG	HVP	HEY	XQI	DTMM	TYVU	QLR	YMRW	RMY	GOG	QYTG	IINL	OMOB	TLIT	LSD	YTJ	XCYTU	NLYTR	NMKMR	NOLMI	ORYO	TQ	JBM	RIJC	YHMBO	CSHO	LBMRW	NMYG	TEMJ	EMMS	DF	QY	LMG	TNLH	MTLN	PIKU	BHHAU	KHIVK	JTCG	HNE	NDU	NBLMI	YCP	USU	DDD	OKVIF	MRYOJ	ELQ	OKT	NLHEM	YSO	FUBKQ	KHAV	DHML	VMJOA	JC	XTLX	NUP	IDMR	OIK	HRYTJ	ESP	YUOII	HONOM	HUWML	DLNBO	OHVL	PJTO	TAKP	OHQI	ALBK	IVPA	PIKH	QMHE	JOMA	OYTR	FDBM	BFQM	HDFB	JIOG	END	PVSM	OMBP	UBK	DHHL	XCIJB	EYLH	KOK	QFSM	QKQ	RMEA	LP	OMDM	HHHND	HQDA	VEKS	IIB	HDBU	JIYHV	LBPO	TXC	HODHE	MBRYE	KHJKA	HDP	QU	EKS	TEII	HMNJ	OICE	TJGG	RMSS	OSME	HLNO	QYKL	VTMD	RG	MIHI	EGR	DJE	NSBT	NLBM	NLNHX	WL	XTKNL	RPYM	OFBR	HPLN	WDMBO	QOPD	ORNIN	JIP	HPA	QMMV	IT	GCV	OGF	HOAU	IMGCE	QJSMP	OWLB	AFMU	DLMO	GLNC	FTMM	NMISB	QTA	MBO	UK	QKE	S	GDHE	TJKS	KNN	GTOR	XFG	HHFBR	MNHJD	SIP	GMMI	TM	RYCK	QSS	YUHHH	FHS	TT	UJMF	NVNO	IFRHU	EMG	JHQ	DGG	SHQU	EMWF	SJHHL	QTBK	POMR	IMPKO	NINH	YSOY	JOMC	VMJKA	GTHHH	BG	PKK	QTW	FDCSH	BOIJ	HINO	HJBU	HFP	ODYJ	MNYHV	EBBB	LYYK	IIVE	JYFE	ENIB	IVTQ	ENSH	HOPSH	YVI	HML	KQEE	VMJ	POII	HND	OGG	PPHA	HVSM	QJNL	QQO	HMHNE	SJCRP	YJIVJ	TTMVN	NVHQI	LIJP	QIJB	QHYE	ELBU	DHNK	HXWKS	UVII	IDHI	MGOIN	QNSD	SJLWS	YCN	TAKG	TCNO	PMMR	TLMI	SLSL	YHE	YQS	XMMVS	HGI	QBME	GCGLC	HVHI	MBDI	OHNB	MWICE	ABBT	BFQ	OHCE	VMJPU	RYRN	QKHD	SUU	MVDI	AHS	KHXE	KLA	HTBN	WLJKA	GOY	YCNH	KHQMB	EQOA	EMPM	VMQMO	FUSMG	EOMD	JRLN	MRT	LSP	YRBN	IFTQ	MSKS	JMD	EHIO	KHIAV	POWY	QTOR	HYBHU	EBND	KBHQ	HODI	XLX	VE	FATE	VLXH	VIKS	KT	YHSK	KHNK	IHU	PYUK	HDBM	DKMR	SO	OGDI	IIOBO	YMMBO	QNG	TLMY	MVNI	QJBF	YJDL	QKHK	HSHNE	GWG	QYIJ	BUCSH	ROIN	EITE	LHHH	RMKMS	MWYOJ	EAV	QKLU	TOMR	TOSU	YSONO	QAPV	EEED	OJK	TYKQ	XCYR	JKI	VIS	SHI	UKT	YNN	VGG	UUHN	LLP	NLYTJ	MYVS	HONKN	KHTW	NG	EQKI	ABME	EHHW	CROB	KMMF	WLIVN	QOMR	EHBV	XCNKQ	BINE	CFBO	OINL	HUIK	TYHS	HJTM	QRYO	PKF	VWYI	MRNO	KRNVM	TCP	QIOK	IFROB	TWA	TVIP	QYJ	HAE	LIBHU	EHBK	BIG	KHEY	OVBMR	TQNG	DFSM	QKNS	TW	IMP	BAU	NMSK	JCROB	LIKQ	OJR	BPRU	DMOB	LSEHR	DG	TMKS	HBYI	LBABU	MGNVM	QYBK	YHMBO	IFCWJ	DMNR	TDT	GTMV	DI	YRHV	IPF	BOAE	FBMMI	YBYE	JDKS	YVVV	IOBT	HQKI	QR	EPD	EIJ	YPD	GIOK	VJMO	DOK	HDKKB	BROG	MIK	HVIO	QKDI	RMHQO	QYLM	THJG	XCHAB	LIC	SBLN	GONSM	QRB	OGSK	WJBO	SCHNE	QIVE	YNDF	RMAPH	BOYTR	IOV	YHJ	HHOE	BOMMF	EYCB	IPYHV	PTYU	TJOMK	TEYV	YHEJ	SJKA	APP	DHA	NMLK	RODI	DJBM	PBMC	VMNG	QJLO	GLLL	HQHQM	RMJMF	OOM	ETAK	XCCRU	RDLN	JJON	MBOG	EATC	BUNSD	OND	RFH	OKP	EPI	WGFG	LL	OBMC	NLPOU	XMBO	EBKQ	YNBO	SPP	NMPD	DQKQ	SC	QTT	PMAM	MHNL	BNMU	FDTWA	QCSH	LEBO	NVOLB	OFBI	QHMY	VMIWG	XQSJE	QVIO	ETVI	RWGF	PA	LSNVM	KRBO	SMYOJ	VMYHJ	NVPRU	GIKS	QMKU	QJCN	BBM	FQHE	FB	SUF	FJVD	JHGU	ILW	MAMR	OMRT	IVJBM	OIVA	IMNVM	XRNBK	XOINO	SLY	SMWTC	QIKU	BKSC	RMNMU	MRHHJ	RMNR	HRTM	EMCW	IVTCA	TEFH	VSQL	LSHER	ILB	BBPM	MWHOE	MGOII	ONMK	QDJ	YS	MRAMI	VMJMF	OM	ABKQ	QTMM	FBKF	AA	HKR	VTXC	KHF	QWL	HJR	MGDD	MBHES	AWLE	SJYLM	DSS	QEOG	FBLN	IHYMF	DMJ	UMR	RWMV	QNHS	YQHL	IVNKV	BIP	KKKK	UOG	NKHG	IMQKK	KOKR	CSHT	HOOML	MWHGR	TK	RIOK	VJKP	HIKP	JCMBO	VWK	QOGS	PHI	TCSH	HDHAH	HSSMM	KBNL	XQTKL	PMYM	TP	HXVYV	VMVL	NGMWM	A	OIBI	LPRU	MVR	NMHD	QQKQ	PI	HQOK	OMBB	PAIU	HBKS	DYG	HHJ	RWK	RPU	LMI	VMRLU	MMTI	BNUI	ENPO	0	KDHE	BOJKA	NVJPU	MRI	LLNSH	FTMD	BJNU	RJTO	YLMR	EHGR	CISM	IOR	XCMWF	STT	OL	RGRR	RCSH	DHAB	NDBT	QFBQ	FIS	EPT	TMPT	QHXE	EHKP	YTWI	YLW	OIKS	LMUO	NO	IVYRF	FF	ONCSH	DJK	BUJQR	XCPI	BNSH	QDHE	NELN	QLYMR	BOTXC	HOHNE	EPRU	YTU	OKHDV	RLB	GJBC	GRTR	FLMI	MMUE	NI	YWMV	EYOK	THRJ	OY	YMS	YMUO	IVTLM	RHG	AHVL	QFH	NOF	EAPV	DCNH	NMYIU	QDHQU	BUNOT	HMY	KMMS	TYBB	TBNH	SEV	KAV	LLN	VLMO	OQMO	BV	MGYUB	QPOU	XKDLN	AAA	YLHV	BQO	IXP	QMR	YAJ	KMYM	FDILR	XCNO	VMHAB	RWG	IVHDS	DJR	AVNO	TBG	VYHS	NNNAO	QHVL	MGBT	DAPP	MCA	EDD	XPCRU	YDOK	QJNAU	MGDHE	MRSLB	RYRV	YVBU	YJILJ	TAPV	BCMJ	OKSS	EINE	JHP	XOPBO	BYBS	QHXM	NMMBO	RMIJ	BJBD	MWBO	KQHKL	BHHJ	ODG	VHKL	EQHL	FHKS	XETLX	BOAPH	NLJP	TYVW	GYK	CIMBO	ESMB	DYHN	TNIH	MRQNI	BUBBQ	OGPYM	SRYTJ	ENWM	HJLP	MBTJB	YRRV	FFH	RMTC	EIJB	NVTT	HQMCW	EEOG	XCMN	RMD	XCAPH	BOCWA	RTC	OVOII	XMUMB	MNJBM	IOGM	TBOF	OUOG	TQO	DDHH	QIT	KQKN	RVMI	TCNO	BUMN	MRMBO	TKRP	QHK	WBP	LLLB	PHAG	PIRP	PDLO	VKN	RUMB	CWMR	NLMA	WLYAJ	KHTA	UYRB	GYBT	NVHN	IMJLV	RONK	JAV	BJCM	JJOSM	BDOE	NLGCE	LIHEJ	YWLN	SJSH	ITXC	YWDV	NMHKL	BOHE	VMOMI	UMGG	MMMV	EMGG	I	GYHN	YITF	QOYB	YCLMI	TYLM	GJKA	HSOG	QNAU	BURVP	RPHH	JKND	EHA	QTCL	LIM	ODE	FDYOJ	NUKS	YTAPV	MFMYM	PJBC	DWD	DY	DIT	EBVK	THDN	MGYKG	MRGIT	JMCH	HOHJU	KQHML	QYRF	RR	TA	YKNL	BWLI	HOUFK	MRTVI	OIOI	IVMWJ	BUVML	QLLN	OKLU	VHXE	LBHA	0	IMKD	VJNU	DBMR	NMHER	EIVE	SHML	HYNKG	IVTXC	VJE	TYTR	MBON	OBND	YOHNE	UOII	CL	WMV	EDBU	DNIB	REED	FHAG	NMPRU	FDYT	TCRU	JCLB	HDHN	BTA	OSU	QRSH	VMQJL	ROMR	TKLD	OHXU	MGPH	IIIL	WLPYM	JPHI	IVOHH	DBB	QHLO	HBMR	VHUP	VMYK	HDFH	EYR	IIKP	RMTWI	NMEII	YMJE	HYHXE	TINO	ROPJ	YW	FQSH	GOFBR	LB	EBHG	IVTYU	JTAK	ETRG	HLIT	YVV	QLSR	OMIG	MDBU	EI	OMBN	OI	JYTJ	BUTMB	JLW	BL	EDOE	PKLB	MMR	RNDU	OHKL	EEEM	XRLX	OUTRG	SILQ	LSKR	EYT	BPO	BOMPM	GKF	GOOHH	RYVO	POMN	AVP	JRYTJ	BHN	BOV	SMSIM	HHN	PPMNP	QPR	RMN	RGG	AQMB	IVYFD	EOG	AMG	YNUI	MGYRF	TGV	RPVM	JCLL	CHMBO	TYDL	JTCD	SE	KTMBO	YLE	Y	ASHR	ESME	HRLN	JNIU	RSHB	JBRRV	JWLB	NMKK	OAA	ECOR	RJR	QSQL	QIBI	TYHJ	AHBR	ESD	HVHU	RJBJ	KN	EIS	XBOIJ	HAHI	HYJP	ADHL	OMWM	FDTGF	YVBCR	HDHQO	OKMR	GASM	PFMU	XXXCP	RJJB	OYBS	LCOR	JAF	BDU	PHH	LEYT	HMP	BUJKA	DHJD	VMHDS	VHK	IVMVH	RKSR	VMBK	BIR	EJOC	QDTT	RUMI	HYOSU	VRMK	SLMY	MHPYM	WB	RMRRD	KHLLB	MRMFJ	VSP	IMYWF	NWU	LWD	VMYF	IJB	JCOJU	GILR	VMHJ	JIKP	CYKQ	QTC	SK	QSUU	GBO	KHKT	XCNIR	EYRD	ED	GEHDA	EHDW	BQU	DYBS	ELFL	TGIMO	OOWY	HHAIL	MU	RJMM	SHOE	KHONK	DMG	LDI	WFQ	NOMRN	VMMWL	NYVI	YVIW	FDMCW	ETCT	QFDV	ON	PA	VMIBI	FU	HXKC	MOOG	OFQU	MWILL	YAPIM	VAHU	GAMO	DDKQ	JCPSH	VDLK	YTPO	ENOT	OYBO	NLKT	NLMBV	HDM	AOP	EDJ	OOSJ	RMBD	LNMCW	GBTC	RLMY	MRVNE	KTQ	RWNL	GBHN	YBO	MBOWY	QKALI	TIS	BHER	IOK	FNHX	FCB	WO	KQIJB	BOPO	OKM	OKCF	FOG	QRUC	MBV	DLBU	QOMM	ENUE	YMRT	FDTC	BTBO	BMJ	TNEF	ELIT	HPDK	XELMO	LE	FJKS	OUM	N	EMWJ	AI	RTK	UICE	HLO	PGI	TIH	TYV	BJE	HDBHX	NUI	GNHE	ROMN	DSMG	VMHSK	RMBHX	RFB	PDMBO	TPFD	RJHR	LMV	EKLU	IOMVN	EJMO	LITA	RBWI	YLLN	YKHG	NMSEO	AJKA	LDDF	IIS	TMFJ	AMCW	PYAJ	AJD	QIKP	NUE	BIKP	BYCK	QNIN	OMH	IVHNK	MNI	AMJ	TPIB	POG	QKVC	SJF	T	DIG	NU	IVBOU	XNOG	ETJB	NSND	IVNIB	DYIU	BK	BJB	KNI	MBDBU	EJ	VMFH	XHOCM	BIPO	PW	RHHJ	GNO	HDJMO	HD	PWLS	BPA	TPOU	QTBS	QFBU	SFB	OFJ	LIPTD	XCQKI	HHSK	HDOG	BAHM	TBFE	NLGYO	XEHF	HND	RHQI	LNE	OSRJ	GYHS	MYLF	NLFHF	EPOU	GKMS	EBHX	MWIAV	HIPYM	TVII	QPYU	DKD	MGHI	FBOK	KRRU	VMLIU	FHVD	MGOK	IVOS	NKF	BTAK	DDF	FDYR	QUOG	KHNE	LBYTG	EV	HUFF	QOOG	VMYHS	DMVS	XCHJM	XCRHU	YJVMJ	XXNBG	HLW	BBHU	TFBK	IVPPA	YVRVP	TWLI	ELLN	TQDA	OMSL	FHUP	HSBT	UMF	PILE	HYHJ	BUHIO	SJYMR	RSH	TNMU	VMBGR	VNOB	JSMH	EJPU	OMI	YRBB	BFBG	MGMSO	RQHA	EYFE	RC	FKT	FG	MWTA	YKMPM	TWK	PU	BGTH	EOP	VMFDV	GYRV	IMIR	ARYE	QNHD	XTWLN	TQSMM	LIHJD	MWD	TNLB	IVHN	TPKP	MHNI	NFDN	YKMBL	YON	LBRC	TWHD	XCHNR	BOKB	XVMIJ	ORR	XCHJE	IVYLR	EUK	ISOK	JFB	IVQS	CWLN	QIRP	YRNN	EFBR	QM	DHHH	FRRD	PIM	EBUH	MRPTD	UTMO	EHK	YRLN	VSLL	VMYAJ	RJBF	VMYCK	KQLW	IIIG	RRRD	TVMT	SRNL	RHS	GMFJ	OBQ	HHSLI	SOAM	FKP	KGG	QMMR	TBNF	BUHDF	NVLMI	FJCR	LIMY	IVSMH	VMLWL	XCYRV	IPSJ	TAKS	XIPG	YHHHH	JUSMM	RMC	DR	YJHHH	LSCWJ	IVCI	DSK	UKQL	TEIB	EBYM	OOMM	DNAO	EJCR	EATE	QC	MGBCD	ML	MFM	MOB	NEM	IML	HP	HS	PN	YRU	MMN	MML	MAM	MEM	YHN	YVHO	YRBP	YQIV	YDCWJ	OKS	OMN	MO	OHN	XXOP	OG	OM	OSHI	OHJ	OON	OMMM	OHI	OPP	OOJ	OYHN	OJE	XOSK	OMVH	XOBHU	OPO	OOSU	OJM	OSP	OOII	OSMR	OKSR	OW	OKR	OJP	OMMF	OHQO	OPR	OMMV	OHEY	OMVN	OMFM	OYMY	OJKP	OTQ	OMA	OSJ	OGR	OLMO	OYCK	OCB	ORHU	ONIN	OKMS	OHJD	OKB	OIHQ	OBMR	OJPU	OOMI	OYKL	OHBV	OIJE	OOBM	OFB	OHDN	ONIB	OWG	OLWS	OIOK	ORMK	OQKI	OMTH	XOMBB	ODT	OLMY	OQKQ	OHHJ	OJRR	OLOK	OSUU	OBGR	OJCM	OSJR	OQMB	OYAJ	OHDV	OWD	OSAV	OAPV	OTKR	OWMV	OPPA	OPKP	OFDV	OJTO	OHI	OMWD	OQKE	OFBU	OJOC	OEOG	OBOF	OGRR	OYFU	OOGF	OMUA	OYTG	OMWD	OTRK	OWLV	ONCR	OWWW	SUHU	YCIU	JUJRU	CMVS	LPWTC	CJSTV	GB	ANAU	BHN	BMMO	BAYC	IM	IMMVM	IMHGU	IMMNN	IMDCI	IMBGR	PYSN	HNHAG	VL	BSS	SSU	UE	TCTU	SM	LN	KLN	NSM	PHLN	BLN	BTLN	PULN	IJLN	NMLN	KSLN	OILN	UNLN	UULN	HDLN	CHLN	DLLN	RBLN	AHLN	JULN	KRLN	FFLN	MFLN	VDLN	OFLN	MOLN	TELN	HLLN	XMSKS	PRKS	SRKS	YOKS	ROKS	NTKS	AUKS	TVKS	POKS	KSWP	PI	PUK	PIJB	KSPRU	PMRW	UH	MV	SLB	SMG	SWL	SKQN	SLMO	SHSB	STKR	TJ	JT	YOOJ	YY	RY	YWS	YWK	GGY	SL	HMSU	HHSL	NEMSU	MSU	0	XMKQ	MIKP	MWG	MTA	MIKL	MTUO	MAIU	MTCL	VI	IKMMM	HXLE	RSL	RP	SR	RKS	RSM	RHN	RVI	JLK	RHP	RCL	YKR	RIK	RPP	RP	RYHN	RIHU	RJE	RNL	RMSU	RQO	XROB	RMKU	RTN	RKI	RSK	RMKS	XRBO	XXROB	ROSU	ROII	RVIS	RHVO	RYMP	RVE	RWL	RMFM	RLWL	RBM	RSLB	RUU	RPRU	HOR	RINE	RRHN	RYMY	RIKP	RHEY	RJMN	RVVM	RFMU	RJHP	RKN	RMNN	RTQ	RFD	SORC	RGR	RHER	RKF	IHMR	ROD	ROSK	RMCW	RNIN	JIR	RHHV	RAV	RSMG	XRYK	RJPU	RPPJ	RUNI	ROMI	RHND	RYKL	RHBV	RIHQ	RGLC	RJKD	RQHL	RIJB	RMLK	KRMNR	RYMR	RICE	RKKB	ROOG	RMMR	RQME	RMBO	RTBS	RMOB	RFBO	RHAP	RAIL	RQKQ	RYPU	RSBN	RHSK	RYIB	RYTV	RHJM	RPHP	RBGR	RYMB	RMSO	RDD	RYOJ	RPOU	RFF	REEE	RQMO	GCWR	RKQI	XRYMU	RCWJ	REDE	RJMO	RIIL	YBLBR	RYBB	RHDF	RWLB	RPPA	RPTD	RTKR	RYTA	RSMG	RVNO	RWB	RMWG	RDAM	RTW	RKGG	RFDV	FBHGR	RMUE	RHUK	RQMF	RTCT	RTUB	RGIT	RTOR	RJBC	RHXE	RJPA	RMRB	RTQM	RCIM	RBSMR	RHAJ	REOY	RQKD	RSJE	RTOR	RWKP	RCKN	XRBBE	RYNB	RGSK	RDLO	RYSK	RYCB	RIHF	RTWA	RMWF	RMUI	JRRYE	RYPC	RTJS	RJAL	RUBB	RBOV	RJPU	RASE	RGTH	RTCL	RKCF	RCWA	ROGF	RGBT	RNOT	RTCO	RMTO	ROYB	XRNWA	RHBK	RDDF	MGRR	RYTP	RHMO	RYPO	RTAV	RJTG	RSRJ	RMBB	RTYB	RYRO	RJBO	RJBF	RRMOR	RMBG	RJBV	BM	WND	HWK	WV	WPU	WPHH	HWNK	WOP	WOII	WKB	WIJB	WMMR	WGTJ	WQMB	WWLV	GMD	GON	GMMS	GG	GSU	GRU	XGI	GHML	GHE	CSHG	GBY	GMKS	GPVM	GLWL	GJP	GTM	GYR	GSP	GMFM	GVIS	GWYI	GMNR	GHPM	GHMY	GYT	GIKP	GYS	GBMR	GYVO	GHND	GAV	OIG	GHMR	GMAM	GMIG	AVG	GHBR	MCG	QIG	GMTC	GFSM	GUSU	GYUK	GJMU	GMLK	GNKM	GBDI	GIJB	GRHG	GADI	GRBO	GROB	GOIP	GHRJ	GHHJ	GLE	GKLU	GJBM	GAPH	GSMB	GSUU	TLQM	GBB	GNUI	XKLG	GMWG	GPTD	GONK	GSAV	GWLS	BFQG	GMRB	GMHF	YIG	GSYQ	GAWE	WNG	GILB	GYCB	GEID	GYPM	GYDK	JEG	YVGG	YEG	GYRO	HG	XGBMC	GBMT	HE	TCHE	HNMNI	NIJMC	WDNIN	HK	KKS	KLLL	KSK	XNBK	KLWU	YCK	VGK	BVIK	KJKA	VPI	VSU	VHG	VMT	VHS	VOIN	VNG	VPP	VNIN	VMKU	VSK	XVIKS	VLW	VAM	YTV	VVIO	VBBM	VTT	VHJD	VYCK	VJHP	XFDV	VMTC	VJPU	YCV	VLWS	VWG	EHV	VSHU	VRB	VMMV	VCNH	VHQI	VNAU	VROB	VLSD	VAA	VNLR	VQMV	VJLO	VHHJ	VQMB	DDV	VMUW	VCWJ	VJLL	VYRN	NKV	VBME	VABT	VHWP	BFQV	VUMI	VTTB	VKOK	XVBBE	VJOC	VMWF	VWVF	VYTJ	JKMV	VYCB	VFBB	VTAK	VGCW	VGRR	SJV	VYWM	WSVWS	YRBVN	VIDI	VMBU	NNM	NNO	0	BND	JBND	NDOK	NDPRU	VEND	YCND	MFVND	YDKNI	SNDD	TVID	HHSLD	NDMBB	THJD	JKN	JPH	JMR	JKB	JSLL	JMMV	JMLC	JMUE	JVMD	JLME	JVMR	JKCF	JWLV	SFDI	NSF	FKF	KU	KUPI	JPMU	KUOLL	KULIT	SKN	SBO	SPT	SFD	SHOE	SNLR	SFDV	SHOO	XSHOV	UL	UON	USU	UYSM	UMVH	UNHE	UMT	UJE	UOIN	CSHU	USK	UBHU	HKU	UHNK	UAU	UMNR	UPR	ULW	UWL	OPU	UJR	URVP	UKD	ULLS	UHHL	UEQ	UPA	UBMR	UGDI	UJPU	UHKL	UNSD	YCU	UHQI	UCOR	UFB	UTBS	UDT	UOMM	UJCM	UKMR	USUU	UYRD	UKKB	UKLU	UDCI	UBB	UWJR	UIHV	UWP	UMWV	HDIUU	UHDP	UAHU	UTBD	XUCNO	UOMN	UFDV	UTVI	UHI	UTQM	UFCB	UYTJ	UFDQ	UNOT	UPKO	UJCO	UHVI	VVV	VVWD	MOO	XNMYI	RU	RUTC	LBHNI	LBQS	VELB	LBDHE	LBYR	LBHQO	SMBLB	HALB	LBYBO	LBQKI	LBOG	LBQMO	LBWMI	BAKB	LBSMG	LBAFU	LBAWE	LBYTJ	LBTCO	LBHDW	VI	IP	IPP	IJE	IMKU	IPRU	ILO	ITQ	IOD	IHHJ	IKLU	ITF	ITSO	IHXO	ITLM	IGSK	IYDL	ISMH	IWCG	INBQ	IYWF	NK	JJ	IT	YCT	IP	KDIPM	NI	NPD	NHVO	VEN	NNOM	NSJ	NMAN	GNHNE	NMM	VNMO	QJSM	VMPOP	VMFFT	HHH	BYHHH	HO	HOYHS	HOBM	HOPA	HOTQ	HOWR	HODT	HOLMY	HOYLO	HOFBR	HOHAG	HOBOU	HOUGK	HOHSK	PSH	PHJ	YMP	MYP	IPP	PDI	HKP	PL	POJ	PCI	PYY	PJE	PLBU	PNG	PHML	XPOMN	CSHP	XOOP	PMKU	PSK	PPO	POSU	PSHR	PHS	PLBK	PJR	PAM	IRP	PIR	PMFJ	PSP	PLLN	PIJC	EIP	PEQ	OGP	PPA	PGDI	VRP	TGP	GGP	QHP	IOP	PHBT	MBP	PHER	PBMR	PHJR	PMIS	PMIK	PUSU	PBON	PBKQ	NBP	PWD	PCNH	PAMJ	PRAU	PJBD	PDL	PICE	PWG	GBHP	PLEG	PRMK	PLSK	PLMY	PYOJ	PHDD	PGTJ	PBGR	PJNU	PAPH	PBTV	PPHP	PFBR	PIYR	HEWP	PSKT	PKQL	PCWJ	PKMB	PUMB	PAHM	PHDF	HNP	RKP	POAE	PRRS	PABT	PLMO	PQMF	PTXC	PSJE	SRP	PILB	PCWA	POGF	YKP	PYTG	MKP	HUP	PAYF	PDDO	PNBQ	PHBK	DDP	XEBP	PYWF	PMBB	PTWU	GTIOP	YOP	IH	XIJ	IHM	IHI	IJ	VMI	OUI	MUI	JJI	TVI	RJI	NTI	AMI	MAI	SHI	YCI	SGI	HSYJ	HSIK	HSBR	HSRAU	HSLMY	QHJ	QLS	QHE	QMSU	QDK	QQNI	QSK	QOP	QMFJ	QLWL	QRVP	QYG	QWYI	QYR	QODI	QFQ	QOII	QVIS	QUU	QJMN	QIPM	QGR	QNEM	QOMG	QVVN	QJKS	QLWP	QHQ	QKMS	QIQ	YCQ	QMTC	QYDI	XQYK	QKT	QJPU	QHKL	XQSMI	EHQ	QRAU	QSKR	QNIB	QWD	QBDI	QRSN	QAMJ	QFB	XQCRU	QHSK	QHHJ	QMGG	QHJM	QKMF	QOIP	QIYR	QEEE	QYTR	QKMR	QNHX	QYOK	HNQ	QPFD	QHKP	QHSB	QCHQ	XQYPS	QWMI	QCWJ	QIKH	QWJO	QVNO	QOMN	QNOK	QQKK	QJMM	QRSJ	QYTA	QSAV	QUMB	QPPA	QHDF	QPTD	QSJL	QDAM	QLIU	QABT	XQCNO	QNUY	QHYU	QSTV	QYVW	QTQM	QEII	QTXC	QTUB	QEED	QNMM	QILR	JTCQ	QTOD	QORQ	QWKP	XQYPP	QJOC	QSTT	QWVF	QITF	TAKQ	QSMA	QWHR	QBOV	QMTO	QFBK	QMJK	QTWI	QKCF	QHUU	QASE	QQOQ	QGRO	XQNWA	QJCL	QJJJ	QMBW	QYWM	TKQ	QWLV	QSRJ	SJQ	QFVK	QSMG	QHUL	QMBG	XQHUO	QYRV	QHBF	QBUE	QJBV	YE	OK	OLOK	FDOK	DLOK	GSOK	OMOK	FBOK	HSOK	YKLSW	NBYJ	TVYJ	JJOYJ	CKHML	MRHML	YSOBY	YSOHU	YSOJB	YSOHM	YSOSP	YSOYU	YSOKR	KNA	KNA	AKN	AMJ	ANSH	APIM	AMO	AMK	AHML	AMMI	HOA	AYT	AHHL	ASP	IEA	AIKP	ALMO	AJV	AOPJ	XABKQ	AOIR	AIHS	AIJB	AMMR	AOWY	AHOR	AYRF	AJMM	ANOK	ABAC	XABBE	AUAM	TAKA	YAOG	AYDK	AWLA	AHGF	ASMG	AATE	ATGS	AYRV	LWP	APVO	BMMU	BPR	TUB	BTK	DU	DEI	DMU	DPI	DSU	DM	DNVM	DFH	AD	DA	DOJ	DAU	DNIN	DPP	DYHS	DOB	XDOO	DBY	DMKS	DBHU	DPO	PYSD	DMFJ	DRC	DRMS	DKSR	DPR	DJP	DOII	DTM	EPD	DMR	DWL	DLW	DHMY	DHS	DJMN	DHPM	DSNO	DWF	DMMF	DEG	DYLB	DHMU	DBBM	DIJ	DTSL	DIKP	DYS	DHVD	DOMG	DMCW	DHJR	DSMM	DJKS	DJKP	JID	YCD	NQD	DHON	DFMU	DNMU	DJV	FQD	DMIG	DMAM	DGR	DHX	DMTC	XDJPU	DYBO	DUSU	DOPJ	DOMI	LND	DEFH	DBND	DNBG	DNKG	DQJL	DHGR	DYTJ	DMLK	DFB	DMMR	DICE	DDHNI	DQKI	DDT	DYKQ	XDCRU	DSMF	DJMF	DBDB	FBRD	DLE	DHJM	DGCE	DYAJ	DJRR	DDCSH	DYRD	DYRF	DOG	DSJR	DYFE	DJNK	KLD	DWLN	XDNLB	DSJL	DHJE	DTMV	DVNO	DQKA	DDAM	DQHK	DNKQ	DDWF	DWLS	DJBJ	DAHU	DJMM	DRSJ	DJKA	DQKK	DPPA	DHDF	DNST	DRRR	DLIU	DABT	DOMN	DYTD	DLSR	DFCQ	DSFB	DIIL	DJCR	OSD	DQKD	DSLY	DJCS	DOGJ	DHHI	DYWV	DHHW	DOBG	DASM	DYRB	TBD	DYHR	DTQM	DHI	DHAJ	DMWO	DLIT	DJOC	DIVA	DIHF	DNBJ	DTWA	DTLM	DDK	DMBS	DFBG	DYTJ	DSYQ	DGCW	DBOV	DOGF	DTWI	DGOV	DMJK	DHUU	JBMRD	DNHB	DNOT	DMTO	KAD	DMMI	XDNWA	DVMO	DYWM	DHSK	DOYB	DNCR	DMBW	SJD	TKD	DYWF	DJBF	DTBO	YMNO	KBNO	KRNO	HXNO	YANO	OMNO	XMNHJ	MNHNE	MNBM	MNLBK	MNOHH	MNIR	MNONH	MNPA	MNBND	MNRBO	MNOMM	MNCWJ	MNMEM	MNJOC	MNGBT	HNE	SKHNE	GQHNE	WJ	OYYIU	PPPH	WPP	HUYR	HUIHQ	HUHUU	XIHHQ	ONHQU	HUNKQ	FKHQU	HUTCA	XHUNW	BGHQU	HPM	ONL	ONNHS	ONLL	ONU	ONLLL	ONLLN	ONHEY	ONNOM	ONWK	ONYVO	ONTQ	ONJV	ONMTC	ONJRU	ONFF	ONVNE	ONQMB	ONABT	OE	EMN	OE	EEI	ENI	EON	EU	ENJ	ERU	ME	EA	EA	EKI	ENHE	EYY	EYK	ECSH	EP	EHML	EMMU	EYHN	EPU	EPSH	EA	EMLS	EJB	EQJ	ESK	EMKS	EOSU	EIKS	EIJC	EBM	EJP	EOPD	ESHR	EJR	EWO	EPH	ENLS	ENI	ETM	EHHL	EWC	EJMN	EOII	EYVI	EFQ	ERVP	ELBK	MRE	FBE	EIKP	EYS	EHVD	ENOM	EWR	EWK	EMNN	EHBU	EHJD	EHEQ	EKB	EHBT	ELMO	ESJ	EVR	EPA	EMAM	EGG	EOMR	EKT	EYBO	ELMI	EOMI	EYKN	EYTH	EIVJ	XESMI	EICE	EOMC	ERYO	EKKB	EJMU	EMMR	ENAU	EAG	ENKM	EDL	ERB	EUON	ECNH	ETBS	EDT	EYKQ	EWQS	EROB	XENBK	EHED	ELSA	XESIM	EYTR	EJRR	ESBN	EWJR	EMSO	EVVW	EDHL	EKKB	ETMC	EYAJ	EJMF	EBAU	EDCI	EWML	EYSY	EC	EYOJ	EEE	ENME	EQMO	EJNK	ERLU	EJLL	EIKH	EJKA	EOMN	EDAM	EJDS	ESMG	EPTD	EWB	EJMM	EHQJ	EAHU	EUMB	EMWL	ECST	ETBN	ETMV	EHAG	EHDF	EMWG	EBOJ	EODE	EAIU	EILR	EGIT	EBAC	EIBI	EMWD	ETUB	EQKD	ESQF	EHUK	EWMO	ENMM	EASM	EMVI	ENLD	EYBS	EJBC	EMIA	EJYJ	BFQE	EHHU	EQJU	ESJE	0	ETBG	XEYPP	EYCD	ENNO	EYPD	EIXP	EYUB	ETWA	EDDV	EYSO	EKHR	ETIT	EWVF	EDLO	EYTJ	ELLP	ETGE	ETBF	EOMK	EVMG	ERMR	ETMC	EKCF	EHDB	EKHA	EJCB	ESND	EYTG	EYBK	EMJK	ETCL	EGTI	EGTH	ELSW	ERRD	ETWT	EYWM	ENCR	EITC	EBUG	EDLO	EYHO	EHUL	EYRO	EMBB	EOTO	ESMG	EJJM	EYRN	EYEM	EFDC	EOMB	EAFO	EMBB	XF	NOF	FPI	FNSH	AF	FNO	FDK	FYHN	FPU	BF	FQS	FOSU	FYVI	FSS	FBR	IRF	FMOB	FYG	FMR	FRC	FHFD	FNOM	FTQ	FTC	FHER	FOPJ	FOMI	FSOY	FKKB	FJMU	YRNF	FHEJ	FAMJ	FMMR	FOIR	XFNBK	FLSP	XQIF	FYTR	FYAJ	FFF	FHJE	FJMM	FAYT	ARF	FWMV	FWB	FJRB	FABT	FTLK	FYAV	FHSM	HGF	FHHW	FSMA	SIF	FAWE	FYCB	GRTF	FKCF	FHDW	FHBK	FYTO	FFE	MOF	FBWI	HBDDF	BMKE	KK	VLM	LNJNK	LLPTD	LLHSB	HQP	IHQ	HQG	HQHQU	OPHQ	HQJR	HQMMR	HQHGR	SYYQ	HNHQ	HQKMR	HQJNK	HQBMC	KHHXE	HQISB	HQYRB	NIHQ	IK	KHKN	KHMJ	KHI	KHNVM	KHIHU	KHNG	KHBO	KHPRU	KHWL	KHLLN	KHBM	KHNF	KHJMN	KHYCK	KHIJ	KHJDI	KHOMI	KHNSD	XKHND	KHOMD	KHPPG	KHRB	KHWG	KHYMR	KHICE	KHHDN	KHOMM	KHHXU	KHWD	KHNNF	KHAA	KHKMR	KHYOJ	KHOMR	KHWLN	KHJRB	KHWMV	KHAHM	KHWB	KHNHD	TWIK	KHAHU	KHDAM	KHBBB	KHGRV	KHYTU	KHYTJ	GKIK	KHMTO	KHKCF	KHNBQ	KHDLO	KHHGF	KHTRG	MGMN	MGHN	MGNO	MGNSH	MGYK	MGCSH	MGQS	MGOSU	MGOIP	MGYR	NFMGI	MGHA	MGMNR	MGKSR	MGRVP	MGMGI	MGGI	MGIKP	MGTC	MGHER	MGSJ	MGLMO	MGHON	MGFSM	MGBKQ	MGIAV	MGYIU	MGMHL	MGYKQ	MGFBO	MGSJR	MGYPU	MGKMR	MGAPP	MGTMC	MGJNU	MGJMF	MGFF	MGPP	MGAU	MGABU	MGRYE	GJHVO	MGVVW	MGJRB	MGTLK	MGOMN	MGILR	MGBOU	XMGBB	MGTLM	MGUOG	MGHWP	MGYSO	MGYTJ	MGBOV	MGRMR	MGTMC	MGTCO	SJMGI	MGYED	MGYPO	HBMGI	MGHUO	HOHQO	KSHVO	MFHVO	YJHOJ	YVHVO	CIMN	SKMVN	OIMVN	KMSO	MGMVN	TWLN	GHMVN	CAMVN	SJMVN	IPTM	HMWKS	NIBQ	MFBQ	JPBQ	WMN	VVW	WML	WHE	WOK	WIK	IKW	WOHH	WGG	OFW	WQKI	WKMR	WJNU	VIW	WYTG	NYO	KMN	KSL	KON	KNO	KU	KSM	KMS	KNSH	KIKU	KAU	KOLL	KMKS	XKOO	KOSU	KYG	KPRU	KTM	KMNR	KYMP	KAM	KOHH	KBM	KKSR	KYVI	KHS	KBQ	KNOM	KOMG	KKN	KGDI	KMTC	KMRT	KMFR	KHDN	KGP	KOOG	KMMR	KEFH	KTBS	XKNBK	KLSD	KFF	KLMY	KWML	KWJR	KHDV	KYSY	KYOJ	KMSO	KCWJ	KIKH	KONK	KDLN	KHXO	KRYE	KKTG	KFDV	KEII	KQHP	KWOT	KFCB	KHYE	KHHW	KTQM	KTOR	XKHUP	KEOG	KMWF	KWVF	KSMH	KYTJ	KBOF	KKRB	KTAK	XKNLP	KBOV	KTMC	KNLM	KMGG	KYTP	KSRJ	KSCE	XKDLO	KNMQ	KJCO	KBUG	NOMK	HAP	HAHE	HAKJ	HAYCK	HAUSU	HAHGR	HAJMU	HLHA	HAHDW	0	BQDHE	IEDHE	BT	MDBT	LBT	GIBT	LKBT	IJBT	KFBT	HXBT	BUMD	BUPU	BUMLS	BUFH	BULBU	BUSK	BUIR	HMBU	NUBU	BUYMP	BUYVI	BUIKP	BUGG	BUFD	BUNIN	BUSMG	FQBU	BUIHQ	BULMO	BUICE	BUCNH	BUDT	BUOMM	BUMGG	BUOG	BUHHJ	BUGCG	BUHXU	BUJLO	BUBD	BUNOK	HWGTI	YBMCU	NKBU	BUTW	XBULM	BUGIT	BUHXE	BUBAC	BUMWF	BUFBG	TWLU	FKBU	BUSHB	BUMJK	BUYTG	BUFDQ	BUNCR	GEBU	BUOG	BUOGE	JMJMM	NHOIN	OK	OKNL	OKHKL	OKOOG	MRHN	MRMJ	MRNI	MRHNI	MRNSH	MRFH	QJMR	MRPSH	MRMVH	MRPP	MRKQ	MRPU	MRBHU	MRHNK	MRGI	MRHS	MRJP	MRHPM	YPMR	MRYR	MRLLN	MRYT	MRHIO	MRLWL	MRTK	MRMMS	IPMR	MROM	MRHVD	MRNOM	MRGG	MRHWK	MRHER	MRMTN	MRBMR	MRMCW	MRKT	MRJPU	MRUSU	MRFB	MRHQI	MRYIU	MRTYV	MROMM	MRBB	MRJMO	MRBGR	MROG	MRTBC	MRYTR	MRQMO	MRIKH	MRQMY	MRAPV	MRHSB	MRIHR	MRYBB	MRUMF	MRDAM	MRJMM	MRSTV	MRYBS	MREED	MRMRR	MRTQM	HEMR	MRNQD	MRYCV	GEMR	MRESD	MRNOT	MRFDQ	MRTMC	MROGF	MRYDK	MRMWM	MRTBO	MRTBF	MRTEI	IF	IFRU	IFNL	IFNVM	IFMK	IFHML	IFYLM	IFQS	IFIKK	IFHPM	IFHS	IFGI	IFJR	UUMMF	IFSMR	IFNF	IFLMO	IFYBO	IFQKI	IFTMC	YWMMF	IFNME	IFQHK	IFTGF	IFGRR	IFYRV	HLBI	WLBI	OYUB	HDMJ	HDL	HDPP	HDDJ	HDMFJ	HDLBK	HDIJC	HDLXH	HDGR	HDUNI	HDHBV	HDIAV	HDBND	HDRHR	HDOIP	HDHHJ	HDWD	HDBGR	HDWCE	HDJBC	HDIUA	HDGCW	HDJIP	HDYRV	JCNI	JCN	JCPU	JCHS	JCHIO	JCVIS	JCMMS	JCPYM	JCMIG	JCLMO	JCHGR	JCSKR	JCSUU	JCWD	XJCQO	JCJNK	JCYTA	JCOMN	JCFDV	JCHOO	JCNLM	YTICE	YTDL	HMM	HMD	HMJ	HNVM	HMT	HAU	HNHE	HHLO	HSK	HPHH	HBHU	HHQM	HIR	HYT	HSHR	HSMR	HAM	HLXH	HHS	HPR	HKSR	HSR	HIJ	HYKS	HHGU	HMNL	HOMG	HOI	HSMG	HQR	HPPJ	HLLB	HFSM	HNSD	HGPM	HQAU	HMOO	HOLK	HFB	HNKM	HMLK	HRBO	HWML	HQSB	HQMB	HNME	HEHA	HTMC	HJCM	HQTM	HJNU	HQMO	HSKT	HQEQ	HWLN	HCWJ	XHLX	HTKR	HIHR	HJKA	HHAG	HVNO	HONK	XHLMO	HFDV	HYRB	HSLY	HTTB	HBUI	HMWD	HHWP	HHYU	HYUB	HHVU	HWLI	HYSK	HAVT	HDLO	HIXP	HVDL	HMWJ	HNOT	HTMC	HMUA	HTCE	HEII	HQHW	HDLO	OFD	FDU	FDND	FDAU	FDHA	UUFD	FDMMS	MWFD	IOFD	XHWMV	EIFD	YEFD	FDMLK	FQVV	FDJMF	FDIKH	FDNHD	FDONK	FDNOB	FDHOA	FDTVI	FDHUK	FDYHR	IDFD	FDILE	FDNII	FDMBB	VIF	YKVIF	VRVIF	QIVIF	TCVIF	HKVIF	IDVIF	BUHVF	HBUF	QMWYF	VVM	VMMD	VMDI	VMON	VMKNI	VMI	VMSHI	VMQS	VMMMI	VMKI	VMPP	VMHG	VMOP	VMJM	VMNL	VMNIN	VMTM	VMPT	VMIKE	VMNSM	VMFQ	VMLLN	VMUU	VMEQ	VMIR	VMKMS	VMMIG	VMHON	VMPA	VMHEQ	VMMLK	XVMFB	VMRB	VMCOR	VMBV	VMHED	VMCNH	VMGCE	VMTLK	VMKMR	VMLMY	VMFBR	VMAPP	VMBBE	XVMBB	VMPOU	VMHYR	VMFQU	VMJMO	VMJRR	VMEEE	VMVVW	VMTLJ	VMDBU	VMIHR	VMAMO	VMBUH	VMRSJ	VMABT	VMLMO	VMWP	VMHJM	VMHJE	VMOMK	VMONK	VMYHR	VMYBB	VMRPA	VMMCA	VMMVI	VMJBC	VMYWV	VMYRB	VMYUB	VMTCT	VMTXC	VMJOC	VMMWF	VMAWE	VMWVF	VMBOV	VMSMH	VMVVD	VMGRO	VMKCF	VMTTR	VMCWA	VMMWM	VMYLR	VMRRD	VMWLV	VMHUO	OJU	BOOJU	GEOJU	OUYPD	BTYV	WLMF	WLJR	WLMYM	WLKLU	WLJBJ	WLGIF	WLPOG	WLCWA	WLTJM	TGHU	TGF	TQOII	TQHPM	TQNOM	TQICE	TQAPV	TQUMF	TGHDS	YRBTN	TGFTK	STQQ	SMT	JESMM	YTSMM	SMYT	OISMM	OMRM	SMOG	LYSMM	JASMM	TBNM	HBSMM	MBSMM	HJSMM	SESMM	JPHQU	JPA	JPMIG	QD	QDND	QDFH	QDMMI	QDAU	QDRLR	QDOMR	QDTBS	QDFBR	QDWLB	QDFDV	QDMVI	QDTTB	QDYBS	QDIDR	SJMN	KSJ	SJLBU	SJEE	SJGB	SJOII	SJJMN	SJHJR	SJLMO	GKSJ	LQ	XL	PKLQ	HKLQ	BKS	YVB	BDI	BM	BHHH	BMMS	BYHS	BPU	BOB	BYHN	BKI	KKB	BNO	BTT	BKI	LEB	BLWL	LWB	BHVO	BOHH	BHS	BMFM	BWL	BHPM	LVBU	NOB	BKD	BYMY	BYS	BNOM	VEOBO	BWK	BKMS	BKN	BFMU	BYVO	BBMR	BJV	BTT	BOMI	BKIC	BYKL	BFD	BHBV	YCOBO	BJMU	BOOG	BBND	BIJB	BSE	BROB	BTBC	BQMB	BYOK	BKLU	BIOI	BLMY	BJMF	BJMO	BQKK	BOMN	BJBJ	BRRS	BWP	BNKQ	BHXO	BHAE	BMWL	BABT	YVB	BMRB	BIBI	BJOC	BMWF	BJCG	BFDQ	BYBR	BTGR	IGB	BYWM	SEB	BITC	BYVG	BYTP	BRRD	BGTE	BHUO	IMSLL	HUD	MGQKD	HX	HXO	BHX	HXT	QKHX	HXYF	HRHVP	HRHKP	NIQ	BBNQ	HYM	HYU	HYIK	HYHE	HYYHS	HYPP	HYL	HYLW	HYHS	HYHA	HYYVI	HYMNR	HYYS	HYMCW	HYFB	HYSHU	HYNDT	HYTHU	HYTWA	HYYTG	HYTBO	AV	LNNAU	TKN	TNHS	TKNI	XTQ	THJ	TMD	TPI	TN	TG	TSU	TVVH	TPP	TMKU	THNE	TNO	TNDU	TOLL	TNHE	TOIN	THVP	TMMU	TAU	TOB	TJE	TPHH	TMMI	THML	TMVH	TJB	TOO	TYY	TQS	XTMKS	TMSU	TBHU	TPO	TJM	TNIU	TGB	TOII	TIR	TSHR	TBR	TMNR	TBU	TPRU	TPR	TRVP	TVIO	TSS	TMFM	TJMN	TYR	TDM	TBM	TTM	TODI	TUU	TKSR	THHL	TIKK	TYMP	TDJ	TOG	TNOM	TIKP	TPYM	XTBG	TBNJ	TNIR	THPL	TAV	TMCW	TLMI	TIMO	TKLG	TYCK	TOIK	THJD	TEM	TWR	TWK	TSJ	TVR	TYIU	TBMR	TPA	TOMG	TTLN	THON	TOHG	TKN	TKSS	XTYK	TKT	XTJPU	TPPJ	THKL	TOMI	TYKL	TBKQ	TBE	TBHQ	TBF	XTSMI	TSOY	XTNDF	TNYK	TVMM	XXXTV	TJBD	TKHF	TOMD	TBV	TOYT	TIJB	TRHR	TOWY	TYTJ	TNKG	TOLK	TJMU	THDS	TIAV	TBND	THQI	TGNO	TADI	TROB	XTOMM	TKHU	TBMG	TBPM	TVMU	TIKT	TJNU	TQMB	TJRR	TVJR	TEMR	TBSE	TAA	TDCI	TQIK	TNUI	TEDE	TNUE	TDHL	TJMR	TNDO	TGCE	TYSY	TEBM	TYFE	TTMC	TYOJ	THHJ	TJLV	TAB	THDV	TNHX	TOG	TKMF	TLBR	TBLI	TBVF	TJMM	THXO	TRRS	TORD	TGGI	TDBU	TTMV	TQHK	THAU	TJRB	TRYE	TIHV	TNOK	TYRN	TWP	TRSJ	TIHO	TPPA	TLMO	TFDV	TEHV	TEIV	TMFF	TYBS	TBLN	TTUB	TTXC	TKOK	TWKP	TYRB	TQKD	TCIM	TJPA	TMVI	TYWV	TOYR	THWP	TNMN	TYUB	TNNO	TBC	TAKM	THOO	TSMH	TJOA	TWVF	TDLO	TAWE	TITF	TSFI	TYSK	TMYF	TGCW	THVU	TOMK	TLSG	TJME	TIVV	THDW	TMWJ	TOGF	TPPP	TESD	TJIP	TASE	TMOM	TMTO	TEAT	TCJL	TYVG	TRJI	TSIC	TMBW	TVMI	THOK	TYTP	TSRJ	TMNM	TWLP	TFVK	TWLA	THGF	TMBB	TGRG	TYRD	TBHU	TNMQ	TQDB	THHE	TEHW	TERD	TMBG	THON	TIDR	THJD	TYYO	TOKF	TMGF	TIDY	YP	YPKS	YPSM	0	YPYK	YPRVK	BIYPU	LIU	LIHN	NHLI	MULMI	LIYV	LION	MSLMI	LIIK	LINVM	LIYK	LIOB	LIQJ	LIPP	LINL	HKLMI	LIMVH	LIHQU	LICI	EILMI	LIOLL	LIQO	UMLI	LIYJ	XLIBH	LIOM	LILW	LIHS	LIVIS	LIMNR	LITM	LIGB	LIYG	LIJR	LIBM	LIOII	XLIBT	LIMMS	LIEG	LITW	LIIHQ	LIWR	LITQ	LIGG	LIHJR	LIYCK	LIOMR	MNLMI	LIMIG	QILMI	LIKT	LIJPU	LILLB	LIYKL	LIFB	LINIB	LIHQI	WLPLI	MVLMI	QLLMI	LIRVK	LIBND	LIHDN	LIOMD	LINKM	LINKG	XLICR	LIROB	LIOKR	LYLMI	LITMC	LINDT	LITGU	LIDHL	LIBGR	LIIRM	LIHHJ	LIAPH	LIFQU	LIQMB	LIWD	LIJNU	LIRLU	LIWMI	LICWJ	LIHDJ	LIAPV	LIOMN	LIHAG	LIHSB	LIMRW	LIYSD	LITCW	NKLMI	LIOAE	LIKGG	LIJRB	LIJBJ	LIFDV	LIQKA	LITBD	LILMI	LIIIL	LIYBS	LIHUP	LIMHF	LIHXE	LIQKD	LIILR	LIBAC	LITMB	GKLMI	LITWA	LIYUB	GKLMI	LIFBG	LIMWF	LIWVF	HEYLI	LIYIJ	LITAK	NHLII	LIHDP	XLITL	LIYTJ	LITIT	LINAO	LIGTH	LIHDW	LITMC	LIJIP	LITGR	NQLMI	LINCR	YRBLN	LIITC	LITBO	LIMBB	LITOE	LITWI	VOLII	TTWLI	JBMRI	LIBUE	HTNG	HTFQ	HOEMN	HOMRN	HOBGN	LEI	YCIV	LOB	LHG	OINV	LOIN	LDK	LHK	PYSV	LQS	KRYHV	LAM	LDJ	LFQ	YNHV	LIVE	LOIK	LOMR	LHER	LFSM	LBKQ	LAV	LRHG	YHXV	IEYHV	EHYHV	XLYKQ	LOMM	LLSA	LHHJ	LEEE	LQMV	FBRYV	LYYHV	LAPH	LSJR	LGGY	LHSB	LAPV	YODV	LORD	LLPB	LJKA	LFDV	LTOR	LMVI	LYAV	LHYU	JTCV	LLIT	LSMA	LNII	SJYHV	LMBB	LDDQ	MWAJ	XBUND	YRBHU	UUBHU	MOBHU	JKBHU	TCBHU	ONBHU	TBBHU	TMBHU	YCBHU	NBDK	NBHVO	YPNBG	NBONH	NBFMU	NBDL	NBCWJ	GBHNE	PYMR	LSYMR	YPYMR	WLYMR	NCYMR	FQYMR	JTCR	GEYMR	INV	IVY	IVMJ	IVM	IVU	IVON	IVHP	IVSHI	IVSK	IVSS	IVOB	XIVOP	IVUK	IVDK	IVJR	IVMNR	IVBM	IVBR	IVHVI	IVNSM	IVUU	IVSHR	IVDHE	IVIR	IVSMG	IVQD	IVGG	IVGR	IVKF	IVHJD	IVHGU	IVHMR	IVOMG	IVNMU	XIVPA	IVNSD	IVJHP	IVBKQ	IVSMM	IVQKI	IVIT	IVMOO	IVFB	IVHGR	IVOWY	IVKHG	IVIOK	IVSJE	IVMSO	IVLMY	IVHDV	IVHXO	IVOIP	IVNHX	IVYRD	IVYOJ	IVTMV	IVPTD	IVDWF	IVYPM	IVAPV	IVRRS	IVOMN	IVBME	IVNUY	IVIOR	IVYTA	IVYHH	IVYBB	IVISB	IVNOB	IVTAK	IVFBU	IVWCE	IVYBS	IVTCT	IVPHT	IVAWE	IVYCB	IVTBH	IVMUA	IVOGF	IVLSW	IVNHB	IVJBK	IVNCR	IVOIM	JRCOR	MTM	MTJE	MTJNU	MSHO	BMSO	FQMSO	MOJTO	UMOO	BSHH	BHPI	BHDH	BHSHR	BHOD	BHHER	BHMA	BHHWP	BHTAK	IBO	BOHIO	BOJM	IPMMO	JTBO	XPTBO	BORHU	BOIR	QIBO	YPBO	OGBO	BOHER	BOIG	BOYVO	BOSOY	BOIJE	BOMMV	XDTBO	BOOMF	JBBO	BOJNK	BOBOO	BOBGR	ILOO	BOFF	BOABU	QKBO	BOIBI	SLQMO	MOGO	YMBO	BONCR	YJHEO	GCOK	GCSLE	GCYBO	GCJKA	GOVL	GOBM	GOIMO	GOMNN	GOHUO	RMPI	MSRYO	RMQO	RMMT	RMYLM	RMNHE	RMOSU	RMIR	RMIKK	RMJP	RMKSR	RMMR	RMODI	RMBT	RMDHE	RMHVD	RMHGU	RMYCK	MNRYO	RMGG	RMYK	RMJPU	RMPPJ	RMYHJ	RMHND	RMYKL	RMSUP	QLRYO	RMIAV	RMNIB	RMQKI	RMYAJ	RMWD	RMSJR	RMOKR	RMYTR	RMHJO	RMIYR	XRMTK	RMITE	RMHJG	RMUMB	RMNKQ	RMHLB	RMPTD	RMHSB	RMNHD	RMYBB	JTCO	RMTQM	RMBVK	RMASM	XRMSJ	RMTMB	IFRYO	RMUBB	FKRYO	RMNOT	RMCWA	RMHDW	RMMMI	RMYFU	RMMTO	RMTCO	RMJCL	RMWLI	RMTJA	RMTLG	RMVVV	RMIWG	RMHUO	RMFFE	JJR	JQU	KQMJ	KQK	KQSHI	KQMSU	KQJR	KQMNR	KQYS	KQRC	KQHQO	KQHFD	KQOHH	KQHVD	KQSHR	KQIPM	KQMIG	KQHBY	KQOMG	KQHER	KQSJU	QOKQ	KQAPP	KQBTV	KQYRF	KQEEE	KQVVW	KQQKK	KQMRW	KQABT	XVMR	KQGRV	KQJQR	KQSTV	KQIXP	KQYBK	KQFDQ	YMD	YMVH	YOJ	YSHR	YOPD	YBR	YKSR	YIR	YNF	YHQO	YHS	YNOM	YTT	YHEQ	YHMR	YIJB	YFB	YIJE	YKHF	YRHG	YICE	YMBB	YJRR	YVNE	YGCG	YHDV	YOMN	YHJU	YUMB	YAPV	YRYE	YHAG	YTCW	YTTB	YHHW	YASM	YGSK	YFDQ	YYPO	YNBQ	YJCO	YBHU	YVVV	RAU	VVRAU	MJNL	YVNL	MNL	INL	YSNL	MTNL	PMNL	TMNL	IRNL	OMNL	MMNL	MBNL	LMPNL	HMNL	NSNL	TCNL	HDNL	KINL	MGNL	PANL	KTNL	XOINL	BQNL	KBNL	BDNL	HRNL	GCNL	SRNL	RGNL	XMBNL	RONL	HJNL	FFNL	DDNL	CJNL	SVNL	RSNL	MGNL	TMNL	MFNL	YJNL	TRNL	HWNL	SONL	HONL	MRNL	UTNL	MCWM	MWMN	TCWM	MWPI	MWDI	MWPD	MWMJ	MWUK	MWCSH	MWMMI	MWKI	MWJP	MWHS	MWTM	MWJR	MWHD	MWIVE	MWNIR	MWHER	MWBMR	MWPA	MWHGU	MWRHG	MWOMD	MWJKD	MWOWY	MWBDI	MWMTH	XMWMB	MWYTR	MWYRD	MWAPP	MWAMO	MWJRB	MWNOB	MWYFD	MWTOG	MWKRT	MWILR	MWSMH	MWTCO	MWOGF	MWYUT	MWTWT	MWYPO	MWHGF	HDLW	CKMGC	MNC	YCC	EKC	KLC	NKC	EUC	GKC	IPC	SJC	CCC	OMJV	XCU	XCN	XCLN	XCY	XCNN	XCG	XCHJ	XCLLL	XCHHH	XCNHE	XCHNI	CLS	XCV	CNSH	XCEI	XCMT	XCMYS	XCMF	XXCKI	XCSS	XCPU	XCFH	XCOB	CBO	XCHE	XCOIN	XCB	XCPIM	CPVM	XCYHN	XCYHS	XCF	XCYJ	XCNG	XCAU	XCMGI	XCMYM	XCTM	XCJR	XCDM	XCMNR	XCSR	XCKLB	XCIKE	XCIV	XCBU	XCAM	XCWL	XCW	XCLW	XCHA	CHVD	XCHHL	XCPRU	XCYLB	XCYVI	XCJP	XCPH	XCSP	XCDHE	CEQ	XCMTN	XCJKS	XCJKP	XCSJ	XCTYV	CMTC	XCKB	XCIHS	CKT	XCMHL	CJPU	XCMIG	CFSM	XCRR	XCRLB	XCWK	CUSU	CBON	XCHJD	XCHGU	XCNKG	XCHGI	XCHJR	COPJ	XCOMG	CKD	XCOMR	XCLMO	XCHER	XCNSD	XCNAU	XCYCK	XCYHV	CYTH	XXXCY	CENH	XCJV	XCVR	CTBS	XCMMR	CDT	XCIPP	CLEG	XCWG	XCRMG	XCBMS	XCHGR	XCHQI	XCHDS	XCOOG	XCBDI	XCYTJ	XCYIU	CLST	CLSA	XCCNH	XCIAV	XCSME	XCSSR	XCNLR	XCQMB	XCJKA	XCTKR	XCTW	XCKJT	XCKMR	XCAMI	XCWD	XCAPP	XCAA	XCWJR	XCOG	CHJO	XXCHL	XCFQU	XCPHP	XCYTR	XCFF	OVJMO	XCSJR	XCNDT	XCVVW	XCQHK	XCTLK	XCPPA	XCLMI	XCWP	XCRRS	XCHJX	XCHDF	XCHJG	XCHXE	XCHAG	XCBME	XXXCY	XCITE	XCTGK	CFDV	XCTVI	CLNO	XCAHU	XCTAK	XCIBI	XCMRB	XCSJE	XCFBU	XXCOG	XCHUD	XCORQ	XCHHW	XCYRB	XCYBS	XCTCT	XXXCJ	CJOC	XCJCR	XCFBG	XCAWE	XCWVF	XCUBB	XCILB	XCYCB	XCYSK	XCYSO	XCSMH	XCMWJ	XCMTO	XCKCF	XCTCO	XCNWA	XCYDK	CLSW	XCTCA	CJCL	XXXCN	XCNOT	XCTOE	XCMBW	XCWLV	XCWLI	XCITC	XCYTP	XXCJB	XCIPF	XCVVV	XCNRI	LSM	LSMMM	LSMJ	LSMG	0	LSKI	LSYK	LSYHN	LSWL	LSGG	XLSYK	LSLMI	LSRR	LSUSU	LSOI	LSYVO	LSWD	LSNWU	LSIAV	LSJKA	LSIRM	LSKLU	LSAA	LSHXU	LSBBE	LSHPA	LSNHX	LSYSY	LSDWF	LSBUK	LSLMO	LSNOK	LSGIT	LSJBC	LSASM	LSTUO	LSNJK	LSWLV	HRJ	NL	NLHJ	NLMU	NLHE	NLMMU	NLTT	NLHS	NLYR	NLDHE	NLIKP	NLNOM	NLYVO	NLPPG	NLYLH	NLAG	NLRBO	NLSJE	NLHJM	NLHHJ	NLWLB	NLWMV	NLKMB	NLHAG	NLHI	NLTCT	NLYTO	NLAVF	NBOP	OG	OGJ	OGNHS	OKOG	YMPOG	YVHG	BMOG	NSOG	HROG	OGIVG	MBMMS	MBYK	MBMKS	MBPRU	MBYKL	MBFB	MBNKG	MBEJB	MBYTV	MBLMY	MBHXU	MBDD	MBBIE	MBEBG	MBIVV	MBTBK	MBSRJ	MBBHG	QBBHU	QBJMO	IDLMY	MIKW	TJHML	TJOP	TJAU	TJAM	TJLBK	TJJV	TJYK	TJHKL	TJNAU	TJFB	TJPFD	TJNHD	TJPYR	TJTKD	TJTTB	TJTHB	QSSHI	QSIKE	AOQS	QSABT	QSBHX	LMMM	YASHR	PMBO	MJMBO	MGMBO	HLMBO	YNMBO	YSMBO	GRMBO	NGMBO	XORMB	PEMBO	XPFMB	YOMBO	SLMBO	ETMBO	HNMBO	ORMBO	PFMBO	WBMBO	RSMBO	UBMBO	SEMBO	TBMBO	EDMBO	AFMBO	MBMBO	YOHWJ	TGMBO	HNNSH	XHNYR	XHNPR	YTHNK	XHNBM	XHNWP	XHNHX	BUHNK	XHNHH	IKHNK	XHNFF	NIOIV	VHOIV	MIKV	MHOIV	YVGV	RUOIV	NV	NVMN	NVHP	NVNSH	NVPU	NVOMN	NVHG	NVHK	NVOKS	NVIJ	NVSMR	NVUU	NVIR	NVSJ	NVHBR	NVOMR	NVHER	NVYCK	NVYHV	NVJBD	NVMRT	NVOMD	NVBV	NVICE	NVWD	NVAPP	NVNHX	NVDAM	NVLMO	NVBBB	NVHXE	NVNUY	NVGIT	NVTAK	NVIBI	NVHHW	NVTQG	NVTLM	NVAWE	NVTBK	NVRUC	NVJBV	KNTHU	TUIRM	HAOAE	NME	NMK	NMLLL	NMA	NMIS	NMBM	NMWC	NMODI	NMPR	NMNSM	NMJP	VENVM	NMEQ	NMIR	NMJPU	NMWK	NMOPJ	NMYVO	NMTT	NMNMM	NMMBB	NMLWS	NMYTJ	NMSME	NMICE	NMTMC	NMWD	NMOG	NMJMF	NMLX	NMIKH	NHNVM	NMNOK	NKNVM	QKNVM	NMHHW	JTCM	NMISM	NMMWF	NMWVF	NMHWP	NMSND	NMLPC	NMMBU	NMYRV	BBHNE	BBOLL	BBHPM	BBJR	BBYVO	BBHMR	BBHER	BBHHJ	BBWD	BBJHR	BBFDV	BBJTU	BBJOC	BBWLI	BBYKB	SIHHH	SHMU	SHHQU	SHSHR	SHYMP	SHGB	SHOD	SHGR	SHJMF	SHFQU	SHHDF	SHJOC	SHWLV	SHVVV	UIP	MRBL	NNMRB	HIYJ	HIIKK	HIJD	MIKI	HIFB	HIMOB	HIBTV	HIYUB	NMSH	XNMSU	NMIKU	NMPU	NMYHS	NMAU	NMMNR	NMIKE	NMMFJ	NMYR	NMYS	NMLW	NMOS	XNMOD	NMHA	FBNWM	NMDHE	XNMIR	NMGG	NMGR	NMJKS	NMKB	NMMBL	NMBMR	NMBON	NMHMR	NMOMI	NMYKL	NMYCK	TQNWM	FQNWM	NMSMI	NMMLK	XNMMB	NMYKQ	NMLEG	NMWG	NMADI	NMHED	NMHVF	EHNWM	NMJMU	NMSKR	NMAIL	NMNIB	NMQMB	NMGCE	XNMTM	NMSJE	NMLMY	NMAPP	NMAA	NMWJR	NMHXU	NMOIP	NMBGR	NMYRF	XNMIK	NMNHI	NMVVW	NMJTO	NMPTD	NMMRW	NMFBI	NMAMO	NMABT	NMWMV	NMWP	NMRRS	NMHDF	NMOAE	NMHAG	NMHAE	XNMLM	XNMIS	XNMEI	QKNWM	NMJPA	NMASM	NMWLF	NMBOU	NMYBS	NMTXC	NMTJS	XNMMW	NMMBS	FKNWM	NMAWE	OKNWM	NMILB	NMSFI	NMSMA	NMMTO	NMTTR	NMFDQ	NMTWI	NMTOE	NMIRP	NMTWT	NMYWM	KNPYM	IPPYM	SPYM	SKPYM	OUPYM	PJPYM	LUPYM	JRPYM	KDPYM	YSPYM	XRSPY	LKPYM	OIPYM	XHIPY	PRPYM	NUPYM	XFBPY	PMJP	VVMPM	QIPYM	XXMBP	XHRPY	ODPM	HOMNM	HYPYM	ORPYM	YCPYM	MOPYM	JDPYM	MBPYM	RBPYM	HRPYM	CRPYM	LDPYM	CHPYM	MMPYM	TAPYM	TWPYM	KUPYM	APPYM	HJPYM	NXPYM	YDPYM	IOPYM	JUPYM	LXPYM	JRBPM	AVPYM	RSPYM	BBPYM	HFPYM	TIPYM	AUPYM	NKPYM	XMBPY	BUPYM	CMPYM	HWPYM	FBPYM	TTPYM	TCPYM	SEPYM	BVPYM	IFPYM	SHPYM	KFPYM	OFPYM	YUPYM	NBPYM	RRPYM	YMPYM	PMTOE	TOPYM	TGPYM	MUPYM	YWTQM	IPHN	IPHD	IPYG	IPFD	IPTMC	DDIXP	IPHHI	IPFDQ	JNPFD	QEQO	IDHI	IDHQU	FBTLC	HDOE	HEYR	WFOIN	OPWGF	WFUU	WFVIS	WFNIN	WFGR	MIKF	WFICE	WFYRF	HHWGF	WFJNK	WFIKH	WFYTA	TCFB	TBIKK	TBIJB	RLWU	XMMUU	XRRWM	NSBUL	LOGTE	GEHHJ	HVCSH	HVLW	HVMMR	HVBVK	HVAJV	HLKN	HLMJ	HLDAM	YKLLL	YUP	YUON	YUHML	YUBM	YUPRU	YUSHR	YUYMP	YUAV	YUMMR	YURYO	YUHLB	YUSMG	IPTC	ORIKP	OMRB	OWLN	SBLN	RROB	VTJB	UOPJ	QIKI	QES	QLIT	MNJNK	MNLMO	EI	FHBV	MGSMF	BUFDV	HDMTC	HKT	VMLW	VMQNI	VMBR	VMSJ	VMCRU	VMBD	VMJBJ	VMLIT	VMYTO	TYMU	LITJB	LTJB	LWLI	IVHML	IVSIM	BOHJR	BOQMB	BOQKA	MWBHU	NMSJE	NMYT	MBPYM	YKPYM	MNPYM	QBPYM	BKPYM	HNPYM	SRYJM"
+.split('\t')
+     var Lat2CJ ={Q:'手',W:'田',E:'水',R:'口',T:'廿',Y:'卜',U:'山',I:'戈',O:'人',P:'心',
+                  A:'日',S:'尸',D:'木',F:'火',G:'土',H:'竹',J:'十',K:'大',L:'中',
+                  Z:'重',X:'難',C:'金',V:'女',B:'月',N:'弓',M:'一','0':'0'}
+     var i, k, sub, subarr, hier, varPY, varCJ, CJArr = []
+     var CJincomplete={}
+     for (i=0; i<cjList.length; i++) {
+         hier=simpList[i]
+         varCJ = cjList[i].replace(/./g, function(lat){return Lat2CJ[lat]} )
+         if(varCJ=='0') 
+             continue // no CangJie for this hieroglyph
+         if (CJArr[varCJ])
+             CJArr[varCJ].push(hier)
+         else
+             CJArr[varCJ]=[hier]
+         for (k=1;k < varCJ.length; k++) {
+             sub=varCJ.substr(0,k)
+             if (subarr=CJincomplete[sub]) {
+                 if (subarr.length <9 && subarr[subarr.length-1] != hier)
+                     CJincomplete[sub].push(hier)
+             } else
+                 CJincomplete[sub]=[hier]
+         }
+     }
+     for(k in CJincomplete) {
+         if(CJArr[k]) {
+             if(CJArr[k].length<10)CJArr[k] = CJArr[k].concat(CJincomplete[k].slice(0,10-CJArr[k].length))
+         }
+     }
+     VirtualKeyboard.Langs.CN.CJArr = CJArr
+ }
+,'activate' : function () {
+     VirtualKeyboard.Langs.CN.INPArr = VirtualKeyboard.Langs.CN.CJArr;
+ }
+,'charProcessor' : VirtualKeyboard.Langs.CN.processChar
+});
 VirtualKeyboard.addLayout('HR','Croatian',
 '¸1234567890\'+žqwertzuiopšđasdfghjklčćyxcvbnm,.-'
 ,{0:'¨!"#$%&/()=?*',44:';:_'},{1:'~ˇ^˘°˛`˙´˝¨¸¤\\|€',24:'÷×',29:'[]',33:'łŁ',36:'ß',40:'@{}§<>'},'¸¨ˇ^˘°˛˙´˝¨¸');
@@ -259,149 +268,32 @@ VirtualKeyboard.addLayout('IN','Kannada',
 VirtualKeyboard.addLayout('KZ','Kazakh',
 '("әіңғ,.үұқөһ\\йцукенгшщзхъфывапролджэячсмитьбю№'
 ,{0:')!',6:';:',13:'/',46:'?'});
-var Korean={
-Jamo: {
-// bits: 1: vowel, 2:
-'\u3131':[14,44032,1], //g
-'\u3132':[6,44620,2], //gg
-'\u3133':[4,-1,3], //gs
-'\u3134':[14,45208,4], //n
-'\u3135':[4,-1,5], //nj
-'\u3136':[4,-1,6], //nh
-'\u3137':[6,45796,7], //d
-'\u3138':[2,46384,0], //dd
-'\u3139':[14,46972,8], //r
-'\u313a':[4,-1,9], //lg
-'\u313b':[4,-1,10], //lm
-'\u313c':[4,-1,11], //lb
-'\u313d':[4,-1,12], //ls
-'\u313e':[4,-1,13], //lt
-'\u313f':[4,-1,14], //lp
-'\u3140':[4,-1,15], //lh
-'\u3141':[6,47560,16], //m
-'\u3142':[14,48148,17], //b
-'\u3143':[2,48736,0], //bb
-'\u3144':[4,-1,18], //bs
-'\u3145':[14,49324,19], //s
-'\u3146':[6,49912,20], //ss
-'\u3147':[6,50500,21], //ng
-'\u3148':[6,51088,22], //j
-'\u3149':[2,51676,0], //jj
-'\u314a':[6,52264,23], //ch
-'\u314b':[6,52852,24], //k
-'\u314c':[6,53440,25], //t
-'\u314d':[6,54028,26], //p
-'\u314e':[6,54616,27], //h
-'\u314f':[1,0,0], //a
-'\u3150':[1,28,0], //ae
-'\u3151':[1,56,0], //ya
-'\u3152':[1,84,0], //yae
-'\u3153':[1,112,0], //eo
-'\u3154':[1,140,0], //e
-'\u3155':[1,168,0], //yeo
-'\u3156':[1,196,0], //ye
-'\u3157':[1,224,0], //o
-'\u315b':[1,336,0], //yo
-'\u315c':[1,364,0], //u
-'\u3160':[1,476,0], //yu ?
-'\u3161':[1,504,0], //eu
-'\u3163':[1,560,0] //i
-},
-VV2V:[0,0,0,0,0,0,0,0,0,224,224,224,0,0,364,364,364,0,0,504,0],
-V2VV:[0,0,0,0,0,0,0,0,{'\u314f':252,'\u3150':280,'\u3163':308},0,0,0,0,{'\u3153':392,'\u3154':420,'\u3163':448},0,0,0,0, {'\u3163':532},0,0],
-CV2C: ['\u3131','\u3132','\u3134','\u3137','\u3138','\u3139','\u3141','\u3142','\u3143','\u3145','\u3146','\u3147','\u3148','\u3149','\u314a','\u314b','\u314c','\u314d','\u314e'],
-C2CC: {'\u3131':'\u3132','\u3137':'\u3138','\u3142':'\u3143','\u3145':'\u3146','\u3148':'\u3149'},
-CC2C: {'\u3132':'\u3131','\u3138':'\u3137','\u3143':'\u3142','\u3146':'\u3145','\u3149':'\u3148'},
-PP2P:[0,0,1,1,0,4,4,0,0,8,8,8,8,8,8,8,0,0,17,0,19,0,0,0,0,0,0,0],
-PP2PC:[0,
-[0,44032],//g
-[0,44620],//gg
-[1,49324],//gs
-[0,45208],//n
-[4,51088],//nj
-[4,54616],//nh
-[0,45796],//d
-[0,46972],//r
-[8,44032],//lg
-[8,47560],//lm
-[8,48148],//lb
-[8,49324],//ls
-[8,53440],//lt
-[8,54028],//lp
-[8,54616],//lh
-[0,47560],//m
-[0,48148],//b
-[17,49324],// bs
-[0,49324],//s
-[0,49912],//ss
-[0,50500],//ng
-[0,51088],//j
-[0,52264],//ch
-[0,52852],//k
-[0,53440],//t
-[0,54028],//p
-[0,54616]//h
-],
+VirtualKeyboard.Langs.KR = new function () {
+    var self = this;
+    self.Jamo = {'ㄱ':[14,44032,1],'ㄲ':[6,44620,2],'ㄳ':[4,-1,3],'ㄴ':[14,45208,4],'ㄵ':[4,-1,5],'ㄶ':[4,-1,6],'ㄷ':[6,45796,7],'ㄸ':[2,46384,0],'ㄹ':[14,46972,8],'ㄺ':[4,-1,9],'ㄻ':[4,-1,10],'ㄼ':[4,-1,11],'ㄽ':[4,-1,12],'ㄾ':[4,-1,13],'ㄿ':[4,-1,14],'ㅀ':[4,-1,15],'ㅁ':[6,47560,16],'ㅂ':[14,48148,17],'ㅃ':[2,48736,0],'ㅄ':[4,-1,18],'ㅅ':[14,49324,19],'ㅆ':[6,49912,20],'ㅇ':[6,50500,21],'ㅈ':[6,51088,22],'ㅉ':[2,51676,0],'ㅊ':[6,52264,23],'ㅋ':[6,52852,24],'ㅌ':[6,53440,25],'ㅍ':[6,54028,26],'ㅎ':[6,54616,27],'ㅏ':[1,0,0],'ㅐ':[1,28,0],'ㅑ':[1,56,0],'ㅒ':[1,84,0],'ㅓ':[1,112,0],'ㅔ':[1,140,0],'ㅕ':[1,168,0],'ㅖ':[1,196,0],'ㅗ':[1,224,0],'ㅛ':[1,336,0],'ㅜ':[1,364,0],'ㅠ':[1,476,0],'ㅡ':[1,504,0],'ㅣ':[1,560,0]}
+    self.VV2V = [0,0,0,0,0,0,0,0,0,224,224,224,0,0,364,364,364,0,0,504,0]
+    self.V2VV = [0,0,0,0,0,0,0,0,{'ㅏ':252,'ㅐ':280,'ㅣ':308},0,0,0,0,{'ㅓ':392,'ㅔ':420,'ㅣ':448},0,0,0,0, {'ㅣ':532},0,0]
+    self.CV2C = 'ㄱㄲㄴㄷㄸㄹㅁㅂㅃㅅㅆㅇㅈㅉㅊㅋㅌㅍㅎ'.split('')
+    self.C2CC = {'ㄱ':'ㄲ','ㄷ':'ㄸ','ㅂ':'ㅃ','ㅅ':'ㅆ','ㅈ':'ㅉ'}
+    self.CC2C = {'ㄲ':'ㄱ','ㄸ':'ㄷ','ㅃ':'ㅂ','ㅆ':'ㅅ','ㅉ':'ㅈ'}
+    self.PP2P = [0,0,1,1,0,4,4,0,0,8,8,8,8,8,8,8,0,0,17,0,19,0,0,0,0,0,0,0]
+    self.PP2PC= [0,[0,44032],[0,44620],[1,49324],[0,45208],[4,51088],[4,54616],[0,45796],[0,46972],[8,44032],[8,47560],[8,48148],[8,49324],[8,53440],[8,54028],[8,54616],[0,47560],[0,48148],[17,49324],[0,49324],[0,49912],[0,50500],[0,51088],[0,52264],[0,52852],[0,53440],[0,54028],[0,54616]]
+    self.P2PP = [0,{'ㄱ':2, 'ㅅ':3},0,0,{'ㅈ':5, 'ㅎ':6},0,0,0,{'ㄱ':9,'ㅁ':10,'ㅂ':11,'ㅅ':12,'ㅌ':13,'ㅍ':14,'ㅎ':15},0,0,0,0,0,0,0,0,{'ㅅ':18},0,{'ㅅ':20},0,0,0,0,0,0,0,0]
 
-P2PP:[0,{'\u3131':2, '\u3145':3}, //g
-0,0,{'\u3148':5, '\u314e':6}, //n
-0,0,0,{'\u3131':9, '\u3141':10, '\u3142':11, '\u3145':12, '\u314c':13, '\u314d':14, '\u314e':15}, //r
-0,0,0,0,0,0,0, // l*
-0,{'\u3145':18}, //b
-0, {'\u3145':20}, //s
-0,0,0,0,0,0,0,0],
+   /**
+    * 1 -sh
+    * 2 -jot
+    * 4 -w
+    * 8 -
+    * 16 -
+    */
+    self.flags = 0 //for some crosstalk
 
-Ru2Kor:{'-':'-',
-'\u0430': '\u314f',     '\u0410': '\u314f',//a
-'\u0431': '\u3142',     '\u0411': '\u3143',     //b, PP
-'\u0432': '\u3157',     '\u0412': '\u3157',     //v
-'\u0433': '\u3131',     '\u0413': '\u3132',     //g,G
-'\u0434': '\u3137',     '\u0414': '\u3138',     //d,TT
-'\u0435': '\u3154',     '\u0415': '\u3154',     //e
-'\u0451': '\u315b',     '\u0401': '\u3155',     //yo, Yo
-'\u0436': '\u3148',     '\u0416': '\u3148',     //zh
-'\u0437': '\u3148',     '\u0417': '\u3148',     //z
-'\u0438': '\u3163',     '\u0418': '\u3163',     //i
-'\u0439': '\u3163',     '\u0419': '\u3163',     //y
-'\u043a': '\u3131',     '\u041a': '\u3132',     //k, K
-'\u043b': '\u3139',     '\u041b': '\u3139',     //l
-'\u043c': '\u3141',     '\u041c': '\u3141',     //m
-'\u043d': '\u3134',     '\u041d': '\u3147',     //n, N=ng
-'\u043e': '\u3157',     '\u041e': '\u3153',     //o, O
-'\u043f': '\u3142',     '\u041f': '\u3143',     //p, PP
-'\u0440': '\u3139',     '\u0420': '\u3139',     //r
-'\u0441': '\u3145',     '\u0421': '\u3146',     //s, SS
-'\u0442': '\u3137',     '\u0422': '\u3138',     //t, TT
-'\u0443': '\u315c',     '\u0423': '\u315c',     //u
-'\u0444': '\u314d',     '\u0424': '\u314d',     //f
-'\u0445': '\u314e',     '\u0425': '\u314e',     //x
-'\u0446': '\u3149',     '\u0426': '\u3149',     //ts
-'\u0447': '\u3148',     '\u0427': '\u3149',     //ch, JJ
-'\u0448': '\u3145',     '\u0428': '\u3145',     //sh
-'\u0449': '\u3145',     '\u0429': '\u3145',     //shch
-'\u044a': '\u044a',     
-'\u044b': '\u3161',     '\u042b': '\u3161',     //eu
-'\u044c': '\u3153',     '\u042c': '\u3153',     // soft sign
-'\u044d': '\u3150',     '\u042d': '\u3150',     //ae
-'\u044e': '\u3160',     '\u042e': '\u3160',     //yu
-'\u044f': '\u3151', '\u042f': '\u3151'//ya
-},
-RuVowels:         "\u044c\u042c\u0410\u0430\u0415\u0435\u0401\u0451\u0418\u0438\u0419\u0439\u041e\u043e\u0423\u0443\u042b\u044b\u042d\u044d\u042e\u044e\u042f\u044f",
-Ru2KorJotVowels:  "\u3155\u3155\u3151\u3151\u3156\u3156\u3155\u315b\u3163\u3163\u3163\u3163\u3155\u315b\u3160\u3160\u3161\u3161\u3152\u3152\u3160\u3160\u3151\u3151",
-flags:0 //for some crosstalk
-/*
-1 -sh
-2 -jot
-4 -w
-8 -
-16 -
-*/
-}
-function parseHangul(bufchar){
+    self.parseHangul = function (bufchar) {
         if(bufchar=='' || bufchar.length>1) return null
-  var code=bufchar.charCodeAt()
+        var code=bufchar.charCodeAt()
         if(code<0x3131 || code >0xD7A3) return null // non Korean buffer
-  else if(code<0x314F && code>0x3130) return [Korean.Jamo[bufchar][1],-1,0] // consonant in buffer
+        else if(code<0x314F && code>0x3130) return [self.Jamo[bufchar][1],-1,0] // consonant in buffer
         code -= 44032
         var arr=[]
         arr[0]=44032+588*(code / 588 >>0)
@@ -409,156 +301,269 @@ function parseHangul(bufchar){
         arr[1]= 28*(code / 28 >>0)
         arr[2]= code % 28
         return arr
-}
+    }
+    self.charProcessor  = function (chr, buf, CVC, rukbd) {
+        var jamo=self.Jamo[chr]
+        if (!CVC) CVC=self.parseHangul(buf)
+        if (CVC==null) {
+            if (!jamo) {
+                return [chr,0]
+            } else {
+                if(jamo[0] & 2) return [chr,1] //can start a syllable
+                else return [chr,0]
+            }
+        } else { // full buf
+            if (chr=='\u0008'){
+                if (CVC[2]) {
+                    return [ String.fromCharCode( CVC[0]+CVC[1]+self.PP2P[CVC[2]]), 1] 
+                } else if(CVC[1]>-1){
+                    var VV2V=self.VV2V[CVC[1]/28]
+                    if(VV2V) 
+                        return [String.fromCharCode(CVC[0]+VV2V), 1]
+                    else 
+                        return [self.CV2C[(CVC[0]-44032)/588], 1]
+                } else if(self.CC2C[buf]) {
+                    return [self.CC2C[buf],1]
+                } else {
+                    self.flags=0
+                    return['',0] 
+                }
+            } else if(!jamo){
+                self.flags=0
+                return [buf+chr,0]
+            } else if(CVC[2]) { // [CVC]
+                if (jamo[0] & 2) { //[CVC] +C
+                    var P2PP = self.P2PP[CVC[2]][chr]    
+                    if(P2PP) return [ String.fromCharCode( CVC[0]+CVC[1]+P2PP), 1] // [CVCC]
+                    else return [buf+chr, 1] // CVC, [C]
+                } else if (jamo[0] & 1) {// [CVC] +V
+                    if(rukbd && CVC[2]==21) 
+                        return [buf+String.fromCharCode(50500+jamo[1]),1]
 
-function KoreanCharProcessor(chr, buf, CVC, rukbd){
-        var jamo=Korean.Jamo[chr]
-  if(!CVC) CVC=parseHangul(buf)
-      if(CVC==null){
-                if(!jamo)       return [chr,0]
-                else{
-                        if(jamo[0] & 2) return [chr,1] //can start a syllable
-                        else return [chr,0]
+                    return [ String.fromCharCode( CVC[0]+CVC[1]+self.PP2PC[CVC[2]][0])
+                            +String.fromCharCode( self.PP2PC[CVC[2]][1]+self.Jamo[chr][1])
+                            ,1] // CV(P) [PV]
+                } else { // [CVC] + PP
+                        return [buf+chr, 0]
                 }
-        }else{ // full buf
-                if(chr=='\u0008'){
-                        if(CVC[2]) return [ String.fromCharCode( CVC[0]+CVC[1]+Korean.PP2P[CVC[2]]), 1]
-                        else if(CVC[1]>-1){
-                                var VV2V=Korean.VV2V[CVC[1]/28]
-                                if(VV2V) return [String.fromCharCode(CVC[0]+VV2V), 1]
-                                else return [Korean.CV2C[(CVC[0]-44032)/588], 1]
+            } else if(CVC[1]>-1) { // [CV]
+                self.flags &=~ 3
+                if (jamo[0] & 4) { // [CV] +P
+                    return [String.fromCharCode(CVC[0]+CVC[1]+jamo[2]), 1] // [CVC]
+                } else if(jamo[0] & 1) { // [CV]+V
+                    if (rukbd) {
+                        var vow
+                        if (self.flags & 4 && (vow='\u3153\u3154\u3163'.indexOf(chr))!=-1) {//weo, we, wi
+                            self.flags &=~4
+                            return [String.fromCharCode(CVC[0]+[392,308,448][vow]),1]
                         }
-                        else if(Korean.CC2C[buf])return [Korean.CC2C[buf],1]
-                        else{
-                                Korean.flags=0
-                                 return['',0] 
+                    }
+                    var V2VV = self.V2VV[CVC[1]/28][chr]
+                    if (V2VV) {// [CVV]
+                        //self.flags &=~7
+                        return [String.fromCharCode(CVC[0]+V2VV), 1] 
+                    } else {// CV,[V]
+                        if (rukbd) {
+                            //self.flags &=~7
+                            return [buf+String.fromCharCode(50500+jamo[1]),1]
                         }
-                }else if(!jamo){
-                        Korean.flags=0
-                  return [buf+chr,0]
-                }else if(CVC[2]){ // [CVC]
-                        if(jamo[0] & 2) { //[CVC] +C
-                                var P2PP = Korean.P2PP[CVC[2]][chr]    
-                                if(P2PP) return [ String.fromCharCode( CVC[0]+CVC[1]+P2PP), 1] // [CVCC]
-                                else return [buf+chr, 1] // CVC, [C]
-                        }else if(jamo[0] & 1){// [CVC] +V
-                                        if(rukbd && CVC[2]==21) return [buf+String.fromCharCode(50500+jamo[1]),1]
-                                 return [String.fromCharCode( CVC[0]+CVC[1]+Korean.PP2PC[CVC[2]][0])+
-                                 String.fromCharCode( Korean.PP2PC[CVC[2]][1]+Korean.Jamo[chr][1]),
-                                 1] // CV(P) [PV]
-                        }else{ // [CVC] + PP
-                                return [buf+chr, 0]
-                        }
-                }else if(CVC[1]>-1){ // [CV]
-                                Korean.flags &=~ 3
-                        if(jamo[0] & 4) // [CV] +P
-                                return [String.fromCharCode(CVC[0]+CVC[1]+jamo[2]), 1] // [CVC]
-                        else if(jamo[0] & 1){ // [CV]+V
-                                     if(rukbd){
-                                                var vow
-                                                if(Korean.flags & 4 && (vow='\u3153\u3154\u3163'.indexOf(chr))!=-1){//weo, we, wi
-                                                        Korean.flags &=~4
-                                                        return [String.fromCharCode(CVC[0]+[392,308,448][vow]),1]
-                                                }
-                                }
-                                var V2VV = Korean.V2VV[CVC[1]/28][chr]
-                                if(V2VV) {// [CVV]
-                                        //Korean.flags &=~7
-                                        return [String.fromCharCode(CVC[0]+V2VV), 1] 
-                                }else {// CV,[V]
-                                        if(rukbd){
-                                                        //Korean.flags &=~7
-                                                        return [buf+String.fromCharCode(50500+jamo[1]),1]
-                                        }
-                                        else return [buf+chr, 0] 
-                                }
-                        }
-                        else return [buf+chr, 1] //CV [C]
+                        else return [buf+chr, 0] 
+                    }
                 }
-                else if(jamo[0] & 1) {// [C] +V 
-                                return [String.fromCharCode(Korean.Jamo[buf][1]+jamo[1]), 1]
-                }else{ //[C]+C
-                                if(buf==chr && Korean.C2CC[buf]) return [Korean.C2CC[buf],1]
-                                else return [buf+chr, 1]
-                }
+                else return [buf+chr, 1] //CV [C]
+            } else if(jamo[0] & 1) {// [C] +V 
+                return [String.fromCharCode(self.Jamo[buf][1]+jamo[1]), 1]
+            } else { //[C]+C
+                if(buf==chr && self.C2CC[buf]) return [self.C2CC[buf],1]
+                else return [buf+chr, 1]
+            }
         }
-}VirtualKeyboard.addLayout('KR','2 Beolsik',
+    }
+};
+VirtualKeyboard.addLayout('KR','2 Beolsik',
 '~1234567890-=\\ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔ[]ㅁㄴㅇㄹㅎㅗㅓㅏㅣ;\'ㅋㅌㅊㅍㅠㅜㅡ,./'
-,{0:'`!@#$%^&*()_+|ㅃㅉㄲㄲㅆ',22:'ㅒㅖ{}',35:':"',44:'<>?'},null,KoreanCharProcessor);
+,{0:'`!@#$%^&*()_+|ㅃㅉㄲㄲㅆ',22:'ㅒㅖ{}',35:':"',44:'<>?'},null,VirtualKeyboard.Langs.KR.charProcessor);
 VirtualKeyboard.addLayout('KR','3 Beolsik',
 '~ㅎㅆㅂㅛㅠㅑㅖㅢㅜㅋ)>:ㅅㄹㅕㅐㅓㄹㄷㅁㅊㅍ(<ㅇㄴㅣㅏㅡㄴㅇㄱㅈㅂㅌㅁㄱㅔㅗㅜㅅㅎ,.ㅗ'
-,{0:'`ㄲㄺㅈㄿㄾ=""\'~;+\\ㅍㅌㄵㅀㄽ56789%/ㄷㄶㄼㄻㅒ1234"ㅊㅄㅋㄳ?-"\'',46:'!'},null,KoreanCharProcessor);
+,{0:'`ㄲㄺㅈㄿㄾ=""\'~;+\\ㅍㅌㄵㅀㄽ56789%/ㄷㄶㄼㄻㅒ1234"ㅊㅄㅋㄳ?-"\'',46:'!'},null,VirtualKeyboard.Langs.KR.charProcessor);
 VirtualKeyboard.addLayout('KR','Ru-Kor',
 'ё1234567890-=\\йцукенгшщзхъфывапролджэячсмитьбю.'
-,{1:'!"№;%:?*()_+/',46:','},null,function(chr, buf){
-        var CVC=parseHangul(buf)
-        if(CVC==null){
-                var kor, jamo
-                if((kor= Korean.Ru2Kor[chr]) && (jamo = Korean.Jamo[kor])){
-                        var flagged='\u0448\u0428\u0439\u0419\u0432\u0412'.indexOf(chr)
-                        if(flagged >=0) Korean.flags |= parseInt('112244'.charAt(flagged), 16)
-                        if(jamo[0] & 1) {// V
-                                return [String.fromCharCode(50500+jamo[1]),1]
-                        }
-                }
-        }else{
-                switch (chr) {
-                case '-': // -
-                        Korean.flags=0
-                        return  [buf, 0]
-                case '\u044a': // tv.znak
-                                if(CVC && CVC[2] && CVC[2]==4)// n->ng
-                                                return [String.fromCharCode(CVC[0]+CVC[1]+21), 1]
-                                else return [buf, buf && 1 || 0]
-                                break
-/*              case '\u044c': //m.znak
-                                return [buf, buf && 1 || 0]
-                                break
-*/
-                case '\u0445': // h
-                        var pos= '\u3142\u3137\u3148\u3131'.indexOf(buf) // p t c k
-                        if (pos!=-1 ) return ['\u314d\u314c\u314a\u314b'.charAt(pos), 1]
-                        else if(CVC[2]) switch (CVC[2]){
-                                case 1: return [String.fromCharCode(CVC[0]+CVC[1]+24), 1] // k>kh
-                                case 7: return [String.fromCharCode(CVC[0]+CVC[1]+25), 1] // t>th
-                                case 17: return [String.fromCharCode(CVC[0]+CVC[1]+26), 1] // p>ph
-                                case 22: return [String.fromCharCode(CVC[0]+CVC[1]+23), 1] // j>ch
-                                case 11: return [String.fromCharCode(CVC[0]+CVC[1]+14), 1] // lp>lph
-                        }
-                        break
-                case '\u0436': // zh
-                        if(buf=='\u3148' || buf=='\u3137') return ['\u3148', 1]
-                        else if(CVC[2]){
-                                if(CVC[2]==22) return [buf, 1];
-                                else if (CVC[2]==7) return [String.fromCharCode(CVC[0]+CVC[1]+22), 1]
-                        }
-                        break
-                case '\u0448': case '\u0428': // sh
-                        Korean.flags =1
-                        return[buf+'\u3145',1]
-                        break
-                case '\u0439': case '\u0419': // yot
-                //debugger              
-                        if(CVC[1] == -1 || CVC[2]) Korean.flags =2 //s-y, sas-y
-                        break
-                case '\u0432': case '\u0412': //w
-                        Korean.flags =4
-                        break
-                default:
-                if(CVC && (Korean.flags & 1 &&  CVC[1]==-1 || Korean.flags & 2 && CVC[2]==0)){//sha, rya
-                                var vow
-                                if((vow=Korean.RuVowels.indexOf(chr))!=-1) {//vowel
-                                                Korean.flags &=~ 3
-                                                return KoreanCharProcessor(Korean.Ru2KorJotVowels.charAt(vow), Korean.CV2C[(CVC[0]-44032)/588], [CVC[0],-1,0])
-                                }
-                        }
-                }
+,{1:'!"№;%:?*()_+/',46:','},null,function (chr, buf) {
+    var Ru2Kor = {'-':'-','а':'ㅏ','А':'ㅏ','б':'ㅂ','Б':'ㅃ','в':'ㅗ','В':'ㅗ','г':'ㄱ','Г':'ㄲ','д':'ㄷ','Д':'ㄸ','е':'ㅔ','Е':'ㅔ','ё':'ㅛ','Ё':'ㅕ','ж':'ㅈ','Ж':'ㅈ','з':'ㅈ','З':'ㅈ','и':'ㅣ','И':'ㅣ','й':'ㅣ','Й':'ㅣ','к':'ㄱ','К':'ㄲ','л':'ㄹ','Л':'ㄹ','м':'ㅁ','М':'ㅁ','н':'ㄴ','Н':'ㅇ','о':'ㅗ','О':'ㅓ','п':'ㅂ','П':'ㅃ','р':'ㄹ','Р':'ㄹ','с':'ㅅ','С':'ㅆ','т':'ㄷ','Т':'ㄸ','у':'ㅜ','У':'ㅜ','ф':'ㅍ','Ф':'ㅍ','х':'ㅎ','Ч':'ㅎ','ц':'ㅉ','Ц':'ㅉ','ч':'ㅈ','Ч':'ㅉ','ш':'ㅅ','Ш':'ㅅ','щ':'ㅅ','Щ':'ㅅ','ъ':'ъ','ы':'ㅡ','Ы':'ㅡ','ь':'ㅓ','Ь':'ㅓ','э':'ㅐ','Э':'ㅐ','ю':'ㅠ','Ю':'ㅠ','я':'ㅑ','Я':'ㅑ'}
+       ,RuVowels = "ьЬаАеЕёЁиИйЙОоуУыЫэЭюЮяЯ"
+       ,Ru2KorJotVowels = "ㅕㅕㅑㅑㅖㅖㅕㅛㅣㅣㅣㅣㅕㅛㅠㅠㅡㅡㅒㅒㅠㅠㅑㅑ"
+       ,Korean = VirtualKeyboard.Langs.KR
+       ,CVC=Korean.parseHangul(buf)
+    if(CVC==null){
+        var kor, jamo
+        if((kor= Ru2Kor[chr]) && (jamo = Korean.Jamo[kor])){
+            var flagged='\u0448\u0428\u0439\u0419\u0432\u0412'.indexOf(chr)
+            if(flagged >=0) Korean.flags |= parseInt('112244'.charAt(flagged), 16)
+            if(jamo[0] & 1) {// V
+                    return [String.fromCharCode(50500+jamo[1]),1]
+            }
         }
-        return KoreanCharProcessor(Korean.Ru2Kor[chr]||chr, buf, CVC, 1)
-});
+    }else{
+        switch (chr) {
+        case '-': // -
+            Korean.flags=0
+            return  [buf, 0]
+        case '\u044a': // tv.znak
+                    if(CVC && CVC[2] && CVC[2]==4)// n->ng
+                                    return [String.fromCharCode(CVC[0]+CVC[1]+21), 1]
+                    else return [buf, buf && 1 || 0]
+                    break
+/*      case '\u044c': //m.znak
+                    return [buf, buf && 1 || 0]
+                    break
+*/
+        case '\u0445': // h
+            var pos= '\u3142\u3137\u3148\u3131'.indexOf(buf) // p t c k
+            if (pos!=-1 ) return ['\u314d\u314c\u314a\u314b'.charAt(pos), 1]
+            else if(CVC[2]) switch (CVC[2]){
+                    case 1: return [String.fromCharCode(CVC[0]+CVC[1]+24), 1] // k>kh
+                    case 7: return [String.fromCharCode(CVC[0]+CVC[1]+25), 1] // t>th
+                    case 17: return [String.fromCharCode(CVC[0]+CVC[1]+26), 1] // p>ph
+                    case 22: return [String.fromCharCode(CVC[0]+CVC[1]+23), 1] // j>ch
+                    case 11: return [String.fromCharCode(CVC[0]+CVC[1]+14), 1] // lp>lph
+            }
+            break
+        case '\u0436': // zh
+            if(buf=='\u3148' || buf=='\u3137') return ['\u3148', 1]
+            else if(CVC[2]){
+                    if(CVC[2]==22) return [buf, 1];
+                    else if (CVC[2]==7) return [String.fromCharCode(CVC[0]+CVC[1]+22), 1]
+            }
+            break
+        case '\u0448': case '\u0428': // sh
+            Korean.flags =1
+            return[buf+'\u3145',1]
+            break
+        case '\u0439': case '\u0419': // yot
+        //debugger              
+            if (CVC[1] == -1 || CVC[2]) Korean.flags =2 //s-y, sas-y
+            break
+        case '\u0432': case '\u0412': //w
+            Korean.flags =4
+            break
+        default:
+        if (CVC && (Korean.flags & 1 &&  CVC[1]==-1 || Korean.flags & 2 && CVC[2]==0)){//sha, rya
+                var vow
+                if ((vow=RuVowels.indexOf(chr))!=-1) {//vowel
+                    Korean.flags &=~ 3
+                    return Korean.charProcessor(Ru2KorJotVowels.charAt(vow), Korean.CV2C[(CVC[0]-44032)/588], [CVC[0],-1,0])
+                }
+            }
+        }
+    }
+    return Korean.charProcessor(Ru2Kor[chr]||chr, buf, CVC, 1)
+}
+);
 VirtualKeyboard.addLayout('KG','Kyrgyz Cyrillic',
 'ё1234567890-=\\йцукенгшщзхъфывапролджэячсмитьбю.'
 ,{1:'!"№;%:?*()_+/',46:','},{16:'ү',19:'ң',32:'ө'});
+VirtualKeyboard.Langs.LA = new function () {
+    var self = this;
+var remap1 = {
+ ga:'ǧa',ge:'ǧe',gi:'ǧi','go':'ǧo',gu:'ǧu',Ga:'Ʀa',Ge:'Ʀe',GI:'Ʀi',Go:'Ʀo',Gu:'Ʀu',GA:'ƦA',GE:'ƦE',GI:'ƦI',GO:'ƦO',GU:'ƦU'
+,pha:'p\u021fa',pho:'p\u021fo',Pha:'P\u021fa',Pho:'P\u021fo',PHA:'P\u021ea',PHo:'P\u021eo'
+,tha:'t\u021fa',tho:'t\u021fo',Tha:'T\u021fa',Tho:'T\u021fo',THa:'T\u021ea',THo:'T\u021eo'
+,kha:'k\u021fa',kho:'k\u021fo',Kha:'K\u021fa',Kho:'K\u021fo',KHa:'K\u021ea',KHo:'K\u021eo'
+,"a'":'á',"A'":'Á',"e'":'é',"E'":'É',"i'":'í',"I'":'Í',"u'":'ú',"U'":'Ú',"o'":'ó',"O'":'Ó'
+    }
+
+   ,remap4c = {
+ 'phun':'pȟuŋ','Phun':'Pȟuŋ','PHUN':'PȞUŊ'
+,'thun':'tȟuŋ','Thun':'Tȟuŋ','THUN':'TȞUŊ'
+,'khun':'kȟuŋ','Khun':'Kȟuŋ','KHUN':'KȞUŊ'
+,'phún':'pȟúŋ','Phún':'Pȟúŋ','PHÚN':'PȞÚŊ'
+,'thún':'tȟúŋ','Thún':'Tȟúŋ','THÚN':'TȞÚŊ'
+,'khún':'kȟúŋ','Khún':'Kȟúŋ','KHÚN':'KȞÚŊ'
+,'an':'aŋ','An':'Aŋ','AN':'AŊ'
+,'in':'iŋ','In':'Iŋ','IN':'IŊ'
+,'un':'uŋ','Un':'Uŋ','UN':'UŊ'
+,'án':'áŋ','Án':'Áŋ','ÁN':'ÁŊ'
+,'ín':'íŋ','Ín':'Íŋ','ÍN':'ÍŊ'
+,'ún':'úŋ','Ún':'Úŋ','ÚN':'ÚŊ'
+,'h':'\u021f', 'H':'\u021e'
+    }
+
+   ,remap0 = {
+ 'phúŋ':'pȟúŋ','Phúŋ':'Pȟúŋ','PHÚ':'PȞÚŊ'
+,'thúŋ':'tȟúŋ','Thú':'Tȟúŋ','THÚŊ':'TȞÚŊ'
+,'khúŋ':'kȟúŋ','Khúŋ':'Kȟú','KHÚ':'KȞÚŊ'
+,'phúŋ':'pȟúŋ','Phúŋ':'Pȟú','PHÚ':'PȞÚ'
+,'thúŋ':'tȟúŋ','Thúŋ':'Tȟú','THÚŊ':'TȞÚ'
+,'khúŋ':'kȟúŋ','Khúŋ':'Kȟú','KHÚŊ':'KȞÚ'
+,"p'":'pʼ',"P'":'Pʼ'
+,"k'":'kʼ',"K'":'Kʼ'
+,"t'":'tʼ',"T'":'Tʼ'
+,"c'":'cʼ',"C'":'Cʼ'
+,"s'":'sʼ',"S'":'Sʼ'
+,"š'":'šʼ',"Š'":'Šʼ'
+,"\u021f'":'\u021fʼ',"\u021e'":'\u021eʼ'
+,"h'":'\u021fʼ',"H'":'\u021eʼ'
+    }
+
+   ,remap2 = {
+ ph:'ph',Ph:'Ph',PH:'PH'
+,th:'th',Th:'Th',TH:'TH'
+,kh:'kh',Kh:'Kh',KH:'KH'
+,an:'an',An:'An',AN:'AN'
+,'in':'in',In:'In',IN:'IN'
+,un:'un',Un:'Un',UN:'UN'
+,'án':'án','Án':'Án','ÁN':'ÁN'
+,'ín':'ín','Ín':'Ín','ÍN':'ÍN'
+,'ún':'ún','Ún':'Ún','ÚN':'ÚN'
+    }
+
+   ,remap3 = {
+ phu:'phu',Phu:'Phu',PHU:'PHU'
+,thu:'thu',Thu:'Thu',THU:'THU'
+,khu:'khu',Khu:'Khu',KHU:'KHU'
+,"phu'":'phú',"Phu'":'Phú',"PHU'":'PHÚ'
+,"thu'":'thú',"Thu'":'Thú',"THU'":'THÚ'
+,"khu'":'khú',"Khu'":'Khú',"KHU'":'KHÚ'
+    }
+
+   ,remap4 = {
+ 'phun':'phun','Phun':'Phun','PHUN':'PHUN'
+,'thun':'thun','Thun':'Thun','THUN':'THUN'
+,'khun':'khun','Khun':'Khun','KHUN':'KHUN'
+,'phún':'phún','Phún':'Phún','PHÚN':'PHÚN'
+,'thún':'thún','Thún':'Thún','THÚN':'THÚN'
+,'khún':'khún','Khún':'Khún','KHÚN':'KHÚN'
+    }
+   ,remap = {}
+
+    var __construct = function() {
+        var i,k
+        var cons =" ǧwštypsdghȟkl'zžčbnmǦWŠTPSDGH\u021eKLZŽČBNM.,<>;:\"?`~1!2@3#4$5%6^7&8*9(0)-_=+\|\u00A0".split('')
+        for(k in remap0) remap[k]=[remap0[k],0]
+        for(k in remap1) remap[k]=[remap1[k],1]
+        for(k in remap2) remap[k]=[remap2[k],2]
+        for(k in remap3) remap[k]=[remap3[k],3]
+        for(k in remap4) remap[k]=[remap4[k],4]
+        for(k in remap4c) 
+        for(var i=0,cL=cons.length; i<cL; i++) 
+            remap[k+cons[i]]=[remap4c[k]+(cons[i]=="'"? "ʼ": cons[i]),1];
+        // clear come memory
+        remap0=remap1=remap2=remap3=remap4=remap4c = null
+        self.remap = remap;
+    }
+    __construct();
+};
+VirtualKeyboard.addLayout('LA','Lakhota Standard',
+'`1234567890-=\\ǧweštyuiop[]asdŋghȟkl;\'zžčvbnm,./'
+,{0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'},null,function(chr, buf){
+    if (chr=='\u0008') { // backspace
+        if (buf.length) {
+            return [buf.slice(0,-1),buf.length-1]
+        } 
+    } else { //non backspace
+        return VirtualKeyboard.Langs.LA.remap[buf+chr] || [buf+chr, 1]
+    }
+});
 VirtualKeyboard.addLayout('MX','Latin American',
 '|1234567890\'¿}qwertyuiop´+asdfghjklñ{zxcvbnm,.-'
 ,{0:'°!"#$%&/()=?¡]',24:'¨*',36:'[',44:';:_'},{0:'¬',11:'\\',13:'`@',25:'~',36:'^'},'`´^');

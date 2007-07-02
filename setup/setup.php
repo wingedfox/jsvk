@@ -193,8 +193,8 @@ function getLayoutList () {
     <?php } ?>
     <br />
     <strong>Group languages by</strong><br />
-    <label for="group1"><input type="radio" name="group" id="group1" value="lng" />Language code (<strong>en</strong>-US)</label>&nbsp;
-    <label for="group2"><input type="radio" name="group" id="group2" value="domain" checked="true" />Language domain (en-<strong>US</strong>)</label>
+    <label for="group1"><input type="radio" name="group" id="group1" value="lng" checked="true" />Language code (en-<strong>US</strong>)</label>&nbsp;
+    <label for="group2"><input type="radio" name="group" id="group2" value="domain" />Language domain (<strong>en</strong>-US)</label>
     <br />
     <br />
     <input type="submit" value="Process selected" />
