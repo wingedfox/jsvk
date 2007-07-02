@@ -221,4 +221,4 @@ function KoreanCharProcessor(chr, buf, CVC, rukbd){
                                 else return [buf+chr, 1]
                 }
         }
-}
+};

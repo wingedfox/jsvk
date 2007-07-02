@@ -79,8 +79,16 @@ function convertKbd(&$f) {
     $res = & $f->getConvertedLayout();
 
     if ($res['keynum']!=47) return false;
+    switch ($_REQUEST['group']) {
+        case "lng" :
+            $code = $res['code']
+            break;
+        case "domain" :
+            $code = $res['domain']
+            break;
+    }
 
-    $s = "VirtualKeyboard.addLayout('".$res['code']."','".$res['name']."',\n'"
+    $s = "VirtualKeyboard.addLayout('".$code."','".$res['name']."',\n'"
         .replaceFormatChars(mb_escape($res['normal']))."'\n,"
         .lytkeys2string($res['shift'])
         .",".lytkeys2string($res['alt'])
@@ -183,6 +191,11 @@ function getLayoutList () {
                                                              :"Target file (<b>/layouts/layouts.js</b>) is already exists, remove it before installing new one."?></span>
         <?php } ?>
     <?php } ?>
+    <br />
+    <strong>Group languages by</strong><br />
+    <label for="group1"><input type="radio" name="group" id="group1" value="lng" />Language code (<strong>en</strong>-US)</label>&nbsp;
+    <label for="group2"><input type="radio" name="group" id="group2" value="domain" checked="true" />Language domain (en-<strong>US</strong>)</label>
+    <br />
     <br />
     <input type="submit" value="Process selected" />
    </div>

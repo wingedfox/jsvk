@@ -322,6 +322,13 @@ var VirtualKeyboard = new function () {
       else
           lt.dk = deadkeys;
 
+      if (lt.dk && isFunction(lt.dk.load)) {
+          if (self.Langs[code]) 
+              lt.dk.load.call(self.Langs[code])
+          else
+              lt.dk.load(self.Langs[code])
+      }
+
       layout[code][name] = lt;
 
       return true;
@@ -382,12 +389,20 @@ var VirtualKeyboard = new function () {
     nodes.desk.innerHTML = btns;
     nodes.keyboard.removeChild(inp);
     inp = null;
+
+
     /*
     *  restore capslock state
     */
     var caps = document.getElementById(idPrefix+'caps');
     if (caps && mode&VK_CAPS) {
       DOM.CSS(caps).addClass(cssClasses.buttonDown);
+    }
+    /*
+    *  call IME activation method, if exists
+    */
+    if (lang.dk && isFunction(lang.dk.activate)) {
+            lang.dk.activate()
     }
     /*
     *  restore shift state
@@ -1097,6 +1112,8 @@ var VirtualKeyboard = new function () {
       *  call user-supplied converter
       */
       res = lang.dk.call(self,tchr,buf);
+    } else if (lang.dk && isFunction(lang.dk.charProcessor)) {
+      res = lang.dk.charProcessor.call(self,tchr,buf);
     } else if (tchr == "\x08") {
       res = ['',0];
     } else {
@@ -1140,7 +1157,7 @@ var VirtualKeyboard = new function () {
                         :(isNumber(chr)?String.fromCharCode(chr)
                                        :chr);
       var html = []
-         ,dk = !isFunction(lyt.dk) && lyt.dk.indexOf(chr)>-1
+         ,dk = isArray(lyt.dk) && lyt.dk.indexOf(chr)>-1
 
       /*
       *  if key matches agains current deadchar list
@@ -1298,7 +1315,6 @@ VirtualKeyboard.IME = new function () {
      */
     self.show = function (s) {
         target = VirtualKeyboard.getAttachedInput();
-//        alert(target+" "+DOM.getParent(target,'body'))
         DOM.getParent(target,'body').appendChild(ime);
         if (s) self.setSuggestions(s);
         if (target && ime && sg.length>0) {

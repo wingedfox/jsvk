@@ -31,6 +31,8 @@ class VirtualKeyboardLayout {
     var $altgr = array();
     var $name = "";
     var $code = "";
+    var $domain = "";
+
     var $copyright = "";
 
     var $columns = array();
@@ -61,8 +63,9 @@ class VirtualKeyboardLayout {
     function processLayout($str) {
         mb_internal_encoding("UTF-8");
         $str = mb_convert_encoding($str,"WINDOWS-1251", "UCS-2");
-        preg_match("/^localename\\t\"\\w+-(\\w+)/mi",$str,$m);
-        $this->code = $m[1];
+        preg_match("/^localename\\t\"\\(w+)-(\\w+)/mi",$str,$m);
+        $this->code = $m[2];
+        $this->domain = strtoupper($m[1]);
         preg_match("/^.*?kbd[^\"]+\"([^\"]+)/mi",$str,$m);
         $this->name = array_shift(preg_split("/\\s-\\s/",$m[1]));
         preg_match("/^copyright[^\"]+\"([^\"]+)/mi",$str,$m);
@@ -121,6 +124,7 @@ class VirtualKeyboardLayout {
 
         $VK = array('name' => $this->name
                    ,'code' => $this->code
+                   ,'domain' => $this->domain
                    ,'copy' => $this->copyright
                    ,'normal' => array()
                    ,'shift' => array(array())

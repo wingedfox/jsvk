@@ -29,11 +29,18 @@
                     f = IOsys.GetFile(addpath+layouts[i].code+'.js');
                     str += f.OpenAsTextStream(1,-2).Read(f.Size());
                   }
-                  if (!res.dk && IOsys.FileExists(cbkpath+layouts[i].name+'.js')) {
-                    f = IOsys.GetFile(cbkpath+layouts[i].name+'.js');
+                  f = cbkpath+layouts[i].path.match(/^.+\\(.+)\.klc$/)[1]+'.js'
+                  if (!res.dk && IOsys.FileExists(f)) {
+                    f = IOsys.GetFile(f);
                     res.dk = f.OpenAsTextStream(1,-2).Read(f.Size());
                   }
-                  str += 'VirtualKeyboard.addLayout(\''+layouts[i].code+'\',\''+layouts[i].name+'\','+nl+
+                  if (document.getElementById('group1').checked) {
+                      var code = layouts[i].code
+                  } else if (document.getElementById('group2').checked) {
+                      var code = layouts[i].domain
+                  }
+
+                  str += 'VirtualKeyboard.addLayout(\''+code+'\',\''+layouts[i].name+'\','+nl+
                                                     '['+res.normal.join(",")+']'+nl+
                                                     (res.shift?',{'+res.shift+'}'+nl:',null')+
                                                     (res.alt?',{'+res.alt+'}'+nl:',null')+
@@ -77,6 +84,11 @@
   </tbody>
  </table>
 </div>
+<strong>Group languages by</strong><br />
+<label for="group1"><input type="radio" name="group" id="group1" value="lng" />Language code (<strong>en</strong>-US)</label>&nbsp;
+<label for="group2"><input type="radio" name="group" id="group2" value="domain" checked="true" />Language domain (en-<strong>US</strong>)</label>
+<br />
+<br />
 <button onclick="cvt()">Process selected</button>
 <script type="text/javascript">
   /**
@@ -107,6 +119,8 @@
 
       self.path = file;
       self.code = fs.match(/^localename\t"\w+-(\w+)/mi)[1]
+      self.domain = fs.match(/^localename\t"(\w+)-\w+/mi)[1].toUpperCase()
+
       self.name = fs.match(/^kbd[^"]+\"([^"]+)/mi)[1].split(/\s-\s/)[0]
       self.copyright = fs.match(/^copyright[^"]+\"([^"]+)/mi)[1]
       if (self.copyright.match(/ilya lebedev/i)) self.copyright = ""
