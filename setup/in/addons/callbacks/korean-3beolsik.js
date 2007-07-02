@@ -1,1 +1,1 @@
-KoreanCharProcessor
+VirtualKeyboard.Langs.KR.charProcessor

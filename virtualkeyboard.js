@@ -323,10 +323,7 @@ var VirtualKeyboard = new function () {
           lt.dk = deadkeys;
 
       if (lt.dk && isFunction(lt.dk.load)) {
-          if (self.Langs[code]) 
-              lt.dk.load.call(self.Langs[code])
-          else
-              lt.dk.load(self.Langs[code])
+          lt.dk.load()
       }
 
       layout[code][name] = lt;
