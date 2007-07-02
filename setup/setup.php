@@ -81,10 +81,10 @@ function convertKbd(&$f) {
     if ($res['keynum']!=47) return false;
     switch ($_REQUEST['group']) {
         case "lng" :
-            $code = $res['code']
+            $code = $res['code'];
             break;
         case "domain" :
-            $code = $res['domain']
+            $code = $res['domain'];
             break;
     }
 

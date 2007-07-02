@@ -1,4 +1,5 @@
 VirtualKeyboard.Langs.LA = new function () {
+    var self = this;
 var remap1 = {
  ga:'ǧa',ge:'ǧe',gi:'ǧi','go':'ǧo',gu:'ǧu',Ga:'Ʀa',Ge:'Ʀe',GI:'Ʀi',Go:'Ʀo',Gu:'Ʀu',GA:'ƦA',GE:'ƦE',GI:'ƦI',GO:'ƦO',GU:'ƦU'
 ,pha:'p\u021fa',pho:'p\u021fo',Pha:'P\u021fa',Pho:'P\u021fo',PHA:'P\u021ea',PHo:'P\u021eo'
@@ -84,7 +85,7 @@ var remap1 = {
             remap[k+cons[i]]=[remap4c[k]+(cons[i]=="'"? "ʼ": cons[i]),1];
         // clear come memory
         remap0=remap1=remap2=remap3=remap4=remap4c = null
-        this.remap = remap;
+        self.remap = remap;
     }
     __construct();
 };
