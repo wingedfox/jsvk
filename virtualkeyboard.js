@@ -1345,10 +1345,8 @@ VirtualKeyboard.IME = new function () {
         ime.style.width = ime.childNodes[2].scrollWidth+dt+'px';
         var xy = DOM.getOffset(target);
         ime.style.left = xy.x+'px';
-        ime.style.top = xy.y+target.offsetHeight+'px';
-//        var xy = DocumentSelection.getSelectionOffset(target);
-//        window.status += xy.y+"="+xy.h+" "
-//        ime.style.top = xy.y-xy.h-xy.h/4+'px';
+        var co = DocumentSelection.getSelectionOffset(target);
+        ime.style.top = xy.y+co.y+co.h+'px';
     }
     /**
      *  Imports suggestions and applies them
