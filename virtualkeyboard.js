@@ -580,7 +580,7 @@ var VirtualKeyboard = new function () {
                   /*
                   *  IE allows to rewrite the key code
                   */
-                  evt.keyCode = chr[0].charCodeAt(0);
+                  evt.keyCode = "\n"==chr[0]?13:chr[0].charCodeAt(0);
                   ret = true;
               } catch (err) {
                   try {

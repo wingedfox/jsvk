@@ -54,7 +54,7 @@ function lytkeys2string ($s,$p) {
         $sh .= $k.":'".replaceFormatChars(mb_escape($v))."',";
     }
     if ($sh) {
-        return $p.": {".substr($sh,0,-1)."},";
+        return $p.": {".substr($sh,0,-1)."}";
     } else {
         return "";
     }
@@ -88,22 +88,23 @@ function convertKbd(&$f) {
             break;
     }
 
-    $s = "VirtualKeyboard.addLayout({code:'".$code."',name:'".$res['name']."',\nkeys:'"
-        .replaceFormatChars(mb_escape($res['normal']))."'\n,"
-        .lytkeys2string($res['shift'],'shift')
-        .lytkeys2string($res['alt'],'alt')
-        .($res['callback']?'cbk:'.$res['callback'].",":"")
-        .($res['dk']?"dk:'".mb_escape($res['dk'])."'":"")."});\n";
+    $params = array();
+    $params[] = "code:'".$code."'";
+    $params[] = "name:'".$res['name']."'";
+    $params[] = "keys:'".replaceFormatChars(mb_escape($res['normal']))."'";
+    $params[] = lytkeys2string($res['shift'],'shift');
+    $params[] = lytkeys2string($res['alt'],'alt');
+    if ($res['callback']) $params[] = "cbk:".$res['callback'];
+    if ($res['dk']) $params[] = "dk:'".mb_escape($res['dk'])."'";
+
+
+    $s = "VirtualKeyboard.addLayout({".join(",",array_filter($params))."});\n";
 
     if ($res['addon'] && !isset($VK_ADDON_INCLUDED[$res['code']])) {
         $s = $res['addon'] . $s;
         $VK_ADDON_INCLUDED[ $res ['code']] = true;
     }
 
-    /*
-    *  remove empty params to save some space
-    */
-    $s = preg_replace("/(,null)+\);/",");",$s);
     
     /*
     *  save layout
