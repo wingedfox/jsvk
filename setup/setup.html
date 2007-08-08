@@ -30,9 +30,9 @@
                     str += f.OpenAsTextStream(1,-2).Read(f.Size());
                   }
                   f = cbkpath+layouts[i].path.match(/^.+\\(.+)\.klc$/)[1]+'.js'
-                  if (!res.dk && IOsys.FileExists(f)) {
+                  if (IOsys.FileExists(f)) {
                     f = IOsys.GetFile(f);
-                    res.dk = f.OpenAsTextStream(1,-2).Read(f.Size());
+                    res.cbk = f.OpenAsTextStream(1,-2).Read(f.Size());
                   }
                   if (document.getElementById('group1').checked) {
                       var code = layouts[i].code
@@ -40,12 +40,13 @@
                       var code = layouts[i].domain
                   }
 
-                  str += 'VirtualKeyboard.addLayout(\''+code+'\',\''+layouts[i].name+'\','+nl+
-                                                    '['+res.normal.join(",")+']'+nl+
-                                                    (res.shift?',{'+res.shift+'}'+nl:',null')+
-                                                    (res.alt?',{'+res.alt+'}'+nl:',null')+
-                                                    (res.dk?','+res.dk:'')+
-                                                   ');\n';
+                  str += "VirtualKeyboard.addLayout({code:'"+code+"',name:'"+layouts[i].name+"',"+nl+
+                                                   "keys:["+res.normal.join(",")+"]"+nl+
+                                                    (res.shift?",shift:{"+res.shift+"}"+nl:"")+
+                                                    (res.alt?",alt:{"+res.alt+"}"+nl:"")+
+                                                    (res.dk?",dk:"+res.dk:'')+
+                                                    (res.cbk?",cbk:"+res.cbk:"")+
+                                                   '});\n';
                   try {
                       var of = IOsys.OpenTextFile(gcf()+'out/layouts.js',8,true,0);
                       of.Write(str);

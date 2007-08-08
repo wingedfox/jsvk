@@ -45,7 +45,7 @@ var VirtualKeyboard = new function () {
    *  @access private
    */
   var idPrefix = 'kb_b';
-  /**
+  /**                                                  
    *  This flag is used to enable or disable keyboard animation
    *  This is very useful in the secure environments, like password input. Controlled by the CSS class on the field
    *
@@ -170,6 +170,16 @@ var VirtualKeyboard = new function () {
    *     'diff' : Object { <start1> : Array, // array of symbols, could not be taken with toUpperCase
    *                       <start2> : Array,
    *                     }
+   *     'dk' : String // list of the active dead keys
+   *              OR
+   *            Function // custom input transformations
+   *              OR
+   *            Object { 'load' : optional on load callback
+   *                     'activate' : optional activation callback
+   *                     'processChar' : required input transformation callback
+   *                   }
+   *     'rtl' : true means the layout is right-to-left
+   *
    *    ].name=<layout_code>,
    *    {...}
    *   ].name = <lang_code>
@@ -187,7 +197,8 @@ var VirtualKeyboard = new function () {
   var nodes = {
       keyboard : null     // Keyboard container @type HTMLDivElement
      ,desk : null         // Keyboard desk @type HTMLDivElement
-     ,langbox : null      // Layout selector @type HTMLSelectElement
+     ,langbox : null      // Language selector @type HTMLSelectElement
+     ,lytbox : null       // Layout selector @type HTMLSelectElement
      ,attachedInput : null// Field, keyboard attached to
   }
   /**
@@ -202,49 +213,27 @@ var VirtualKeyboard = new function () {
   **  KEYBOARD LAYOUT
   **************************************************************************/
   /**
-   *  Remove layout from the list
-   *
-   *  @param {String} layout code
-   *  @return {Boolean} removal state
-   *  @access public
-   */
-  self.removeLayout = function (code) {
-    if (!isString(code)) return false;
-    var pos = 0;
-    for (var i in layout) {
-      if (!layout.hasOwnProperty(i) || !layout[i].hasOwnProperty(code)) continue;
-      /*
-      *  if we have only 1 layout available don't do that;
-      */
-      if (1==nodes.lytbox.getOptionsCount() && 1==nodes.langbox.getOptionsCount()) return false;
-
-      if (nodes.lytbox.getValue() == code) {
-          self.setNextLayout();
-          nodes.lytbox.removeSelectedOptions(code,'exact');   
-      }
-      if (!nodes.lytbox.getOptionsCount()) {
-          self.setNextLang();
-          nodes.langbox.removeSelectedOptions(i,'exact');
-      }
-      delete (layout[pos]);
-      return true;
-    }
-    return false;
-  }
-  /**
    *  Add layout to the list
    *
-   *  @see layout
-   *  @param {String} layout code
-   *  @param {String} layout name
-   *  @param {Array} keycodes
-   *  @param {Object} differences for shift
-   *  @param {Object} differences for alt
-   *  @param {Array} list of the present deadkeys
+   *  @see #layout
+   *  @param {Object} l layout description hash:
+   *    { 'code' : {String} layout code
+   *     ,'name' : {String} layout name
+   *     ,'keys' : {String,Array} keycodes
+   *     ,'shift': {Object} optional shift keys, array of string
+   *     ,'alt'  : {Array} optional altgr keys
+   *     ,'dk'   : {String} list of the active deadkeys
+   *     ,'cbk' : {Function} callback
+   *                OR
+   *              { 'load' : {Function} optional load callback (called from addLayout)
+   *               ,'activate' : {Function} optional activation callback (called from switchLayout)
+   *               ,'charProcessor' : {Function} required char processing callback
+   *              }
+   *    }
    *  @return {Boolean}
    *  @scope public
    */
-  self.addLayout = function(code, name, alpha, diff, alt, deadkeys) {
+  self.addLayout = function(l) {
       /**
        *  Private function, used to convert the string to engine-aware array
        *
@@ -254,19 +243,18 @@ var VirtualKeyboard = new function () {
        */
       var doParse = function(s) {
           return (isString(s)?s.match(/\x01.+?\x02|./g).map(function(a){return a.replace(/[\x01-\x03]/g,"")})
-                             :s);
+                             :s.map(function(a){return isArray(a)?a.map(String.fromCharCode).join(""):String.fromCharCode(a)}))
       }
 
-      alpha = doParse(alpha);
-      if (!isString(code)) throw new Error ('VirtualKeyboard.addLayout requires first parameter to be a string.');
-      if (!isString(name)) throw new Error ('VirtualKeyboard.addLayout requires second parameter to be a string.')
-      if (isEmpty(alt)) alt = {};
-      if (isEmpty(diff)) diff = {};
-      if (isUndefined(deadkeys)) deadkeys = [];
+      var code = l.code.entityDecode().toUpperCase()
+         ,name = l.name.entityDecode()
+         ,alpha = doParse(l.keys)
+         ,shift = l.shift || {}
+         ,alt = l.alt || {}
+         ,dk = l.dk || []
+         ,cbk = l.cbk
 
-      code = code.entityDecode().toUpperCase();
-      name = name.entityDecode();
-      if (!isArray(alpha) || 47!=alpha.length) throw new Error ('VirtualKeyboard.addLayout requires 3rd parameter to be an array with 47 items, '+alpha.length+' detected. Layout code: '+code+', layout title: '+name);
+      if (!isArray(alpha) || 47!=alpha.length) throw new Error ('VirtualKeyboard requires \'keys\' property to be an array with 47 items, '+alpha.length+' detected. Layout code: '+code+', layout name: '+name);
 
       /*
       *  add language, if it does not exists
@@ -286,8 +274,8 @@ var VirtualKeyboard = new function () {
          ,lt = []
 
       for (var i=0, aL = alpha.length; i<aL; i++) {
-         if (diff.hasOwnProperty(i)) {
-           cs = doParse(diff[i]);
+         if (shift.hasOwnProperty(i)) {
+           cs = doParse(shift[i]);
            csc = i;
          }
          if (alt.hasOwnProperty(i)) {
@@ -315,18 +303,28 @@ var VirtualKeyboard = new function () {
       lt.splice(57,0,'alt_right');
       lt.splice(58,0,'ctrl_right');
 
-      if (isString(deadkeys))
-          lt.dk = doParse(deadkeys)
-      else if (isArray(deadkeys))
-          lt.dk = deadkeys.map(String.fromCharCode).join("")
-      else
-          lt.dk = deadkeys;
+      if (isString(dk))
+          lt.dk = doParse(dk)
+      else if (isArray(dk))
+          lt.dk = dk.map(String.fromCharCode).join("")
 
-      if (lt.dk && isFunction(lt.dk.load)) {
-          lt.dk.load()
-      }
+      /*
+      *  check for right-to-left languages
+      */
+      lt.rtl = !!lt.toString().match(/[\u05b0-\u06ff]/)
 
       layout[code][name] = lt;
+
+      /*
+      *  finalize things by calling loading callback, if exists
+      */
+      if (isFunction(cbk)) {
+          lt.charProcessor = cbk
+      } else if (cbk) {
+          if (isFunction(cbk.load)) cbk.load()
+          lt.activate = cbk.activate;
+          lt.charProcessor = cbk.charProcessor
+      }
 
       return true;
   }
@@ -369,7 +367,7 @@ var VirtualKeyboard = new function () {
     *  inp is used to calculate real char width and detect combining symbols
     *  @see __getCharHtmlForKey
     */
-    nodes.keyboard.appendChild(inp);
+    document.body.appendChild(inp);
 
     lang = layout[code][name];
     for (i=0, aL = lang.length; i<aL; i++) {
@@ -384,7 +382,7 @@ var VirtualKeyboard = new function () {
               +"</a></div>";
     }
     nodes.desk.innerHTML = btns;
-    nodes.keyboard.removeChild(inp);
+    document.body.removeChild(inp);
     inp = null;
 
 
@@ -398,8 +396,8 @@ var VirtualKeyboard = new function () {
     /*
     *  call IME activation method, if exists
     */
-    if (lang.dk && isFunction(lang.dk.activate)) {
-            lang.dk.activate()
+    if (isFunction(lang.activate)) {
+        lang.activate();
     }
     /*
     *  restore shift state
@@ -409,6 +407,11 @@ var VirtualKeyboard = new function () {
       DOM.CSS(document.getElementById(idPrefix+'shift_right')).addClass(cssClasses.buttonDown);
       self.toggleLayoutMode();
     }
+
+    /*
+    *  toggle RTL/LTR state
+    */
+    if (nodes.attachedInput) nodes.attachedInput.dir = lang.rtl?'rtl':'ltr'
   }
 
   /**
@@ -627,13 +630,6 @@ var VirtualKeyboard = new function () {
                   DocumentSelection.setRange(nodes.attachedInput,-chr[1],0,true);
               }
           }
-          /*
-          *  check for right-to-left languages
-          */
-          if (chr[0] && chr[0].charCodeAt (0) > 0x5b0 && chr[0].charCodeAt (0) < 0x6ff)
-              nodes.attachedInput.dir = "rtl";
-          else if (0 == nodes.attachedInput.value.length) 
-              nodes.attachedInput.dir = "ltr";
       }
       return ret;
   }
@@ -914,7 +910,7 @@ var VirtualKeyboard = new function () {
       */
       var s1 = document.getElementById(idPrefix+'shift_left'),
           s2 = document.getElementById(idPrefix+'shift_right');
-      s1.className = DOM.CSS(s2)[mtd[e.type]](cssClasses.buttonHover);
+      s1.className = DOM.CSS(s2)[mtd[e.type]](cssClasses.buttonHover).getClass();
     } else if (el.id.indexOf('alt')>-1 || el.id.indexOf('ctrl')>-1) {
       /*
       *  both alt and ctrl keys should be blurred
@@ -923,7 +919,7 @@ var VirtualKeyboard = new function () {
          ,s2 = document.getElementById(idPrefix+'alt_right')
          ,s3 = document.getElementById(idPrefix+'ctrl_left')
          ,s4 = document.getElementById(idPrefix+'ctrl_right')
-      s1.className = s2.className= s3.className= DOM.CSS(s4)[mtd[e.type]](cssClasses.buttonHover);
+      s1.className = s2.className= s3.className= DOM.CSS(s4)[mtd[e.type]](cssClasses.buttonHover).getClass();
     } else {
       if (animate) DOM.CSS(el)[mtd[e.type]](cssClasses.buttonHover);
     }
@@ -948,6 +944,11 @@ var VirtualKeyboard = new function () {
     if (isString(el)) el = document.getElementById(el);
 
     if (el == nodes.attachedInput) return nodes.attachedInput;
+
+    /*
+    *  reset input state, defined earlier
+    */
+    if (nodes.attachedInput) nodes.attachedInput.dir = ''
     /*
     *  force IME hide on field switch
     */
@@ -975,6 +976,12 @@ var VirtualKeyboard = new function () {
         animate = !DOM.CSS(nodes.attachedInput).hasClass(cssClasses.noanim);
     else 
         animate = true;
+
+    /*
+    *  toggle RTL/LTR state
+    */
+    nodes.attachedInput.dir = lang.rtl?'rtl':'ltr'
+
     return nodes.attachedInput;
   }
   /**
@@ -1039,6 +1046,7 @@ var VirtualKeyboard = new function () {
         return;
     }
     nodes.keyboard.style.display = 'none';
+    nodes.attachedInput.dir = '';
     nodes.attachedInput = null;
     return true;
   }
@@ -1083,10 +1091,10 @@ var VirtualKeyboard = new function () {
            ,s2 = document.getElementById(idPrefix+a1+'_right')
         if (mode&a2) {
             mode = mode ^ a2;
-            s1.className = DOM.CSS(s2).removeClass(cssClasses.buttonDown);
+            s1.className = DOM.CSS(s2).removeClass(cssClasses.buttonDown).getClass();
         } else {
             mode = mode | a2;
-            s1.className = DOM.CSS(s2).addClass(cssClasses.buttonDown);
+            s1.className = DOM.CSS(s2).addClass(cssClasses.buttonDown).getClass();
         }
         return true;
     }
@@ -1104,13 +1112,11 @@ var VirtualKeyboard = new function () {
    */
   var __charProcessor = function (tchr, buf) {
     var res = [];
-    if (isFunction(lang.dk)) {
+    if (isFunction(lang.charProcessor)) {
       /*
       *  call user-supplied converter
       */
-      res = lang.dk.call(self,tchr,buf);
-    } else if (lang.dk && isFunction(lang.dk.charProcessor)) {
-      res = lang.dk.charProcessor.call(self,tchr,buf);
+      res = lang.charProcessor(tchr,buf);
     } else if (tchr == "\x08") {
       res = ['',0];
     } else {
@@ -1147,12 +1153,6 @@ var VirtualKeyboard = new function () {
    *  @scope private
    */
   var __getCharHtmlForKey = function (lyt, chr, css, inp) {
-      /*
-      *  if char exists
-      */
-      chr = isArray(chr)?chr.map(String.fromCharCode).join("")
-                        :(isNumber(chr)?String.fromCharCode(chr)
-                                       :chr);
       var html = []
          ,dk = isArray(lyt.dk) && lyt.dk.indexOf(chr)>-1
 

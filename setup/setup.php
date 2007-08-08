@@ -48,15 +48,15 @@ function replaceFormatChars($str) {
     return str_replace(array_keys($LAYOUT_EXCEPTIONS), array_values($LAYOUT_EXCEPTIONS),$str);
 }
 
-function lytkeys2string ($s) {
+function lytkeys2string ($s,$p) {
     $sh = "";
     foreach ($s as $k => $v) {
         $sh .= $k.":'".replaceFormatChars(mb_escape($v))."',";
     }
     if ($sh) {
-        return "{".substr($sh,0,-1)."}";
+        return $p.": {".substr($sh,0,-1)."},";
     } else {
-        return "null";
+        return "";
     }
 }
 
@@ -88,11 +88,12 @@ function convertKbd(&$f) {
             break;
     }
 
-    $s = "VirtualKeyboard.addLayout('".$code."','".$res['name']."',\n'"
+    $s = "VirtualKeyboard.addLayout({code:'".$code."',name:'".$res['name']."',\nkeys:'"
         .replaceFormatChars(mb_escape($res['normal']))."'\n,"
-        .lytkeys2string($res['shift'])
-        .",".lytkeys2string($res['alt'])
-        .",".($res['callback']?$res['callback']:($res['dk']?"'".mb_escape($res['dk'])."'":"null")).");\n";
+        .lytkeys2string($res['shift'],'shift')
+        .lytkeys2string($res['alt'],'alt')
+        .($res['callback']?'cbk:'.$res['callback'].",":"")
+        .($res['dk']?"dk:'".mb_escape($res['dk'])."'":"")."});\n";
 
     if ($res['addon'] && !isset($VK_ADDON_INCLUDED[$res['code']])) {
         $s = $res['addon'] . $s;
