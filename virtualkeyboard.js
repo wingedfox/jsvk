@@ -166,18 +166,21 @@ var VirtualKeyboard = new function () {
    *  Array contains layout, it's 'shifted' difference and name
    *  Structure:
    *   [
-   *    ['alpha' : Array, // key codes
-   *     'diff' : Object { <start1> : Array, // array of symbols, could not be taken with toUpperCase
-   *                       <start2> : Array,
-   *                     }
-   *     'dk' : String // list of the active dead keys
-   *              OR
-   *            Function // custom input transformations
-   *              OR
-   *            Object { 'load' : optional on load callback
-   *                     'activate' : optional activation callback
-   *                     'processChar' : required input transformation callback
-   *                   }
+   *    ['alpha' : {Array} key codes
+   *     'shift' : {Object} { <start1> : Array, // array of symbols, could not be taken with toUpperCase
+   *                          <start2> : Array,
+   *                        }
+   *     'alt' : {Object} { <start1> : Array, // array of symbols
+   *                        <start2> : Array,
+   *                      }
+   *     'css' : {String} css class to be set on kbDesk when layout is activated
+   *     'dk' : {String} list of the active dead keys
+   *     'cbk' : {Function} custom input transformations
+   *               OR
+   *             {Object} { 'load' : optional on load callback
+   *                        'activate' : optional activation callback
+   *                        'charProcessor' : required input transformation callback
+   *                      }
    *     'rtl' : true means the layout is right-to-left
    *
    *    ].name=<layout_code>,
@@ -246,13 +249,16 @@ var VirtualKeyboard = new function () {
                              :s.map(function(a){return isArray(a)?a.map(String.fromCharCode).join(""):String.fromCharCode(a)}))
       }
 
-      var code = l.code.entityDecode().toUpperCase()
+      var code = l.code.entityDecode().split("-")
          ,name = l.name.entityDecode()
          ,alpha = doParse(l.keys)
          ,shift = l.shift || {}
          ,alt = l.alt || {}
          ,dk = l.dk || []
          ,cbk = l.cbk
+
+      css = code[0]
+      code = code[1] || code[0]
 
       if (!isArray(alpha) || 47!=alpha.length) throw new Error ('VirtualKeyboard requires \'keys\' property to be an array with 47 items, '+alpha.length+' detected. Layout code: '+code+', layout name: '+name);
 
@@ -315,6 +321,10 @@ var VirtualKeyboard = new function () {
 
       layout[code][name] = lt;
 
+      /*
+      *  this CSS will be set on kbDesk
+      */
+      lt.css = css
       /*
       *  finalize things by calling loading callback, if exists
       */
@@ -385,7 +395,11 @@ var VirtualKeyboard = new function () {
     document.body.removeChild(inp);
     inp = null;
 
-
+    /*
+    *  set layout-dependent class names
+    */
+    nodes.desk.className = lang.css
+    self.IME.css = lang.css
     /*
     *  restore capslock state
     */
@@ -1311,6 +1325,11 @@ VirtualKeyboard.IME = new function () {
      *  @scope public
      */
     self.show = function (s) {
+        /*
+        *  external property, set in the #switchLayout
+        */
+        ime.className = self.css
+
         target = VirtualKeyboard.getAttachedInput();
         DOM.getParent(target,'body').appendChild(ime);
         if (s) self.setSuggestions(s);

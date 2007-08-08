@@ -79,9 +79,11 @@ function convertKbd(&$f) {
     $res = & $f->getConvertedLayout();
 
     if ($res['keynum']!=47) return false;
+    $res['domain'] = strtoupper($res['domain']);
     switch ($_REQUEST['group']) {
         case "lng" :
-            $code = $res['code'];
+            $code = $res['domain']==$res['code']?$res['code']
+                                                :$res['domain'].'-'.$res['code'];
             break;
         case "domain" :
             $code = $res['domain'];

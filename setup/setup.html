@@ -34,8 +34,10 @@
                     f = IOsys.GetFile(f);
                     res.cbk = f.OpenAsTextStream(1,-2).Read(f.Size());
                   }
+                  layouts[i].domain = layouts[i].domain.toUpperCase();
                   if (document.getElementById('group1').checked) {
-                      var code = layouts[i].code
+                      var code = layouts[i].domain==layouts[i].code?layouts[i].code
+                                                                   :layouts[i].domain+'-'+layouts[i].code
                   } else if (document.getElementById('group2').checked) {
                       var code = layouts[i].domain
                   }

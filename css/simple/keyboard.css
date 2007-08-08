@@ -72,9 +72,9 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         overflow: visible;
         text-align: center;
 }
-#virtualKeyboard #kbDesk div.kbButton span.shifted {
+#virtualKeyboard #kbDesk div.kbButton span.shifted,
+#virtualKeyboard #kbDesk div.kbButton span.alted {
         color: green;
-        font-family: Verdana;
         font-size: 6pt;
         height: 100%;
         line-height: 1.1;
@@ -87,16 +87,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 #virtualKeyboard #kbDesk div.kbButton span.alted {
         color: blue;
-        font-family: Verdana;
-        font-size: 6pt;
-        height: 100%;
-        line-height: 1.1;
-        position: absolute;
         right: 7px;
-        top: 0px;
-        text-transform: none;
-        vertical-align: bottom;
-        width: 100%;
 }
 #virtualKeyboard #kbDesk div.kbButton span.normal {
         position: absolute;
@@ -316,4 +307,23 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
    position: absolute;
    right: 1px;
    overflow: hidden;
+}
+
+/************************************
+* Place for the locale-dependent styles
+* overload fonts here
+*
+* Language-dependent class name is equal to uppercased language domain code (ZH in zh-CN)
+*/
+#virtualKeyboard #kbDesk.ZH div.kbButton span {
+        font-family: MingLiU, SimSun, "Arial Unicode MS";
+        font-size: 13px;
+}
+#virtualKeyboard #kbDesk.ZH div.kbButton span.alted,
+#virtualKeyboard #kbDesk.ZH div.kbButton span.shifted {
+        font-size: 9px;
+}
+#VirtualKeyboardIME.ZH div.IMEContent {
+        font-family: SimSun, "Arial Unicode MS";
+        font-size: 16px;
 }
