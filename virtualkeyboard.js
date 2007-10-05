@@ -425,7 +425,8 @@ var VirtualKeyboard = new function () {
     /*
     *  toggle RTL/LTR state
     */
-    if (nodes.attachedInput) nodes.attachedInput.dir = lang.rtl?'rtl':'ltr'
+    if (nodes.attachedInput) (nodes.attachedInput.contentWindow?nodes.attachedInput.contentWindow.document.body
+                                                               :nodes.attachedInput).dir = lang.rtl?'rtl':'ltr'
   }
 
   /**
@@ -443,31 +444,24 @@ var VirtualKeyboard = new function () {
        *  1 - shift keys
        *  2 - alt keys (has priority, when it pressed together with shift)
        */
-       ,sh = Math.min(mode&(VK_ALT|VK_SHIFT),2);
+       ,sh = Math.min(mode&(VK_ALT|VK_SHIFT),2)
+       ,ca = [cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted];
+    DOM.CSS(nodes.desk).removeClass.apply(self,ca).addClass(ca[sh]);
     for (var i=0, lL=lang.length; i<lL; i++) {
         if (isString(lang[i])) continue;
         bi++;
-        var btn = document.getElementById(idPrefix+bi).firstChild.childNodes
-           ,c = null
+        var btn = document.getElementById(idPrefix+bi).firstChild.childNodes;
         /*
         *  swap symbols and its CSS classes
         */
         if (btn.length>1) {
-            c = DOM.CSS(btn.item(0))
-            c.removeClass(cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted);
-            if (!sh||isEmpty(lang[i][sh])) c.addClass(cssClasses.buttonNormal)  // put in the 'active' position
-            else if (sh&1)                 c.addClass(cssClasses.buttonShifted) // swap with shift
-            else                           c.addClass(cssClasses.buttonAlted)   // swap with alt
-            c = DOM.CSS(btn.item(1))
-            c.removeClass(cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted);
-            if (!sh)       c.addClass(cssClasses.buttonShifted) // put in the 'home' position
-            else if (sh&1) c.addClass(cssClasses.buttonNormal)  // put in the 'active' position
-            else           c.addClass(cssClasses.buttonShifted) // put in the 'home' position
-            c = DOM.CSS(btn.item(2))
-            c.removeClass(cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted);
-            if (!sh)       c.addClass(cssClasses.buttonAlted)   // put in the 'home' position
-            else if (sh&1) c.addClass(cssClasses.buttonAlted)   // put in the 'home' position
-            else           c.addClass(cssClasses.buttonNormal)  // put in the 'active' position
+            DOM.CSS(btn.item(0)).removeClass(ca).addClass(ca[sh]);
+            DOM.CSS(btn.item(1)).removeClass(ca).addClass([cssClasses.buttonShifted
+                                                          ,cssClasses.buttonNormal
+                                                          ,cssClasses.buttonShifted][sh]);
+            DOM.CSS(btn.item(2)).removeClass(ca).addClass([cssClasses.buttonAlted
+                                                          ,cssClasses.buttonAlted
+                                                          ,cssClasses.buttonNormal][sh]);
         }
     }
   }
@@ -583,64 +577,58 @@ var VirtualKeyboard = new function () {
       }
       if (chr) {
           /*
-          *  use behavior of real keyboard - replace selected text with new input
+          *  process current selection and new symbol with __charProcessor, it might update them 
           */
           if (!(chr = __charProcessor(chr, DocumentSelection.getSelection(nodes.attachedInput)))) return ret;
-          if (1 == chr[0].length         // if only single symbol exists
-            && !chr[1]                   // if no selection required
-            && evt && !evt.keyIdentifier // check for Safari (all KHTML based browsers?)...
-            && !evt.ctrlKey && !evt.altKey) {
-              try {
-                  /*
-                  *  IE allows to rewrite the key code
-                  */
-                  evt.keyCode = "\n"==chr[0]?13:chr[0].charCodeAt(0);
-                  ret = true;
-              } catch (err) {
-                  try {
-                      /*
-                      *  Mozilla implements events interface mostly complete
-                      *  also, this code helps to keep input text in the view
-                      */
-                      var e = document.createEvent("KeyboardEvent");
-                      e.initKeyEvent(
-                                     "keypress",       //  in DOMString typeArg,
-                                     false,            //  in boolean canBubbleArg,
-                                     true,             //  in boolean cancelableArg,
-                                     null,             //  in nsIDOMAbstractView viewArg,  Specifies UIEvent.view. This value may be null.
-                                     false,            //  in boolean ctrlKeyArg,
-                                     false,            //  in boolean altKeyArg,
-                                     false,            //  in boolean shiftKeyArg,
-                                     false,            //  in boolean metaKeyArg,
-                                     0,chr[0].charCodeAt(0)//,chr[0].charCodeAt(0)
-                      );  
-                      e.__bypass = true;
-                      nodes.attachedInput.dispatchEvent(e);
-                  } catch (err) {
-                      /*
-                      *  this is used at least by Opera9, because it neither support overwriting keyCode value
-                      *  nor KeyboardEvent creation
-                      */
-                      if (DocumentSelection.getStart(nodes.attachedInput) != DocumentSelection.getEnd(nodes.attachedInput))
-                          DocumentSelection.deleteAtCursor(nodes.attachedInput);
-                      DocumentSelection.insertAtCursor(nodes.attachedInput,chr[0]);
-                  }
-              }
-          } else {
+          /*
+          *  try to create an event, then fallback to DocumentSelection, if something fails
+          */
+          try {
               /*
-              *  __charProcessor might return the char sequence
-              *  it could not be processed with the standard events, thus insert it manually
+              *  throw an error when selection is required or multiple chars submitted
+              *  it's simpler than write number of nesting if..else statements
               */
-              if (DocumentSelection.getStart(nodes.attachedInput) != DocumentSelection.getEnd(nodes.attachedInput))
-                  DocumentSelection.deleteAtCursor(nodes.attachedInput);
+              if (chr[1] || chr[0].length>1 || nodes.attachedInput.contentDocument) {
+                  throw new Error;
+              }
+              var ck = chr[0].charCodeAt(chr[0].length-1);
+              /*
+              *  trying to create an event, borrowed from YAHOO.util.UserAction
+              */
+              if (isFunction(document.createEvent)) {
+                  var evt = null;
+                  try {
+                      evt = document.createEvent("KeyEvents");
+                      evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, ck, ck);
+                  } catch (ex){
+                      try {
+                          evt = document.createEvent("Events");
+                      } catch (uierror /*:Error*/){
+                          evt = document.createEvent("UIEvents");
+                      } finally {
+                          evt.initEvent('keypress', false, true);
+                          evt.view = null;
+                          evt.altKey = false;
+                          evt.ctrlKey = false;
+                          evt.shiftKey = false;
+                          evt.metaKey = false;
+                          evt.keyCode = ck;
+                          evt.charCode = ck;
+                      }          
+                  }
+                  evt.VK_bypass = true;
+
+                  nodes.attachedInput.dispatchEvent(evt);
+              } else {
+                  evt.keyCode = 10==chr[0]?13:chr[0].charCodeAt(0);
+                  ret = true;
+              }
+          } catch (e) {
               DocumentSelection.insertAtCursor(nodes.attachedInput,chr[0]);
               /*
               *  select as much, as __charProcessor callback requested
               */
               if (chr[1]) {
-                  /*
-                  *  settimeout is used to select text right after event handlers will insert new contents
-                  */
                   DocumentSelection.setRange(nodes.attachedInput,-chr[1],0,true);
               }
           }
@@ -767,10 +755,14 @@ var VirtualKeyboard = new function () {
         }
         break;
       case 'keypress' :
+        switch (keyCode) {
+          case 8: // backspace
+              e.preventDefault();
+        }
         /*
         *  flag is set only when virtual key passed to input target
         */
-        if (newKeyCode && !e.__bypass) {
+        if (newKeyCode && !e.VK_bypass) {
             if (!_keyClicker_(newKeyCode, e)) {
                 e.preventDefault();
             }
@@ -962,7 +954,8 @@ var VirtualKeyboard = new function () {
     /*
     *  reset input state, defined earlier
     */
-    if (nodes.attachedInput) nodes.attachedInput.dir = ''
+    if (nodes.attachedInput) (nodes.attachedInput.contentWindow?nodes.attachedInput.contentWindow.document.body
+                                                               :nodes.attachedInput).dir = ''
     /*
     *  force IME hide on field switch
     */
@@ -970,19 +963,23 @@ var VirtualKeyboard = new function () {
     /*
     *  only inputable nodes are allowed
     */
-    EM.removeEventListener(nodes.attachedInput,'keydown',_keydownHandler_);
-    EM.removeEventListener(nodes.attachedInput,'keypress',_keydownHandler_);
-    EM.removeEventListener(nodes.attachedInput,'keyup',_keydownHandler_);
-    EM.removeEventListener(nodes.attachedInput,'mousedown',self.IME.hide);
-    if (!el || !el.tagName || (el.tagName.toLowerCase() != 'input' && el.tagName.toLowerCase() != 'textarea')) {
-        nodes.attachedInput = null
-    } else {
-        EM.addEventListener(el,'keydown',_keydownHandler_);
-        EM.addEventListener(el,'keyup',_keydownHandler_);
-        EM.addEventListener(el,'keypress',_keydownHandler_);
-        EM.addEventListener(el,'mousedown',self.IME.hide);
-        nodes.attachedInput = el;
+    if (nodes.attachedInput) {
+        var oe = nodes.attachedInput
+        if (oe.contentWindow) {
+            oe = oe.contentWindow.document.body.parentNode
+        }
+        EM.removeEventListener(oe,'keydown',_keydownHandler_);
+        EM.removeEventListener(oe,'keypress',_keydownHandler_);
+        EM.removeEventListener(oe,'keyup',_keydownHandler_);
+        EM.removeEventListener(oe,'mousedown',self.IME.hide);
     }
+    if (!el || !el.tagName) {
+        nodes.attachedInput = null
+        return null;
+    }
+
+    nodes.attachedInput = el;
+
     /*
     *  set keyboard animation for the current field
     */
@@ -992,10 +989,23 @@ var VirtualKeyboard = new function () {
         animate = true;
 
     /*
-    *  toggle RTL/LTR state
+    *  for iframe target we track its HTML node
     */
-    nodes.attachedInput.dir = lang.rtl?'rtl':'ltr'
-
+    if (el.contentWindow) {
+        el = el.contentWindow.document.body
+        /*
+         *  toggle RTL/LTR state
+         */
+        el.dir = lang.rtl?'rtl':'ltr'
+        el = el.parentNode;
+    } else {
+        el.dir = lang.rtl?'rtl':'ltr'
+    }
+    EM.addEventListener(el,'keydown',_keydownHandler_);
+    EM.addEventListener(el,'keyup',_keydownHandler_);
+    EM.addEventListener(el,'keypress',_keydownHandler_);
+    EM.addEventListener(el,'mousedown',self.IME.hide);
+    
     return nodes.attachedInput;
   }
   /**
@@ -1036,10 +1046,6 @@ var VirtualKeyboard = new function () {
             EM.addEventListener(kpTarget,'keypress', _keydownHandler_);
         }
     }
-    /*
-    *  special, for IE
-    */
-    setTimeout(function(){nodes.keyboard.style.display = 'block';},1);
 
     return true;
   }
@@ -1059,8 +1065,9 @@ var VirtualKeyboard = new function () {
         self.IME.hide();
         return;
     }
-    nodes.keyboard.style.display = 'none';
-    nodes.attachedInput.dir = '';
+    nodes.keyboard.parentNode.removeChild(nodes.keyboard);
+    (nodes.attachedInput.contentWindow?nodes.attachedInput.contentWindow.document.body
+                                      :nodes.attachedInput).dir = lang.rtl?'rtl':'ltr'
     nodes.attachedInput = null;
     return true;
   }
@@ -1084,7 +1091,7 @@ var VirtualKeyboard = new function () {
    *  @scope public 
    */
   self.isOpen = function () /* :Boolean */ {
-      return nodes.keyboard.style.display == 'block';
+      return nodes.keyboard.parentNode && nodes.keyboard.parentNode.nodeType == 1;
   }
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
@@ -1169,6 +1176,7 @@ var VirtualKeyboard = new function () {
   var __getCharHtmlForKey = function (lyt, chr, css, inp) {
       var html = []
          ,dk = isArray(lyt.dk) && lyt.dk.indexOf(chr)>-1
+         ,i = 0
 
       /*
       *  if key matches agains current deadchar list
@@ -1182,13 +1190,12 @@ var VirtualKeyboard = new function () {
       */
       if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr+"\xa0";
 
-      html[html.length] = "<span ";
+      html[i++] = "<span";
       if (css) { 
-          html[html.length] = "class=\"";
-          html[html.length] = css;
-          html[html.length] = "\"";
+          html[i++] = " class=\""+css+"\"";
       }
-      html[html.length] = ">"+(chr?inp.innerHTML:"")+"</span>";
+      html[i++] = " title=\""+chr+"\""
+      html[i++] = " >"+(chr?inp.innerHTML:"")+"</span>";
     return html.join("");
   }
   /**
@@ -1286,6 +1293,7 @@ var VirtualKeyboard = new function () {
     EM.addEventListener(nodes.desk,'mouseover', _btnMouseInOut_);
     EM.addEventListener(nodes.desk,'mouseout', _btnMouseInOut_);
     EM.addEventListener(nodes.desk,'dragstart', EM.preventDefaultAction);
+    EM.addEventListener(nodes.desk,'click', EM.preventDefaultAction);
     EM.addEventListener(window,'domload', __init);
     EM.addEventListener(window,'unload', self.close);
 
@@ -1349,7 +1357,7 @@ VirtualKeyboard.IME = new function () {
     self.hide = function () {
         if (ime) ime.style.display = "none";
         EM.removeEventListener(target,'blur', keepSelection);
-        if (target) DocumentSelection.deleteAtCursor(target);
+        if (target) DocumentSelection.deleteSelection(target);
         target = null;
         sg=[];
     }
