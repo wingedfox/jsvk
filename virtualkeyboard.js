@@ -952,6 +952,15 @@ var VirtualKeyboard = new function () {
     if (el == nodes.attachedInput) return nodes.attachedInput;
 
     /*
+    *  perform initialization...
+    */
+    if (!lang) {
+        self.switchLayout(options.layout.code,options.layout.name);
+        if (!lang) {
+            self.switchLayout(nodes.langbox.getValue(), nodes.lytbox.getValue());
+        }
+    }
+    /*
     *  reset input state, defined earlier
     */
     if (nodes.attachedInput) (nodes.attachedInput.contentWindow?nodes.attachedInput.contentWindow.document.body
@@ -1212,13 +1221,6 @@ var VirtualKeyboard = new function () {
         opts.layout = opts.layout.split("_");
         options.layout.code = opts.layout[0];
         options.layout.name = opts.layout[1];
-    }
-    /*
-    *  perform initialization...
-    */
-    self.switchLayout(options.layout.code,options.layout.name);
-    if (!lang) {
-        self.switchLayout(nodes.langbox.getValue(), nodes.lytbox.getValue());
     }
   }
   /**
