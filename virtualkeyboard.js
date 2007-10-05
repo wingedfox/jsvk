@@ -455,7 +455,8 @@ var VirtualKeyboard = new function () {
         *  swap symbols and its CSS classes
         */
         if (btn.length>1) {
-            DOM.CSS(btn.item(0)).removeClass(ca).addClass(ca[sh]);
+            if (btn.item(sh).innerHTML)
+                DOM.CSS(btn.item(0)).removeClass(ca).addClass(ca[sh]);
             DOM.CSS(btn.item(1)).removeClass(ca).addClass([cssClasses.buttonShifted
                                                           ,cssClasses.buttonNormal
                                                           ,cssClasses.buttonShifted][sh]);
@@ -567,6 +568,7 @@ var VirtualKeyboard = new function () {
                   */
                   if (!(evt && evt.shiftKey) && mode&VK_SHIFT) {
                       reSetDualKeys('shift', VK_SHIFT);
+                      self.toggleLayoutMode();
                       if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT | VK_CAPS))) {
                           if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
                       } else {
