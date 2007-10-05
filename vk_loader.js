@@ -14,16 +14,19 @@ VirtualKeyboard = new function () {
     /*
     *  track, how we've opened
     */
-    var targetWindow = window.dialogArguments||window.opener||window.top;
-    if (targetWindow != window) {
-        var addHead = targetWindow.document.getElementsByTagName('head')[0];
-        var targetScript = window.location.href.match(/\/(.+)\..+$/)[1]+'.js';
-    } else {
-        var addHead = null;
-        var targetScript = 'vk_loader.js';
+    var targetWindow = window.dialogArguments||window.opener||window.top
+       ,addHead = null
+       ,targetScript = 'vk_loader.js';
+    try {
+        if (targetWindow != window) {
+            var addHead = targetWindow.document.getElementsByTagName('head')[0];
+            var targetScript = window.location.href.match(/\/(.+)\..+$/)[1]+'.js';
+        }
+    } catch (e) {
+        targetWindow = window;
     }
-    var q = (function (sname,td){if(!td) td=document; var sc=td.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?].*|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {return pq(m[3].replace(/^[^?]*\?([^#]+)/,"$1"));}}})
-             (targetScript,targetWindow.document);
+
+    q = (function (sname,td){if(!td) td=document; var sc=td.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?].*|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {return pq(m[3].replace(/^[^?]*\?([^#]+)/,"$1"));}}})(targetScript,targetWindow.document);
 
     var p = (function (sname){var sc=document.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?]|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return m[1];if (m[1].indexOf("/")==0) return m[1];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,"");}}return null;})
              ('vk_loader.js');
