@@ -171,7 +171,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 #virtualKeyboard #kbDesk div#kb_balt_left,
 #virtualKeyboard #kbDesk div#kb_balt_right {
-		padding: 0 0 0 2px;
+        padding: 0 0 0 2px;
         width: 32px;
 }
 #virtualKeyboard #kbDesk div#kb_balt_left {
@@ -247,9 +247,12 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard select#kb_langselector, #virtualKeyboard select#kb_layoutselector {
         bottom: 2px;
         border: 1px solid black;
+        position: absolute;
+}
+#virtualKeyboard select#kb_langselector, #virtualKeyboard select#kb_layoutselector,
+#virtualKeyboard select#kb_langselector option, #virtualKeyboard select#kb_layoutselector option {
         font-family: Arial, Tahoma, Verdana sans-serif;
         font-size: 11px;
-        position: absolute;
 }
 #virtualKeyboard #copyrights {
         bottom: 4px;
@@ -261,6 +264,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         text-transform: italic;
 }
 #virtualKeyboard #copyrights a {
+        font-size: 9px;
         color: blue;
         cursor: normal;
         outline: 0;
