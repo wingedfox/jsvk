@@ -261,12 +261,11 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         left: 2px;
         line-height: normal;
         position: absolute;
-        text-transform: italic;
 }
 #virtualKeyboard #copyrights a {
         font-size: 9px;
         color: blue;
-        cursor: normal;
+        cursor: default;
         outline: 0;
 }
 

@@ -446,6 +446,7 @@ var VirtualKeyboard = new function () {
        */
        ,sh = Math.min(mode&(VK_ALT|VK_SHIFT),2)
        ,ca = [cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted];
+    nodes.desk.style.display="none";
     DOM.CSS(nodes.desk).removeClass.apply(self,ca).addClass(ca[sh]);
     for (var i=0, lL=lang.length; i<lL; i++) {
         if (isString(lang[i])) continue;
@@ -455,14 +456,14 @@ var VirtualKeyboard = new function () {
         *  swap symbols and its CSS classes
         */
         if (btn.length>1) {
-            if (btn.item(sh).innerHTML)
-                DOM.CSS(btn.item(0)).removeClass(ca).addClass(ca[sh]);
-            DOM.CSS(btn.item(1)).removeClass(ca).addClass([cssClasses.buttonShifted
-                                                          ,cssClasses.buttonNormal
-                                                          ,cssClasses.buttonShifted][sh]);
-            DOM.CSS(btn.item(2)).removeClass(ca).addClass([cssClasses.buttonAlted
-                                                          ,cssClasses.buttonAlted
-                                                          ,cssClasses.buttonNormal][sh]);
+            if (btn[sh].firstChild && btn[sh].firstChild.nodeValue.length)
+                DOM.CSS(btn[0]).removeClass(ca).addClass(ca[sh]);
+            DOM.CSS(btn[1]).removeClass(ca).addClass([cssClasses.buttonShifted
+                                                     ,cssClasses.buttonNormal
+                                                     ,cssClasses.buttonShifted][sh]);
+            DOM.CSS(btn[2]).removeClass(ca).addClass([cssClasses.buttonAlted
+                                                     ,cssClasses.buttonAlted
+                                                     ,cssClasses.buttonNormal][sh]);
         }
     }
   }
@@ -590,7 +591,7 @@ var VirtualKeyboard = new function () {
               *  throw an error when selection is required or multiple chars submitted
               *  it's simpler than write number of nesting if..else statements
               */
-              if (chr[1] || chr[0].length>1 || nodes.attachedInput.contentDocument) {
+              if (chr[1] || chr[0].length>1 || nodes.attachedInput.contentDocument || window.opera) {
                   throw new Error;
               }
               var ck = chr[0].charCodeAt(chr[0].length-1);
