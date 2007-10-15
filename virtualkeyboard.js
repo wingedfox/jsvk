@@ -446,7 +446,6 @@ var VirtualKeyboard = new function () {
        */
        ,sh = Math.min(mode&(VK_ALT|VK_SHIFT),2)
        ,ca = [cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted];
-    nodes.desk.style.display="none";
     DOM.CSS(nodes.desk).removeClass.apply(self,ca).addClass(ca[sh]);
     for (var i=0, lL=lang.length; i<lL; i++) {
         if (isString(lang[i])) continue;
@@ -517,7 +516,6 @@ var VirtualKeyboard = new function () {
       var chr = ""
          ,ret = false;
       key = key.replace(idPrefix, "");
-
       switch (key) {
           case "caps" :
           case "shift" :
@@ -531,9 +529,9 @@ var VirtualKeyboard = new function () {
               /*
               *  is char is in the buffer, or selection made, made decision at __charProcessor
               */
-              if (DocumentSelection.getSelection(nodes.attachedInput))
-                  chr = "\x08";
-              else
+//              if (DocumentSelection.getSelection(nodes.attachedInput))
+//                  chr = "\x08";
+//              else
                   DocumentSelection.deleteAtCursor(nodes.attachedInput, false);
               break;
           case 'del':
@@ -880,12 +878,13 @@ var VirtualKeyboard = new function () {
     /*
     *  do uppercase transformation
     */
-    if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT | VK_CAPS))) {
-      if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
-    } else {
-      if (animate) DOM.CSS(nodes.desk).removeClass(cssClasses.capslock)
+    if ('caps' == key || 'shift_left' == key || 'shift_right' == key) {
+        if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT | VK_CAPS))) {
+          if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
+        } else {
+          if (animate) DOM.CSS(nodes.desk).removeClass(cssClasses.capslock)
+        }
     }
-
     e.preventDefault();
     e.stopPropagation();
   }
