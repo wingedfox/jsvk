@@ -27,14 +27,14 @@ DOCS=$(CURDIR)/license.txt
 
 # {{{ BrowserExtensions
 EXT=$(EXT_DIR)/helpers.js \
-        $(EXT_DIR)/objectextensions.js \
-        $(EXT_DIR)/dom.js \
-        $(EXT_DIR)/eventmanager.js \
-        $(EXT_DIR)/regexpextensions.js \
-        $(EXT_DIR)/arrayextensions.js \
-        $(EXT_DIR)/stringextensions.js \
-        $(EXT_DIR)/documentselection.js \
-        $(EXT_DIR)/dom/selectbox.js
+		$(EXT_DIR)/objectextensions.js \
+		$(EXT_DIR)/dom.js \
+		$(EXT_DIR)/eventmanager.js \
+		$(EXT_DIR)/regexpextensions.js \
+		$(EXT_DIR)/arrayextensions.js \
+		$(EXT_DIR)/stringextensions.js \
+		$(EXT_DIR)/documentselection.js \
+		$(EXT_DIR)/dom/selectbox.js
 # }}}
 
 # {{{ LAYOUTS
@@ -43,13 +43,13 @@ LAYOUTS=$(CURDIR)/layouts/layouts.js
 
 # {{{ SKINS
 SKINS=$(CSS_DIR)/*/button_set.gif \
-        $(CSS_DIR)/*/keyboard.css
+		$(CSS_DIR)/*/keyboard.css
 # }}}
 
 # {{{ SOURCES
 SOURCES=$(CURDIR)/virtualkeyboard.js \
-         $(CURDIR)/vk_loader.js \
-         $(CURDIR)/vk_popup.js
+		 $(CURDIR)/vk_loader.js \
+		 $(CURDIR)/vk_popup.js
 # }}}
 
 # {{{ DEMO
@@ -70,61 +70,61 @@ FILES_FULL  = $(FILES_COMPACT) $(EXT)
 FILES_TINYMCE = $(TINYMCE)
 
 full:
-        @echo "Creating full distribution"
-        @-rm $(DIST_NAME) -Rf
-        @mkdir $(DIST_NAME)
-        @cp --parents -r $(FILES_FULL) $(DIST_PATH)
-        @echo "Creating archive"
-        @$(TAR) -zcf $(DIST_NAME_ARC) $(DIST_PATH)
-        @rm $(DIST_NAME) -Rf
-        @echo "All done"
+		@echo "Creating full distribution"
+		@-rm $(DIST_NAME) -Rf
+		@mkdir $(DIST_NAME)
+		@cp --parents -r $(FILES_FULL) $(DIST_PATH)
+		@echo "Creating archive"
+		@$(TAR) -zcf $(DIST_NAME_ARC) $(DIST_PATH)
+		@rm $(DIST_NAME) -Rf
+		@echo "All done"
 
 compact:
-        @echo "Creating compact distribution"
-        @-rm $(DIST_NAME) -Rf
-        @mkdir $(DIST_NAME)
-        @mkdir $(DIST_PATH)extensions
-        @cp --parents -r $(FILES_COMPACT) $(DIST_PATH)
-        @echo "Compressing scripts"
-        @$(TS) -db $(EXT) $(DIST_PATH)extensions/e.js
-        @sed '/extensions\//!b;:a /]/!{N;ba};s,\[[^]]\+,["extensions/e.js",m' $(DIST_PATH)vk_loader.js >$(DIST_PATH)vk_loader.js.tmp
-        @mv $(DIST_PATH)vk_loader.js.tmp $(DIST_PATH)vk_loader.js
-        @$(TS) -r -db $(DIST_PATH)
-        @echo "Creating archive"
-        @$(TAR) -zcf $(DIST_NAME_ARC) $(DIST_PATH)
-        @rm $(DIST_NAME) -Rf
-        @echo "All done"
+		@echo "Creating compact distribution"
+		@-rm $(DIST_NAME) -Rf
+		@mkdir $(DIST_NAME)
+		@mkdir $(DIST_PATH)extensions
+		@cp --parents -r $(FILES_COMPACT) $(DIST_PATH)
+		@echo "Compressing scripts"
+		@$(TS) -db $(EXT) $(DIST_PATH)extensions/e.js
+		@sed '/extensions\//!b;:a /]/!{N;ba};s,\[[^]]\+,["extensions/e.js",m' $(DIST_PATH)vk_loader.js >$(DIST_PATH)vk_loader.js.tmp
+		@mv $(DIST_PATH)vk_loader.js.tmp $(DIST_PATH)vk_loader.js
+		@$(TS) -r -db $(DIST_PATH)
+		@echo "Creating archive"
+		@$(TAR) -zcf $(DIST_NAME_ARC) $(DIST_PATH)
+		@rm $(DIST_NAME) -Rf
+		@echo "All done"
 
 lite:
-        @echo "Creating lite distribution"
-        @-rm $(DIST_NAME) -Rf
-        @mkdir $(DIST_NAME)
-        @mkdir $(DIST_PATH)extensions
-        @cp --parents -r $(FILES_LITE) $(DIST_PATH)
-        @echo "Compressing scripts"
-        @$(TS) -db $(EXT) $(DIST_PATH)extensions/e.js
-        @sed '/extensions\//!b;:a /]/!{N;ba};s,\[[^]]\+,["extensions/e.js",m' $(DIST_PATH)vk_loader.js >$(DIST_PATH)vk_loader.js.tmp
-        @mv $(DIST_PATH)vk_loader.js.tmp $(DIST_PATH)vk_loader.js
-        @$(TS) -r -db $(DIST_PATH)
-        @echo "Creating archive"
-        @$(TAR) -zcf $(DIST_NAME_ARC) $(DIST_PATH)
-        @rm $(DIST_NAME) -Rf
-        @echo "All done"
+		@echo "Creating lite distribution"
+		@-rm $(DIST_NAME) -Rf
+		@mkdir $(DIST_NAME)
+		@mkdir $(DIST_PATH)extensions
+		@cp --parents -r $(FILES_LITE) $(DIST_PATH)
+		@echo "Compressing scripts"
+		@$(TS) -db $(EXT) $(DIST_PATH)extensions/e.js
+		@sed '/extensions\//!b;:a /]/!{N;ba};s,\[[^]]\+,["extensions/e.js",m' $(DIST_PATH)vk_loader.js >$(DIST_PATH)vk_loader.js.tmp
+		@mv $(DIST_PATH)vk_loader.js.tmp $(DIST_PATH)vk_loader.js
+		@$(TS) -r -db $(DIST_PATH)
+		@echo "Creating archive"
+		@$(TAR) -zcf $(DIST_NAME_ARC) $(DIST_PATH)
+		@rm $(DIST_NAME) -Rf
+		@echo "All done"
 
 tinymce: compact
-        @echo "Creating tinyMCE plugin from compact distribution"
-        @-rm $(DIST_NAME) -Rf
-        @mkdir $(DIST_NAME)
-        @mkdir $(DIST_PATH)jsvk
-        @cp -r $(FILES_TINYMCE) $(DIST_PATH)jsvk/
-        @echo "Creating archive"
-        @$(TAR) -zxf $(subst tinymce,compact,$(DIST_NAME_ARC)) -C "$(DIST_PATH)jsvk/jscripts/"
-        @rm $(subst tinymce,compact,$(DIST_NAME_ARC))
-        @mv $(DIST_PATH)jsvk/jscripts/$(subst tinymce,compact,$(DIST_NAME))/* $(DIST_PATH)jsvk/jscripts/
-        @rm -Rf $(DIST_PATH)jsvk/jscripts/$(subst tinymce,compact,$(DIST_NAME))
-        @$(TAR) -zcf $(DIST_NAME_ARC) $(DIST_PATH)jsvk/
-        @rm -Rf $(DIST_NAME)
-        @echo "All done"
+		@echo "Creating tinyMCE plugin from compact distribution"
+		@-rm $(DIST_NAME) -Rf
+		@mkdir $(DIST_NAME)
+		@mkdir $(DIST_PATH)jsvk
+		@cp -r $(FILES_TINYMCE) $(DIST_PATH)jsvk/
+		@echo "Creating archive"
+		@$(TAR) -zxf $(subst tinymce,compact,$(DIST_NAME_ARC)) -C "$(DIST_PATH)jsvk/jscripts/"
+		@rm $(subst tinymce,compact,$(DIST_NAME_ARC))
+		@mv $(DIST_PATH)jsvk/jscripts/$(subst tinymce,compact,$(DIST_NAME))/* $(DIST_PATH)jsvk/jscripts/
+		@rm -Rf $(DIST_PATH)jsvk/jscripts/$(subst tinymce,compact,$(DIST_NAME))
+		@$(TAR) -zcf $(DIST_NAME_ARC) $(DIST_PATH)jsvk/
+		@rm -Rf $(DIST_NAME)
+		@echo "All done"
 
 
 all: full tinymce compact lite
