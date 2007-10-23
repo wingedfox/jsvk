@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+ <head>
+ <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
+  <title>Virtual Keyboard plugin demo</title>
+  <!-- tinyMCE -->
+  <script language="javascript" type="text/javascript" src="../../../tiny_mce.js"></script>
+  <script language="javascript" type="text/javascript">
+        // Notice: The simple theme does not use all options some of them are limited to the advanced theme
+        tinyMCE.init({
+                mode : "textareas"
+               ,theme : "advanced"
+               ,plugins : "jsvk"
+               ,theme_advanced_buttons1_add_before : "jsvk,tablecontrols,separator"
+        });
+  </script>
+  <!-- /tinyMCE -->
+
+ </head>
+ <body>
+  <h3>Virtual Keyboard plugin for TinyMCE</h3>
+  <p>This page shows <a href="http://debugger.ru/projects/virtualkeyboard">VirtualKeyboard</a> plugin usage for the TinyMCE rich-text editor.</p>
+  <ul><strong>Known issues</strong>
+   <li>Virtual "Del" and "BackSpace" keys does not delete elements: images, tables, paragraphs, etc</li>
+   <li>Deletion does not take in count continuos whitespaces, like real backspace does</li>
+   <li>Plugin has only partial Opera support because of its weird selection implementation and incorrect <a hre="http://www.quirksmode.org/js/keys.html" target="_blank">key events processing</a></li>
+  </ul>
+
+  <textarea id="elm1" name="elm1" rows="10" cols="40">
+        Some &lt;b&gt;element&lt;/b&gt;, this is to be editor 1.
+        &lt;p&gt;Some paragraph. &lt;a href=&quot;http://www.sourceforge.net&quot;&gt;Some link&lt;/a&gt;&lt;/p&gt;
+        &lt;img src=&quot;../images/jsvk.gif&quot;&gt;
+  </textarea>
+  <br />
+
+  <textarea id="elm2" name="elm2" rows="15" cols="32">
+        Some &lt;b&gt;element&lt;/b&gt;, this is to be editor 2.
+        &lt;p id=&quot;a123&quot;&gt;Some paragraph. &lt;a href=&quot;http://www.sourceforge.net&quot;&gt;Some link&lt;/a&gt;&lt;/p&gt;
+        &lt;img src=&quot;../images/jsvk.gif&quot;&gt;
+  </textarea>
+ </body>
+</html>
