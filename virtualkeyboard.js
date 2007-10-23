@@ -526,15 +526,24 @@ var VirtualKeyboard = new function () {
           case "alt_right" :
               return;
           case 'backspace':
+
               /*
               *  is char is in the buffer, or selection made, made decision at __charProcessor
               */
-//              if (DocumentSelection.getSelection(nodes.attachedInput))
-//                  chr = "\x08";
-//              else
+              if (String(DocumentSelection.getSelection(nodes.attachedInput)).length > 1) {
+                  chr = "\x08";
+              } else if (evt) {
+                  self.IME.hide(true);
+                  return true;
+              } else {
                   DocumentSelection.deleteAtCursor(nodes.attachedInput, false);
+                  self.IME.hide(true);
+              }
               break;
           case 'del':
+              self.IME.hide(true);
+              if (evt)
+                  return true;
               DocumentSelection.deleteAtCursor(nodes.attachedInput, true);
               break;
           case 'space':
@@ -592,7 +601,7 @@ var VirtualKeyboard = new function () {
               if (chr[1] || chr[0].length>1 || nodes.attachedInput.contentDocument || window.opera) {
                   throw new Error;
               }
-              var ck = chr[0].charCodeAt(chr[0].length-1);
+              var ck = chr[0].charCodeAt(0);
               /*
               *  trying to create an event, borrowed from YAHOO.util.UserAction
               */
@@ -618,10 +627,9 @@ var VirtualKeyboard = new function () {
                       }          
                   }
                   evt.VK_bypass = true;
-
                   nodes.attachedInput.dispatchEvent(evt);
               } else {
-                  evt.keyCode = 10==chr[0]?13:chr[0].charCodeAt(0);
+                  evt.keyCode = 10==ck?13:ck;
                   ret = true;
               }
           } catch (e) {
@@ -656,13 +664,13 @@ var VirtualKeyboard = new function () {
         switch (keyCode) {
           case 8: // backspace
           case 9: // tab
+          case 46: // del
               var el = nodes.desk.childNodes[keymap[keyCode]];
-              _keyClicker_(el.id, e);
               /*
               *  set the class only 1 time
               */
               if (animate && !e.getRepeat()) DOM.CSS(el).addClass(cssClasses.buttonDown);
-              e.preventDefault();
+              if (!_keyClicker_(el.id, e)) e.preventDefault();
 
               break;
           case 16://shift
@@ -757,8 +765,9 @@ var VirtualKeyboard = new function () {
         break;
       case 'keypress' :
         switch (keyCode) {
-          case 8: // backspace
-              e.preventDefault();
+            case 8:
+            case 46:
+                return;
         }
         /*
         *  flag is set only when virtual key passed to input target
@@ -1356,12 +1365,13 @@ VirtualKeyboard.IME = new function () {
     /**
      *  Hides IME
      *
+     *  @param {Boolean} keep keeps selection
      *  @scope public
      */
-    self.hide = function () {
+    self.hide = function (keep) {
         if (ime) ime.style.display = "none";
         EM.removeEventListener(target,'blur', keepSelection);
-        if (target) DocumentSelection.deleteSelection(target);
+        if (target && !keep) DocumentSelection.deleteSelection(target);
         target = null;
         sg=[];
     }
