@@ -27,12 +27,12 @@ DOCS=$(CURDIR)/license.txt
 
 # {{{ BrowserExtensions
 EXT=$(EXT_DIR)/helpers.js \
-		$(EXT_DIR)/objectextensions.js \
+		$(EXT_DIR)/ext/object.js \
 		$(EXT_DIR)/dom.js \
 		$(EXT_DIR)/eventmanager.js \
-		$(EXT_DIR)/regexpextensions.js \
-		$(EXT_DIR)/arrayextensions.js \
-		$(EXT_DIR)/stringextensions.js \
+		$(EXT_DIR)/ext/regexp.js \
+		$(EXT_DIR)/ext/array.js \
+		$(EXT_DIR)/ext/string.js \
 		$(EXT_DIR)/documentselection.js \
 		$(EXT_DIR)/dom/selectbox.js
 # }}}
@@ -48,8 +48,9 @@ SKINS=$(CSS_DIR)/*/button_set.gif \
 
 # {{{ SOURCES
 SOURCES=$(CURDIR)/virtualkeyboard.js \
-		 $(CURDIR)/vk_loader.js \
-		 $(CURDIR)/vk_popup.js
+		$(CURDIR)/vk_loader.js \
+		$(CURDIR)/vk_popup.js
+		$(EXT_DIR)/scriptqueue.js \
 # }}}
 
 # {{{ DEMO

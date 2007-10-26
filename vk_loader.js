@@ -10,7 +10,6 @@ VirtualKeyboard = new function () {
 };
 (function () {
     var pq = function (q) {if ('string'!=typeof q || q.length<2) return {};q = q.split("&");for (var z=0,qL=q.length,rs={},kv,rkv;z<qL;z++){kv=q[z].split("=");kv[0]=kv[0].replace(/[{}\[\]]*$/,"");rkv = rs[kv[0]];kv[1]=unescape(kv[1]?kv[1].replace("+"," "):"");if (rkv)if ('array'==typeof(rkv))rs[kv[0]][rs[kv[0]].length]=kv[1];else rs[kv[0]]=[rs[kv[0]],kv[1]];else rs[kv[0]]=kv[1];}return rs}
-    var ls = function (h,e,w) {var s = (w||window).document.createElement('script');s.type= "text/javascript";s.charset="UTF-8";s.src=h;e.appendChild(s);}
 
     /*
     *  track, how we've opened
@@ -36,10 +35,10 @@ VirtualKeyboard = new function () {
     var qs = pq(targetWindow.location.search.slice(1));
     var dpd = [ 'extensions/helpers.js'
                ,'extensions/dom.js'
-               ,'extensions/objectextensions.js'
-               ,'extensions/stringextensions.js'
-               ,'extensions/regexpextensions.js'
-               ,'extensions/arrayextensions.js'
+               ,'extensions/ext/object.js'
+               ,'extensions/ext/string.js'
+               ,'extensions/ext/regexp.js'
+               ,'extensions/ext/array.js'
                ,'extensions/eventmanager.js'
                ,'extensions/documentselection.js'
                ,'extensions/dom/selectbox.js'
@@ -51,11 +50,11 @@ VirtualKeyboard = new function () {
     ];
     q.skin = qs.vk_skin || q.skin || 'winxp';
     q.layout = qs.vk_layout || q.layout || null;
-//    document.write('<link rel="stylesheet" type="text/css" href="'+p+'css/'+q.skin+'/keyboard.css" />')
+
     var head = document.getElementsByTagName('head')[0]
        ,s;
     /*
-    *  loading styles
+    *  load styles at the proper places
     */
     s = document.createElement('link');
     s.rel = 'stylesheet';
@@ -70,18 +69,23 @@ VirtualKeyboard = new function () {
         addHead.appendChild(lnk);
         lnk = null;
     }
+
+    for (var i=0,dL=dpd.length;i<dL;i++)
+        dpd[i] = p+dpd[i];
+    dpd[i++] = p+'virtualkeyboard.js?layout='+q.layout;
+    dpd[i] = p+'layouts/layouts.js';
+    if (!(window.ScriptQueueIncludes instanceof Array)) window.ScriptQueueIncludes = []
+    window.ScriptQueueIncludes = window.ScriptQueueIncludes.concat(dpd);
+
     /*
-    *  loading scripts
+    *  attach script loader
     */
-    for (var i=0,dL=dpd.length;i<dL;i++) {
-        ls(p+dpd[i],head);
-//        document.write('<scr'+'ipt type="text/javascript" charset="UTF-8" src="'+p+dpd[i]+'"></scr'+'ipt>');
-        if (addHead) {
-            ls(p+dpd[i],addHead,targetWindow);
-        }
+    if (document.body) {
+        s = document.createElement('script');
+        s.type="text/javascript";
+        s.src = p+'/extensions/scriptqueue.js';
+        head.appendChild(s);
+    } else {
+        document.write("<scr"+"ipt type=\"text/javascript\" id = \"vk_loader_scriptqueue\" src=\""+p+'/extensions/scriptqueue.js'+"\"></scr"+"ipt>");
     }
-    ls(p+'virtualkeyboard.js?layout='+q.layout,head);
-    ls(p+'layouts/layouts.js',head);
-//    document.write('<scr'+'ipt type="text/javascript" charset="UTF-8" src="'+p+'virtualkeyboard.js?layout='+q.layout+'"></scr'+'ipt>');
-//    document.write('<scr'+'ipt type="text/javascript" charset="UTF-8" src="'+p+'layouts/layouts.js"></scr'+'ipt>');
 })();
