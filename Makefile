@@ -49,8 +49,8 @@ SKINS=$(CSS_DIR)/*/button_set.gif \
 # {{{ SOURCES
 SOURCES=$(CURDIR)/virtualkeyboard.js \
 		$(CURDIR)/vk_loader.js \
-		$(CURDIR)/vk_popup.js
-		$(EXT_DIR)/scriptqueue.js \
+		$(CURDIR)/vk_popup.js \
+		$(EXT_DIR)/scriptqueue.js
 # }}}
 
 # {{{ DEMO
