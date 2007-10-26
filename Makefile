@@ -28,10 +28,10 @@ DOCS=$(CURDIR)/license.txt
 # {{{ BrowserExtensions
 EXT=$(EXT_DIR)/helpers.js \
 		$(EXT_DIR)/ext/object.js \
+		$(EXT_DIR)/ext/array.js \
 		$(EXT_DIR)/dom.js \
 		$(EXT_DIR)/eventmanager.js \
 		$(EXT_DIR)/ext/regexp.js \
-		$(EXT_DIR)/ext/array.js \
 		$(EXT_DIR)/ext/string.js \
 		$(EXT_DIR)/documentselection.js \
 		$(EXT_DIR)/dom/selectbox.js
