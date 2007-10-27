@@ -120,7 +120,6 @@ tinymce: compact
 		@cp -r $(FILES_TINYMCE) $(DIST_PATH)jsvk/
 		@echo "Creating archive"
 		@$(TAR) -zxf $(subst tinymce,compact,$(DIST_NAME_ARC)) -C "$(DIST_PATH)jsvk/jscripts/"
-		@rm $(subst tinymce,compact,$(DIST_NAME_ARC))
 		@mv $(DIST_PATH)jsvk/jscripts/$(subst tinymce,compact,$(DIST_NAME))/* $(DIST_PATH)jsvk/jscripts/
 		@rm -Rf $(DIST_PATH)jsvk/jscripts/$(subst tinymce,compact,$(DIST_NAME))
 		@$(TAR) -zcf $(DIST_NAME_ARC) $(DIST_PATH)jsvk/
