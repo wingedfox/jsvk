@@ -1371,7 +1371,7 @@ VirtualKeyboard.IME = new function () {
     self.hide = function (keep) {
         if (ime) ime.style.display = "none";
         EM.removeEventListener(target,'blur', keepSelection);
-        if (target && !keep) DocumentSelection.deleteSelection(target);
+        if (target && DocumentSelection.getSelection(target) && !keep) DocumentSelection.deleteSelection(target);
         target = null;
         sg=[];
     }
@@ -1482,5 +1482,5 @@ VirtualKeyboard.IME = new function () {
         ime.childNodes[0].onmousedown = self.nextPage;
         ime.childNodes[1].onmousedown = self.prevPage;
     }
-    EM.addEventListener(window,'domload',_construct);
+    _construct();
 }
