@@ -19,7 +19,7 @@
  * @lastchange $Author$
  */
 // Load plugin specific language pack
-tinymce.PluginManager.requireLangPack('jsvk');
+tinymce.PluginManager.requireLangPack('Jsvk');
 
 tinymce.create('tinymce.plugins.VirtualKeyboard', new function () {
     var self = this
@@ -40,8 +40,9 @@ tinymce.create('tinymce.plugins.VirtualKeyboard', new function () {
         _vk_layout = ed.getParam('vk_layout', _vk_layout);
     
         // Register buttons
-        ed.addButton('jsvk', 'jsvk.desc', 'mceVirtualKeyboard', {
-            image : url + '/img/jsvk.gif'
+        ed.addButton('Jsvk', { title: 'Jsvk.desc'
+                              ,cmd: 'mceVirtualKeyboard'
+                              ,image : url + '/img/jsvk.gif'
         });
         ed.onInit.add(_init);
     }
@@ -61,7 +62,7 @@ tinymce.create('tinymce.plugins.VirtualKeyboard', new function () {
         loaded = true;
 
         var s = document.createElement('script');
-        s.src = tinymce.baseURL +'/plugins/jsvk/jscripts/vk_loader.js?vk_skin='+_vk_skin+'&vk_layout='+_vk_layout;
+        s.src = tinymce.baseURL +'/plugins/Jsvk/jscripts/vk_loader.js?vk_skin='+_vk_skin+'&vk_layout='+_vk_layout;
         s.type= "text/javascript";
         s.charset="UTF-8";
         document.getElementsByTagName('head')[0].appendChild(s);
@@ -98,4 +99,4 @@ tinymce.create('tinymce.plugins.VirtualKeyboard', new function () {
 });
 
 // Register plugin
-tinymce.PluginManager.add('jsvk', tinymce.plugins.VirtualKeyboard);
+tinymce.PluginManager.add('Jsvk', tinymce.plugins.VirtualKeyboard);

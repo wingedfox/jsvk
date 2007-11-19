@@ -135,12 +135,12 @@ tinymce tinymce3 xinha:: compact
 		@echo "Creating $@ plugin from $< distribution"
 		@-rm $(DIST_NAME) -Rf
 		@mkdir $(DIST_NAME)
-		@mkdir $(DIST_PATH)jsvk
-		@cp -r $(FILES_$($@)) $(DIST_PATH)jsvk/
-		@cp -r $(ICON) $(DIST_PATH)jsvk/img
+		@mkdir $(DIST_PATH)Jsvk
+		@cp -r $(FILES_$($@)) $(DIST_PATH)Jsvk/
+		@cp -r $(ICON) $(DIST_PATH)Jsvk/img
 		@echo "Creating archive"
-		@$(TAR) -zxf $(subst $@,$<,$(DIST_NAME_ARC)) -C "$(DIST_PATH)jsvk/jscripts/" --strip=2 "./$(subst $@,$<,$(DIST_NAME))" 
-		$(TAR) -zcf $(DIST_NAME_ARC) --strip=3 -C "$(DIST_PATH)" jsvk
+		@$(TAR) -zxf $(subst $@,$<,$(DIST_NAME_ARC)) -C "$(DIST_PATH)Jsvk/jscripts/" --strip=2 "./$(subst $@,$<,$(DIST_NAME))" 
+		$(TAR) -zcf $(DIST_NAME_ARC) --strip=3 -C "$(DIST_PATH)" Jsvk
 		@rm -Rf $(DIST_NAME)
 		@echo "All done"
 

@@ -19,9 +19,9 @@
  * @lastchange $Author$
  */
 // Import plugin specific language pack
-tinyMCE.importPluginLanguagePack('jsvk');
+tinyMCE.importPluginLanguagePack('Jsvk');
 // Singleton class
-var TinyMCE_jsvkPlugin = {
+var TinyMCE_JsvkPlugin = {
     _loaded : false,
     _vk_skin : "winxp",
     _vk_layout : "",
@@ -57,7 +57,7 @@ var TinyMCE_jsvkPlugin = {
         this._vk_layout = tinyMCE.getParam('vk_layout', this._vk_layout);
 
         var s = document.createElement('script');
-        s.src = tinyMCE.baseURL +'/plugins/jsvk/jscripts/vk_loader.js?vk_skin='+this._vk_skin+'&vk_layout='+this._vk_layout;
+        s.src = tinyMCE.baseURL +'/plugins/Jsvk/jscripts/vk_loader.js?vk_skin='+this._vk_skin+'&vk_layout='+this._vk_layout;
         s.type= "text/javascript";
         s.charset="UTF-8";
         document.getElementsByTagName('head')[0].appendChild(s);
@@ -76,8 +76,8 @@ var TinyMCE_jsvkPlugin = {
      */
     getControlHTML : function(cn) {
         switch (cn) {
-            case "jsvk":
-                return tinyMCE.getButtonHTML(cn, 'lang_jsvk_desc', '{$pluginurl}/img/jsvk.gif', 'mceVirtualKeyboard', true);
+            case "Jsvk":
+                return tinyMCE.getButtonHTML(cn, 'lang_Jsvk_desc', '{$pluginurl}/img/jsvk.gif', 'mceVirtualKeyboard', true);
         }
         return "";
     },
@@ -131,4 +131,4 @@ var TinyMCE_jsvkPlugin = {
 };
 
 // Adds the plugin class to the list of available TinyMCE plugins
-tinyMCE.addPlugin("jsvk", TinyMCE_jsvkPlugin);
+tinyMCE.addPlugin("Jsvk", TinyMCE_JsvkPlugin);
