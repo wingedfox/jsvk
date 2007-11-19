@@ -610,21 +610,12 @@ var VirtualKeyboard = new function () {
                   try {
                       evt = document.createEvent("KeyEvents");
                       evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, ck, ck);
-                  } catch (ex){
-                      try {
-                          evt = document.createEvent("Events");
-                      } catch (uierror /*:Error*/){
-                          evt = document.createEvent("UIEvents");
-                      } finally {
-                          evt.initEvent('keypress', false, true);
-                          evt.view = null;
-                          evt.altKey = false;
-                          evt.ctrlKey = false;
-                          evt.shiftKey = false;
-                          evt.metaKey = false;
-                          evt.keyCode = ck;
-                          evt.charCode = ck;
-                      }          
+                  } catch (ex) {
+                      /*
+                      *  Safari implements
+                      */
+                      evt = document.createEvent("KeyboardEvents");
+                      evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, ck, 0);
                   }
                   evt.VK_bypass = true;
                   nodes.attachedInput.dispatchEvent(evt);
