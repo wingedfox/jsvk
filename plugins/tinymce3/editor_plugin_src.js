@@ -2,7 +2,7 @@
  * $Id$
  * $HeadURL$
  *
- * Virtual Keyboard plugin for tinyMCE.
+ * Virtual Keyboard plugin for TinyMCE v3 editor.
  * (C) 2006-2007 Ilya Lebedev <ilya@lebedev.net>
  *
  * This library is free software; you can redistribute it and/or
@@ -41,7 +41,7 @@ tinymce.create('tinymce.plugins.VirtualKeyboard', new function () {
     
         // Register buttons
         ed.addButton('jsvk', 'jsvk.desc', 'mceVirtualKeyboard', {
-            image : url + '/images/jsvk.gif'
+            image : url + '/img/jsvk.gif'
         });
         ed.onInit.add(_init);
     }

@@ -764,11 +764,6 @@ var VirtualKeyboard = new function () {
         }
         break;
       case 'keypress' :
-        switch (keyCode) {
-            case 8:
-            case 46:
-                return;
-        }
         /*
         *  flag is set only when virtual key passed to input target
         */

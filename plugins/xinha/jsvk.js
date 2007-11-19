@@ -1,11 +1,25 @@
-// Mask Language plugin for Xinha
-// Implementation by Udo Schmal
-//
-// (c) Udo Schmal & Schaffrath NeueMedien 2004
-// Distributed under the same terms as HTMLArea itself.
-// This notice MUST stay intact for use (see license.txt).
+/**
+ * $Id$
+ * $HeadURL$
+ *
+ * Virtual Keyboard plugin for Xinha editor.
+ * (C) 2007 Ilya Lebedev <ilya@lebedev.net>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ * See http://www.gnu.org/copyleft/lesser.html
+ *
+ * Do not remove this comment if you want to use script!
+ * Не удаляйте данный комментарий, если вы хотите использовать скрипт!
+ *
+ * @author Ilya Lebedev <ilya@lebedev.net>
+ * @version $Rev$
+ * @lastchange $Author$
+ */
 
-function JsVirtualKeyboard(editor, args) {
+function Jsvk(editor, args) {
     var self = this;
     var static = arguments.callee;
     /**
@@ -21,7 +35,7 @@ function JsVirtualKeyboard(editor, args) {
      *  @type String
      *  @scope private
      */
-    var panel = editor.addPanel(cfg.JsVirtualKeyboard.panel || "bottom");
+    var panel = editor.addPanel(cfg.Jsvk.panel || "bottom");
     editor.hidePanel(panel);
     /**
      *  Default layout name
@@ -29,14 +43,14 @@ function JsVirtualKeyboard(editor, args) {
      *  @type String
      *  @scope protected
      */
-    var layout = cfg.JsVirtualKeyboard.layout || "";
+    var layout = cfg.Jsvk.layout || "";
     /**
      *  Default skin
      *
      *  @type String
      *  @scope protected
      */
-    var skin = cfg.JsVirtualKeyboard.skin || "";
+    var skin = cfg.Jsvk.skin || "";
     /**
      *  Reference to the editor, keyboard attached to
      *
@@ -97,24 +111,24 @@ function JsVirtualKeyboard(editor, args) {
         }
     }
     var _construct = function () {
-        cfg.registerButton({ id : "JsVirtualKeyboard"
-                               ,tooltip : Xinha._lc("General purpose virtual keyboard","JsVirtualKeyboard")
-                               ,image : editor.imgURL("jsvk.gif","JsVirtualKeyboard")
+        cfg.registerButton({ id : "Jsvk"
+                               ,tooltip : Xinha._lc("General purpose virtual keyboard","Jsvk")
+                               ,image : editor.imgURL("jsvk.gif","Jsvk")
                                ,textMode : true
                                ,action : toggleKeyboard
                               });
-        cfg.addToolbarElement("JsVirtualKeyboard", "inserthorizontalrule", 1);
+        cfg.addToolbarElement("Jsvk", "inserthorizontalrule", 1);
         /*
         *  load files only once
         */
         if (!static.loaded) {
             static.loaded = true;
-            Xinha._loadback(_editor_url+"plugins/JsVirtualKeyboard/jscripts/vk_loader.js?skin="+skin+"&layout="+layout);
+            Xinha._loadback(_editor_url+"plugins/Jsvk/jscripts/vk_loader.js?skin="+skin+"&layout="+layout);
         }
     }
     _construct();
 }
-JsVirtualKeyboard._pluginInfo = {
+Jsvk._pluginInfo = {
   name          : "Virtual Keyboard",
   version       : "1.0",
   developer     : "Ilya Lebedev",
@@ -130,6 +144,6 @@ JsVirtualKeyboard._pluginInfo = {
  *  @type Boolean
  *  @scope protected
  */
-JsVirtualKeyboard._loaded = false;
+Jsvk._loaded = false;
 
-Xinha.Config.prototype.JsVirtualKeyboard={"skin":"","layout":"","panel":"bottom"};
+Xinha.Config.prototype.Jsvk={"skin":"","layout":"","panel":"bottom"};

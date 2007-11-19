@@ -61,14 +61,33 @@ DEMO=$(CURDIR)/*.html
 SETUP=$(CURDIR)/setup
 # }}}
 
+# {{{ ICON
+ICON=$(CURDIR)/img/jsvk.gif
+# }}}
+
 # {{{ TINY_MCE
 TINYMCE=$(CURDIR)/plugins/tinymce/*
+# }}}
+
+# {{{ TINY_MCE3
+TINYMCE3=$(CURDIR)/plugins/tinymce3/*
+# }}}
+
+# {{{ XINHA
+XINHA=$(CURDIR)/plugins/xinha/*
 # }}}
 
 FILES_LITE = $(DOCS) $(LAYOUTS) $(SKINS) $(SOURCES) $(DEMO)
 FILES_COMPACT = $(FILES_LITE) $(SETUP)
 FILES_FULL  = $(FILES_COMPACT) $(EXT)
 FILES_TINYMCE = $(TINYMCE)
+FILES_TINYMCE3 = $(TINYMCE3)
+FILES_XINHA = $(XINHA)
+
+# Target names substitution
+tinymce = TINYMCE
+tinymce3 = TINYMCE3
+xinha = XINHA
 
 full:
 		@echo "Creating full distribution"
@@ -112,21 +131,22 @@ lite:
 		@rm $(DIST_NAME) -Rf
 		@echo "All done"
 
-tinymce: compact
-		@echo "Creating tinyMCE plugin from compact distribution"
+tinymce tinymce3 xinha:: compact
+		@echo "Creating $@ plugin from $< distribution"
 		@-rm $(DIST_NAME) -Rf
 		@mkdir $(DIST_NAME)
 		@mkdir $(DIST_PATH)jsvk
-		@cp -r $(FILES_TINYMCE) $(DIST_PATH)jsvk/
+		@cp -r $(FILES_$($@)) $(DIST_PATH)jsvk/
+		@cp -r $(ICON) $(DIST_PATH)jsvk/img
 		@echo "Creating archive"
-		@$(TAR) -zxf $(subst tinymce,compact,$(DIST_NAME_ARC)) -C "$(DIST_PATH)jsvk/jscripts/"
-		@mv $(DIST_PATH)jsvk/jscripts/$(subst tinymce,compact,$(DIST_NAME))/* $(DIST_PATH)jsvk/jscripts/
-		@rm -Rf $(DIST_PATH)jsvk/jscripts/$(subst tinymce,compact,$(DIST_NAME))
-		@$(TAR) -zcf $(DIST_NAME_ARC) $(DIST_PATH)jsvk/
+		@$(TAR) -zxf $(subst $@,$<,$(DIST_NAME_ARC)) -C "$(DIST_PATH)jsvk/jscripts/" --strip=2 "./$(subst $@,$<,$(DIST_NAME))" 
+		$(TAR) -zcf $(DIST_NAME_ARC) --strip=3 -C "$(DIST_PATH)" jsvk
 		@rm -Rf $(DIST_NAME)
 		@echo "All done"
 
 
-all: full tinymce compact lite
+all: full compact lite plugins
+
+plugins: tinymce tinymce3 xinha
 
 # setup vim:ts=4:sw=4:fdm:marker:

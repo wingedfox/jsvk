@@ -2,7 +2,7 @@
  * $Id$
  * $HeadURL$
  *
- * Virtual Keyboard plugin for tinyMCE.
+ * Virtual Keyboard plugin for TinyMCE editor.
  * (C) 2006-2007 Ilya Lebedev <ilya@lebedev.net>
  *
  * This library is free software; you can redistribute it and/or
@@ -77,7 +77,7 @@ var TinyMCE_jsvkPlugin = {
     getControlHTML : function(cn) {
         switch (cn) {
             case "jsvk":
-                return tinyMCE.getButtonHTML(cn, 'lang_jsvk_desc', '{$pluginurl}/images/jsvk.gif', 'mceVirtualKeyboard', true);
+                return tinyMCE.getButtonHTML(cn, 'lang_jsvk_desc', '{$pluginurl}/img/jsvk.gif', 'mceVirtualKeyboard', true);
         }
         return "";
     },
