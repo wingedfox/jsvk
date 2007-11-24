@@ -34,7 +34,6 @@ EXT=$(EXT_DIR)/helpers.js \
 		$(EXT_DIR)/ext/regexp.js \
 		$(EXT_DIR)/ext/string.js \
 		$(EXT_DIR)/documentselection.js \
-		$(EXT_DIR)/dom/selectbox.js
 # }}}
 
 # {{{ LAYOUTS
