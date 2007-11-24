@@ -36,7 +36,7 @@ var VirtualKeyboard = new function () {
    *  @scope private
    */
   var options = {
-     'layout' : {'code':null,'name':null}
+     'layout' : null
   }
   /**
    *  ID prefix
@@ -163,16 +163,10 @@ var VirtualKeyboard = new function () {
   /**
    *  Available layouts
    *
-   *  Array contains layout, it's 'shifted' difference and name
    *  Structure:
    *   [
-   *    ['alpha' : {Array} key codes
-   *     'shift' : {Object} { <start1> : Array, // array of symbols, could not be taken with toUpperCase
-   *                          <start2> : Array,
-   *                        }
-   *     'alt' : {Object} { <start1> : Array, // array of symbols
-   *                        <start2> : Array,
-   *                      }
+   *    {'name' : {String} layout name to find it using switchLayout
+   *     'keys' : {Array} 3-dimensional array of the keyboard codes [normal, shift, alt] keys
    *     'css' : {String} css class to be set on kbDesk when layout is activated
    *     'dk' : {String} list of the active dead keys
    *     'cbk' : {Function} custom input transformations
@@ -183,14 +177,20 @@ var VirtualKeyboard = new function () {
    *                      }
    *     'rtl' : true means the layout is right-to-left
    *
-   *    ].name=<layout_code>,
-   *    {...}
-   *   ].name = <lang_code>
+   *    }
+   *   ]
    *
-   *  @type Object
+   *  @type Array
    *  @access private
    */
-  var layout = {}
+  var layout = []
+  /**
+   *  Name-to-ID map
+   *
+   *  @type Object
+   *  @scope private
+   */
+  layout.hash = {}
   /**
    *  Shortcuts to the nodes
    *
@@ -201,7 +201,6 @@ var VirtualKeyboard = new function () {
       keyboard : null     // Keyboard container @type HTMLDivElement
      ,desk : null         // Keyboard desk @type HTMLDivElement
      ,langbox : null      // Language selector @type HTMLSelectElement
-     ,lytbox : null       // Layout selector @type HTMLSelectElement
      ,attachedInput : null// Field, keyboard attached to
   }
   /**
@@ -226,146 +225,61 @@ var VirtualKeyboard = new function () {
    *     ,'shift': {Object} optional shift keys, array of string
    *     ,'alt'  : {Array} optional altgr keys
    *     ,'dk'   : {String} list of the active deadkeys
-   *     ,'cbk' : {Function} callback
+   *     ,'cbk' : {Function} char processing callback
    *                OR
    *              { 'load' : {Function} optional load callback (called from addLayout)
    *               ,'activate' : {Function} optional activation callback (called from switchLayout)
    *               ,'charProcessor' : {Function} required char processing callback
    *              }
    *    }
-   *  @return {Boolean}
    *  @scope public
    */
   self.addLayout = function(l) {
-      /**
-       *  Private function, used to convert the string to engine-aware array
-       *
-       *  @param {Array, String} s source to check&parse
-       *  @return {Array}
-       *  @scope private
-       */
-      var doParse = function(s) {
-          return (isString(s)?s.match(/\x01.+?\x02|./g).map(function(a){return a.replace(/[\x01-\x03]/g,"")})
-                             :s.map(function(a){return isArray(a)?a.map(String.fromCharCode).join(""):String.fromCharCode(a)}))
-      }
 
       var code = l.code.entityDecode().split("-")
          ,name = l.name.entityDecode()
-         ,alpha = doParse(l.keys)
-         ,shift = l.shift || {}
-         ,alt = l.alt || {}
-         ,dk = l.dk || []
-         ,cbk = l.cbk
-
-      css = code[0]
-      code = code[1] || code[0]
+         ,alpha = __doParse(l.keys)
 
       if (!isArray(alpha) || 47!=alpha.length) throw new Error ('VirtualKeyboard requires \'keys\' property to be an array with 47 items, '+alpha.length+' detected. Layout code: '+code+', layout name: '+name);
 
       /*
-      *  add language, if it does not exists
+      *  overwrite keys with parsed data for future use
       */
-      if (!layout.hasOwnProperty(code)) {
-        layout[code] = {};
-        nodes.langbox.addOption(code, code, false, false, true);
-      }
+      l.code = (code[1] || code[0]);
+      l.name = name;
+      l.keys = alpha;
+      l.domain = code[0];
 
-      /*
-      *  convert layout in machine-aware form
-      */
-      var ca = null
-         ,cac = -1
-         ,cs = null
-         ,csc = -1
-         ,lt = []
-
-      for (var i=0, aL = alpha.length; i<aL; i++) {
-         if (shift.hasOwnProperty(i)) {
-           cs = doParse(shift[i]);
-           csc = i;
-         }
-         if (alt.hasOwnProperty(i)) {
-           ca = doParse(alt[i]);
-           cac = i;
-         }
-         lt[i] = [alpha[i],                                          // normal chars
-                  (csc>-1&&cs.hasOwnProperty(i-csc)?cs[i-csc]:null), // shift chars
-                  (cac>-1&&ca.hasOwnProperty(i-cac)?ca[i-cac]:null)  // alt chars
-                 ];
+      name = l.code+" "+name
+      if (!layout.hash.hasOwnProperty(name)) {
+          layout.hash[name] = layout.length;
+          l.toString = function(){return this.code+" "+this.name};
+          layout.push(l);
       }
       /*
-      *  add control keys
+      *  call load handler for the current layout
       */
-      lt.splice(14,0,'backspace');
-      lt.splice(15,0,'tab');
-      lt.splice(28,0,'enter');
-      lt.splice(29,0,'caps');
-      lt.splice(41,0,'shift_left');
-      lt.splice(52,0,'shift_right');
-      lt.splice(53,0,'del');
-      lt.splice(54,0,'ctrl_left');
-      lt.splice(55,0,'alt_left');
-      lt.splice(56,0,'space');
-      lt.splice(57,0,'alt_right');
-      lt.splice(58,0,'ctrl_right');
-
-      if (isString(dk))
-          lt.dk = doParse(dk)
-      else if (isArray(dk))
-          lt.dk = dk.map(String.fromCharCode).join("")
-
-      /*
-      *  check for right-to-left languages
-      */
-      lt.rtl = !!lt.toString().match(/[\u05b0-\u06ff]/)
-
-      layout[code][name] = lt;
-
-      /*
-      *  this CSS will be set on kbDesk
-      */
-      lt.css = css
-      /*
-      *  finalize things by calling loading callback, if exists
-      */
-      if (isFunction(cbk)) {
-          lt.charProcessor = cbk
-      } else if (cbk) {
-          if (isFunction(cbk.load)) cbk.load()
-          lt.activate = cbk.activate;
-          lt.charProcessor = cbk.charProcessor
-      }
-
-      return true;
+      if (l.cbk && isFunction(l.cbk.load))
+          l.cbk.load.call(this);
   }
   /**
    *  Set current layout
    *
-   *  @param {String} language code
-   *  @param {String} layout code
+   *  @param {String} code layout name
    *  @return {Boolean} change state
    *  @access public
    */
-  self.switchLayout = function (code, name) {
-    if (null == code) code = nodes.langbox.getValue();
-    if (!layout.hasOwnProperty(code) || (name && lang==layout[code][name])) return false;
+  self.switchLayout = function (code) {
+    if (!layout.hash.hasOwnProperty(code)) return false;
+    
     /*
-    *  select another language, if current is not the same as new
+    *  if number of the option != number of layouts, regenerate list
     */
-    if (nodes.langbox.getValue() != code) nodes.langbox.selectOnlyMatchingOptions(code,'exact');
+    if (layout.length != nodes.langbox.options.length) __buildOptionsList();
     /*
-    *  force layouts removal, becase switchLayout could be called outside keyboard
+    *  touch the dropdown box
     */
-    nodes.lytbox.removeAllOptions();
-    for (var i in layout[code]) {
-        if (layout[code].hasOwnProperty(i)) nodes.lytbox.addOption(i,i,false,false,true);
-    }
-    if (!name || !nodes.lytbox.selectOnlyMatchingOptions(name,'exact')) {
-        nodes.lytbox.selectOption(0);
-        name = nodes.lytbox.getValue();
-    }
-
-    if (!layout[code].hasOwnProperty(name)) return false;
+    nodes.langbox.options[layout.hash[code]].selected = true;
     /*
     *  we will use old but quick innerHTML
     */
@@ -378,8 +292,12 @@ var VirtualKeyboard = new function () {
     *  @see __getCharHtmlForKey
     */
     document.body.appendChild(inp);
+    inp.style.position = 'absolute';
+    inp.style.left = '-1000px';
 
-    lang = layout[code][name];
+    lang = layout[layout.hash[code]];
+    if (!isArray(lang)) lang = layout[layout.hash[code]] = __prepareLayout(lang);
+
     for (i=0, aL = lang.length; i<aL; i++) {
       var chr = lang[i];
       btns +=  "<div id=\""+idPrefix+(isArray(chr)?zcnt++:chr)
@@ -400,13 +318,11 @@ var VirtualKeyboard = new function () {
     */
     nodes.desk.className = lang.css
     self.IME.css = lang.css
+
     /*
-    *  restore capslock state
+    *  reset mode for the new layout
     */
-    var caps = document.getElementById(idPrefix+'caps');
-    if (caps && mode&VK_CAPS) {
-      DOM.CSS(caps).addClass(cssClasses.buttonDown);
-    }
+    mode = VK_NORMAL;
     /*
     *  call IME activation method, if exists
     */
@@ -414,19 +330,11 @@ var VirtualKeyboard = new function () {
         lang.activate();
     }
     /*
-    *  restore shift state
-    */
-    if (mode&VK_SHIFT) {
-      DOM.CSS(document.getElementById(idPrefix+'shift_left')).addClass(cssClasses.buttonDown);
-      DOM.CSS(document.getElementById(idPrefix+'shift_right')).addClass(cssClasses.buttonDown);
-      self.toggleLayoutMode();
-    }
-
-    /*
     *  toggle RTL/LTR state
     */
     if (nodes.attachedInput) (nodes.attachedInput.contentWindow?nodes.attachedInput.contentWindow.document.body
                                                                :nodes.attachedInput).dir = lang.rtl?'rtl':'ltr'
+    return true;
   }
 
   /**
@@ -466,24 +374,6 @@ var VirtualKeyboard = new function () {
         }
     }
   }
-  /*
-  *  Used to rotate langs (or set prefferred one, if legal code is specified)
-  *
-  *  @access private
-  */
-  self.setNextLang = function () {
-      nodes.langbox.selectNext(true);
-      self.switchLayout(nodes.langbox.getValue(),null);
-  }
-  /*
-  *  Used to rotate lang layouts
-  *
-  *  @access private
-  */
-  self.setNextLayout = function () {
-      nodes.lytbox.selectNext(true);
-      self.switchLayout(nodes.langbox.getValue(),nodes.lytbox.getValue());
-  }
   /**
    *  Return the list of the available layouts
    *
@@ -492,12 +382,8 @@ var VirtualKeyboard = new function () {
    */
   self.getLayouts = function () {
       var lts = [];
-      for (var i in layout) {
-        if (!layout.hasOwnProperty(i)) continue;
-        for (var z in layout[i]) {
-          if (!layout[i].hasOwnProperty(z)) continue;
-          lts[lts.length] = i+"\xa0-\xa0"+z;
-        }
+      for (var i=0,lL=layout.length;i<lL;i++) {
+          lts[lts.length] = [layout[i].code,layout[i].name];
       }
       return lts.sort();
   }
@@ -721,18 +607,6 @@ var VirtualKeyboard = new function () {
         }
         break;
       case 'keyup' :
-        /*
-        *  switch languages
-        */
-        if (!(mode ^ (VK_SHIFT | VK_CTRL))) {
-            self.setNextLang();
-        }
-        /*
-        *  switch layouts
-        */
-        if (!(mode ^ (VK_SHIFT | VK_ALT))) {
-            self.setNextLayout();
-        }
         switch (keyCode) {
             case 17:
             case 18:
@@ -951,12 +825,10 @@ var VirtualKeyboard = new function () {
     /*
     *  perform initialization...
     */
-    if (!lang) {
-        self.switchLayout(options.layout.code,options.layout.name);
-        if (!lang) {
-            self.switchLayout(nodes.langbox.getValue(), nodes.lytbox.getValue());
-        }
-    }
+    if (!lang)
+        self.switchLayout(options.layout) || self.switchLayout(layout[0].toString());
+    if (!lang)
+        throw new Error ('No layouts available');
     /*
     *  reset input state, defined earlier
     */
@@ -1036,6 +908,7 @@ var VirtualKeyboard = new function () {
   self.open =
   self.show = function (input, holder, kpTarget){
     if ( !(input = self.attachInput(nodes.attachedInput || input)) || !nodes.keyboard || !document.body ) return false;
+
     /*
     *  check pass means that node is not attached to the body
     */
@@ -1102,6 +975,126 @@ var VirtualKeyboard = new function () {
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
   //---------------------------------------------------------------------------
+  /**
+   *  Builds options for the layout selection box
+   *
+   *  @scope private
+   */
+  var __buildOptionsList = function () {
+      var s = layout.sort()
+         ,l,o,n
+         ,cc = {};
+      layout.hash = {};
+      nodes.langbox.innerHTML = "";
+      for (var i=0,sL=s.length;i<sL;i++) {
+          l = layout[i];
+          if (cc.label!=l.code) {
+              cc = document.createElement('optgroup');
+              cc.label = l.code;
+              nodes.langbox.appendChild(cc);
+          }
+          n = l.code+" "+l.name;
+          o = document.createElement('option');
+          o.value = n;
+          o.appendChild(document.createTextNode(l.name));
+          o.label = l.name;
+          cc.appendChild(o);
+          /*
+          *  record option position
+          */
+          layout.hash[n] = i;
+      }
+  }
+  /**
+   *  Converts string of chars or array of char codes to the array of chars
+   *
+   *  @param {Array, String} s source to check&parse
+   *  @return {Array}
+   *  @scope private
+   */
+  var __doParse = function(s) {
+      if (isString(s))
+          return s.match(/\x01.+?\x02|./g).map(function(a){return a.replace(/[\x01-\x03]/g,"")});
+      else
+          return s.map(function(a){return isArray(a)?a.map(String.fromCharCode).join(""):String.fromCharCode(a)});
+  }
+  /**
+   *  Prepares layout for typing
+   *
+   *  @param {Object} l layout object to process
+   *  @scope private
+   */
+  var __prepareLayout = function(l) {
+      /*
+      *  convert layout in machine-aware form
+      */
+      var alpha = l.keys
+         ,shift = l.shift || {}
+         ,alt = l.alt || {}
+         ,dk = l.dk || []
+         ,cbk = l.cbk
+         ,ca = null
+         ,cac = -1
+         ,cs = null
+         ,csc = -1
+         ,lt = []
+         ,css = l.domain
+
+      lt.name = l.name;
+      lt.code = l.code;
+
+      for (var i=0, aL = alpha.length; i<aL; i++) {
+         if (shift.hasOwnProperty(i)) {
+           cs = __doParse(shift[i]);
+           csc = i;
+         }
+         if (alt.hasOwnProperty(i)) {
+           ca = __doParse(alt[i]);
+           cac = i;
+         }
+         lt[i] = [alpha[i],                                          // normal chars
+                  (csc>-1&&cs.hasOwnProperty(i-csc)?cs[i-csc]:null), // shift chars
+                  (cac>-1&&ca.hasOwnProperty(i-cac)?ca[i-cac]:null)  // alt chars
+                 ];
+      }
+      /*
+      *  add control keys
+      */
+      lt.splice(14,0,'backspace');
+      lt.splice(15,0,'tab');
+      lt.splice(28,0,'enter');
+      lt.splice(29,0,'caps');
+      lt.splice(41,0,'shift_left');
+      lt.splice(52,0,'shift_right');
+      lt.splice(53,0,'del');
+      lt.splice(54,0,'ctrl_left');
+      lt.splice(55,0,'alt_left');
+      lt.splice(56,0,'space');
+      lt.splice(57,0,'alt_right');
+      lt.splice(58,0,'ctrl_right');
+
+      lt.dk = __doParse(dk)
+
+      /*
+      *  check for right-to-left languages
+      */
+      lt.rtl = !!lt.toString().match(/[\u05b0-\u06ff]/)
+
+      /*
+      *  this CSS will be set on kbDesk
+      */
+      lt.css = css
+      /*
+      *  finalize things by calling loading callback, if exists
+      */
+      if (isFunction(cbk)) {
+          lt.charProcessor = cbk
+      } else if (cbk) {
+          lt.activate = cbk.activate;
+          lt.charProcessor = cbk.charProcessor;
+      }
+      return lt;
+  }
   /**
    *  Sets specified state on dual keys (like Alt, Ctrl)
    *
@@ -1205,97 +1198,77 @@ var VirtualKeyboard = new function () {
     return html.join("");
   }
   /**
-   *  Handler for the 'domload' event
-   *
-   *  @scope protected
-   */
-  var __init = function () {
-    /*
-    *  set some options
-    */
-    var opts = getScriptQuery('virtualkeyboard.js');
-    if (opts.layout) {
-        opts.layout = opts.layout.split("_");
-        options.layout.code = opts.layout[0];
-        options.layout.name = opts.layout[1];
-    }
-  }
-  /**
    *  Keyboard constructor
    *
    *  @access public
    */
   var __construct = function() {
-    /*
-    *  process the deadkeys, to make better useable, but non-editable object
-    */
-    var dk = {};
-    for (var i=0, dL=deadkeys.length; i<dL; i++) {
-      if (!deadkeys.hasOwnProperty(i)) continue;
       /*
-      *  got correct deadkey symbol
+      *  process the deadkeys, to make better useable, but non-editable object
       */
-      dk[deadkeys[i][0]] = {};
-      var chars = deadkeys[i][1].split(" ");
-      /*
-      *  process char:mod_char pairs
-      */
-      for (var z=0, cL=chars.length; z<cL; z++) {
-        dk[deadkeys[i][0]][chars[z].charAt(0)] = chars[z].charAt(1);
+      var dk = {};
+      for (var i=0, dL=deadkeys.length; i<dL; i++) {
+        if (!deadkeys.hasOwnProperty(i)) continue;
+        /*
+        *  got correct deadkey symbol
+        */
+        dk[deadkeys[i][0]] = {};
+        var chars = deadkeys[i][1].split(" ");
+        /*
+        *  process char:mod_char pairs
+        */
+        for (var z=0, cL=chars.length; z<cL; z++) {
+          dk[deadkeys[i][0]][chars[z].charAt(0)] = chars[z].charAt(1);
+        }
       }
-    }
-    /*
-    *  resulting array:
-    *
-    *  { '<dead_char>' : { '<key>' : '<modification>', }
-    */
-    deadkeys = dk;
+      /*
+      *  resulting array:
+      *
+      *  { '<dead_char>' : { '<key>' : '<modification>', }
+      */
+      deadkeys = dk;
+    
+      /*
+      *  convert keymap array to the object, to have better typing speed
+      */
+      var tk = keymap;
+      keymap = [];
+      for (var i=0, kL=tk.length; i<kL; i++) {
+          keymap[tk[i]] = i;
+      }
+      tk = null;
+      /*
+      *  create keyboard UI
+      */
+      nodes.keyboard = document.createElement('div');
+      nodes.keyboard.id = 'virtualKeyboard';
+      nodes.keyboard.innerHTML = "<div id=\"kbDesk\"><!-- --></div>"
+                                +"<select id=\"kb_langselector\"></select>"
+                                +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank">VirtualKeyboard '+self.$VERSION$+'</a><br />&copy; 2006-2007 <a href="http://debugger.ru" target="_blank">"Debugger.ru"</a></div>';
+    
+      nodes.desk = nodes.keyboard.firstChild;
+    
+      var el = nodes.keyboard.childNodes.item(1);
+      EM.addEventListener(el,'change', function(e){self.switchLayout(this.value)});
+      nodes.langbox = el;
+    
+      /*
+      *  insert some copyright information
+      */
+      EM.addEventListener(nodes.desk,'mousedown', _btnMousedown_);
+      EM.addEventListener(nodes.desk,'mouseup', _btnClick_);
+      EM.addEventListener(nodes.desk,'mouseover', _btnMouseInOut_);
+      EM.addEventListener(nodes.desk,'mouseout', _btnMouseInOut_);
+      EM.addEventListener(nodes.desk,'dragstart', EM.preventDefaultAction);
+      EM.addEventListener(nodes.desk,'click', EM.preventDefaultAction);
 
-    /*
-    *  convert keymap array to the object, to have better typing speed
-    */
-    var tk = keymap;
-    keymap = [];
-    for (var i=0, kL=tk.length; i<kL; i++) {
-        keymap[tk[i]] = i;
-    }
-    tk = null;
-    /*
-    *  create keyboard UI
-    */
-    nodes.keyboard = document.createElement('div');
-    nodes.keyboard.id = 'virtualKeyboard';
-    nodes.keyboard.innerHTML = "<div id=\"kbDesk\"><!-- --></div>"
-                              +"<select id=\"kb_langselector\"></select>"
-                              +"<select id=\"kb_layoutselector\"></select>"
-                              +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank">VirtualKeyboard '+self.$VERSION$+'</a><br />&copy; 2006-2007 <a href="http://debugger.ru" target="_blank">"Debugger.ru"</a></div>';
-
-    nodes.desk = nodes.keyboard.firstChild;
-    /*
-    *  reference to layout selector
-    */
-    var el = nodes.keyboard.childNodes.item(1);
-    nodes.langbox = new Selectbox(el);
-    EM.addEventListener(el,'change', function(e){self.switchLayout(e.target.value,0)});
-
-    var el = nodes.keyboard.childNodes.item(2);
-    nodes.lytbox = new Selectbox(el);
-    EM.addEventListener(el,'change', function(e){self.switchLayout(null,e.target.value)});
-
-    nodes.keyboard.appendChild(el); 
-
-    /*
-    *  insert some copyright information
-    */
-    EM.addEventListener(nodes.desk,'mousedown', _btnMousedown_);
-    EM.addEventListener(nodes.desk,'mouseup', _btnClick_);
-    EM.addEventListener(nodes.desk,'mouseover', _btnMouseInOut_);
-    EM.addEventListener(nodes.desk,'mouseout', _btnMouseInOut_);
-    EM.addEventListener(nodes.desk,'dragstart', EM.preventDefaultAction);
-    EM.addEventListener(nodes.desk,'click', EM.preventDefaultAction);
-    EM.addEventListener(window,'domload', __init);
-    EM.addEventListener(window,'unload', self.close);
-
+      /*
+      *  check url params for the default layout name
+      */
+      var opts = getScriptQuery('virtualkeyboard.js');
+      if (opts.layout) {
+          options.layout = opts.layout;
+      }
   }
   /*
   *  call the constructor

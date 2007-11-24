@@ -9,7 +9,7 @@ VirtualKeyboard = new function () {
   }
 };
 (function () {
-    var pq = function (q) {if ('string'!=typeof q || q.length<2) return {};q = q.split("&");for (var z=0,qL=q.length,rs={},kv,rkv;z<qL;z++){kv=q[z].split("=");kv[0]=kv[0].replace(/[{}\[\]]*$/,"");rkv = rs[kv[0]];kv[1]=unescape(kv[1]?kv[1].replace("+"," "):"");if (rkv)if ('array'==typeof(rkv))rs[kv[0]][rs[kv[0]].length]=kv[1];else rs[kv[0]]=[rs[kv[0]],kv[1]];else rs[kv[0]]=kv[1];}return rs}
+    var pq = function (q) {if ('string'!=typeof q || q.length<2) return {};q = q.split(/&amp;|&/g);for (var z=0,qL=q.length,rs={},kv,rkv;z<qL;z++){kv=q[z].split("=");kv[0]=kv[0].replace(/[{}\[\]]*$/,"");rkv = rs[kv[0]];kv[1]=unescape(kv[1]?kv[1].replace("+"," "):"");if (rkv)if ('array'==typeof(rkv))rs[kv[0]][rs[kv[0]].length]=kv[1];else rs[kv[0]]=[rs[kv[0]],kv[1]];else rs[kv[0]]=kv[1];}return rs}
 
     /*
     *  track, how we've opened
@@ -26,10 +26,9 @@ VirtualKeyboard = new function () {
         targetWindow = window;
     }
 
-    q = (function (sname,td){if(!td) td=document; var sc=td.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?].*|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {return pq(m[3].replace(/^[^?]*\?([^#]+)/,"$1"));}}})(targetScript,targetWindow.document)
-        || {};
+    q = (function (sname,td){var h=(td||document).getElementsByTagName('html')[0].innerHTML,sr=new RegExp('<scr'+'ipt[^>]+?src\s*[^>]+?/'+sname+'([^#"\']*).+?</scr'+'ipt>','i'),m = h.match(sr);if (m) return parseQuery(m[1].replace(/^[^?]*\?([^#]+)/,"$1"));return {};})(targetScript,targetWindow.document)
 
-    var p = (function (sname){var sc=document.getElementsByTagName('html')[0].getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?]|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return m[1];if (m[1].indexOf("/")==0) return m[1];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,"");}}return null;})
+    var p = (function (sname){var sc=document.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?]|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return m[1];if (m[1].indexOf("/")==0) return m[1];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,"");}}return null;})
              ('vk_loader.js');
 
     var qs = pq(targetWindow.location.search.slice(1));
@@ -41,7 +40,6 @@ VirtualKeyboard = new function () {
                ,'extensions/ext/array.js'
                ,'extensions/eventmanager.js'
                ,'extensions/documentselection.js'
-               ,'extensions/dom/selectbox.js'
 /*
 * not used by default
 * 
@@ -72,20 +70,24 @@ VirtualKeyboard = new function () {
 
     for (var i=0,dL=dpd.length;i<dL;i++)
         dpd[i] = p+dpd[i];
-    dpd[i++] = p+'virtualkeyboard.js?layout='+q.layout;
+    dpd[i++] = p+'virtualkeyboard.js?layout='+q.layout+'&skin=aaa&qqq=bnrf';
     dpd[i] = p+'layouts/layouts.js';
-    if (!(window.ScriptQueueIncludes instanceof Array)) window.ScriptQueueIncludes = []
-    window.ScriptQueueIncludes = window.ScriptQueueIncludes.concat(dpd);
-
-    /*
-    *  attach script loader
-    */
-    if (document.body) {
-        s = document.createElement('script');
-        s.type="text/javascript";
-        s.src = p+'/extensions/scriptqueue.js';
-        head.appendChild(s);
+    if (window.ScriptQueue) {
+        ScriptQueue.queue(dpd);
     } else {
-        document.write("<scr"+"ipt type=\"text/javascript\" id = \"vk_loader_scriptqueue\" src=\""+p+'/extensions/scriptqueue.js'+"\"></scr"+"ipt>");
+        if (!(window.ScriptQueueIncludes instanceof Array)) window.ScriptQueueIncludes = []
+        window.ScriptQueueIncludes = window.ScriptQueueIncludes.concat(dpd);
+        
+        /*
+        *  attach script loader
+        */
+        if (document.body) {
+            s = document.createElement('script');
+            s.type="text/javascript";
+            s.src = p+'extensions/scriptqueue.js';
+            head.appendChild(s);
+        } else {
+            document.write("<scr"+"ipt type=\"text/javascript\" src=\""+p+'extensions/scriptqueue.js'+"\"></scr"+"ipt>");
+        }
     }
 })();

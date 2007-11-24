@@ -122,7 +122,7 @@ class VirtualKeyboardLayout {
         mb_internal_encoding("UTF-8");
         $fs = array_slice($this->strings,0,47);
 
-        $VK = array('name' => $this->name
+        $VK = array('name' => code2utf($this->name)
                    ,'code' => $this->code
                    ,'domain' => $this->domain
                    ,'copy' => $this->copyright

@@ -26,8 +26,6 @@ Demos: [<a>Plain text</a>] |
        <br />
        <br />
        <div id="td"></div>
-       <br />
-       <input id="showkb" type="button" value="Keyboard" onclick="VirtualKeyboard.toggle('testb','td'); return false;" />
       </div>
       <div id="dbg">
       </div>
@@ -44,23 +42,21 @@ Demos: [<a>Plain text</a>] |
       <li><a href="http://forum.dklab.ru/js/advises/VirtualKeyboard.html">Support forum</a></li>
       <li><a href="http://www.codeproject.com/jscript/jsvk.asp">English article @CodeProject</a></li>
      </ul>
-     <ol><strong>How to use this demo:</strong>
-      <li>Click the 'keyboard' button below
-      <li>Click virtual buttons with mouse and the the text in the input field
-      <li>Focus another field to tell keyboard to use it as input target 
-      <li>Enter some more text with mouse, to check that keyboard switched field successfully
-      </li>Repeat steps 2-4, using keyboard, to check on-the-fly keys translation
-     </ol>
      <ol id="sul"><strong>Supported languagues:</strong><br /><em>Links are persistent</em>
      </ol>
      <script type="text/javascript">
          EM.addEventListener(window,'domload',function(){
+             /*
+             *  open the keyboard
+             */
+             VirtualKeyboard.toggle('testb','td');
              var el = document.getElementById('sul')
                 ,lt = VirtualKeyboard.getLayouts()
                 ,dl = window.location.href.replace(/[?#].+/,"")
              for (var i=0,lL=lt.length; i<lL; i++) {
-                 var cl = lt[i].split("\xa0-\xa0");
-                 lt[i] = "<a href=\""+dl+"?vk_layout="+cl[0]+"_"+cl[1]+"\" onclick=\"VirtualKeyboard.switchLayout('"+cl[0]+"','"+cl[1]+"');return false;\" >"+lt[i]+"</a>"
+                 var cl = lt[i];
+                 cl = cl[0]+" "+cl[1];
+                 lt[i] = "<a href=\""+dl+"?vk_layout="+cl+"\" onclick=\"VirtualKeyboard.switchLayout(this.title);return false;\" title=\""+cl+"\" alt=\""+cl+"\" >"+cl+"</a>"
              }
              el.innerHTML += "<li>"+lt.join("</li><li>")+"</li>";
          });
