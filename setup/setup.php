@@ -124,6 +124,7 @@ function getLayoutList () {
 ?>
 <html>
  <head>
+  <title>Virtual Keyboard layouts setup page</title>
   <style type="text/css">
    table {
        padding: 0;
