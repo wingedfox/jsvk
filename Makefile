@@ -139,7 +139,7 @@ tinymce tinymce3 xinha:: compact
 		@cp -r $(ICON) $(DIST_PATH)Jsvk/img
 		@echo "Creating archive"
 		@$(TAR) -zxf $(subst $@,$<,$(DIST_NAME_ARC)) -C "$(DIST_PATH)Jsvk/jscripts/" --strip=2 "./$(subst $@,$<,$(DIST_NAME))" 
-		$(TAR) -zcf $(DIST_NAME_ARC) --strip=3 -C "$(DIST_PATH)" Jsvk
+		@$(TAR) -zcf $(DIST_NAME_ARC) --strip=3 -C "$(DIST_PATH)" Jsvk
 		@rm -Rf $(DIST_NAME)
 		@echo "All done"
 

@@ -70,7 +70,7 @@ VirtualKeyboard = new function () {
 
     for (var i=0,dL=dpd.length;i<dL;i++)
         dpd[i] = p+dpd[i];
-    dpd[i++] = p+'virtualkeyboard.js?layout='+q.layout+'&skin=aaa&qqq=bnrf';
+    dpd[i++] = p+'virtualkeyboard.js?layout='+q.layout;
     dpd[i] = p+'layouts/layouts.js';
     if (window.ScriptQueue) {
         ScriptQueue.queue(dpd);
