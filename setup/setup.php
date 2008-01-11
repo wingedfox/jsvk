@@ -64,8 +64,16 @@ function mb_escape($str) {
     return preg_replace("/([\\\\'])/u","\\\\$1",$str);
 }
 
+/*
+*  prepare layouts file;
+*/
 $VK_ADDON_INCLUDED = array();
 @unlink(LAYOUT_OUT);
+$fd = fopen(LAYOUT_OUT,"ab");
+fwrite($fd,'﻿');
+fclose($fd);
+$fd = null;
+
 /**
  *  Converts plaintext keyboard layout to the valid javascript code and saves it
  *
@@ -140,13 +148,13 @@ function getLayoutList () {
  </head>
  <body>
   <p>Keyboard layouts setup</p>
-  <form action="" method="POST" />
+  <form action="" method="POST" >
    <div>
     <div style="height: 400px; overflow: auto; border: 1px inset black;">
      <table id="targetkbd" border="0">
       <thead>
        <tr>
-        <th><input type="checkbox" onclick="var els=this.parentNode.parentNode.parentNode.parentNode.tBodies[0].getElementsByTagName('input'); for(var i in els) els[i].checked=this.checked;"</th>
+        <th><input type="checkbox" onclick="var els=this.parentNode.parentNode.parentNode.parentNode.tBodies[0].getElementsByTagName('input'); for(var i in els) els[i].checked=this.checked;"></th>
         <th>Layout Code</th>
         <th>Layout Name</th>
         <th>Copyright</th>

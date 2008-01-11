@@ -79,9 +79,20 @@ class VirtualKeyboardLayout {
          *   @type {String}
          */
         $this->strings = preg_split("#[\\r\\n]+#",preg_replace(array("#^.+?//SC[^\\r\\n]+[/\\s-]+#smi","#\\s+(^deadkey|^ligature|^keyname).+#smi"),"",$str));
+        $this->strings = array_map(create_function('$a','return preg_split("#\\t+#",$a);'),$this->strings);
+        /*
+        *  remove SGCap strings
+        */
+        for ($z=sizeof($this->strings);$z>=0;$z--) {
+            if (-1 == (int)$this->strings[$z][0]) {
+                array_splice($this->strings,$z,1);
+            }
+        }
+        /*
+        *  Move OEM keys on the right places
+        */
         array_splice($this->strings,12,0,array_splice($this->strings,36,1));
         array_unshift($this->strings,array_pop(array_splice($this->strings,36,1)));
-        $this->strings = array_map(create_function('$a','return preg_split("#\\t+#",$a);'),$this->strings);
       
         preg_match("/shiftstate\\s+((?:(?!layout).|[\\r\\n])+)/i",$str,$m);
         $this->columns = preg_split("/\\s.+[\\r\\n]+/",$m[1]);
@@ -156,7 +167,7 @@ class VirtualKeyboardLayout {
             *
             *  %% indicates a presence on ligature
             *  
-            *  sometimes, MSKCL is getting buggy and move shift key to alt+shift
+            *  sometimes, MSKLC is getting buggy and move shift key to alt+shift
             */
             if ($sc == -1 || (mb_strtoupper($sc) == mb_strtoupper($nc) && '%%' != $sc)) {
                 $VK['shift'][sizeof($VK['normal'])] = array();
