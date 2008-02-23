@@ -1,6 +1,6 @@
 VirtualKeyboard.Langs.LA = new function () {
     var self = this;
-var remap1 = {
+    var remap1 = {
  ga:'ǧa',ge:'ǧe',gi:'ǧi','go':'ǧo',gu:'ǧu',Ga:'Ʀa',Ge:'Ʀe',GI:'Ʀi',Go:'Ʀo',Gu:'Ʀu',GA:'ƦA',GE:'ƦE',GI:'ƦI',GO:'ƦO',GU:'ƦU'
 ,pha:'p\u021fa',pho:'p\u021fo',Pha:'P\u021fa',Pho:'P\u021fo',PHA:'P\u021ea',PHo:'P\u021eo'
 ,tha:'t\u021fa',tho:'t\u021fo',Tha:'T\u021fa',Tho:'T\u021fo',THa:'T\u021ea',THo:'T\u021eo'
@@ -8,7 +8,7 @@ var remap1 = {
 ,"a'":'á',"A'":'Á',"e'":'é',"E'":'É',"i'":'í',"I'":'Í',"u'":'ú',"U'":'Ú',"o'":'ó',"O'":'Ó'
     }
 
-   ,remap4c = {
+    ,remap4c = {
  'phun':'pȟuŋ','Phun':'Pȟuŋ','PHUN':'PȞUŊ'
 ,'thun':'tȟuŋ','Thun':'Tȟuŋ','THUN':'TȞUŊ'
 ,'khun':'kȟuŋ','Khun':'Kȟuŋ','KHUN':'KȞUŊ'
@@ -24,7 +24,7 @@ var remap1 = {
 ,'h':'\u021f', 'H':'\u021e'
     }
 
-   ,remap0 = {
+    ,remap0 = {
  'phúŋ':'pȟúŋ','Phúŋ':'Pȟúŋ','PHÚ':'PȞÚŊ'
 ,'thúŋ':'tȟúŋ','Thú':'Tȟúŋ','THÚŊ':'TȞÚŊ'
 ,'khúŋ':'kȟúŋ','Khúŋ':'Kȟú','KHÚ':'KȞÚŊ'
@@ -41,7 +41,7 @@ var remap1 = {
 ,"h'":'\u021fʼ',"H'":'\u021eʼ'
     }
 
-   ,remap2 = {
+    ,remap2 = {
  ph:'ph',Ph:'Ph',PH:'PH'
 ,th:'th',Th:'Th',TH:'TH'
 ,kh:'kh',Kh:'Kh',KH:'KH'
@@ -53,7 +53,7 @@ var remap1 = {
 ,'ún':'ún','Ún':'Ún','ÚN':'ÚN'
     }
 
-   ,remap3 = {
+    ,remap3 = {
  phu:'phu',Phu:'Phu',PHU:'PHU'
 ,thu:'thu',Thu:'Thu',THU:'THU'
 ,khu:'khu',Khu:'Khu',KHU:'KHU'
@@ -62,7 +62,7 @@ var remap1 = {
 ,"khu'":'khú',"Khu'":'Khú',"KHU'":'KHÚ'
     }
 
-   ,remap4 = {
+    ,remap4 = {
  'phun':'phun','Phun':'Phun','PHUN':'PHUN'
 ,'thun':'thun','Thun':'Thun','THUN':'THUN'
 ,'khun':'khun','Khun':'Khun','KHUN':'KHUN'
@@ -70,19 +70,24 @@ var remap1 = {
 ,'thún':'thún','Thún':'Thún','THÚN':'THÚN'
 ,'khún':'khún','Khún':'Khún','KHÚN':'KHÚN'
     }
-   ,remap = {}
+
+    ,remap = {};
 
     var __construct = function() {
         var i,k
-        var cons =" ǧwštypsdghȟkl'zžčbnmǦWŠTPSDGH\u021eKLZŽČBNM.,<>;:\"?`~1!2@3#4$5%6^7&8*9(0)-_=+\|\u00A0".split('')
+        var cons ="ǧwštypsdghȟkl'zžčbnmǦWŠTPSDGH\u021eKLZŽČBNM".split('')
+        var punct =" .,<>;:\"?`~1!2@3#4$5%6^7&8*9(0)-_=+\|\u00A0".split('')
         for(k in remap0) remap[k]=[remap0[k],0]
         for(k in remap1) remap[k]=[remap1[k],1]
         for(k in remap2) remap[k]=[remap2[k],2]
         for(k in remap3) remap[k]=[remap3[k],3]
         for(k in remap4) remap[k]=[remap4[k],4]
-        for(k in remap4c) 
-        for(var i=0,cL=cons.length; i<cL; i++) 
-            remap[k+cons[i]]=[remap4c[k]+(cons[i]=="'"? "ʼ": cons[i]),1];
+        for(k in remap4c) {
+            for(var i=0,cL=cons.length; i<cL; i++) 
+                remap[k+cons[i]]=[remap4c[k]+(cons[i]=="'"? "ʼ": cons[i]),1];
+            for(var i=0,pL=punct.length; i<pL; i++)
+                remap[k+punct[i]]=[remap4c[k]+punct[i],0];
+        }
         // clear come memory
         remap0=remap1=remap2=remap3=remap4=remap4c = null
         self.remap = remap;
