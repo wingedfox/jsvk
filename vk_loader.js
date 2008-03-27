@@ -46,8 +46,8 @@ VirtualKeyboard = new function () {
 *               ,'layouts/unconverted.js'
 */
     ];
-    q.skin = qs.vk_skin || q.skin || 'winxp';
-    q.layout = qs.vk_layout || q.layout || null;
+    q.skin = qs.vk_skin || q.vk_skin || 'winxp';
+    q.layout = qs.vk_layout || q.vk_layout || null;
 
     var head = document.getElementsByTagName('head')[0]
        ,s;
