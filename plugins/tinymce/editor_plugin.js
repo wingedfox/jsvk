@@ -25,6 +25,7 @@ var TinyMCE_JsvkPlugin = {
     _loaded : false,
     _vk_skin : "winxp",
     _vk_layout : "",
+    _vk_mode : "",
     _curId : null,
     /**
      * Returns information about the plugin as a name/value array.
@@ -39,7 +40,7 @@ var TinyMCE_JsvkPlugin = {
                     author : 'Ilya Lebedev AKA WingedFox',
                     authorurl : 'http://www.debugger.ru',
                     infourl : 'http://www.debugger.ru/projects/virtualkeyboard/',
-                    version : "1.0"
+                    version : "1.1"
             };
     },
 
@@ -55,9 +56,10 @@ var TinyMCE_JsvkPlugin = {
 
         this._vk_skin = tinyMCE.getParam('vk_skin', this._vk_skin);
         this._vk_layout = tinyMCE.getParam('vk_layout', this._vk_layout);
+        this._vk_mode = tinyMCE.getParam('vk_mode', this._vk_mode);
 
         var s = document.createElement('script');
-        s.src = tinyMCE.baseURL +'/plugins/Jsvk/jscripts/vk_loader.js?vk_skin='+this._vk_skin+'&vk_layout='+this._vk_layout;
+        s.src = tinyMCE.baseURL +'/plugins/Jsvk/jscripts/vk_'+(this._vk_mode.toLowerCase()||'loader')+'.js?vk_skin='+this._vk_skin+'&vk_layout='+this._vk_layout;
         s.type= "text/javascript";
         s.charset="UTF-8";
         document.getElementsByTagName('head')[0].appendChild(s);
@@ -98,23 +100,25 @@ var TinyMCE_JsvkPlugin = {
             // Remember to have the "mce" prefix for commands so they don't intersect with built in ones in the browser.
             case "mceVirtualKeyboard":
                 if (user_interface) {
-                    var el;
+                    var el
+                       ,vk = window[this._vk_mode+'VirtualKeyboard'];
                     if (this._curId === editor_id) {
-                        VirtualKeyboard.close();
+                        vk.close();
                         this._curId = null;
                     } else {
                         if (null != this._curId && (el = document.getElementById('VirtualKeyboard_'+this._curId))) {
-                            VirtualKeyboard.close();
+                            vk.close();
                         }
                         if (!(el = document.getElementById('VirtualKeyboard_'+editor_id))) {
                             el = document.getElementById(editor_id+"_parent").getElementsByTagName('table')[0];
                             el.insertRow(el.rows.length)
                             el = el.rows[el.rows.length-1];
+                            el.align = 'center';
                             el.id = 'VirtualKeyboard_' + editor_id;
                             el.appendChild(document.createElement('td'));
                         }
                         el = el.firstChild;
-                        VirtualKeyboard.open(editor_id,el);
+                        vk.open(editor_id,el);
                         this._curId = editor_id;
                     }
                 } else {
