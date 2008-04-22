@@ -20,14 +20,13 @@ VirtualKeyboard = new function () {
     try {
         if (targetWindow != window) {
             var addHead = targetWindow.document.getElementsByTagName('head')[0];
-            var targetScript = window.location.href.match(/\/(.+)\..+$/)[1]+'.js';
+            var targetScript = window.location.href.match(/.*\/(.+)\..+$/)[1]+'.js';
         }
     } catch (e) {
         targetWindow = window;
     }
 
-    q = (function (sname,td){var h=(td||document).getElementsByTagName('html')[0].innerHTML,sr=new RegExp('<scr'+'ipt[^>]+?src\s*[^>]+?/'+sname+'([^#"\']*).+?</scr'+'ipt>','i'),m = h.match(sr);if (m) return pq(m[1].replace(/^[^?]*\?([^#]+)/,"$1"));return {};})(targetScript,targetWindow.document)
-
+    q = (function (sname,td){var h=(td||document).getElementsByTagName('html')[0].innerHTML,sr=new RegExp('<scr'+'ipt[^>]+?src[^"\']+.*?'+sname+'([^#"\']*)','i'),m = h.match(sr);if (m) return pq(m[1].replace(/^[^?]*\?([^#]+)/,"$1"));return {};})(targetScript,targetWindow.document)
     var p = (function (sname){var sc=document.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?]|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return m[1];if (m[1].indexOf("/")==0) return m[1];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,"");}}return null;})
              ('vk_loader.js');
 
