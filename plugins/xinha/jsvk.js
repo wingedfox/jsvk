@@ -52,6 +52,13 @@ function Jsvk(editor, args) {
      */
     var skin = cfg.Jsvk.skin || "";
     /**
+     *  Keyboard mode
+     *
+     *  @type String
+     *  @scope protected
+     */
+    var type = cfg.Jsvk.type || "";
+    /**
      *  Reference to the editor, keyboard attached to
      *
      *  @type Xinha
@@ -73,13 +80,14 @@ function Jsvk(editor, args) {
      *
      */
     self.onMode = function (mode) {
-        var act = ['open','attachInput'][VirtualKeyboard.isOpen()+0];
+        var vk = window[type+"VirtualKeyboard"];
+        var act = ['open','attachInput'][vk.isOpen()+0];
         switch(mode){
             case "textmode":
-                VirtualKeyboard[act](editor._textArea,panel);
+                vk[act](editor._textArea,panel);
                 break;
             case "wysiwyg":
-                VirtualKeyboard[act](editor._iframe,panel);
+                vk[act](editor._iframe,panel);
                 break;
         }
     }
@@ -90,6 +98,7 @@ function Jsvk(editor, args) {
      *  @scope protected
      */
     var toggleKeyboard = function (ed) {
+        var vk = window[type+"VirtualKeyboard"];
         if (null == static.editor) {
             // attach keyboard
             static.editor = ed;
@@ -100,13 +109,13 @@ function Jsvk(editor, args) {
             static.editor = null;
             static.panel = null;
             ed.hidePanel(panel);
-            VirtualKeyboard.close();
+            vk.close();
         } else {
             static.editor.hidePanel(static.panel);
             static.panel = panel;
             static.editor = ed;
             ed.showPanel(panel);
-            VirtualKeyboard.close();
+            vk.close();
             self.onMode(ed._editMode);
         }
     }
@@ -123,7 +132,7 @@ function Jsvk(editor, args) {
         */
         if (!static.loaded) {
             static.loaded = true;
-            Xinha._loadback(_editor_url+"plugins/Jsvk/jscripts/vk_loader.js?skin="+skin+"&layout="+layout);
+            Xinha._loadback(_editor_url+"plugins/Jsvk/jscripts/vk_"+(type.toLowerCase()||"loader")+".js?vk_skin="+skin+"&vk_layout="+layout);
         }
     }
     _construct();
