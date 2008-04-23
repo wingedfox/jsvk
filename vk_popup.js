@@ -97,7 +97,9 @@ PopupVirtualKeyboard = new function() {
      *  @scope protected
      */
     self.onload = function () {
-        hWnd.VirtualKeyboard.show( document.getElementById(tgt)
+        if ('string' == typeof tgt)
+            tgt = document.getElementById(tgt);
+        hWnd.VirtualKeyboard.show( tgt
                                   ,hWnd.document.body
                                   ,hWnd.document.body
                                  );
