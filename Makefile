@@ -139,10 +139,17 @@ tinymce tinymce3 xinha:: compact
 		@cp -r $(ICON) $(DIST_PATH)Jsvk/img
 		@echo "Creating archive"
 		@$(TAR) -zxf $(subst $@,$<,$(DIST_NAME_ARC)) -C "$(DIST_PATH)Jsvk/jscripts/" --strip=2 "./$(subst $@,$<,$(DIST_NAME))" 
+		@$(call $(findstring tinymce,$@)_renamer)
 		@$(TAR) -zcf $(DIST_NAME_ARC) --strip=3 -C "$(DIST_PATH)" Jsvk
 		@rm -Rf $(DIST_NAME)
 		@echo "All done"
 
+define tinymce_renamer
+		@echo "Creating _src copy of plugin script"
+	        @cp $(DIST_PATH)Jsvk/editor_plugin.js $(DIST_PATH)Jsvk/editor_plugin_src.js
+		@echo "Packing plugin"
+	        @$(TS) -r -db $(DIST_PATH)Jsvk/editor_plugin.js
+endef
 
 all: full compact lite plugins
 
