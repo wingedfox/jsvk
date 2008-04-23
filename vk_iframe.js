@@ -126,7 +126,9 @@ IFrameVirtualKeyboard = new function() {
     self.onload = function () {
         hWnd = (iFrame.contentWindow||iFrame.contentDocument.window);
 
-        hWnd.VirtualKeyboard.show( document.getElementById(tgt)
+        if ('string' == typeof tgt) 
+            tgt = document.getElementById(tgt);
+        hWnd.VirtualKeyboard.show( tgt
                                   ,hWnd.document.body
                                   ,hWnd.document.body
                                  );
