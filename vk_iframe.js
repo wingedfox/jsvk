@@ -55,7 +55,9 @@ IFrameVirtualKeyboard = new function() {
      *  @access public
      */
     self.attachInput = function(el) {
-        return hWnd.VirtualKeyboard.attachInput(el);
+        if (hWnd&&hWnd.VirtualKeyboard)
+            return hWnd.VirtualKeyboard.attachInput(el);
+        return false;
     }
     /**
      *  Shows keyboard
