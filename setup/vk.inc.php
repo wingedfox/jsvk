@@ -219,7 +219,7 @@ class VirtualKeyboardLayout {
         }
         $add = realpath($this->root.$this->addon.$this->callback.preg_replace("/.+[\\/\\\\]+(.+)\\.klc$/i","\\1.js",$this->fname));
         if (file_exists($add)) {
-            $VK['callback'] = file_get_contents($add);
+            $VK['callback'] = trim(file_get_contents($add),"\r\n; ");
         }
 
         return $VK;

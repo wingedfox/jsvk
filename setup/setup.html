@@ -33,7 +33,7 @@
                   f = cbkpath+layouts[i].path.match(/^.+\\(.+)\.klc$/)[1]+'.js'
                   if (IOsys.FileExists(f)) {
                     f = IOsys.GetFile(f);
-                    res.cbk = f.OpenAsTextStream(1,-2).Read(f.Size());
+                    res.cbk = f.OpenAsTextStream(1,-2).Read(f.Size()).replace(/[\r\n\s;]$/g);
                   }
                   layouts[i].domain = layouts[i].domain.toUpperCase();
                   if (document.getElementById('group1').checked) {
