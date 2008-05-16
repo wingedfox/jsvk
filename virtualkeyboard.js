@@ -484,7 +484,7 @@ var VirtualKeyboard = new function () {
               *  throw an error when selection is required or multiple chars submitted
               *  it's simpler than write number of nesting if..else statements
               */
-              if (chr[1] || chr[0].length>1 || nodes.attachedInput.contentDocument || window.opera) {
+              if (chr[1] || chr[0].length>1 || nodes.attachedInput.contentDocument) {
                   throw new Error;
               }
               var ck = chr[0].charCodeAt(0);
@@ -495,7 +495,7 @@ var VirtualKeyboard = new function () {
                   var evt = null;
                   try {
                       evt = document.createEvent("KeyEvents");
-                      evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, ck, ck);
+                      evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, 0, ck);
                   } catch (ex) {
                       /*
                       *  Safari implements
@@ -517,6 +517,7 @@ var VirtualKeyboard = new function () {
               if (chr[1]) {
                   DocumentSelection.setRange(nodes.attachedInput,-chr[1],0,true);
               }
+              nodes.attachedInput.focus();
           }
       }
       return ret;
