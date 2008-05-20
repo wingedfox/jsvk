@@ -588,7 +588,7 @@ var VirtualKeyboard = new function () {
                       /*
                       *  assign the key code to be inserted on the keypress
                       */
-                      newKeyCode = nodes.desk.childNodes[keymap[keyCode]].id;
+                      newKeyCode = el.id;
                   }
                   if (e.altKey && e.ctrlKey) {
                       e.preventDefault();
@@ -1205,7 +1205,7 @@ var VirtualKeyboard = new function () {
    */
   var __construct = function() {
       /*
-      *  process the deadkeys, to make better useable, but non-editable object
+      *  process the deadkeys, to make more usable, but non-editable object
       */
       var dk = {};
       for (var i=0, dL=deadkeys.length; i<dL; i++) {
