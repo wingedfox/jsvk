@@ -55,6 +55,25 @@ var VirtualKeyboard = new function () {
    */
   var animate = true;
   /**
+   *  list of the control keys to be shown
+   *
+   *
+   *
+   */
+  var controlkeys = {14:'backspace'
+                    ,15:'tab'
+                    ,28:'enter'
+                    ,29:'caps'
+                    ,41:'shift_left'
+                    ,52:'shift_right'
+                    ,53:'del'
+                    ,54:'ctrl_left'
+                    ,55:'alt_left'
+                    ,56:'space'
+                    ,57:'alt_right'
+                    ,58:'ctrl_right'};
+
+  /**
    *  Keyboard keys mapping, as on the keyboard
    *
    *  @type Array
@@ -1061,18 +1080,11 @@ var VirtualKeyboard = new function () {
       /*
       *  add control keys
       */
-      lt.splice(14,0,'backspace');
-      lt.splice(15,0,'tab');
-      lt.splice(28,0,'enter');
-      lt.splice(29,0,'caps');
-      lt.splice(41,0,'shift_left');
-      lt.splice(52,0,'shift_right');
-      lt.splice(53,0,'del');
-      lt.splice(54,0,'ctrl_left');
-      lt.splice(55,0,'alt_left');
-      lt.splice(56,0,'space');
-      lt.splice(57,0,'alt_right');
-      lt.splice(58,0,'ctrl_right');
+      for (var i in controlkeys) {
+          if (controlkeys.hasOwnProperty(i)) {
+              lt.splice(i,0,controlkeys[i]);
+          }
+      }
 
       lt.dk = __doParse(dk)
 
