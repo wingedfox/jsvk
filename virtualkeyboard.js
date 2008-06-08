@@ -299,38 +299,14 @@ var VirtualKeyboard = new function () {
     *  touch the dropdown box
     */
     nodes.langbox.options[layout.hash[code]].selected = true;
-    /*
-    *  we will use old but quick innerHTML
-    */
-    var btns = ""
-       ,i
-       ,zcnt = 0
-       ,inp = document.createElement('span');
-    /*
-    *  inp is used to calculate real char width and detect combining symbols
-    *  @see __getCharHtmlForKey
-    */
-    document.body.appendChild(inp);
-    inp.style.position = 'absolute';
-    inp.style.left = '-1000px';
 
     lang = layout[layout.hash[code]];
     if (!isArray(lang)) lang = layout[layout.hash[code]] = __prepareLayout(lang);
 
-    for (i=0, aL = lang.length; i<aL; i++) {
-      var chr = lang[i];
-      btns +=  "<div id=\""+idPrefix+(isArray(chr)?zcnt++:chr)
-              +"\" class=\""+cssClasses.buttonUp
-              +"\"><a href=\"#"+i+"\""
-              +">"+(isArray(chr)?(__getCharHtmlForKey(lang,chr[0],cssClasses.buttonNormal,inp)
-                                 +__getCharHtmlForKey(lang,chr[1],cssClasses.buttonShifted,inp)
-                                 +__getCharHtmlForKey(lang,chr[2],cssClasses.buttonAlted,inp))
-                                :"")
-              +"</a></div>";
-    }
-    nodes.desk.innerHTML = btns;
-    document.body.removeChild(inp);
-    inp = null;
+    /*
+    *  overwrite layout
+    */
+    nodes.desk.innerHTML = __getKeyboardHtml(lang);
 
     /*
     *  set layout-dependent class names
@@ -1174,6 +1150,37 @@ var VirtualKeyboard = new function () {
       }
     }
     return res;
+  }
+  /**
+   * Keyboard layout builder
+   *
+   * @param {Array} lang keys to put on the keyboard
+   * @return {String} serialized HTML
+   * @scope private
+   */              
+  var __getKeyboardHtml = function (lang) {
+    var inp = document.createElement('span');
+    /*
+    *  inp is used to calculate real char width and detect combining symbols
+    *  @see __getCharHtmlForKey
+    */
+    document.body.appendChild(inp);
+    inp.style.position = 'absolute';
+    inp.style.left = '-1000px';
+
+    for (var i=0, aL=lang.length, btns = [], zcnt = 0, chr; i<aL; i++) {
+      chr = lang[i];
+      btns.push("<div id=\"",idPrefix,(isArray(chr)?zcnt++:chr)
+               ,"\" class=\"",cssClasses.buttonUp
+               ,"\"><a href=\"#",i,"\""
+               ,">",(isArray(chr)?(__getCharHtmlForKey(lang,chr[0],cssClasses.buttonNormal,inp)
+                                  +__getCharHtmlForKey(lang,chr[1],cssClasses.buttonShifted,inp)
+                                  +__getCharHtmlForKey(lang,chr[2],cssClasses.buttonAlted,inp))
+                                 :"<!-- -->")
+               ,"</a></div>");
+    }
+    document.body.removeChild(inp);
+    return btns.join("");
   }
   /**
    *  Char html constructor
