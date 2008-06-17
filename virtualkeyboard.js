@@ -116,7 +116,7 @@ var VirtualKeyboard = new function () {
        ,'/,.PYF UK-Dvorak'    : "m1234567890ÛÝÜÀ¼¾PYFGCRL¿=AOEUIDHTNSÞ;QJKXBMWVZ"
        ,'FG;IOD Turkish F'    : "À1234567890=mXFG;IODRNHPQWUÛEAÝTKMLYÞJÜVC¿ZSB¾¼"
        ,';QBYUR US-Dvorak'    : "7ÛÝ¿PFMLJ4321Ü;QBYURSO¾65=mKCDTHEAZ8ÞÀXGVWNI¼09"
-       ,'56Q.OR US-Dvorak'   : "m1234JLMFP¿ÛÝÜ56Q¾ORSUYB;=78ZAEHTDCKÞ90X¼INWVGÀ"
+       ,'56Q.OR US-Dvorak'    : "m1234JLMFP¿ÛÝÜ56Q¾ORSUYB;=78ZAEHTDCKÞ90X¼INWVGÀ"
   }
   /**
    *  Keyboard mode, bitmap
@@ -670,6 +670,12 @@ var VirtualKeyboard = new function () {
             *  reset flag
             */
             newKeyCode = null;
+        }
+        /*
+        *  suppress dead keys from the keyboard driver
+        */
+        if (0==keyCode && !newKeyCode && !e.VK_bypass) {
+            e.preventDefault();
         }
         return;
     }
