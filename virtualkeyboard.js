@@ -1,4 +1,4 @@
-/**
+﻿/**
  * $Id$
  * $HeadURL$
  *
@@ -13,7 +13,6 @@
  * See http://www.gnu.org/copyleft/lesser.html
  *
  * Do not remove this comment if you want to use script!
- * �� �������� ������ �����������, ���� �� ������ ������������ ������!
  *
  * @author Vladislav SHCHapov <phprus@gmail.com>
  * @author Ilya Lebedev <ilya@lebedev.net>
@@ -45,7 +44,7 @@ var VirtualKeyboard = new function () {
    *  @access private
    */
   var idPrefix = 'kb_b';
-  /**                                                  
+  /**
    *  This flag is used to enable or disable keyboard animation
    *  This is very useful in the secure environments, like password input. Controlled by the CSS class on the field
    *
@@ -74,16 +73,51 @@ var VirtualKeyboard = new function () {
                     ,58:'ctrl_right'};
 
   /**
-   *  Keyboard keys mapping, as on the keyboard
+   *  Current keyboard mapping
    *
    *  @type Array
    *  @scope private
    */
-  var keymap = [192,49,50,51,52,53,54,55,56,57,48,109,61,220,8,  // ~ to BS
-                9,81,87,69,82,84,89,85,73,79,80,219,221,13,      // TAB to ENTER
-                20,65,83,68,70,71,72,74,75,76,59,222,            // CAPS to '
-                16,90,88,67,86,66,78,77,188,190,191,16,          // SHIFT to SHIFT
-                46,17,18,32,18,17];                              // Delete, Ctrl, Alt, SPACE, Alt, Ctrl
+  var keymap;
+
+  /**
+   *  List of the available mappings
+   *
+   *  @type Object
+   *  @scope private
+   */
+  var keymaps = {
+        'QWERTY'              : "À1234567890m=ÜQWERTYUIOPÛÝASDFGHJKL;ÞZXCVBNM¼¾¿"
+       ,'QWERTY Canadian'     : "Þ1234567890m=ÜQWERTYUIOPÛÝASDFGHJKL;ÀZXCVBNM¼¾¿"
+       ,'QWERTY Dutch'        : "Þ1234567890Û¿ÜQWERTYUIOPÝ;ASDFGHJKL=ÀZXCVBNM¼¾m"
+       ,'QWERTY Estonian'     : "¿1234567890m=ÜQWERTYUIOPÞÛASDFGHJKL;ÀZXCVBNM¼¾Ý"
+       ,'QWERTY Greek (220)'  : "À1234567890¿ÛÜQWERTYUIOP=ÝASDFGHJKL;ÞZXCVBNM¼¾m"
+       ,'QWERTY Greek (319)'  : "À1234567890¿=ÜQWERTYUIOPÛÝASDFGHJKL;ÞZXCVBNM¼¾m"
+       ,'QWERTY Gujarati'     : "À1234567890m=XQWERTYUIOPÛÝASDFGHJKL;ÜZXCVBNM¼¾¿"
+       ,'QWERTY Italian'      : "Ü1234567890ÛÝ¿QWERTYUIOP;=ASDFGHJKLÀÞZXCVBNM¼¾m"
+       ,'QWERTY Kannada'      : "À1234567890m=ZQWERTYUIOPÛÝASDFGHJKL;ÞZXCVBNM¼¾¿"
+       ,'QWERTY Portuguese'   : "À1234567890ÛÝ¿QWERTYUIOP=;ASDFGHJKLÞÜZXCVBNM¼¾m"
+       ,'QWERTY Scandinavian' : "Ü1234567890=Û¿QWERTYUIOPÝ;ASDFGHJKLÀÞZXCVBNM¼¾m"
+       ,'QWERTY Spanish'      : "Ü1234567890mÛ¿QWERTYUIOPÝ;ASDFGHJKLÀÞZXCVBNM¼¾ß"
+       ,'QWERTY Tamil'        : "À1234567890m =ZQWERTYUIOPÛÝASDFGHJKL;ÞCVBNM¼¾ ¿"
+       ,'QWERTY Turkish'      : "À1234567890ßm¼QWERTYUIOPÛÝASDFGHJKL;ÞZXCVBNM¿Ü¾"
+       ,'QWERTY UK'           : "ß1234567890m=ÞQWERTYUIOPÛÝASDFGHJKL;ÀZXCVBNM¼¾¿"
+       ,'QWERTZ Albanian'     : "À1234567890m=ÜQWERTZUIOPÛÝASDFGHJKL;ÞYXCVBNM¼¾¿"
+       ,'QWERTZ Bosnian'      : "À1234567890¿=ÜQWERTZUIOPÛÝASDFGHJKL;ÞYXCVBNM¼¾m"
+       ,'QWERTZ Czech'        : "À1234567890=¿ÜQWERTZUIOPÛÝASDFGHJKL;ÞYXCVBNM¼¾m"
+       ,'QWERTZ German'       : "Ü1234567890ÛÝ¿QWERTZUIOP;=ASDFGHJKLÀÞYXCVBNM¼¾m"
+       ,'QWERTZ Hungarian'    : "0123456789À¿=ÜQWERTZUIOPÛÝASDFGHJKL;ÞYXCVBNM¼¾m"
+       ,'QWERTZ Slovak'       : "À1234567890¿ßÜQWERTZUIOPÛÝASDFGHJKL;ÞYXCVBNM¼¾m"
+       ,'QWERTZ Swiss'        : "Ü1234567890ÛÝßQWERTZUIOP;ÞASDFGHJKLÀ¿YXCVBNM¼¾m"
+       ,'AZERTY Belgian'      : "Þ1234567890ÛmÜAZERTYUIOPÝ;QSDFGHJKLMÀWXCVBN¼¾¿="
+       ,'AZERTY French'       : "Þ1234567890Û=ÜAZERTYUIOPÝ;QSDFGHJKLMÀWXCVBN¼¾¿ß"
+       ,',WERTY Bulgarian'    : "À1234567890m¾Ü¼WERTYUIOPÛÝASDFGHJKL;ÞZXCVBNMßQ¿"
+       ,'QGJRMV Latvian'      : "À1234567890mFÜQGJRMVNZWXYH;USILDATECÞÛBÝKPOß¼¾¿"
+       ,'/,.PYF UK-Dvorak'    : "m1234567890ÛÝÜÀ¼¾PYFGCRL¿=AOEUIDHTNSÞ;QJKXBMWVZ"
+       ,'FG;IOD Turkish F'    : "À1234567890=mXFG;IODRNHPQWUÛEAÝTKMLYÞJÜVC¿ZSB¾¼"
+       ,';QBYUR US-Dvorak'    : "7ÛÝ¿PFMLJ4321Ü;QBYURSO¾65=mKCDTHEAZ8ÞÀXGVWNI¼09"
+       ,'56Q.OR US-Dvorak'   : "m1234JLMFP¿ÛÝÜ56Q¾ORSUYB;=78ZAEHTDCKÞ90X¼INWVGÀ"
+  }
   /**
    *  Keyboard mode, bitmap
    *
@@ -127,7 +161,7 @@ var VirtualKeyboard = new function () {
     ["\x5e", "a\xe2 A\xc2 e\xea E\xca i\xee I\xce o\xf4 O\xd4 u\xfb U\xdb y\u0176 Y\u0177 "+
              "c\u0109 C\u0108 h\u0125 H\u0124 g\u011d G\u011c s\u015d S\u015c w\0175 W\0174 "+ //latin
              "\u0131\xee \u0130\xce " // dotless small i, capital I with dot above
-    ], 
+    ],
     // grave
     ["\x60", "a\xe0 A\xc0 e\xe8 E\xc8 i\xec I\xcc o\xf2 O\xd2 u\xf9 U\xd9 y\u1ef3 Y\u1ef2 w\u1e81 W\u1e80"],
     // tilde
@@ -228,7 +262,7 @@ var VirtualKeyboard = new function () {
    *  @type Number
    *  @scope private
    */
-  var newKeyCode = null; 
+  var newKeyCode = null;
 
   /**************************************************************************
   **  KEYBOARD LAYOUT
@@ -290,7 +324,7 @@ var VirtualKeyboard = new function () {
    */
   self.switchLayout = function (code) {
     if (!layout.hash.hasOwnProperty(code)) return false;
-    
+
     /*
     *  if number of the option != number of layouts, regenerate list
     */
@@ -333,13 +367,13 @@ var VirtualKeyboard = new function () {
   }
 
   /**
-   *  Toggles layout mode (switch alternative key bindings) 
+   *  Toggles layout mode (switch alternative key bindings)
    *
    *  @access private
    */
   self.toggleLayoutMode = function () {
     /*
-    *  now, process to layout toggle 
+    *  now, process to layout toggle
     */
     var bi = -1
        /*
@@ -439,7 +473,7 @@ var VirtualKeyboard = new function () {
           default:
                   var el = document.getElementById(idPrefix+key);
                   /*
-                  *  replace is used to strip 'nbsp' base char, when its used to display combining marks 
+                  *  replace is used to strip 'nbsp' base char, when its used to display combining marks
                   *  @see __getCharHtmlForKey
                   */
                   try {
@@ -468,7 +502,7 @@ var VirtualKeyboard = new function () {
       }
       if (chr) {
           /*
-          *  process current selection and new symbol with __charProcessor, it might update them 
+          *  process current selection and new symbol with __charProcessor, it might update them
           */
           if (!(chr = __charProcessor(chr, DocumentSelection.getSelection(nodes.attachedInput)))) return ret;
           /*
@@ -550,7 +584,7 @@ var VirtualKeyboard = new function () {
               if (!e.getRepeat() && !(mode&VK_SHIFT)) {
                   reSetDualKeys('shift', VK_SHIFT);
                   self.toggleLayoutMode();
-              }   
+              }
               break;
           case 17: //ctrl
           case 18: //alt
@@ -689,11 +723,11 @@ var VirtualKeyboard = new function () {
    *  @param {Event} mousedown event
    *  @access protected
    */
-  var _btnMousedown_ = function (e) { 
+  var _btnMousedown_ = function (e) {
     /*
     *  either pressed key or something new
     */
-    var el = DOM.getParent(e.srcElement||e.target, 'a'); 
+    var el = DOM.getParent(e.srcElement||e.target, 'a');
     /*
     *  skip invalid nodes
     */
@@ -709,13 +743,13 @@ var VirtualKeyboard = new function () {
           DOM.CSS(cp).addClass(cssClasses.buttonDown)
         } else {
           mode = mode ^ VK_CAPS;
-          DOM.CSS(cp).removeClass(cssClasses.buttonDown)          
+          DOM.CSS(cp).removeClass(cssClasses.buttonDown)
         }
         break;
       case "shift_left":
       case "shift_right":
         /*
-        *  Shift is pressed in on both keyboard and virtual keyboard, return 
+        *  Shift is pressed in on both keyboard and virtual keyboard, return
         */
         if (mode&VK_SHIFT && e.shiftKey) break;
         reSetDualKeys('shift', VK_SHIFT);
@@ -726,7 +760,7 @@ var VirtualKeyboard = new function () {
       case "ctrl_left":
       case "ctrl_right":
         /*
-        *  Alt is pressed in on both keyboard and virtual keyboard, return 
+        *  Alt is pressed in on both keyboard and virtual keyboard, return
         */
         if (mode&VK_ALT && e.altKey || mode&VK_CTRL && e.ctrlKey) break;
         reSetDualKeys('alt', VK_ALT);
@@ -761,7 +795,7 @@ var VirtualKeyboard = new function () {
    *  @param {Event} mouseup event
    *  @access protected
    */
-  var _btnMouseInOut_ = function (e) { 
+  var _btnMouseInOut_ = function (e) {
     /*
     *  either pressed key or something new
     */
@@ -798,6 +832,16 @@ var VirtualKeyboard = new function () {
     }
     e.preventDefault();
     e.stopPropagation();
+  }
+
+  /**
+   *  Switches keyboard map...
+   *
+   *  @param {Event} e
+   *  @scope private
+   */
+  function switchMapping (e) {
+      keymap = keymaps[e.target.value];
   }
   /**********************************************************
   *  MOST COMMON METHODS
@@ -857,9 +901,9 @@ var VirtualKeyboard = new function () {
     /*
     *  set keyboard animation for the current field
     */
-    if (nodes.attachedInput) 
+    if (nodes.attachedInput)
         animate = !DOM.CSS(nodes.attachedInput).hasClass(cssClasses.noanim);
-    else 
+    else
         animate = true;
 
     /*
@@ -879,7 +923,7 @@ var VirtualKeyboard = new function () {
     EM.addEventListener(el,'keyup',_keydownHandler_);
     EM.addEventListener(el,'keypress',_keydownHandler_);
     EM.addEventListener(el,'mousedown',self.IME.hide);
-    
+
     return nodes.attachedInput;
   }
   /**
@@ -926,7 +970,7 @@ var VirtualKeyboard = new function () {
   }
   /**
    *  Hides the keyboard
-   *  
+   *
    *  @return {Boolean}
    *  @scope public
    */
@@ -961,9 +1005,9 @@ var VirtualKeyboard = new function () {
   }
   /**
    *  Returns true if keyboard is opened
-   * 
+   *
    *  @return {Boolean}
-   *  @scope public 
+   *  @scope public
    */
   self.isOpen = function () /* :Boolean */ {
       return nodes.keyboard.parentNode && nodes.keyboard.parentNode.nodeType == 1;
@@ -1157,7 +1201,7 @@ var VirtualKeyboard = new function () {
    * @param {Array} lang keys to put on the keyboard
    * @return {String} serialized HTML
    * @scope private
-   */              
+   */
   var __getKeyboardHtml = function (lang) {
     var inp = document.createElement('span');
     /*
@@ -1210,7 +1254,7 @@ var VirtualKeyboard = new function () {
       if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr+"\xa0";
 
       html[i++] = "<span";
-      if (css) { 
+      if (css) {
           html[i++] = " class=\""+css+"\"";
       }
       html[i++] = " title=\""+chr+"\""
@@ -1247,16 +1291,39 @@ var VirtualKeyboard = new function () {
       *  { '<dead_char>' : { '<key>' : '<modification>', }
       */
       deadkeys = dk;
-    
-      /*
-      *  convert keymap array to the object, to have better typing speed
-      */
-      var tk = keymap;
-      keymap = [];
-      for (var i=0, kL=tk.length; i<kL; i++) {
-          keymap[tk[i]] = i;
+
+      var mappings = [];
+      for (var i in keymaps) {
+          var map = keymaps[i].split("").map(function(c){return c.charCodeAt(0)});
+          /*
+          *  add control keys
+          */
+          map.splice(14,0,8);
+          map.splice(15,0,9);
+          map.splice(28,0,13);
+          map.splice(29,0,20);
+          map.splice(41,0,16);
+          map.splice(52,0,16);
+          map.splice(53,0,46);
+          map.splice(54,0,17);
+          map.splice(55,0,18);
+          map.splice(56,0,32);
+          map.splice(57,0,18);
+          map.splice(58,0,17);
+          /*
+          *  convert keymap array to the object, to have better typing speed
+          */
+          var tk = map;
+          map = [];
+          for (var z=0, kL=tk.length; z<kL; z++) {
+              map[tk[z]] = z;
+          }
+          keymaps[i] = map;
+          mappings.push(i);
       }
-      tk = null;
+      keymap = keymaps['QWERTY'];
+
+
       /*
       *  create keyboard UI
       */
@@ -1264,14 +1331,21 @@ var VirtualKeyboard = new function () {
       nodes.keyboard.id = 'virtualKeyboard';
       nodes.keyboard.innerHTML = "<div id=\"kbDesk\"><!-- --></div>"
                                 +"<select id=\"kb_langselector\"></select>"
-                                +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank">VirtualKeyboard '+self.$VERSION$+'</a><br />&copy; 2006-2007 <a href="http://debugger.ru" target="_blank">"Debugger.ru"</a></div>';
-    
+                                +"<select id=\"kb_mappingselector\"></select>"
+                                +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank">VirtualKeyboard '+self.$VERSION$+'</a><br />&copy; 2006-2008 <a href="http://debugger.ru" target="_blank">"Debugger.ru"</a></div>';
+
       nodes.desk = nodes.keyboard.firstChild;
-    
+
       var el = nodes.keyboard.childNodes.item(1);
       EM.addEventListener(el,'change', function(e){self.switchLayout(this.value)});
       nodes.langbox = el;
-    
+
+      var el = el.nextSibling;
+
+      for (var i=0, mL=mappings.length; i<mL; i++) {
+          el.options[i] = new Option(mappings[i],mappings[i]);
+      }
+      EM.addEventListener(el,'change', switchMapping);
       /*
       *  insert some copyright information
       */
