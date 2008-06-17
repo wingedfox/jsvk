@@ -106,7 +106,7 @@ compact:
 		@cp --parents -r $(FILES_COMPACT) $(DIST_PATH)
 		@echo "Compressing scripts"
 		@$(TS) -db $(EXT) $(DIST_PATH)extensions/e.js
-		@sed '/extensions\//!b;:a /]/!{N;ba};s,\[[^]]\+,["extensions/e.js",m' $(DIST_PATH)vk_loader.js >$(DIST_PATH)vk_loader.js.tmp
+		@sed '/extensions\//!b;:a /]/!{N;ba};s,\[[^]]\+,["extensions/e.js",' $(DIST_PATH)vk_loader.js >$(DIST_PATH)vk_loader.js.tmp
 		@mv $(DIST_PATH)vk_loader.js.tmp $(DIST_PATH)vk_loader.js
 		@$(TS) -r -db $(DIST_PATH)
 		@echo "Creating archive"
@@ -122,7 +122,7 @@ lite:
 		@cp --parents -r $(FILES_LITE) $(DIST_PATH)
 		@echo "Compressing scripts"
 		@$(TS) -db $(EXT) $(DIST_PATH)extensions/e.js
-		@sed '/extensions\//!b;:a /]/!{N;ba};s,\[[^]]\+,["extensions/e.js",m' $(DIST_PATH)vk_loader.js >$(DIST_PATH)vk_loader.js.tmp
+		@sed '/extensions\//!b;:a /]/!{N;ba};s,\[[^]]\+,["extensions/e.js",' $(DIST_PATH)vk_loader.js >$(DIST_PATH)vk_loader.js.tmp
 		@mv $(DIST_PATH)vk_loader.js.tmp $(DIST_PATH)vk_loader.js
 		@$(TS) -r -db $(DIST_PATH)
 		@echo "Creating archive"
