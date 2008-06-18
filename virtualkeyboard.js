@@ -1,3 +1,4 @@
+
 ﻿/**
  * $Id$
  * $HeadURL$
@@ -87,7 +88,7 @@ var VirtualKeyboard = new function () {
    *  @scope private
    */
   var keymaps = {
-        'QWERTY'              : "À1234567890m=ÜQWERTYUIOPÛÝASDFGHJKL;ÞZXCVBNM¼¾¿"
+        'QWERTY Standard'     : "À1234567890m=ÜQWERTYUIOPÛÝASDFGHJKL;ÞZXCVBNM¼¾¿"
        ,'QWERTY Canadian'     : "Þ1234567890m=ÜQWERTYUIOPÛÝASDFGHJKL;ÀZXCVBNM¼¾¿"
        ,'QWERTY Dutch'        : "Þ1234567890Û¿ÜQWERTYUIOPÝ;ASDFGHJKL=ÀZXCVBNM¼¾m"
        ,'QWERTY Estonian'     : "¿1234567890m=ÜQWERTYUIOPÞÛASDFGHJKL;ÀZXCVBNM¼¾Ý"
@@ -1298,38 +1299,6 @@ var VirtualKeyboard = new function () {
       */
       deadkeys = dk;
 
-      var mappings = [];
-      for (var i in keymaps) {
-          var map = keymaps[i].split("").map(function(c){return c.charCodeAt(0)});
-          /*
-          *  add control keys
-          */
-          map.splice(14,0,8);
-          map.splice(15,0,9);
-          map.splice(28,0,13);
-          map.splice(29,0,20);
-          map.splice(41,0,16);
-          map.splice(52,0,16);
-          map.splice(53,0,46);
-          map.splice(54,0,17);
-          map.splice(55,0,18);
-          map.splice(56,0,32);
-          map.splice(57,0,18);
-          map.splice(58,0,17);
-          /*
-          *  convert keymap array to the object, to have better typing speed
-          */
-          var tk = map;
-          map = [];
-          for (var z=0, kL=tk.length; z<kL; z++) {
-              map[tk[z]] = z;
-          }
-          keymaps[i] = map;
-          mappings.push(i);
-      }
-      keymap = keymaps['QWERTY'];
-
-
       /*
       *  create keyboard UI
       */
@@ -1347,10 +1316,41 @@ var VirtualKeyboard = new function () {
       nodes.langbox = el;
 
       var el = el.nextSibling;
+      var mapGroup = "";
+      for (var i in keymaps) {
+          var map = keymaps[i].split("").map(function(c){return c.charCodeAt(0)});
+          /*
+          *  add control keys
+          */
+          map.splice(14,0,8,9);
+          map.splice(28,0,13,20);
+          map.splice(41,0,16);
+          map.splice(52,0,16,46,17,18,32,18,17);
+          /*
+          *  convert keymap array to the object, to have better typing speed
+          */
+          var tk = map;
+          map = [];
+          for (var z=0, kL=tk.length; z<kL; z++) {
+              map[tk[z]] = z;
+          }
+          keymaps[i] = map;
 
-      for (var i=0, mL=mappings.length; i<mL; i++) {
-          el.options[i] = new Option(mappings[i],mappings[i]);
+          /*
+          *  append mapping to the dropdown box
+          */
+          tk = i.split(" ",2);
+          if (mapGroup.indexOf(mapGroup=tk[0])!=0) {
+              el.appendChild(document.createElement('optgroup'))
+              el.lastChild.label = mapGroup;
+          }
+          map = document.createElement('option');
+          el.lastChild.appendChild(map);
+          map.value = i;
+          map.innerHTML = tk[1];
       }
+      keymap = keymaps['QWERTY Standard'];
+
       EM.addEventListener(el,'change', switchMapping);
       /*
       *  insert some copyright information
