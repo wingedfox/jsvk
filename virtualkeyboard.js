@@ -327,6 +327,10 @@ var VirtualKeyboard = new function () {
     if (!layout.hash.hasOwnProperty(code)) return false;
 
     /*
+    *  hide IME on layout switch
+    */
+    self.IME.hide();
+    /*
     *  if number of the option != number of layouts, regenerate list
     */
     if (layout.length != nodes.langbox.options.length) __buildOptionsList();
@@ -444,9 +448,9 @@ var VirtualKeyboard = new function () {
           case 'backspace':
 
               /*
-              *  is char is in the buffer, or selection made, made decision at __charProcessor
+              *  if IME is open, ask IME processor for the advice
               */
-              if (String(DocumentSelection.getSelection(nodes.attachedInput)).length > 1) {
+              if (self.IME.isOpen()) {
                   chr = "\x08";
               } else if (evt) {
                   self.IME.hide(true);
