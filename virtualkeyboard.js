@@ -1,4 +1,3 @@
-
 ﻿/**
  * $Id$
  * $HeadURL$
@@ -346,6 +345,14 @@ var VirtualKeyboard = new function () {
     *  overwrite layout
     */
     nodes.desk.innerHTML = __getKeyboardHtml(lang);
+
+    /*
+    *  prevent IE from selecting anything here, otherwise it drops any existing selection
+    */
+    var els = nodes.desk.getElementsByTagName("*");
+    for (var i=0, eL=els.length; i<eL; i++) {
+        els[i].unselectable = "on";
+    }
 
     /*
     *  set layout-dependent class names
@@ -1268,7 +1275,6 @@ var VirtualKeyboard = new function () {
       if (css) {
           html[i++] = " class=\""+css+"\"";
       }
-      html[i++] = " title=\""+chr+"\""
       html[i++] = " >"+(chr?inp.innerHTML:"")+"</span>";
     return html.join("");
   }
@@ -1363,8 +1369,16 @@ var VirtualKeyboard = new function () {
       EM.addEventListener(nodes.desk,'mouseup', _btnClick_);
       EM.addEventListener(nodes.desk,'mouseover', _btnMouseInOut_);
       EM.addEventListener(nodes.desk,'mouseout', _btnMouseInOut_);
-      EM.addEventListener(nodes.desk,'dragstart', EM.preventDefaultAction);
       EM.addEventListener(nodes.desk,'click', EM.preventDefaultAction);
+
+      /*
+      *  prevent IE from selecting anything here, otherwise it drops any existing selection
+      */
+      var els = nodes.keyboard.getElementsByTagName("*");
+      for (var i=0, eL=els.length; i<eL; i++) {
+          els[i].unselectable = "on";
+      }
+      nodes.keyboard.onmousedown = function () {return false;}
 
       /*
       *  check url params for the default layout name
@@ -1418,7 +1432,7 @@ VirtualKeyboard.IME = new function () {
         DOM.getParent(target,'body').appendChild(ime);
         if (s) self.setSuggestions(s);
         if (target && ime && sg.length>0) {
-            EM.addEventListener(target,'blur', keepSelection);
+            EM.addEventListener(target,'blur',self.hide);
             ime.style.display = "block";
             self.updatePosition(target);
         } else {
@@ -1433,7 +1447,7 @@ VirtualKeyboard.IME = new function () {
      */
     self.hide = function (keep) {
         if (ime) ime.style.display = "none";
-        EM.removeEventListener(target,'blur', keepSelection);
+        EM.removeEventListener(target,'blur',self.hide);
         if (target && DocumentSelection.getSelection(target) && !keep) DocumentSelection.deleteSelection(target);
         target = null;
         sg=[];
@@ -1527,10 +1541,10 @@ VirtualKeyboard.IME = new function () {
             s[s.length] = "<b>"+((i+1)%10)+"</b>"+": "+sg[p+i];
         }
         ime.childNodes[2].innerHTML = s.join("; ")+"<br clear=\"both\" />";
-    }
-    var keepSelection = function() {
-        DocumentSelection.setRange(target,DocumentSelection.getStart(this),DocumentSelection.getEnd(this));
-        this.focus();
+        var els = ime.getElementsByTagName("*");
+        for (var i=0,eL=els.length; i<eL; i++) {
+            els[i].unselectable = "on";
+        }
     }
     /**
      *  Just the constructor
@@ -1544,6 +1558,11 @@ VirtualKeyboard.IME = new function () {
         ime.childNodes[1].appendChild(targetWindow.document.createComment(""));
         ime.childNodes[0].onmousedown = self.nextPage;
         ime.childNodes[1].onmousedown = self.prevPage;
+        /*
+        *  blocks any selection
+        */
+        ime.unselectable = "on";
+        ime.onmousedown = function () {return false;}
     }
     _construct();
 }
