@@ -1317,7 +1317,7 @@ var VirtualKeyboard = new function () {
       nodes.keyboard.innerHTML = "<div id=\"kbDesk\"><!-- --></div>"
                                 +"<select id=\"kb_langselector\"></select>"
                                 +"<select id=\"kb_mappingselector\"></select>"
-                                +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank">VirtualKeyboard '+self.$VERSION$+'</a><br />&copy; 2006-2008 <a href="http://debugger.ru" target="_blank">"Debugger.ru"</a></div>';
+                                +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank">VirtualKeyboard '+self.$VERSION$+'</a><br />&copy; 2006-2008 <a href="http://debugger.ru" target="_blank">Debugger.ru</a></div>';
 
       nodes.desk = nodes.keyboard.firstChild;
 
