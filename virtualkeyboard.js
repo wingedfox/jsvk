@@ -1538,13 +1538,26 @@ VirtualKeyboard.IME = new function () {
      */
     var showPage = function () {
         for (var i=0,p=page*10,s=[]; i<10 && !isUndefined(sg[p+i]); i++) {
-            s[s.length] = "<b>"+((i+1)%10)+"</b>"+": "+sg[p+i];
+            s[s.length] = "<span><b>"+((i+1)%10)+": </b>"+sg[p+i]+"</span>";
         }
         ime.childNodes[2].innerHTML = s.join("; ")+"<br clear=\"both\" />";
         var els = ime.getElementsByTagName("*");
         for (var i=0,eL=els.length; i<eL; i++) {
             els[i].unselectable = "on";
         }
+    }
+    /**
+     *  Inserts selected choice, replacing possible selection and hides IME toolbar
+     *
+     *  @param {MousedownEvent} e
+     *  @scope protected
+     */
+    function pasteSuggestion(e) {
+        var el = DOM.getParent(e.target,'span');
+        if (el) {
+            DocumentSelection.insertAtCursor(target,el.lastChild.nodeValue);
+        }
+        self.hide();
     }
     /**
      *  Just the constructor
@@ -1563,6 +1576,7 @@ VirtualKeyboard.IME = new function () {
         */
         ime.unselectable = "on";
         ime.onmousedown = function () {return false;}
+        EM.addEventListener(ime.lastChild,'mousedown',pasteSuggestion);
     }
     _construct();
 }
