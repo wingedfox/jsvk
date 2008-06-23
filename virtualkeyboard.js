@@ -581,6 +581,20 @@ var VirtualKeyboard = new function () {
     switch (e.type) {
       case 'keydown' :
         switch (keyCode) {
+          case 37:
+              if (self.IME.isOpen()) {
+                  self.IME.prevPage();
+                  e.preventDefault();
+                  return;
+              }
+              break;
+          case 39:
+              if (self.IME.isOpen()) {
+                  self.IME.nextPage();
+                  e.preventDefault();
+                  return;
+              }
+              break;
           case 8: // backspace
           case 9: // tab
           case 46: // del
