@@ -285,42 +285,88 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
  */
 #VirtualKeyboardIME {
    background: #fff;
-   border:1px solid #333;
+   border: 0;
    position: absolute;
-   width: 200px;
 }
-#VirtualKeyboardIME div.IMEContent {
+#VirtualKeyboardIME div {
+   font-size: 11px;
+}
+#VirtualKeyboardIME table,
+#VirtualKeyboardIME table td {
+   border: 0;
+   border-collapse: collapse;
+   margin: 0;
+   padding: 0;
+   text-align: right;
+   white-space: nowrap;
+}
+#VirtualKeyboardIME table td.IMEControl {
+   border: 1px solid #000;
+   padding: 1px;
+}
+
+#VirtualKeyboardIME td.IMEContent {
    border: 1px solid #333;
    border-top: 0;
    border-bottom: 0;
-   height: 21px;
-   line-height: 21px;
    margin: 0 12px;
    overflow: auto;
    padding: 0 3px;
    white-space: nowrap;
 }
-#VirtualKeyboardIME div.left {
+#VirtualKeyboardIME td.IMEContent a {
+   text-decoration: none;
+   color: #000;
+}
+#VirtualKeyboardIME td.IMEContent a:hover {
+   text-decoration: underline;
+}
+#VirtualKeyboardIME div.left,
+#VirtualKeyboardIME div.right {
    border-bottom: 10px solid #fff;
-   border-left: 0px solid black;
-   border-right: 10px solid #000;
    border-top: 10px solid #fff;
-   position: absolute;
-   left: 1px;
    font-size: 1px;
    overflow: hidden;
 }
+#VirtualKeyboardIME div.left {
+   border-left: 0px solid #000;
+   border-right: 10px solid #000;
+}
 #VirtualKeyboardIME div.right {
-   border-bottom: 10px solid #fff;
    border-left: 10px solid #000;
-   border-right: 0px solid black;
-   border-top: 10px solid #fff;
-   float: right;
-   position: absolute;
-   right: 1px;
+   border-right: 0px solid #000;
+}
+#VirtualKeyboardIME td.IMEInfo {
+   height: 13px;
+   vertical-align: middle;
+}
+#VirtualKeyboardIME td.IMEInfo div {
+   position: relative;
+}
+#VirtualKeyboardIME td.IMEInfo div.showAll div.arrow,
+#VirtualKeyboardIME td.IMEInfo div.showPage div.arrow {
+   border-left: 10px solid #fff;
+   border-right: 10px solid #fff;
+   top: 2px;
+   left: 50%;
+   margin-left: -10px;
    overflow: hidden;
+   position: absolute;
+   height: 0;
+   width: 0;
 }
 
+#VirtualKeyboardIME td.IMEInfo div.showAll div.arrow {
+   border-bottom: 0px solid #000;
+   border-top: 10px solid #000;
+}
+#VirtualKeyboardIME td.IMEInfo div.showPage div.arrow {
+   border-bottom: 10px solid #000;
+   border-top: 0px solid #000;
+}
+#VirtualKeyboardIME td.IMEInfo div.IMEPageCounter {
+   float: left;
+}
 
 /************************************
 * Place for the locale-dependent styles
