@@ -583,15 +583,13 @@ var VirtualKeyboard = new function () {
         switch (keyCode) {
           case 37:
               if (self.IME.isOpen()) {
-                  self.IME.prevPage();
-                  e.preventDefault();
+                  self.IME.prevPage(e);
                   return;
               }
               break;
           case 39:
               if (self.IME.isOpen()) {
-                  self.IME.nextPage();
-                  e.preventDefault();
+                  self.IME.nextPage(e);
                   return;
               }
               break;
@@ -921,7 +919,7 @@ var VirtualKeyboard = new function () {
         EM.removeEventListener(oe,'keydown',_keydownHandler_);
         EM.removeEventListener(oe,'keypress',_keydownHandler_);
         EM.removeEventListener(oe,'keyup',_keydownHandler_);
-        EM.removeEventListener(oe,'mousedown',self.IME.hide);
+        EM.removeEventListener(oe,'mousedown',self.IME.blurHandler);
     }
     if (!el || !el.tagName) {
         nodes.attachedInput = null
@@ -954,7 +952,7 @@ var VirtualKeyboard = new function () {
     EM.addEventListener(el,'keydown',_keydownHandler_);
     EM.addEventListener(el,'keyup',_keydownHandler_);
     EM.addEventListener(el,'keypress',_keydownHandler_);
-    EM.addEventListener(el,'mousedown',self.IME.hide);
+    EM.addEventListener(el,'mousedown',self.IME.blurHandler);
 
     return nodes.attachedInput;
   }
@@ -1414,18 +1412,24 @@ var VirtualKeyboard = new function () {
  */
 VirtualKeyboard.Langs = {};
 /**
- *  Simple IME thing, using to show input tips, supplied by the callback
+ *  Simple IME thing to show input tips, supplied by the callback
  *
- *  Usage: just call VirtualKeyboard.IME.show(suggestionlist); to show the suggestions
+ *  Usage: 
+ *   - call VirtualKeyboard.IME.show(suggestionlist); to show the suggestions
+ *   - call VirtualKeyboard.IME.show(keep_selection); to hide IME toolbar and keep selectio if needed
  *
  *  @scope public
  */
 VirtualKeyboard.IME = new function () {
     var self = this;
-    var html = "<div id=\"VirtualKeyboardIME\"><div class=\"right\"><!--!--></div><div class=\"left\"></div><div class=\"IMEContent\"><br clear=\"both\" /></div></div>";
+    var html = "<div id=\"VirtualKeyboardIME\"><table><tr><td class=\"IMEControl\"><div class=\"left\"></div></td>"
+              +"<td class=\"IMEControl IMEContent\"></td>"
+              +"<td class=\"IMEControl\"><div class=\"right\"></div></td></tr>"
+              +"<tr><td class=\"IMEControl IMEInfo\" colspan=\"3\"><div class=\"showAll\"><div class=\"IMEPageCounter\"></div><div class=\"arrow\"></div></div></td></tr></div>";
     var ime = null;
     var chars = "";
     var page = 0;
+    var showAll = false;
     var sg = [];
     var target = null;
     var targetWindow = window.dialogArguments||window.opener||window.top;
@@ -1446,13 +1450,14 @@ VirtualKeyboard.IME = new function () {
         DOM.getParent(target,'body').appendChild(ime);
         if (s) self.setSuggestions(s);
         if (target && ime && sg.length>0) {
-            EM.addEventListener(target,'blur',self.hide);
+            EM.addEventListener(target,'blur',self.blurHandler);
             ime.style.display = "block";
             self.updatePosition(target);
-        } else {
+        } else if ('none' != ime.style.display) {
             self.hide();
         }
     }
+
     /**
      *  Hides IME
      *
@@ -1460,11 +1465,14 @@ VirtualKeyboard.IME = new function () {
      *  @scope public
      */
     self.hide = function (keep) {
-        if (ime) ime.style.display = "none";
-        EM.removeEventListener(target,'blur',self.hide);
-        if (target && DocumentSelection.getSelection(target) && !keep) DocumentSelection.deleteSelection(target);
-        target = null;
-        sg=[];
+        if (ime && 'none' != ime.style.display) {
+            ime.style.display = "none";
+            EM.removeEventListener(target,'blur',self.blurHandler);
+            if (target && DocumentSelection.getSelection(target) && !keep) 
+                DocumentSelection.deleteSelection(target);
+            target = null;
+            sg=[];
+        }
     }
     /**
      *  Updates position of the IME tooltip
@@ -1472,9 +1480,6 @@ VirtualKeyboard.IME = new function () {
      *  @scope public
      */
     self.updatePosition = function () {
-        ime.style.width = '50px';
-        var dt = ime.offsetWidth - ime.childNodes[2].clientWidth;
-        ime.style.width = ime.childNodes[2].scrollWidth+dt+'px';
         var xy = DOM.getOffset(target);
         ime.style.left = xy.x+'px';
         var co = DocumentSelection.getSelectionOffset(target);
@@ -1503,24 +1508,34 @@ VirtualKeyboard.IME = new function () {
         return isNumber(idx)?sg[idx]:sg;
     }
     /**
-     *  Shows the next page of suggestions
+     *  Shows the next page from the suggestions list
      *
+     *  @param {Event} e optional event to be cancelled
      *  @scope public
      */
-    self.nextPage = function () {
+    self.nextPage = function (e) {
          page = Math.max(Math.min(page+1,(Math.ceil(sg.length/10))-1),0);
          showPage();
-         return false;
+         if (e) {
+             e.stopPropagation();
+             e.preventDefault();
+             return false;
+         }
     }
     /**
-     *  Shows the previous page of suggestions
+     *  Shows the previous page from the suggestions list
      *
+     *  @param {Event} e optional event to be cancelled
      *  @scope public
      */
-    self.prevPage = function () {
+    self.prevPage = function (e) {
          page = Math.max(page-1,0);
          showPage();
-         return false;
+         if (e) {
+             e.stopPropagation();
+             e.preventDefault();
+             return false;
+         }
     }
     /**
      *  Returns the current page number
@@ -1546,15 +1561,64 @@ VirtualKeyboard.IME = new function () {
          return 'block' == ime.style.display;
     }
     /**
+     *  Gets called on input field blur then closes IME toolbar and removes the selection
+     *  
+     */
+    self.blurHandler = function (e) {
+        self.hide();
+    }
+    /**
+     *  Toggles 'all' and 'paged' modes of the toolbar
+     *
+     *  @param {Event} e optional event to be cancelled
+     *  @scope public
+     */
+    self.toggleShowAll = function (e) {
+         var sa = ime.firstChild.rows[1].cells[0].lastChild;
+         if (showAll = !showAll) {
+             page = 0;
+             sa.className = 'showPage';
+         } else {
+             sa.className = 'showAll';
+         }
+         showPage();
+         if (e) {
+             e.stopPropagation();
+             e.preventDefault();
+             return false;
+         }
+    }
+    /**
      *  Shows currently selected page in the IME tooltip
      *
      *  @scope private
      */
     var showPage = function () {
-        for (var i=0,p=page*10,s=[]; i<10 && !isUndefined(sg[p+i]); i++) {
-            s[s.length] = "<span><b>"+((i+1)%10)+": </b>"+sg[p+i]+"</span>";
+        var s = ['<table>'];
+        if (showAll) {
+            for (var z=0,pL=Math.ceil(sg.length/10); z<pL; z++ ) {
+                s.push('<tr>');
+                for (var i=0,p=z*10; i<10 && !isUndefined(sg[p+i]); i++) {
+                    s.push("<td><a href=''>")
+                    if (0==z) {
+                        s.push("<b>&nbsp;"+((i+1)%10)+": </b>");
+                    }
+                    s.push(sg[p+i]+"</a></td>");
+                }
+                s.push('</tr>');
+            }
+        } else {
+            s.push('<tr>');
+            for (var i=0,p=page*10; i<10 && !isUndefined(sg[p+i]); i++) {
+                s.push("<td><a href=''><b>&nbsp;"+((i+1)%10)+": </b>"+sg[p+i]+"</a></td>");
+            }
+            s.push('</tr>');
         }
-        ime.childNodes[2].innerHTML = s.join("; ")+"<br clear=\"both\" />";
+        s.push('</table>');
+        ime.firstChild.rows[0].cells[1].innerHTML = s.join("");
+        // update page counter
+        ime.firstChild.rows[1].cells[0].firstChild.firstChild.innerHTML = (page+1)+"/"+(0+showAll || Math.ceil(sg.length/10));
+        // prevent selection in IE
         var els = ime.getElementsByTagName("*");
         for (var i=0,eL=els.length; i<eL; i++) {
             els[i].unselectable = "on";
@@ -1566,13 +1630,15 @@ VirtualKeyboard.IME = new function () {
      *  @param {MousedownEvent} e
      *  @scope protected
      */
-    function pasteSuggestion(e) {
-        var el = DOM.getParent(e.target,'span');
+    var pasteSuggestion = function (e) {
+        var el = DOM.getParent(e.target,'a');
         if (el) {
             DocumentSelection.insertAtCursor(target,el.lastChild.nodeValue);
+            self.hide();
         }
-        self.hide();
+        e.preventDefault();
     }
+
     /**
      *  Just the constructor
      */
@@ -1581,16 +1647,22 @@ VirtualKeyboard.IME = new function () {
         el.innerHTML = html;
         ime = el.firstChild;
         ime.style.display = 'none';
-        ime.childNodes[0].appendChild(targetWindow.document.createComment(""));
-        ime.childNodes[1].appendChild(targetWindow.document.createComment(""));
-        ime.childNodes[0].onmousedown = self.nextPage;
-        ime.childNodes[1].onmousedown = self.prevPage;
+        var arrl = ime.firstChild.rows[0].cells[0]
+           ,arrr = ime.firstChild.rows[0].cells[2]
+           ,arrd = ime.firstChild.rows[1].cells[0].lastChild
+        EM.addEventListener(arrl,'mousedown',self.prevPage);
+        EM.addEventListener(arrr,'mousedown',self.nextPage);
+        EM.addEventListener(arrd,'mousedown',self.toggleShowAll);
         /*
         *  blocks any selection
         */
         ime.unselectable = "on";
-        ime.onmousedown = function () {return false;}
-        EM.addEventListener(ime.lastChild,'mousedown',pasteSuggestion);
+        var els = ime.getElementsByTagName("*");
+        for (var i=0,eL=els.length;i<eL;i++) {
+            els[i].unselectable = "on";
+        }
+
+        EM.addEventListener(ime,'mousedown',pasteSuggestion);
     }
     _construct();
 }
