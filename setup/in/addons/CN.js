@@ -14,7 +14,7 @@ VirtualKeyboard.Langs.CN = new function () {
         var num, str, arr
         if (chr=='\u0008') { // backspace
             if (buf && (str=buf.slice(0,-1))) {
-                VirtualKeyboard.IME.show(self.INPArr[str] || []);
+                VirtualKeyboard.IME.show(self.INPArr[str.toLowerCase()] || []);
                 return [str,str.length]
             } else {
                 VirtualKeyboard.IME.hide()
@@ -22,9 +22,9 @@ VirtualKeyboard.Langs.CN = new function () {
             }
         } else { //non backspace
             str=buf+chr
-            arr = self.INPArr[str] || []
+            arr = self.INPArr[str.toLowerCase()] || []
             if (arr.length) { // miao
-                VirtualKeyboard.IME.show((typeof arr =='string')? self.INPArr[str]=arr.split('') : arr)
+                VirtualKeyboard.IME.show((typeof arr =='string')? self.INPArr[str.toLowerCase()]=arr.split('') : arr)
                 return [str, str.length]
             } else if(VirtualKeyboard.IME.getSuggestions().length) { // not a part of a syllable
                 if (isFinite(num=parseInt(chr))) { // miao3
@@ -35,9 +35,9 @@ VirtualKeyboard.Langs.CN = new function () {
                         VirtualKeyboard.IME.hide();
                         return[str,0]
                     }
-                } else if ((arr = self.INPArr[chr] || []).length) { //nih
+                } else if ((arr = self.INPArr[chr.toLowerCase()] || []).length) { //nih
                     str=VirtualKeyboard.IME.getSuggestions()[0]
-                    VirtualKeyboard.IME.setSuggestions((typeof arr =='string')? self.INPArr[str]=arr.split('') : arr)
+                    VirtualKeyboard.IME.setSuggestions((typeof arr =='string')? self.INPArr[str.toLowerCase()]=arr.split('') : arr)
                     return [str+chr,1]
                 } else { // ni,
                     str=VirtualKeyboard.IME.getSuggestions()[0]
