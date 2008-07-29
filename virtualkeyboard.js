@@ -869,7 +869,7 @@ var VirtualKeyboard = new function () {
    *  @param {Event} e
    *  @scope private
    */
-  function switchMapping (e) {
+  var switchMapping = function (e) {
       keymap = keymaps[e.target.value];
   }
   /**********************************************************
