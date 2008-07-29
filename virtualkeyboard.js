@@ -165,7 +165,7 @@ var VirtualKeyboard = new function () {
     // grave
     ["\x60", "a\xe0 A\xc0 e\xe8 E\xc8 i\xec I\xcc o\xf2 O\xd2 u\xf9 U\xd9 y\u1ef3 Y\u1ef2 w\u1e81 W\u1e80"],
     // tilde
-    ["\x7e", "a\xe3 A\xc3 o\xf5 O\xd5 u\u0169 U\\u0168 n\xf1 N\xd1 y\u1ef8 Y\1ef7"],
+    ["\x7e", "a\xe3 A\xc3 o\xf5 O\xd5 u\u0169 U\u0168 n\xf1 N\xd1 y\u1ef8 Y\1ef7"],
     // ring above, degree sign
     ["\xb0", "a\xe5 A\xc5 u\u016f U\u016e"],
     // caron
@@ -373,8 +373,7 @@ var VirtualKeyboard = new function () {
     /*
     *  toggle RTL/LTR state
     */
-    if (nodes.attachedInput) (nodes.attachedInput.contentWindow?nodes.attachedInput.contentWindow.document.body
-                                                               :nodes.attachedInput).dir = lang.rtl?'rtl':'ltr'
+    __toggleInputDir();
     return true;
   }
 
@@ -393,7 +392,7 @@ var VirtualKeyboard = new function () {
        *  1 - shift keys
        *  2 - alt keys (has priority, when it pressed together with shift)
        */
-       ,sh = Math.min(mode&(VK_ALT|VK_SHIFT),2)
+       ,sh = Math.min(mode&(VK_ALT|VK_SHIFT),VK_ALT)
        ,ca = [cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted];
     DOM.CSS(nodes.desk).removeClass.apply(self,ca).addClass(ca[sh]);
     for (var i=0, lL=lang.length; i<lL; i++) {
@@ -902,14 +901,13 @@ var VirtualKeyboard = new function () {
     /*
     *  reset input state, defined earlier
     */
-    if (nodes.attachedInput) (nodes.attachedInput.contentWindow?nodes.attachedInput.contentWindow.document.body
-                                                               :nodes.attachedInput).dir = ''
+    __toggleInputDir(true);
     /*
     *  force IME hide on field switch
     */
     self.IME.hide();
     /*
-    *  only inputable nodes are allowed
+    *  remove every VK artifact from the old input
     */
     if (nodes.attachedInput) {
         var oe = nodes.attachedInput
@@ -922,38 +920,29 @@ var VirtualKeyboard = new function () {
         EM.removeEventListener(oe,'mousedown',self.IME.blurHandler);
     }
     if (!el || !el.tagName) {
-        nodes.attachedInput = null
-        return null;
-    }
-
-    nodes.attachedInput = el;
-
-    /*
-    *  set keyboard animation for the current field
-    */
-    if (nodes.attachedInput)
-        animate = !DOM.CSS(nodes.attachedInput).hasClass(cssClasses.noanim);
-    else
-        animate = true;
-
-    /*
-    *  for iframe target we track its HTML node
-    */
-    if (el.contentWindow) {
-        el = el.contentWindow.document.body
-        /*
-         *  toggle RTL/LTR state
-         */
-        el.dir = lang.rtl?'rtl':'ltr'
-        el = el.parentNode;
+        nodes.attachedInput = null;
     } else {
-        el.dir = lang.rtl?'rtl':'ltr'
-    }
-    EM.addEventListener(el,'keydown',_keydownHandler_);
-    EM.addEventListener(el,'keyup',_keydownHandler_);
-    EM.addEventListener(el,'keypress',_keydownHandler_);
-    EM.addEventListener(el,'mousedown',self.IME.blurHandler);
 
+        /*
+        *  set keyboard animation for the current field
+        */
+        animate = !DOM.CSS(el).hasClass(cssClasses.noanim);
+        /*
+        *  set input direction
+        */
+        __toggleInputDir();
+        /*
+        *  for iframe target we track its HTML node
+        */
+        if (el.contentWindow) {
+            el = el.contentWindow.document.body.parentNode;
+        }
+        EM.addEventListener(el,'keydown',_keydownHandler_);
+        EM.addEventListener(el,'keyup',_keydownHandler_);
+        EM.addEventListener(el,'keypress',_keydownHandler_);
+        EM.addEventListener(el,'mousedown',self.IME.blurHandler);
+        nodes.attachedInput = el;
+    }
     return nodes.attachedInput;
   }
   /**
@@ -1015,8 +1004,10 @@ var VirtualKeyboard = new function () {
         return;
     }
     nodes.keyboard.parentNode.removeChild(nodes.keyboard);
-    (nodes.attachedInput.contentWindow?nodes.attachedInput.contentWindow.document.body
-                                      :nodes.attachedInput).dir = lang.rtl?'rtl':'ltr'
+    /*
+    *  reset input direction on the field
+    */
+    __toggleInputDir(true);
     nodes.attachedInput = null;
     return true;
   }
@@ -1045,6 +1036,22 @@ var VirtualKeyboard = new function () {
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
   //---------------------------------------------------------------------------
+  /**
+   *  Sets input direction mode
+   *
+   *  @param {Boolean} reset resets input mode to default, when true
+   */
+  var __toggleInputDir = function (reset) {
+      if (nodes.attachedInput) {
+          var mode = reset?""
+                          :(lang.rtl?'rtl'
+                                    :'ltr');
+          if (nodes.attachedInput.contentWindow)
+              nodes.attachedInput.contentWindow.document.body.dir = mode;
+          else 
+              nodes.attachedInput.dir = mode;
+      }
+  }
   /**
    *  Builds options for the layout selection box
    *
