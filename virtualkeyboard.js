@@ -41,7 +41,7 @@ var VirtualKeyboard = new function () {
    *  ID prefix
    *
    *  @type String
-   *  @access private
+   *  @scope private
    */
   var idPrefix = 'kb_b';
   /**
@@ -139,7 +139,7 @@ var VirtualKeyboard = new function () {
    *  @see http://en.wikipedia.org/wiki/Dead_key
    *  @see http://en.wikipedia.org/wiki/Combining_character
    *  @type Array
-   *  @access private
+   *  @scope private
    */
   var deadkeys = [
     // greek tonos
@@ -192,7 +192,7 @@ var VirtualKeyboard = new function () {
    *  CSS classes will be used to style buttons
    *
    *  @type Object
-   *  @access private
+   *  @scope private
    */
   var cssClasses = {
     'buttonUp'      : 'kbButton'
@@ -210,7 +210,7 @@ var VirtualKeyboard = new function () {
    *  current layout
    *
    *  @type Object
-   *  @access public
+   *  @scope public
    */
   var lang = null;
   /**
@@ -234,7 +234,7 @@ var VirtualKeyboard = new function () {
    *   ]
    *
    *  @type Array
-   *  @access private
+   *  @scope private
    */
   var layout = []
   /**
@@ -248,7 +248,7 @@ var VirtualKeyboard = new function () {
    *  Shortcuts to the nodes
    *
    *  @type Object
-   *  @access private
+   *  @scope private
    */
   var nodes = {
       keyboard : null     // Keyboard container @type HTMLDivElement
@@ -320,7 +320,7 @@ var VirtualKeyboard = new function () {
    *
    *  @param {String} code layout name
    *  @return {Boolean} change state
-   *  @access public
+   *  @scope public
    */
   self.switchLayout = function (code) {
     if (!layout.hash.hasOwnProperty(code)) return false;
@@ -380,7 +380,7 @@ var VirtualKeyboard = new function () {
   /**
    *  Toggles layout mode (switch alternative key bindings)
    *
-   *  @access private
+   *  @scope private
    */
   self.toggleLayoutMode = function () {
     /*
@@ -436,7 +436,7 @@ var VirtualKeyboard = new function () {
    *
    *  @param {HTMLInputElement} key on the virtual keyboard
    *  @param {EventTarget} evt optional event object, to be used to re-map the keyCode
-   *  @access private
+   *  @scope private
    */
   var _keyClicker_ = function (key, evt) {
       var chr = ""
@@ -566,7 +566,7 @@ var VirtualKeyboard = new function () {
    *  Captures some keyboard events
    *
    *  @param {Event} keydown
-   *  @access protected
+   *  @scope protected
    */
   var _keydownHandler_ = function(e) {
     /*
@@ -717,7 +717,7 @@ var VirtualKeyboard = new function () {
    *  Handle clicks on the buttons, actually used with mouseup event
    *
    *  @param {Event} mouseup event
-   *  @access protected
+   *  @scope protected
    */
   var _btnClick_ = function (e) {
     /*
@@ -750,7 +750,7 @@ var VirtualKeyboard = new function () {
    *  Additionally, it is used by keyboard wrapper to forward keyboard events to the virtual keyboard
    *
    *  @param {Event} mousedown event
-   *  @access protected
+   *  @scope protected
    */
   var _btnMousedown_ = function (e) {
     /*
@@ -822,7 +822,7 @@ var VirtualKeyboard = new function () {
    *  Method is used to remove 'pressed' button state
    *
    *  @param {Event} mouseup event
-   *  @access protected
+   *  @scope protected
    */
   var _btnMouseInOut_ = function (e) {
     /*
@@ -880,7 +880,7 @@ var VirtualKeyboard = new function () {
    *
    *  @param {Null, HTMLInputElement,String} element to attach keyboard to
    *  @return {HTMLInputElement, Null}
-   *  @access public
+   *  @scope public
    */
   self.attachInput = function (el) {
     /*
@@ -962,7 +962,7 @@ var VirtualKeyboard = new function () {
    *  @param {HTMLElement} kpTarget optional target to bind key* event handlers to,
    *                       is useful for frame and popup keyboard placement
    *  @return {Boolean} operation state
-   *  @access public
+   *  @scope public
    */
   self.open =
   self.show = function (input, holder, kpTarget){
@@ -1019,7 +1019,7 @@ var VirtualKeyboard = new function () {
    *  @param {HTMLElement} kpTarget optional target to bind key* event handlers to,
    *                       is useful for frame and popup keyboard placement
    *  @return {Boolean} operation state
-   *  @access public
+   *  @scope public
    */
   self.toggle = function (input, holder, kpTarget) {
       self.isOpen()?self.close():self.show(input, holder, kpTarget);
@@ -1300,7 +1300,7 @@ var VirtualKeyboard = new function () {
   /**
    *  Keyboard constructor
    *
-   *  @access public
+   *  @scope public
    */
   var __construct = function() {
       /*
