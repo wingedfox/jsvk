@@ -357,8 +357,8 @@ var VirtualKeyboard = new function () {
     /*
     *  set layout-dependent class names
     */
-    nodes.desk.className = lang.css
-    self.IME.css = lang.css
+    nodes.desk.className = lang.domain
+    self.IME.css = lang.domain
 
     /*
     *  reset mode for the new layout
@@ -427,7 +427,6 @@ var VirtualKeyboard = new function () {
       }
       return lts.sort();
   }
-
   //---------------------------------------------------------------------------
   // GLOBAL EVENT HANDLERS
   //---------------------------------------------------------------------------
@@ -1107,15 +1106,14 @@ var VirtualKeyboard = new function () {
       */
       var alpha = l.keys
          ,shift = l.shift || {}
-         ,alt = l.alt || {}
-         ,dk = l.dk || []
-         ,cbk = l.cbk
-         ,ca = null
-         ,cac = -1
-         ,cs = null
-         ,csc = -1
-         ,lt = []
-         ,css = l.domain
+         ,alt   = l.alt || {}
+         ,dk    = l.dk || []
+         ,cbk   = l.cbk
+         ,ca    = null
+         ,cac   = -1
+         ,cs    = null
+         ,csc   = -1
+         ,lt    = []
 
       lt.name = l.name;
       lt.code = l.code;
@@ -1153,7 +1151,7 @@ var VirtualKeyboard = new function () {
       /*
       *  this CSS will be set on kbDesk
       */
-      lt.css = css
+      lt.domain = l.domain
       /*
       *  finalize things by calling loading callback, if exists
       */
@@ -1251,9 +1249,9 @@ var VirtualKeyboard = new function () {
 
     for (var i=0, aL=lang.length, btns = [], zcnt = 0, chr; i<aL; i++) {
       chr = lang[i];
-      btns.push("<div id=\"",idPrefix,(isArray(chr)?zcnt++:chr)
-               ,"\" class=\"",cssClasses.buttonUp
-               ,"\"><a href=\"#",i,"\""
+      btns.push("<div id='",idPrefix,(isArray(chr)?zcnt++:chr)
+               ,"' class='",cssClasses.buttonUp
+               ,"'><a href='#",i,"'"
                ,">",(isArray(chr)?(__getCharHtmlForKey(lang,chr[0],cssClasses.buttonNormal,inp)
                                   +__getCharHtmlForKey(lang,chr[1],cssClasses.buttonShifted,inp)
                                   +__getCharHtmlForKey(lang,chr[2],cssClasses.buttonAlted,inp))
@@ -1298,11 +1296,9 @@ var VirtualKeyboard = new function () {
     return html.join("");
   }
   /**
-   *  Keyboard constructor
-   *
-   *  @scope public
+   *  Keyboard initializer
    */
-  var __construct = function() {
+  (function() {
       /*
       *  process the deadkeys, to make more usable, but non-editable object
       */
@@ -1406,11 +1402,7 @@ var VirtualKeyboard = new function () {
       if (opts.layout) {
           options.layout = opts.layout;
       }
-  }
-  /*
-  *  call the constructor
-  */
-  __construct();
+  })();
 }
 /**
  *  Container for the custom language IMEs, don't mess with the window object
@@ -1418,6 +1410,12 @@ var VirtualKeyboard = new function () {
  *  @type {Object}
  */
 VirtualKeyboard.Langs = {};
+/**
+ *  Container for the dictionaries
+ *
+ *  @type {Object}
+ */
+VirtualKeyboard.Dicts = {};
 /**
  *  Simple IME thing to show input tips, supplied by the callback
  *
@@ -1429,9 +1427,9 @@ VirtualKeyboard.Langs = {};
  */
 VirtualKeyboard.IME = new function () {
     var self = this;
-    var html = "<div id=\"VirtualKeyboardIME\"><table><tr><td class=\"IMEControl\"><div class=\"left\"></div></td>"
+    var html = "<div id=\"VirtualKeyboardIME\"><table><tr><td class=\"IMEControl\"><div class=\"left\"><!-- --></div></td>"
               +"<td class=\"IMEControl IMEContent\"></td>"
-              +"<td class=\"IMEControl\"><div class=\"right\"></div></td></tr>"
+              +"<td class=\"IMEControl\"><div class=\"right\"><!-- --></div></td></tr>"
               +"<tr><td class=\"IMEControl IMEInfo\" colspan=\"3\"><div class=\"showAll\"><div class=\"IMEPageCounter\"></div><div class=\"arrow\"></div></div></td></tr></div>";
     var ime = null;
     var chars = "";
@@ -1647,9 +1645,9 @@ VirtualKeyboard.IME = new function () {
     }
 
     /**
-     *  Just the constructor
+     *  Just the initializer
      */
-    var _construct = function () {
+    (function () {
         var el = targetWindow.document.createElement('div');
         el.innerHTML = html;
         ime = el.firstChild;
@@ -1670,6 +1668,5 @@ VirtualKeyboard.IME = new function () {
         }
 
         EM.addEventListener(ime,'mousedown',pasteSuggestion);
-    }
-    _construct();
+    })();
 }
