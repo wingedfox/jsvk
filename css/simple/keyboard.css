@@ -336,6 +336,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 #VirtualKeyboardIME td.IMEInfo div {
    position: relative;
+   width: 100%;
 }
 #VirtualKeyboardIME td.IMEInfo div.showAll div.arrow,
 #VirtualKeyboardIME td.IMEInfo div.showPage div.arrow {
@@ -360,6 +361,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 #VirtualKeyboardIME td.IMEInfo div.IMEPageCounter {
    float: left;
+   width: auto;
 }
 
 /************************************
