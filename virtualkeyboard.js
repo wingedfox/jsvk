@@ -132,7 +132,10 @@ var VirtualKeyboard = new function () {
      ,VK_SHIFT = 1
      ,VK_ALT = 2
      ,VK_CTRL = 4
-     ,VK_CAPS = 8;
+     ,VK_CAPS = 8
+     ,VK_ALT_CTRL = VK_ALT|VK_CTRL
+     ,VK_ALT_SHIFT = VK_ALT|VK_SHIFT
+     ,VK_SHIFT_CAPS = VK_SHIFT|VK_CAPS;
   /**
    *  Deadkeys, original and mofified characters
    *
@@ -392,7 +395,7 @@ var VirtualKeyboard = new function () {
        *  1 - shift keys
        *  2 - alt keys (has priority, when it pressed together with shift)
        */
-       ,sh = Math.min(mode&(VK_ALT|VK_SHIFT),VK_ALT)
+       ,sh = Math.min(mode&(VK_ALT_SHIFT),VK_ALT)
        ,ca = [cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted];
     DOM.CSS(nodes.desk).removeClass.apply(self,ca).addClass(ca[sh]);
     for (var i=0, lL=lang.length; i<lL; i++) {
@@ -487,7 +490,7 @@ var VirtualKeyboard = new function () {
                   *  @see __getCharHtmlForKey
                   */
                   try {
-                      chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT|VK_SHIFT),2)].firstChild || el.firstChild.firstChild.firstChild).nodeValue.replace("\xa0","").replace("\xa0","");
+                      chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT_SHIFT),2)].firstChild || el.firstChild.firstChild.firstChild).nodeValue.replace("\xa0","").replace("\xa0","");
                   } catch (err) {
                       return;
                   }
@@ -495,14 +498,14 @@ var VirtualKeyboard = new function () {
                   *  do uppercase if either caps or shift clicked, not both
                   *  and only 'normal' key state is active
                   */
-                  if (((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT | VK_CAPS)))) chr = chr.toUpperCase();
+                  if (((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT_CAPS)))) chr = chr.toUpperCase();
                   /*
                   *  reset shift state, if clicked on the letter button
                   */
                   if (!(evt && evt.shiftKey) && mode&VK_SHIFT) {
                       reSetDualKeys('shift', VK_SHIFT);
                       self.toggleLayoutMode();
-                      if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT | VK_CAPS))) {
+                      if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT_CAPS))) {
                           if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
                       } else {
                           if (animate) DOM.CSS(nodes.desk).removeClass(cssClasses.capslock)
@@ -610,7 +613,7 @@ var VirtualKeyboard = new function () {
               break;
           case 17: //ctrl
           case 18: //alt
-              if (!e.getRepeat() && e.altKey && e.ctrlKey && !(mode&(VK_ALT|VK_CTRL))) {
+              if (!e.getRepeat() && e.altKey && e.ctrlKey && !(mode&(VK_ALT_CTRL))) {
                   reSetDualKeys('ctrl', VK_CTRL);
                   reSetDualKeys('alt', VK_ALT);
                   self.toggleLayoutMode();
@@ -662,7 +665,7 @@ var VirtualKeyboard = new function () {
         switch (keyCode) {
             case 17:
             case 18:
-                if (!e.ctrlKey && mode&(VK_CTRL|VK_ALT)) {
+                if (!e.ctrlKey && mode&(VK_ALT_CTRL)) {
                     reSetDualKeys('ctrl', VK_CTRL);
                     reSetDualKeys('alt', VK_ALT);
                     self.toggleLayoutMode();
@@ -705,7 +708,7 @@ var VirtualKeyboard = new function () {
     *  do uppercase transformation
     */
     if (!e.getRepeat() && (20 == keyCode || 16 == keyCode)) {
-        if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT | VK_CAPS))) {
+        if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT_CAPS))) {
             if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
         } else {
             if (animate) DOM.CSS(nodes.desk).removeClass(cssClasses.capslock);
@@ -806,7 +809,7 @@ var VirtualKeyboard = new function () {
     *  do uppercase transformation
     */
     if ('caps' == key || 'shift_left' == key || 'shift_right' == key) {
-        if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT | VK_CAPS))) {
+        if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT_CAPS))) {
           if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
         } else {
           if (animate) DOM.CSS(nodes.desk).removeClass(cssClasses.capslock)
@@ -1298,7 +1301,7 @@ var VirtualKeyboard = new function () {
   /**
    *  Keyboard initializer
    */
-  (function() {
+  ;(function() {
       /*
       *  process the deadkeys, to make more usable, but non-editable object
       */
@@ -1647,7 +1650,7 @@ VirtualKeyboard.IME = new function () {
     /**
      *  Just the initializer
      */
-    (function () {
+    ;(function () {
         var el = targetWindow.document.createElement('div');
         el.innerHTML = html;
         ime = el.firstChild;
