@@ -1396,7 +1396,7 @@ var VirtualKeyboard = new function () {
       for (var i=0, eL=els.length; i<eL; i++) {
           els[i].unselectable = "on";
       }
-      nodes.keyboard.onmousedown = function () {return false;}
+      nodes.keyboard.onmousedown = function (e) {if (!e || !e.target.tagName || 'select' != e.target.tagName.toLowerCase()) return false}
 
       /*
       *  check url params for the default layout name
@@ -1413,12 +1413,6 @@ var VirtualKeyboard = new function () {
  *  @type {Object}
  */
 VirtualKeyboard.Langs = {};
-/**
- *  Container for the dictionaries
- *
- *  @type {Object}
- */
-VirtualKeyboard.Dicts = {};
 /**
  *  Simple IME thing to show input tips, supplied by the callback
  *
