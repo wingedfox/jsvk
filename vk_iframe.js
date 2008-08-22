@@ -139,6 +139,10 @@ IFrameVirtualKeyboard = new function() {
         */
         hWnd.document.body.className = hWnd.document.body.parentNode.className = 'VirtualKeyboardPopup';
         var kbd = hWnd.document.body.firstChild;
+        while ("virtualKeyboard" != kbd.id) {
+            hWnd.document.body.removeChild(kbd);
+            kbd = hWnd.document.body.firstChild;
+        }
         iFrame.style.height = kbd.offsetHeight+'px';
         iFrame.style.width = kbd.offsetWidth+'px';
     }

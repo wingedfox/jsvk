@@ -107,9 +107,19 @@ PopupVirtualKeyboard = new function() {
         *  set class names to add some styling to html, body
         */
         hWnd.document.body.className = hWnd.document.body.parentNode.className = 'VirtualKeyboardPopup';
-        hWnd.dialogHeight = parseInt(hWnd.dialogHeight)-hWnd.DOM.getClientHeight()+hWnd.document.body.firstChild.offsetHeight+'px';
-        hWnd.dialogWidth = parseInt(hWnd.dialogWidth)-hWnd.DOM.getClientWidth()+hWnd.document.body.firstChild.offsetWidth+'px';
-        if (hWnd.sizeToContent) hWnd.sizeToContent();
+        if (hWnd.sizeToContent) {
+            hWnd.sizeToContent();
+        } else {
+            var kbd = hWnd.document.body.firstChild;
+            while ("virtualKeyboard" != kbd.id) {
+                hWnd.document.body.removeChild(kbd);
+                kbd = hWnd.document.body.firstChild;
+            }
+            hWnd.dialogHeight = kbd.offsetHeight+'px';
+            hWnd.dialogWidth = kbd.offsetWidth+'px';
+            hWnd.resizeTo(kbd.offsetWidth+hWnd.DOM.getOffsetWidth()-hWnd.DOM.getClientWidth()
+                         ,kbd.offsetHeight+hWnd.DOM.getOffsetHeight()-hWnd.DOM.getClientHeight());
+        }
         hWnd.onunload = self.close;
     }
     if (window.attachEvent) window.attachEvent('onunload', self.close);
