@@ -56,8 +56,8 @@ var VirtualKeyboard = new function () {
   /**
    *  list of the control keys to be shown
    *
-   *
-   *
+   *  @type Object
+   *  @scope private
    */
   var controlkeys = {14:'backspace'
                     ,15:'tab'
@@ -71,7 +71,18 @@ var VirtualKeyboard = new function () {
                     ,56:'space'
                     ,57:'alt_right'
                     ,58:'ctrl_right'};
-
+  /**
+   *  Prefixes for the keys
+   *
+   *  @type Object
+   *  @scope private
+   */
+  var KEY = {
+      'SHIFT' : 'shift'
+     ,'ALT'   : 'alt'
+     ,'CTRL'  : 'ctrl'
+     ,'CAPS'  : 'caps'
+  }
   /**
    *  Current keyboard mapping
    *
@@ -135,7 +146,8 @@ var VirtualKeyboard = new function () {
      ,VK_CAPS = 8
      ,VK_ALT_CTRL = VK_ALT|VK_CTRL
      ,VK_ALT_SHIFT = VK_ALT|VK_SHIFT
-     ,VK_SHIFT_CAPS = VK_SHIFT|VK_CAPS;
+     ,VK_SHIFT_CAPS = VK_SHIFT|VK_CAPS
+     ,VK_ALL = VK_SHIFT|VK_ALT|VK_CTRL|VK_CAPS;
   /**
    *  Deadkeys, original and mofified characters
    *
@@ -381,43 +393,6 @@ var VirtualKeyboard = new function () {
   }
 
   /**
-   *  Toggles layout mode (switch alternative key bindings)
-   *
-   *  @scope private
-   */
-  self.toggleLayoutMode = function () {
-    /*
-    *  now, process to layout toggle
-    */
-    var bi = -1
-       /*
-       *  0 - normal keys
-       *  1 - shift keys
-       *  2 - alt keys (has priority, when it pressed together with shift)
-       */
-       ,sh = Math.min(mode&(VK_ALT_SHIFT),VK_ALT)
-       ,ca = [cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted];
-    DOM.CSS(nodes.desk).removeClass.apply(self,ca).addClass(ca[sh]);
-    for (var i=0, lL=lang.length; i<lL; i++) {
-        if (isString(lang[i])) continue;
-        bi++;
-        var btn = document.getElementById(idPrefix+bi).firstChild.childNodes;
-        /*
-        *  swap symbols and its CSS classes
-        */
-        if (btn.length>1) {
-            if (btn[sh].firstChild && btn[sh].firstChild.nodeValue.length)
-                DOM.CSS(btn[0]).removeClass(ca).addClass(ca[sh]);
-            DOM.CSS(btn[1]).removeClass(ca).addClass([cssClasses.buttonShifted
-                                                     ,cssClasses.buttonNormal
-                                                     ,cssClasses.buttonShifted][sh]);
-            DOM.CSS(btn[2]).removeClass(ca).addClass([cssClasses.buttonAlted
-                                                     ,cssClasses.buttonAlted
-                                                     ,cssClasses.buttonNormal][sh]);
-        }
-    }
-  }
-  /**
    *  Return the list of the available layouts
    *
    *  @return {Array}
@@ -445,11 +420,11 @@ var VirtualKeyboard = new function () {
          ,ret = false;
       key = key.replace(idPrefix, "");
       switch (key) {
-          case "caps" :
-          case "shift" :
+          case KEY.CAPS  :
+          case KEY.SHIFT :
           case "shift_left" :
           case "shift_right" :
-          case "alt" :
+          case KEY.ALT   :
           case "alt_left" :
           case "alt_right" :
               return;
@@ -490,7 +465,8 @@ var VirtualKeyboard = new function () {
                   *  @see __getCharHtmlForKey
                   */
                   try {
-                      chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT_SHIFT),2)].firstChild || el.firstChild.firstChild.firstChild).nodeValue.replace("\xa0","").replace("\xa0","");
+                      chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT_SHIFT),VK_ALT)].firstChild || el.firstChild.firstChild.firstChild).nodeValue;
+                      chr = chr.replace("\xa0","").replace("\xa0","");
                   } catch (err) {
                       return;
                   }
@@ -498,19 +474,7 @@ var VirtualKeyboard = new function () {
                   *  do uppercase if either caps or shift clicked, not both
                   *  and only 'normal' key state is active
                   */
-                  if (((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT_CAPS)))) chr = chr.toUpperCase();
-                  /*
-                  *  reset shift state, if clicked on the letter button
-                  */
-                  if (!(evt && evt.shiftKey) && mode&VK_SHIFT) {
-                      reSetDualKeys('shift', VK_SHIFT);
-                      self.toggleLayoutMode();
-                      if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT_CAPS))) {
-                          if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
-                      } else {
-                          if (animate) DOM.CSS(nodes.desk).removeClass(cssClasses.capslock)
-                      }
-                  }
+                  if (((mode&VK_CAPS)>>3) ^ (mode&VK_SHIFT)) chr = chr.toUpperCase();
               break;
       }
       if (chr) {
@@ -576,6 +540,10 @@ var VirtualKeyboard = new function () {
     */
     if (!self.isOpen()) return;
     /*
+    *  record new keyboard mode
+    */
+    var newMode = mode;
+    /*
     *  differently process different events
     */
     var keyCode = e.getKeyCode();
@@ -605,36 +573,18 @@ var VirtualKeyboard = new function () {
               if (!_keyClicker_(el.id, e)) e.preventDefault();
 
               break;
-          case 16://shift
-              if (!e.getRepeat() && !(mode&VK_SHIFT)) {
-                  reSetDualKeys('shift', VK_SHIFT);
-                  self.toggleLayoutMode();
-              }
-              break;
-          case 17: //ctrl
-          case 18: //alt
-              if (!e.getRepeat() && e.altKey && e.ctrlKey && !(mode&(VK_ALT_CTRL))) {
-                  reSetDualKeys('ctrl', VK_CTRL);
-                  reSetDualKeys('alt', VK_ALT);
-                  self.toggleLayoutMode();
-              }
-              break;
           case 20: //caps lock
               if (!e.getRepeat()) {
-                  var cp = document.getElementById(idPrefix+'caps');
-                  if (!(mode & VK_CAPS)) {
-                      mode = mode | VK_CAPS;
-                      DOM.CSS(cp).addClass(cssClasses.buttonDown)
-                  } else {
-                      mode = mode ^ VK_CAPS;
-                      DOM.CSS(cp).removeClass(cssClasses.buttonDown)
-                  }
+                  newMode = newMode ^ VK_CAPS;
               }
               break;
           case 27:
               VirtualKeyboard.close();
               return false;
           default:
+              if (!e.getRepeat()) {
+                  newMode = newMode|e.shiftKey|e.ctrlKey<<2|e.altKey<<1;
+              }
               if (keymap.hasOwnProperty(keyCode)) {
                   if (!(e.altKey ^ e.ctrlKey)) {
                       var el = nodes.desk.childNodes[keymap[keyCode]];
@@ -663,21 +613,12 @@ var VirtualKeyboard = new function () {
         break;
       case 'keyup' :
         switch (keyCode) {
-            case 17:
-            case 18:
-                if (!e.ctrlKey && mode&(VK_ALT_CTRL)) {
-                    reSetDualKeys('ctrl', VK_CTRL);
-                    reSetDualKeys('alt', VK_ALT);
-                    self.toggleLayoutMode();
-                }
-                break;
-            case 16:
-                reSetDualKeys('shift', VK_SHIFT);
-                self.toggleLayoutMode();
-                break;
             case 20:
-                return;
+                break;
             default:
+                if (!e.getRepeat()) {
+                    newMode = mode&(VK_ALL^(!e.shiftKey|(!e.ctrlKey<<2)|(!e.altKey<<1)));
+                }
                 if (animate && keymap.hasOwnProperty(keyCode)) {
                     DOM.CSS(nodes.desk.childNodes[keymap[keyCode]]).removeClass(cssClasses.buttonDown);
                 }
@@ -702,17 +643,13 @@ var VirtualKeyboard = new function () {
         if (0==keyCode && !newKeyCode && !e.VK_bypass) {
             e.preventDefault();
         }
-        return;
     }
     /*
-    *  do uppercase transformation
+    *  update layout state
     */
-    if (!e.getRepeat() && (20 == keyCode || 16 == keyCode)) {
-        if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT_CAPS))) {
-            if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
-        } else {
-            if (animate) DOM.CSS(nodes.desk).removeClass(cssClasses.capslock);
-        }
+    if (newMode != mode) {
+        __updateControlKeys(newMode);
+        __updateLayout();
     }
   }
   /**
@@ -742,8 +679,18 @@ var VirtualKeyboard = new function () {
       case "ctrl_right":
           return;
     }
-    if (animate) DOM.CSS(el).removeClass(cssClasses.buttonDown)
+
+    if (animate) {
+        DOM.CSS(el).removeClass(cssClasses.buttonDown)
+    }
     _keyClicker_(el.id);
+
+    var newMode = mode&(VK_CAPS|e.shiftKey|e.altKey<<1|e.ctrlKey<<2);
+    if (mode != newMode) {
+        __updateControlKeys(newMode);
+        __updateLayout();
+    }
+
   }
   /**
    *  Handle mousedown event
@@ -765,39 +712,27 @@ var VirtualKeyboard = new function () {
     if (!el || el.parentNode.id.indexOf(idPrefix)<0) return;
     el = el.parentNode;
 
+    var newMode = mode;
+
     var key = el.id.substring(idPrefix.length);
     switch (key) {
       case "caps":
-        var cp = document.getElementById(idPrefix+'caps');
-        if (!(mode & VK_CAPS)) {
-          mode = mode | VK_CAPS;
-          DOM.CSS(cp).addClass(cssClasses.buttonDown)
-        } else {
-          mode = mode ^ VK_CAPS;
-          DOM.CSS(cp).removeClass(cssClasses.buttonDown)
-        }
+        newMode = newMode ^ VK_CAPS;
         break;
       case "shift_left":
       case "shift_right":
         /*
         *  Shift is pressed in on both keyboard and virtual keyboard, return
         */
-        if (mode&VK_SHIFT && e.shiftKey) break;
-        reSetDualKeys('shift', VK_SHIFT);
-        self.toggleLayoutMode();
+        if (e.shiftKey) break;
+        newMode = newMode ^ VK_SHIFT;
         break;
       case "alt_left":
       case "alt_right":
       case "ctrl_left":
       case "ctrl_right":
-        /*
-        *  Alt is pressed in on both keyboard and virtual keyboard, return
-        */
-        if (mode&VK_ALT && e.altKey || mode&VK_CTRL && e.ctrlKey) break;
-        reSetDualKeys('alt', VK_ALT);
-        reSetDualKeys('ctrl', VK_CTRL);
-        self.toggleLayoutMode();
-        break;
+          newMode = newMode ^ (e.altKey<<1^VK_ALT) ^ (e.ctrlKey<<2^VK_CTRL);
+          break;
       /*
       *  any real pressed key
       */
@@ -805,16 +740,12 @@ var VirtualKeyboard = new function () {
         if (animate) DOM.CSS(el).addClass(cssClasses.buttonDown)
         break;
     }
-    /*
-    *  do uppercase transformation
-    */
-    if ('caps' == key || 'shift_left' == key || 'shift_right' == key) {
-        if ((mode & VK_SHIFT || mode & VK_CAPS) && (mode ^ (VK_SHIFT_CAPS))) {
-          if (animate) DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
-        } else {
-          if (animate) DOM.CSS(nodes.desk).removeClass(cssClasses.capslock)
-        }
+
+    if (mode != newMode) {
+        __updateControlKeys(newMode);
+        __updateLayout();
     }
+
     e.preventDefault();
     e.stopPropagation();
   }
@@ -831,7 +762,7 @@ var VirtualKeyboard = new function () {
     *  either pressed key or something new
     */
     var el = DOM.getParent(e.srcElement||e.target, 'a')
-       ,mtd = {'mouseover': 'addClass', 'mouseout' : 'removeClass'};
+       ,mtd = {'mouseover': 2, 'mouseout' : 3}
     /*
     *  skip invalid nodes
     */
@@ -846,20 +777,15 @@ var VirtualKeyboard = new function () {
       /*
       *  both shift keys should be blurred
       */
-      var s1 = document.getElementById(idPrefix+'shift_left'),
-          s2 = document.getElementById(idPrefix+'shift_right');
-      s1.className = DOM.CSS(s2)[mtd[e.type]](cssClasses.buttonHover).getClass();
+      __toggleControlKeysState(mtd[e.type], KEY.SHIFT);
     } else if (el.id.indexOf('alt')>-1 || el.id.indexOf('ctrl')>-1) {
       /*
       *  both alt and ctrl keys should be blurred
       */
-      var s1 = document.getElementById(idPrefix+'alt_left')
-         ,s2 = document.getElementById(idPrefix+'alt_right')
-         ,s3 = document.getElementById(idPrefix+'ctrl_left')
-         ,s4 = document.getElementById(idPrefix+'ctrl_right')
-      s1.className = s2.className= s3.className= DOM.CSS(s4)[mtd[e.type]](cssClasses.buttonHover).getClass();
-    } else {
-      if (animate) DOM.CSS(el)[mtd[e.type]](cssClasses.buttonHover);
+      __toggleControlKeysState(mtd[e.type], KEY.CTRL);
+      __toggleControlKeysState(mtd[e.type], KEY.ALT);
+    } else if (animate) {
+        __toggleKeyState(mtd[e.type], null, el.id)
     }
     e.preventDefault();
     e.stopPropagation();
@@ -1167,29 +1093,134 @@ var VirtualKeyboard = new function () {
       return lt;
   }
   /**
+   *  Toggles layout mode (switch alternative key bindings)
+   *
+   *  @scope private
+   */
+  __updateLayout = function () {
+    /*
+    *  now, process to layout toggle
+    */
+    var bi = -1
+       /*
+       *  0 - normal keys
+       *  1 - shift keys
+       *  2 - alt keys (has priority, when it pressed together with shift)
+       */
+       ,sh = 0
+       ,ca = [cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted];
+
+    if ((mode&VK_ALT_CTRL)==VK_ALT_CTRL) {
+        sh = 2;
+    } else if (mode&VK_SHIFT) {
+        sh = 1;
+    }
+    DOM.CSS(nodes.desk).removeClass(ca).addClass(ca[sh]);
+
+    if (animate) {
+        /*
+        *  toggle caps state only when animation is allowed
+        */
+        if (((mode&VK_CAPS)>>3) ^ (mode&VK_SHIFT)) {
+            DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
+        } else {
+            DOM.CSS(nodes.desk).removeClass(cssClasses.capslock);
+        }
+    }
+    for (var i=0, lL=lang.length; i<lL; i++) {
+        if (isString(lang[i])) continue;
+        bi++;
+        var btn = document.getElementById(idPrefix+bi).firstChild.childNodes;
+        /*
+        *  swap symbols and its CSS classes
+        */
+        if (btn[sh].firstChild && btn[sh].firstChild.nodeValue.length) {
+            DOM.CSS(btn[0]).removeClass(ca).addClass(ca[sh]);
+            DOM.CSS(btn[1]).removeClass(ca).addClass([cssClasses.buttonShifted
+                                                     ,cssClasses.buttonNormal
+                                                     ,cssClasses.buttonShifted][sh]);
+            DOM.CSS(btn[2]).removeClass(ca).addClass([cssClasses.buttonAlted
+                                                     ,cssClasses.buttonAlted
+                                                     ,cssClasses.buttonNormal][sh]);
+        }
+    }
+  }
+  /**
    *  Sets specified state on dual keys (like Alt, Ctrl)
    *
    *  @param {String} a1 key suffix to be checked
    *  @param {Number} a2 keyboard mode
    *  @scope private
    */
-  var reSetDualKeys = function (a1,a2) {
-    if (a1 && a2) {
-        /*
-        *  toggle keys, it's needed, really
-        */
-        var s1 = document.getElementById(idPrefix+a1+'_left')
-           ,s2 = document.getElementById(idPrefix+a1+'_right')
-        if (mode&a2) {
-            mode = mode ^ a2;
-            s1.className = DOM.CSS(s2).removeClass(cssClasses.buttonDown).getClass();
-        } else {
-            mode = mode | a2;
-            s1.className = DOM.CSS(s2).addClass(cssClasses.buttonDown).getClass();
-        }
-        return true;
-    }
-    return false;
+  var __updateControlKeys = function (newMode) {
+      /*
+      *  all changed bits will be raised
+      */
+      var changes = mode ^ newMode;
+      if (changes&VK_SHIFT) {
+          __toggleControlKeysState(!!(newMode&VK_SHIFT), KEY.SHIFT);
+      }
+      if (changes&VK_ALT) {
+          __toggleControlKeysState(!!(newMode&VK_ALT), KEY.ALT);
+      }
+      if (changes&VK_CTRL) {
+          __toggleControlKeysState(!!(newMode&VK_CTRL), KEY.CTRL);
+      }
+      if (changes&VK_CAPS) {
+          __toggleKeyState(!!(newMode&VK_CAPS), KEY.CAPS);
+      }
+      mode = newMode;
+  }
+  /**
+   *  Toggles control key state, designed for dual keys only
+   *
+   *  @param {Number, Boolean} state one of raised (0), down (1), hover (2)
+   *  @param {String} prefix key name to be evaluated
+   */
+  var __toggleControlKeysState = function (state, prefix) {
+      var s1 = document.getElementById(idPrefix+prefix+'_left')
+         ,s2 = document.getElementById(idPrefix+prefix+'_right');
+      switch (0+state) {
+          case 0: 
+              s1.className = DOM.CSS(s2).removeClass(cssClasses.buttonDown).getClass();
+              break;
+          case 1:
+              s1.className = DOM.CSS(s2).addClass(cssClasses.buttonDown).getClass();
+              break;
+          case 2:
+              s1.className = DOM.CSS(s2).addClass(cssClasses.buttonHover).getClass();
+              break;
+          case 3:
+              s1.className = DOM.CSS(s2).removeClass(cssClasses.buttonHover).getClass();
+              break;
+      }
+  }
+  /**
+   *  Toggles key state
+   *
+   *  @param {Number, Boolean} state one of raised (0), down (1), hover (2)
+   *  @param {String} suffix optional key suffix
+   *  @param {String} name optional key name
+   */
+  var __toggleKeyState = function (state, suffix, name) {
+      var s = document.getElementById(suffix? idPrefix+suffix
+                                            : name);
+      if (s) {
+          switch (0+state) {
+              case 0: 
+                  DOM.CSS(s).removeClass(cssClasses.buttonDown);
+                  break;
+              case 1:
+                  DOM.CSS(s).addClass(cssClasses.buttonDown);
+                  break;
+              case 2:
+                  DOM.CSS(s).addClass(cssClasses.buttonHover);
+                  break;
+              case 3:
+                  DOM.CSS(s).removeClass(cssClasses.buttonHover);
+                  break;
+          }
+      }
   }
   /**
    *  Char processor
