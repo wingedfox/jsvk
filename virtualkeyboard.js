@@ -680,10 +680,12 @@ var VirtualKeyboard = new function () {
           return;
     }
 
+    if (DOM.CSS(el).hasClass(cssClasses.buttonDown)) {
+        _keyClicker_(el.id);
+    }
     if (animate) {
         DOM.CSS(el).removeClass(cssClasses.buttonDown)
     }
-    _keyClicker_(el.id);
 
     var newMode = mode&(VK_CAPS|e.shiftKey|e.altKey<<1|e.ctrlKey<<2);
     if (mode != newMode) {
@@ -785,7 +787,13 @@ var VirtualKeyboard = new function () {
       __toggleControlKeysState(mtd[e.type], KEY.CTRL);
       __toggleControlKeysState(mtd[e.type], KEY.ALT);
     } else if (animate) {
-        __toggleKeyState(mtd[e.type], null, el.id)
+        __toggleKeyState(mtd[e.type], null, el.id);
+        if ('mouseout' == e.type.toLowerCase()) {
+            /*
+            *  reset 'hover' state
+            */
+            __toggleKeyState(0, null, el.id);
+        }
     }
     e.preventDefault();
     e.stopPropagation();
