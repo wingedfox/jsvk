@@ -891,6 +891,20 @@ var VirtualKeyboard = new function () {
       return nodes.attachedInput;
   }
   /**
+   *  Returns target operating window
+   *
+   *  @return window property for current input field, of current window
+   *  @scope public
+   */
+  self.getTargetWindow = function () {
+      var win = window;
+      if (null != nodes.attachedInput) {
+          var document = nodes.attachedInput.ownerDocument;
+          win = document.defaultView || document.parentWindow || document.window || window;
+      }
+      return win;
+  }
+  /**
    *  Shows keyboard
    *
    *  @param {HTMLElement, String} input element or it to bind keyboard to
@@ -1473,7 +1487,7 @@ VirtualKeyboard.IME = new function () {
     var showAll = false;
     var sg = [];
     var target = null;
-    var targetWindow = window.dialogArguments||window.opener||window.top;
+    var targetWindow = null;
 
     /**
      *  Shows the IME tooltip
@@ -1483,12 +1497,22 @@ VirtualKeyboard.IME = new function () {
      */
     self.show = function (s) {
         /*
+        *  if there's no IME or target window is not the same, as before - create new IME
+        */
+        if (targetWindow != VirtualKeyboard.getTargetWindow()) {
+            if (ime && ime.parentNode) {
+                ime.parentNode.removeChild(ime);
+            }
+            targetWindow = VirtualKeyboard.getTargetWindow();
+            __createImeToolbar();
+            targetWindow.document.body.appendChild(ime);
+        }
+        /*
         *  external property, set in the #switchLayout
         */
         ime.className = self.css
 
         target = VirtualKeyboard.getAttachedInput();
-        DOM.getParent(target,'body').appendChild(ime);
         if (s) self.setSuggestions(s);
         if (target && ime && sg.length>0) {
             EM.addEventListener(target,'blur',self.blurHandler);
@@ -1683,7 +1707,7 @@ VirtualKeyboard.IME = new function () {
     /**
      *  Just the initializer
      */
-    ;(function () {
+    var __createImeToolbar = function () {
         var el = targetWindow.document.createElement('div');
         el.innerHTML = html;
         ime = el.firstChild;
@@ -1704,5 +1728,5 @@ VirtualKeyboard.IME = new function () {
         }
 
         EM.addEventListener(ime,'mousedown',pasteSuggestion);
-    })();
+    }
 }
