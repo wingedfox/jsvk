@@ -822,7 +822,7 @@ var VirtualKeyboard = new function () {
     /*
     *  if null is supplied, don't change the target field
     */
-    if (null == el && !nodes.attachedInput) return null;
+    if (!el) return nodes.attachedInput;
     if (isString(el)) el = document.getElementById(el);
 
     if (el == nodes.attachedInput) return nodes.attachedInput;
@@ -834,27 +834,12 @@ var VirtualKeyboard = new function () {
         self.switchLayout(options.layout) || self.switchLayout(layout[0].toString());
     if (!lang)
         throw new Error ('No layouts available');
+
     /*
-    *  reset input state, defined earlier
+    *  detach everything
     */
-    __toggleInputDir(true);
-    /*
-    *  force IME hide on field switch
-    */
-    self.IME.hide();
-    /*
-    *  remove every VK artifact from the old input
-    */
-    if (nodes.attachedInput) {
-        var oe = nodes.attachedInput
-        if (oe.contentWindow) {
-            oe = oe.contentWindow.document.body.parentNode
-        }
-        EM.removeEventListener(oe,'keydown',_keydownHandler_);
-        EM.removeEventListener(oe,'keypress',_keydownHandler_);
-        EM.removeEventListener(oe,'keyup',_keydownHandler_);
-        EM.removeEventListener(oe,'mousedown',self.IME.blurHandler);
-    }
+    self.detachInput();
+
     if (!el || !el.tagName) {
         nodes.attachedInput = null;
     } else {
@@ -881,6 +866,40 @@ var VirtualKeyboard = new function () {
     }
     return nodes.attachedInput;
   }
+
+  /**
+   *  Detaches input from the virtual keyboard
+   *
+   *  @return detach state
+   *  @scope private
+   */
+  self.detachInput = function () {
+      if (!nodes.attachedInput) return false;
+      /*
+      *  reset input state, defined earlier
+      */
+      __toggleInputDir(true);
+      /*
+      *  force IME hide on field switch
+      */
+      self.IME.hide();
+      /*
+      *  remove every VK artifact from the old input
+      */
+      if (nodes.attachedInput) {
+          var oe = nodes.attachedInput
+          if (oe.contentWindow) {
+              oe = oe.contentWindow.document.body.parentNode
+          }
+          EM.removeEventListener(oe,'keydown',_keydownHandler_);
+          EM.removeEventListener(oe,'keypress',_keydownHandler_);
+          EM.removeEventListener(oe,'keyup',_keydownHandler_);
+          EM.removeEventListener(oe,'mousedown',self.IME.blurHandler);
+      }
+      nodes.attachedInput = null;
+      return true;
+  }
+
   /**
    *  Returns the attached input node
    *
@@ -946,19 +965,8 @@ var VirtualKeyboard = new function () {
   self.close =
   self.hide = function () {
     if (!nodes.keyboard || !self.isOpen()) return false;
-    /*
-    *  force IME hide
-    */
-    if (self.IME.isOpen()) {
-        self.IME.hide();
-        return;
-    }
+    self.detachInput();
     nodes.keyboard.parentNode.removeChild(nodes.keyboard);
-    /*
-    *  reset input direction on the field
-    */
-    __toggleInputDir(true);
-    nodes.attachedInput = null;
     return true;
   }
   /**
@@ -981,7 +989,7 @@ var VirtualKeyboard = new function () {
    *  @scope public
    */
   self.isOpen = function () /* :Boolean */ {
-      return nodes.keyboard.parentNode && nodes.keyboard.parentNode.nodeType == 1;
+      return (!!nodes.keyboard.parentNode) && nodes.keyboard.parentNode.nodeType == 1;
   }
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
@@ -1549,6 +1557,7 @@ VirtualKeyboard.IME = new function () {
         ime.style.left = xy.x+'px';
         var co = DocumentSelection.getSelectionOffset(target);
         ime.style.top = xy.y+co.y+co.h+'px';
+//        window.top.document.getElementById('testa').value += (xy.y+" "+co.y+" "+co.h)+" === "
     }
     /**
      *  Imports suggestions and applies them
@@ -1623,7 +1632,7 @@ VirtualKeyboard.IME = new function () {
          return sg[self.getPage()*10+n]
     }
     self.isOpen = function () {
-         return 'block' == ime.style.display;
+         return ime && 'block' == ime.style.display;
     }
     /**
      *  Gets called on input field blur then closes IME toolbar and removes the selection

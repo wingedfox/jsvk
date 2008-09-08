@@ -77,7 +77,7 @@ PopupVirtualKeyboard = new function() {
     self.close = 
     self.hide = function (target) {
         if (!hWnd || hWnd.closed) return false;
-        if (!hWnd.VirtualKeyboard.isOpen()) hWnd.VirtualKeyboard.hide();
+        if (hWnd.VirtualKeyboard.isOpen()) hWnd.VirtualKeyboard.hide();
         hWnd.close();
         hWnd = null;
     }
@@ -101,7 +101,7 @@ PopupVirtualKeyboard = new function() {
             tgt = document.getElementById(tgt);
         hWnd.VirtualKeyboard.show( tgt
                                   ,hWnd.document.body
-                                  ,hWnd.document.body
+                                  ,hWnd.document.body.parentNode
                                  );
         /*
         *  set class names to add some styling to html, body
