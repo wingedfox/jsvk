@@ -490,7 +490,7 @@ var VirtualKeyboard = new function () {
               *  throw an error when selection is required or multiple chars submitted
               *  it's simpler than write number of nesting if..else statements
               */
-              if (chr[1] || chr[0].length>1 || nodes.attachedInput.contentDocument || '\t' == chr[0]) {
+              if (chr[1] || chr[0].length>1 || chr.charCodeAt(0)>0x7fff || nodes.attachedInput.contentDocument || '\t' == chr[0]) {
                   throw new Error;
               }
               var ck = chr[0].charCodeAt(0);
@@ -523,7 +523,6 @@ var VirtualKeyboard = new function () {
               if (chr[1]) {
                   DocumentSelection.setRange(nodes.attachedInput,-chr[1],0,true);
               }
-              nodes.attachedInput.focus();
           }
       }
       return ret;
