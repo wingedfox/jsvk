@@ -84,7 +84,7 @@ class VirtualKeyboardLayout {
         *  remove SGCap strings
         */
         for ($z=sizeof($this->strings);$z>=0;$z--) {
-            if (-1 == (int)$this->strings[$z][0]) {
+            if (-1 == @(int)$this->strings[$z][0]) {
                 array_splice($this->strings,$z,1);
             }
         }
