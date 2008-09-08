@@ -427,7 +427,7 @@ var VirtualKeyboard = new function () {
           case KEY.ALT   :
           case "alt_left" :
           case "alt_right" :
-              return;
+              return true;
           case 'backspace':
 
               /*
@@ -633,6 +633,10 @@ var VirtualKeyboard = new function () {
         */
         if (newKeyCode && !e.VK_bypass) {
             if (!_keyClicker_(newKeyCode, e)) {
+                e.stopPropagation();
+                /*
+                *  keeps browsers away from running built-in event handlers
+                */
                 e.preventDefault();
             }
             /*
@@ -640,10 +644,12 @@ var VirtualKeyboard = new function () {
             */
             newKeyCode = null;
         }
-        /*
-        *  suppress dead keys from the keyboard driver
-        */
-        if (0==keyCode && !newKeyCode && !e.VK_bypass) {
+        if (!mode^VK_ALT_CTRL && (e.altKey || e.ctrlKey)) {
+            self.IME.hide();
+        }
+        if (0==keyCode && !newKeyCode && !e.VK_bypass  // suppress dead keys from the keyboard driver
+          && (!e.ctrlKey && !e.altKey && !e.shiftKey)  // only when no special keys pressed, unblocking system shortcuts
+           ) {
             e.preventDefault();
         }
     }
