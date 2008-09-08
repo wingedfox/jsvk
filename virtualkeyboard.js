@@ -578,7 +578,11 @@ var VirtualKeyboard = new function () {
               }
               break;
           case 27:
-              VirtualKeyboard.close();
+              if (self.IME.isOpen()) {
+                  self.IME.hide();
+              } else {
+                  VirtualKeyboard.close();
+              }
               return false;
           default:
               if (!e.getRepeat()) {
