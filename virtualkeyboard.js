@@ -429,11 +429,10 @@ var VirtualKeyboard = new function () {
           case "alt_right" :
               return true;
           case 'backspace':
-
               /*
-              *  if IME is open, ask IME processor for the advice
+              *  if layout has char processor and there's any selection, ask it for advice
               */
-              if (self.IME.isOpen()) {
+              if (isFunction(lang.charProcessor) && DocumentSelection.getSelection(nodes.attachedInput).length) {
                   chr = "\x08";
               } else if (evt) {
                   self.IME.hide(true);
