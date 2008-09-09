@@ -1219,7 +1219,7 @@ VirtualKeyboard.addLayout({code:'PT-BR',name:'Portuguese (Brazilian ABNT)',keys:
 VirtualKeyboard.addLayout({code:'PT',name:'Portuguese',keys:'\\1234567890\'«~qwertyuiop+´asdfghjklçºzxcvbnm,.-',shift: {0:'|!"#$%&/()=?»^',24:'*`',36:'ª',44:';:_'},alt: {2:'@£§€',7:'{[]}',16:'€',24:'¨]'},dk:'~^¨´'});
 VirtualKeyboard.addLayout({code:'RO',name:'Romanian',keys:']1234567890+\'âqwertzuiopăîasdfghjklşţyxcvbnm,.-',shift: {0:'[!"#¤%&/()=?*',44:';:_'},alt: {1:'~ˇ^˘°˛`·´˝¨¸',14:'\\|',24:'÷×',27:'đĐ',33:'łŁ$ß',40:'@{}§<>'}});
 VirtualKeyboard.addLayout({code:'RU',name:'Russian_Qwerty',keys:'ё1234567890-=\\йцукенгшщзхъфывапролджэячсмитьбю.',shift: {1:'!"№;%:?*()_+/',46:','},alt: {0:'`',14:'QWERTYUIOP[]ASDFGHJKL;\'ZXCVBNM,.'}});
-VirtualKeyboard.addLayout({code:'RU',name:'Russian ������',keys:'ю1234567890-=эяжертыуиопшщасдфгчйкл;\'зхцвбнм,./',shift: {1:'!ъЪ$%ёЁ*()_+',35:':"',44:'<>?'}});
+VirtualKeyboard.addLayout({code:'RU',name:'Russian ЯЖЕРТЫ',keys:'ю1234567890-=эяжертыуиопшщасдфгчйкл;\'зхцвбнм,./',shift: {1:'!ъЪ$%ёЁ*()_+',35:':"',44:'<>?'}});
 VirtualKeyboard.addLayout({code:'RU',name:'Russian Translit',keys:'ё1234567890-ъэяшертыуиопющасдфгчйкльжзхцвбнм;.=',shift: {1:'№!/":«»?()_',44:'\',%'}});
 VirtualKeyboard.addLayout({code:'RU',name:'Russian (Typewriter)',keys:'|№-/":,._?%!;)йцукенгшщзхъфывапролджэячсмитьбюё',shift: {0:'+123456789=\\('}});
 VirtualKeyboard.addLayout({code:'RU',name:'Russian',keys:'ё1234567890-=\\йцукенгшщзхъфывапролджэячсмитьбю.',shift: {1:'!"№;%:?*()_+/',46:','}});
