@@ -918,20 +918,6 @@ var VirtualKeyboard = new function () {
       return nodes.attachedInput;
   }
   /**
-   *  Returns target operating window
-   *
-   *  @return window property for current input field, of current window
-   *  @scope public
-   */
-  self.getTargetWindow = function () {
-      var win = window;
-      if (null != nodes.attachedInput) {
-          var document = nodes.attachedInput.ownerDocument;
-          win = document.defaultView || document.parentWindow || document.window || window;
-      }
-      return win;
-  }
-  /**
    *  Shows keyboard
    *
    *  @param {HTMLElement, String} input element or it to bind keyboard to
@@ -1512,14 +1498,16 @@ VirtualKeyboard.IME = new function () {
      *  @scope public
      */
     self.show = function (s) {
+        target = VirtualKeyboard.getAttachedInput();
+        var win = DOM.getWindow(target);
         /*
         *  if there's no IME or target window is not the same, as before - create new IME
         */
-        if (targetWindow != VirtualKeyboard.getTargetWindow()) {
+        if (targetWindow != win) {
             if (ime && ime.parentNode) {
                 ime.parentNode.removeChild(ime);
             }
-            targetWindow = VirtualKeyboard.getTargetWindow();
+            targetWindow = win;
             __createImeToolbar();
             targetWindow.document.body.appendChild(ime);
         }
@@ -1528,7 +1516,6 @@ VirtualKeyboard.IME = new function () {
         */
         ime.className = self.css
 
-        target = VirtualKeyboard.getAttachedInput();
         if (s) self.setSuggestions(s);
         if (target && ime && sg.length>0) {
             EM.addEventListener(target,'blur',self.blurHandler);
