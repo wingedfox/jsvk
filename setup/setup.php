@@ -1,4 +1,6 @@
 <?php
+header("Content-Type: text/html; charset=utf-8");
+
 require "vk.inc.php";
 
 define ('LAYOUT_ROOT', dirname(__FILE__)."/in/");
@@ -154,7 +156,7 @@ function getLayoutList () {
      <table id="targetkbd" border="0">
       <thead>
        <tr>
-        <th><input type="checkbox" onclick="var els=this.parentNode.parentNode.parentNode.parentNode.tBodies[0].getElementsByTagName('input'); for(var i in els) els[i].checked=this.checked;"></th>
+        <th><input type="checkbox" onclick="var els=this.parentNode.parentNode.parentNode.parentNode.tBodies[0].getElementsByTagName('input'); for(var i=0, eL=els.length; i<eL; i++) els[i].checked=this.checked;"></th>
         <th>Layout Code</th>
         <th>Layout Name</th>
         <th>Copyright</th>

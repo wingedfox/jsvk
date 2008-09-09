@@ -62,7 +62,7 @@ class VirtualKeyboardLayout {
     }
     function processLayout($str) {
         mb_internal_encoding("UTF-8");
-        $str = mb_convert_encoding($str,"WINDOWS-1251", "UCS-2");
+        $str = mb_convert_encoding($str,"UTF-8", "UCS-2");
         preg_match("/^localename\\t\"(\\w+)-(\\w+)/mi",$str,$m);
         $this->code = $m[2];
         $this->domain = strtoupper($m[1]);
