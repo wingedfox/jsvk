@@ -1,5 +1,3 @@
-/* 	Skin made by Bastiaan Fronik (info [ at ] bastiaanfronik dot com) 
-	based on stylesheet of WingedFox */
 html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         padding: 0;
         margin: 0;
@@ -7,12 +5,12 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 
 #virtualKeyboard {
         border: 1px solid #686888;
-        background: #dedfe0;
-        height: 242px;
+        background: #ECE9D8;
+        height: 170px;
         margin: 0;
-        padding-right: 2px;
+        padding: 0;
         position: relative;
-        width: 606px;
+        width: 428px;
 }
 /*
 *  global overrides
@@ -26,12 +24,8 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 #virtualKeyboard #kbDesk {
         display: inline-block;
-        margin: 0;
-        padding: 4px 2px 0 2px;
-/*IE5.5 will ignore the rule below */
-        margin/**/:/**/ 4px 2px 0 4px;
-        padding/**/:/**/ 0;
-/*--*/
+        margin: 4px 2px 0 4px;
+        padding: 0;
         position: relative;
         font-size: 1px;
         overflow: hidden;
@@ -41,47 +35,51 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 
 #virtualKeyboard #kbDesk div.kbButton {
         float: left;
-        height: 38px;
+        height: 25px;
         overflow: hidden;
-        padding: 0;
-        margin: 1px;
+        padding: 1px 2px 2px 1px;
         position: relative;
-        width: 38px;
+        width: 25px;
         z-index: 2;
 }
 #virtualKeyboard #kbDesk div.kbButton a {
-        background: url(button_set.gif) 0 0 no-repeat;
+        border: 1px outset #eee;
         display: block;
         height: 100%;
         position: relative;
         text-decoration: none;
         width: 100%;
 }
+
 #virtualKeyboard #kbDesk.capsLock div.kbButton span.normal {
         text-transform: uppercase;
 }
 
 #virtualKeyboard #kbDesk div.kbButtonHover a {
-        background-position: 0 -41px;
+        border-color: #000;
 }
 #virtualKeyboard #kbDesk div.kbButtonDown a {
-        background-position: 0 -82px;
+        border-style: inset;
 }
 #virtualKeyboard #kbDesk div.kbButton span {
         display: block;
         font-family: Verdana;
-        font-size: 18px;
+        font-size: 13px;
         font-weight: normal;
         overflow: visible;
         text-align: center;
 }
+
 #virtualKeyboard #kbDesk div.kbButton span.title {
-        display: none;
+        text-transform: capitalize;
+        font-size: 10px !important;
+        line-height: 22px;
 }
+
 #virtualKeyboard #kbDesk div.kbButton span.shifted,
 #virtualKeyboard #kbDesk div.kbButton span.alted {
         color: green;
-        font-size: 9pt;
+        font-size: 6pt;
         height: 100%;
         line-height: 1.1;
         position: absolute;
@@ -105,143 +103,67 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         color: red;
 }
 
-#virtualKeyboard #kbDesk div#kb_benter
-{
-	background-position: -303px 0px;
-	margin-top: -39px;
-	margin-bottom: 1px;
-	position: relative;
-	float: right;
-	height: 78px;
-	width: 85px;
-	z-index: -1;
+#virtualKeyboard #kbDesk div#kb_b13 {
+        float: right;
+        left: -2px;
+        top: 28px;
+        width: 37px;
 }
+
+#virtualKeyboard #kbDesk div#kb_benter {
+        float: right;
+        left: -2px;
+        width: 58px;
+}
+
 #virtualKeyboard #kbDesk div#kb_benter[id] {
         z-index: 0;
 }
-#virtualKeyboard #kbDesk div#kb_benter a {
-        background-position: -303px 0px;
+
+#virtualKeyboard #kbDesk div#kb_bbackspace {
+        width: 53px;
+        float: right;
+        margin-top: -28px;
+        left: -2px
 }
-#virtualKeyboard #kbDesk div#kb_benter.kbButtonHover a {
-        background-position: -303px -81px;
-}
-#virtualKeyboard #kbDesk div#kb_benter.kbButtonDown a {
-        background-position: -303px -162px;
-}
-#virtualKeyboard #kbDesk div#kb_bbackspace a {
-        background-position: -41px -123px;
-}
-#virtualKeyboard #kbDesk div#kb_bbackspace.kbButtonHover a {
-        background-position: -41px -164px;
-}
-#virtualKeyboard #kbDesk div#kb_bbackspace.kbButtonDown a {
-        background-position: -41px -205px;
-}
+
 #virtualKeyboard #kbDesk div#kb_btab {
-        width: 60px;
+        width: 41px;
 }
-#virtualKeyboard #kbDesk div#kb_btab a {
-        background-position: -238px -123px;
-}
-#virtualKeyboard #kbDesk div#kb_btab.kbButtonHover a {
-        background-position: -238px -164px;
-}
-#virtualKeyboard #kbDesk div#kb_btab.kbButtonDown a {
-        background-position: -238px -205px;
-}
+
 #virtualKeyboard #kbDesk div#kb_bcaps {
-        width: 71px;
+        width: 48px;
 }
-#virtualKeyboard #kbDesk div#kb_bcaps a {
-        background-position: -164px -123px;
-}
-#virtualKeyboard #kbDesk div#kb_bcaps.kbButtonHover a {
-        background-position: -164px -164px;
-}
-#virtualKeyboard #kbDesk div#kb_bcaps.kbButtonDown a {
-        background-position: -164px -205px;
-}
+
 #virtualKeyboard #kbDesk div#kb_bshift_left,
 #virtualKeyboard #kbDesk div#kb_bshift_right {
-        width: 78px;
+        width: 52px;
 }
-#virtualKeyboard #kbDesk div#kb_bshift_left a,
-#virtualKeyboard #kbDesk div#kb_bshift_right a {
-        background-position: -82px -123px;
-}
-#virtualKeyboard #kbDesk div#kb_bshift_left.kbButtonHover a,
-#virtualKeyboard #kbDesk div#kb_bshift_right.kbButtonHover a {
-        background-position: -82px -164px;
-}
-#virtualKeyboard #kbDesk div#kb_bshift_left.kbButtonDown a,
-#virtualKeyboard #kbDesk div#kb_bshift_right.kbButtonDown a {
-        background-position: -82px -205px;
-}
+
 #virtualKeyboard #kbDesk div#kb_balt_left,
 #virtualKeyboard #kbDesk div#kb_balt_right {
-        padding: 0 0 0 2px;
-        width: 47px;
+        width: 32px;
 }
+
 #virtualKeyboard #kbDesk div#kb_balt_left {
-        margin-left: 33px;
-        padding-left: 0;
-/*IE5.5 will ignore the rule below */
-        padding-left/**/:/**/ 41px;
-        margin-left/**/:/**/ 0;
-/*--*/
+        left: 53px;
+        margin-right: 53px;
 }
-#virtualKeyboard #kbDesk div#kb_balt_left a,
-#virtualKeyboard #kbDesk div#kb_balt_right a {
-        background-position: -391px 0;
-}
-#virtualKeyboard #kbDesk div#kb_balt_left.kbButtonHover a,
-#virtualKeyboard #kbDesk div#kb_balt_right.kbButtonHover a {
-        background-position: -391px -41px;
-}
-#virtualKeyboard #kbDesk div#kb_balt_left.kbButtonDown a,
-#virtualKeyboard #kbDesk div#kb_balt_right.kbButtonDown a {
-        background-position: -391px -82px;
-}
+
 #virtualKeyboard #kbDesk div#kb_bctrl_left,
 #virtualKeyboard #kbDesk div#kb_bctrl_right {
         float: left;
-        width: 48px;
+        width: 32px;
 }
 #virtualKeyboard #kbDesk div#kb_bctrl_right {
         float: right;
+        left: -2px;
 }
-#virtualKeyboard #kbDesk div#kb_bctrl_left a,
-#virtualKeyboard #kbDesk div#kb_bctrl_right a {
-        background-position: -391px -123px;
-}
-#virtualKeyboard #kbDesk div#kb_bctrl_left.kbButtonHover a,
-#virtualKeyboard #kbDesk div#kb_bctrl_right.kbButtonHover a {
-        background-position: -391px -164px;
-}
-#virtualKeyboard #kbDesk div#kb_bctrl_left.kbButtonDown a,
-#virtualKeyboard #kbDesk div#kb_bctrl_right.kbButtonDown a {
-        background-position: -391px -205px;
-}
-#virtualKeyboard #kbDesk div#kb_bdel a {
-        background-position: 0 -123px;
-}
-#virtualKeyboard #kbDesk div#kb_bdel.kbButtonHover a {
-        background-position: 0 -164px;
-}
-#virtualKeyboard #kbDesk div#kb_bdel.kbButtonDown a {
-        background-position: 0 -205px;
+#virtualKeyboard #kbDesk div#kb_bdel {
+        width: 27px;
 }
 #virtualKeyboard #kbDesk div#kb_bspace {
-        width: 259px;
-}
-#virtualKeyboard #kbDesk div#kb_bspace a {
-        background-position: -41px 0;
-}
-#virtualKeyboard #kbDesk div#kb_bspace.kbButtonHover a {
-        background-position: -41px -41px;
-}
-#virtualKeyboard #kbDesk div#kb_bspace.kbButtonDown a {
-        background-position: -41px -82px;
+        width: 166px;
 }
 
 #virtualKeyboard select#kb_langselector,
@@ -265,18 +187,17 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         padding-left: 20px;
 }
 
-#virtualKeyboard #copyrights
-{
-	bottom: 4px;
-	color: #6f737a;
-	font-size: 9px;
-	left: 4px;
-	line-height: normal;
-	position: absolute;
+#virtualKeyboard #copyrights {
+        bottom: 4px;
+        color: blue;
+        font-size: 9px;
+        left: 2px;
+        line-height: normal;
+        position: absolute;
 }
 #virtualKeyboard #copyrights a {
         font-size: 9px;
-        color: #6f737a;
+        color: blue;
         cursor: default;
         outline: 0;
 }
@@ -287,16 +208,16 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
  *
  */
 #VirtualKeyboardIME {
-   background: #fff;
-   border: 0;
+   background: #ECE9D8;
+   border: 1px outset #eee;
    position: absolute;
+   z-index: 2;
 }
 #VirtualKeyboardIME div {
    font-size: 11px;
 }
 #VirtualKeyboardIME table,
 #VirtualKeyboardIME table td {
-   border: 0;
    border-collapse: collapse;
    margin: 0;
    padding: 0;
@@ -304,30 +225,31 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
    white-space: nowrap;
 }
 #VirtualKeyboardIME table td.IMEControl {
-   border: 1px solid #000;
    padding: 1px;
 }
 
 #VirtualKeyboardIME td.IMEContent {
-   border: 1px solid #333;
    border-top: 0;
    border-bottom: 0;
    margin: 0 12px;
    overflow: auto;
-   padding: 0 3px;
    white-space: nowrap;
 }
 #VirtualKeyboardIME td.IMEContent a {
-   text-decoration: none;
+   border: 1px outset #eee;
    color: #000;
+   display: block;
+   margin: 0 1px 1px 0;
+   padding: 0;
+   text-decoration: none;
 }
 #VirtualKeyboardIME td.IMEContent a:hover {
-   text-decoration: underline;
+   border-style: inset;
 }
 #VirtualKeyboardIME div.left,
 #VirtualKeyboardIME div.right {
-   border-bottom: 10px solid #fff;
-   border-top: 10px solid #fff;
+   border-bottom: 10px solid #ECE9D8;
+   border-top: 10px solid #ECE9D8;
    font-size: 1px;
    overflow: hidden;
 }
@@ -349,8 +271,8 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 #VirtualKeyboardIME td.IMEInfo div.showAll div.arrow,
 #VirtualKeyboardIME td.IMEInfo div.showPage div.arrow {
-   border-left: 10px solid #fff;
-   border-right: 10px solid #fff;
+   border-left: 10px solid #ECE9D8;
+   border-right: 10px solid #ECE9D8;
    top: 2px;
    left: 50%;
    margin-left: -10px;

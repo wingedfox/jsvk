@@ -74,6 +74,9 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         text-align: center;
         top: 2px;
 }
+#virtualKeyboard #kbDesk div.kbButton span.title {
+        display: none;
+}
 #virtualKeyboard #kbDesk div.kbButton span.shifted,
 #virtualKeyboard #kbDesk div.kbButton span.alted {
         display: none;

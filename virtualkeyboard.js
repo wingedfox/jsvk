@@ -1305,15 +1305,17 @@ var VirtualKeyboard = new function () {
     inp.style.position = 'absolute';
     inp.style.left = '-1000px';
 
-    for (var i=0, aL=lang.length, btns = [], zcnt = 0, chr; i<aL; i++) {
+    for (var i=0, aL=lang.length, btns = [], zcnt = 0, chr, title; i<aL; i++) {
       chr = lang[i];
+      title = isArray(chr)?chr[0]:chr.replace(/_.+/,'');
       btns.push("<div id='",idPrefix,(isArray(chr)?zcnt++:chr)
                ,"' class='",cssClasses.buttonUp
                ,"'><a href='#",i,"'"
+               ,"title='",title,"'"
                ,">",(isArray(chr)?(__getCharHtmlForKey(lang,chr[0],cssClasses.buttonNormal,inp)
                                   +__getCharHtmlForKey(lang,chr[1],cssClasses.buttonShifted,inp)
                                   +__getCharHtmlForKey(lang,chr[2],cssClasses.buttonAlted,inp))
-                                 :"<!-- -->")
+                                 :"<span class='title'>"+title+"</span>")
                ,"</a></div>");
     }
     document.body.removeChild(inp);
