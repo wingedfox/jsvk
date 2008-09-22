@@ -1353,7 +1353,7 @@ var VirtualKeyboard = new function () {
           html[i++] = " class=\""+css+"\"";
       }
       html[i++] = " >"+(chr?inp.innerHTML:"")+"</span>";
-    return html.join("");
+      return html.join("");
   }
   /**
    *  Keyboard initializer
@@ -1554,7 +1554,6 @@ VirtualKeyboard.IME = new function () {
         ime.style.left = xy.x+'px';
         var co = DocumentSelection.getSelectionOffset(target);
         ime.style.top = xy.y+co.y+co.h+'px';
-//        window.top.document.getElementById('testa').value += (xy.y+" "+co.y+" "+co.h)+" === "
     }
     /**
      *  Imports suggestions and applies them
