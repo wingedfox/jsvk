@@ -863,6 +863,7 @@ var VirtualKeyboard = new function () {
         /*
         *  for iframe target we track its HTML node
         */
+        nodes.attachedInput = el;
         if (el.contentWindow) {
             el = el.contentWindow.document.body.parentNode;
         }
@@ -870,7 +871,6 @@ var VirtualKeyboard = new function () {
         EM.addEventListener(el,'keyup',_keydownHandler_);
         EM.addEventListener(el,'keypress',_keydownHandler_);
         EM.addEventListener(el,'mousedown',self.IME.blurHandler);
-        nodes.attachedInput = el;
     }
     return nodes.attachedInput;
   }
