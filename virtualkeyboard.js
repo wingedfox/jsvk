@@ -784,16 +784,18 @@ var VirtualKeyboard = new function () {
     *  should be applied for every button, needed to save 'pressed' state on mouseover/out
     */
     if (el.id.indexOf('shift')>-1) {
-      /*
-      *  both shift keys should be blurred
-      */
-      __toggleControlKeysState(mtd[e.type], KEY.SHIFT);
+        /*
+        *  both shift keys should be blurred
+        */
+        __toggleControlKeysState(mtd[e.type], KEY.SHIFT);
     } else if (el.id.indexOf('alt')>-1 || el.id.indexOf('ctrl')>-1) {
-      /*
-      *  both alt and ctrl keys should be blurred
-      */
-      __toggleControlKeysState(mtd[e.type], KEY.CTRL);
-      __toggleControlKeysState(mtd[e.type], KEY.ALT);
+        /*
+        *  both alt and ctrl keys should be blurred
+        */
+        __toggleControlKeysState(mtd[e.type], KEY.CTRL);
+        __toggleControlKeysState(mtd[e.type], KEY.ALT);
+    } else if (el.id.indexOf('caps')>-1) {
+        __toggleKeyState(mtd[e.type], null, el.id);
     } else if (animate) {
         __toggleKeyState(mtd[e.type], null, el.id);
         if ('mouseout' == e.type.toLowerCase()) {
