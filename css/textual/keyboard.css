@@ -6,7 +6,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard {
         border: 1px solid #686888;
         background: #ECE9D8;
-        height: 170px;
+        height: 173px;
         margin: 0;
         padding: 0;
         position: relative;
@@ -43,6 +43,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         z-index: 2;
 }
 #virtualKeyboard #kbDesk div.kbButton a {
+        background: #cfccbe;
         border: 1px outset #eee;
         display: block;
         height: 100%;
@@ -56,6 +57,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 
 #virtualKeyboard #kbDesk div.kbButtonHover a {
+        background: #f0eddd;
         border-color: #000;
 }
 #virtualKeyboard #kbDesk div.kbButtonDown a {
@@ -190,6 +192,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard #copyrights {
         bottom: 4px;
         color: blue;
+        font-family: tahoma, verdana, arial;
         font-size: 9px;
         left: 2px;
         line-height: normal;
@@ -236,6 +239,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
    white-space: nowrap;
 }
 #VirtualKeyboardIME td.IMEContent a {
+   background: #cfccbe;
    border: 1px outset #eee;
    color: #000;
    display: block;
@@ -244,6 +248,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
    text-decoration: none;
 }
 #VirtualKeyboardIME td.IMEContent a:hover {
+   background: #f0eddd;
    border-style: inset;
 }
 #VirtualKeyboardIME div.left,

@@ -1,5 +1,5 @@
-/* 	Skin made by Bastiaan Fronik (info [ at ] bastiaanfronik dot com) 
-	based on stylesheet of WingedFox */
+/*  Skin made by Bastiaan Fronik (info [ at ] bastiaanfronik dot com) 
+    based on stylesheet of WingedFox */
 html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         padding: 0;
         margin: 0;
@@ -105,16 +105,15 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         color: red;
 }
 
-#virtualKeyboard #kbDesk div#kb_benter
-{
-	background-position: -303px 0px;
-	margin-top: -39px;
-	margin-bottom: 1px;
-	position: relative;
-	float: right;
-	height: 78px;
-	width: 85px;
-	z-index: -1;
+#virtualKeyboard #kbDesk div#kb_benter {
+        background-position: -303px 0px;
+        margin-top: -39px;
+        margin-bottom: 1px;
+        position: relative;
+        float: right;
+        height: 78px;
+        width: 85px;
+        z-index: -1;
 }
 #virtualKeyboard #kbDesk div#kb_benter[id] {
         z-index: 0;
@@ -265,14 +264,14 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         padding-left: 20px;
 }
 
-#virtualKeyboard #copyrights
-{
-	bottom: 4px;
-	color: #6f737a;
-	font-size: 9px;
-	left: 4px;
-	line-height: normal;
-	position: absolute;
+#virtualKeyboard #copyrights {
+        bottom: 4px;
+        color: #6f737a;
+        font-family: tahoma, verdana, arial;
+        font-size: 9px;
+        left: 4px;
+        line-height: normal;
+        position: absolute;
 }
 #virtualKeyboard #copyrights a {
         font-size: 9px;

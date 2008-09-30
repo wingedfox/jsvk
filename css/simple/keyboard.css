@@ -263,6 +263,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard #copyrights {
         bottom: 4px;
         color: blue;
+        font-family: tahoma, verdana, arial;
         font-size: 9px;
         left: 2px;
         line-height: normal;

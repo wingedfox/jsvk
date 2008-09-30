@@ -6,7 +6,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard {
         border: 1px solid #686888;
         background: #f0ecff;
-        height: 120px;
+        height: 136px;
         margin: 0;
         padding: 0;
         position: relative;
@@ -222,13 +222,14 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard select#kb_langselector,
 #virtualKeyboard select#kb_mappingselector {
         border: 1px solid black;
-        bottom: 2px;
+        bottom: 21px;
         position: absolute;
         right: 2px;
-        width: 75px;
+        width: 125px;
 }
 #virtualKeyboard select#kb_mappingselector {
-        right: 80px;
+        right: 2px;
+        bottom: 2px;
 }
 #virtualKeyboard select,
 #virtualKeyboard select option {
@@ -243,6 +244,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard #copyrights {
         bottom: 2px;
         color: #77a;
+        font-family: tahoma, verdana, arial;
         font-size: 9px;
         left: 4px;
         line-height: normal;
