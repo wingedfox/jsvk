@@ -1667,24 +1667,20 @@ VirtualKeyboard.IME = new function () {
      */
     var showPage = function () {
         var s = ['<table>'];
-        if (showAll) {
-            for (var z=0,pL=Math.ceil(sg.length/10); z<pL; z++ ) {
+        for (var z=0,pL=Math.ceil(sg.length/10); z<pL; z++ ) {
+            if (showAll || z == page) {
                 s.push('<tr>');
                 for (var i=0,p=z*10; i<10 && !isUndefined(sg[p+i]); i++) {
                     s.push("<td><a href=''>")
-                    if (0==z) {
+                    if (z==page) {
                         s.push("<b>&nbsp;"+((i+1)%10)+": </b>");
+                    } else {
+                        s.push("<b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>");
                     }
                     s.push(sg[p+i]+"</a></td>");
                 }
                 s.push('</tr>');
             }
-        } else {
-            s.push('<tr>');
-            for (var i=0,p=page*10; i<10 && !isUndefined(sg[p+i]); i++) {
-                s.push("<td><a href=''><b>&nbsp;"+((i+1)%10)+": </b>"+sg[p+i]+"</a></td>");
-            }
-            s.push('</tr>');
         }
         s.push('</table>');
         ime.firstChild.rows[0].cells[1].innerHTML = s.join("");
