@@ -1312,7 +1312,7 @@ var VirtualKeyboard = new function () {
       title = isArray(chr)?chr[0]:chr.replace(/_.+/,'');
       btns.push("<div id='",idPrefix,(isArray(chr)?zcnt++:chr)
                ,"' class='",cssClasses.buttonUp
-               ,"'><a href='#",i,"'"
+               ,"'><a "
                ,"title='",title,"'"
                ,">",(isArray(chr)?(__getCharHtmlForKey(lang,chr[0],cssClasses.buttonNormal,inp)
                                   +__getCharHtmlForKey(lang,chr[1],cssClasses.buttonShifted,inp)
