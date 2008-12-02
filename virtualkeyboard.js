@@ -688,7 +688,7 @@ var VirtualKeyboard = new function () {
           return;
     }
 
-    if (DOM.CSS(el).hasClass(cssClasses.buttonDown)) {
+    if (DOM.CSS(el).hasClass(cssClasses.buttonDown) || !animate) {
         _keyClicker_(el.id);
     }
     if (animate) {
