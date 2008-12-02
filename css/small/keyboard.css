@@ -79,7 +79,10 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 #virtualKeyboard #kbDesk div.kbButton span.shifted,
 #virtualKeyboard #kbDesk div.kbButton span.alted {
-        display: none;
+        position: absolute;
+        right: -5px;
+        top: 0;
+        visibility: hidden;
 }
 #virtualKeyboard #kbDesk span.deadKey {
         color: red;
