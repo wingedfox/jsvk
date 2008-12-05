@@ -10,7 +10,10 @@ VirtualKeyboard.addLayout({code:'BE-BY',name:'Belarusian',keys:'ё1234567890-=\\
 VirtualKeyboard.addLayout({code:'FR-BE',name:'Belgian (Comma)',keys:'²&é"\'(§è!çà)-µazertyuiop^$qsdfghjklmùwxcvbn,;:=',shift: {0:'³123456789°_£',24:'¨*',36:'%',43:'?./+'},alt: {1:'|@#{[^',9:'{}',13:'`',16:'€',24:'[]',36:'´',46:'~'},dk:'`^´~'});
 VirtualKeyboard.addLayout({code:'FR-BE',name:'Belgian French',keys:'²&é"\'(§è!çà)-µazertyuiop^$qsdfghjklmùwxcvbn,;:=',shift: {0:'³123456789°_£',24:'¨*',36:'%',43:'?./+'},alt: {1:'|@#{[^',9:'{}',13:'`',16:'€',24:'[]',36:'´',46:'~'},dk:'`^´~'});
 VirtualKeyboard.addLayout({code:'NL-BE',name:'Belgian (Period)',keys:'²&é"\'(§è!çà)-µazertyuiop^$qsdfghjklmùwxcvbn,;:=',shift: {0:'³123456789°_£',24:'¨*',36:'%',43:'?./+'},alt: {1:'|@#{[^',9:'{}',13:'`',16:'€',24:'[]',36:'´',46:'~'},dk:'`^´~'});
+VirtualKeyboard.addLayout({code:'BN-IN',name:'Baishakhi Inscript',keys:'\u200D১২৩৪৫৬৭৮৯০-ৃ\\ৌ,াীূবহগদজড়োে্িুপরকতচটৎংমনবলস,.য়',shift: {0:'\u200C',9:'()ঃঋ|ঔঐআঈঊভঙঘধঝঢঞওএঅইউফঢ়খথছঠ',38:'ঁণ',43:'শষ।য'}});
 VirtualKeyboard.addLayout({code:'BN-IN',name:'Bengali (Inscript)',keys:' ১২৩৪৫৬৭৮৯০-ৃ ৌৈাীূবহগদজড়োে্িুপরকতচট ংমনবলস,.য়',shift: {1:'!@',4:'র্জ্ঞত্রক্ষশ্র()ঃঋ',14:'ঔঐআঈঊভঙঘধঝঢঞওএঅইউফ',33:'খথছঠ',38:'ঁণ',43:'শষ',46:'য'}});
+VirtualKeyboard.addLayout({code:'BN-IN',name:'Probhat Phonetic',keys:'\u200D১২৩৪৫৬৭৮৯০-=\u200Cদূীরটএুিওপেোাসডতগহজকল;\'য়শচআবনম,।্',shift: {0:'~!@#৳%^ঞৎ()_+॥ধঊঈড়ঠঐউইঔফৈৌঅষঢথঘঃঝখং:"যঢ়ছঋভণঙৃঁ?'}});
+VirtualKeyboard.addLayout({code:'BN-BD',name:'Unijoy',keys:'\u200C১২৩৪৫৬৭৮৯০-=ৎঙযডপটচজহগড়ৃুিা্বকতদ;\'্োেরনসম,./',shift: {0:'\u200D!@#৳%÷ঁ×()_+ঃংয়ঢফঠছঝঞঘঢ়',26:'্রূীঅ।ভখথধ:"',38:'ৌৈলণষশ<>?'}});
 VirtualKeyboard.addLayout({code:'BN-IN',name:'Bengali',keys:' 1234567890-ৃ ৌৈাীূবহগদজড়োে্িুপরকতচট ংমনবলস,.য',shift: {3:'্রর্জ্রত্ষক্রশ্র()ঃঋ',14:'ঔঐআঈঊভঙঘধঝঢঞওএঅইউফ',33:'খথছঠ',38:'ঁণ',43:'শষ{য়'},alt: {1:'১২৩৪৫৬৭৮৯০',12:'ৢ',14:'ৗ',17:'ৣ',24:'ড়',26:'৴৶৸ৢ',32:'ৰ',38:'৺'}});
 VirtualKeyboard.addLayout({code:'BLA',name:'Blackfoot Phonetic',keys:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,᙮/',shift: {0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'},cbk:new function () {
     var reNotBLA = /[^aehikmnopstwy]/
