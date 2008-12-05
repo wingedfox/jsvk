@@ -258,7 +258,29 @@ var VirtualKeyboard = new function () {
    *  @type Object
    *  @scope private
    */
-  layout.hash = {}
+  layout.hash = {};
+  /**
+   *  Available layout codes
+   *
+   *  @type Array
+   *  @scope private
+   */
+  layout.codes = {};
+  /**
+   *  Filter on the layout codes
+   *
+   *  @type Array
+   *  @scope private
+   */
+  layout.codeFilter = null;
+  /**
+   *  Generated layout options
+   *
+   *  @type Array
+   *  @scope private
+   */
+  layout.options = null;
+
   /**
    *  Shortcuts to the nodes
    *
@@ -318,17 +340,34 @@ var VirtualKeyboard = new function () {
       l.keys = alpha;
       l.domain = code[0];
 
-      name = l.code+" "+name
-      if (!layout.hash.hasOwnProperty(name)) {
-          layout.hash[name] = layout.length;
-          l.toString = function(){return this.code+" "+this.name};
-          layout.push(l);
-      }
+      /*
+      *  don't touch already existing layout
+      */
+      if (layout.hash.hasOwnProperty(l.code+" "+l.name))
+          return;
+
+      /*
+      *  update list of the layout codes
+      */
+      if (!layout.codes.hasOwnProperty(l.code))
+          layout.codes[l.code] = l.code;
+
+      /*
+      *  nice print of the layout
+      */
+      l.toString = function(){return this.code+" "+this.name};
+
+      layout.push(l);
       /*
       *  call load handler for the current layout
       */
       if (l.cbk && isFunction(l.cbk.load))
           l.cbk.load.call(this);
+
+      /*
+      *  reset hash, to be recalculated on options draw
+      */
+      layout.options = null;
   }
   /**
    *  Set current layout
@@ -338,20 +377,22 @@ var VirtualKeyboard = new function () {
    *  @scope public
    */
   self.switchLayout = function (code) {
-    if (!layout.hash.hasOwnProperty(code)) return false;
+    /*
+    *  trying to regenerate options list
+    */
+    __buildOptionsList();
+
+    if (!layout.options.hasOwnProperty(code)) return false;
 
     /*
     *  hide IME on layout switch
     */
     self.IME.hide();
-    /*
-    *  if number of the option != number of layouts, regenerate list
-    */
-    if (layout.length != nodes.langbox.options.length) __buildOptionsList();
+
     /*
     *  touch the dropdown box
     */
-    nodes.langbox.options[layout.hash[code]].selected = true;
+    nodes.langbox.options[layout.options[code]].selected = true;
 
     lang = layout[layout.hash[code]];
     if (!isArray(lang)) lang = layout[layout.hash[code]] = __prepareLayout(lang);
@@ -404,6 +445,53 @@ var VirtualKeyboard = new function () {
           lts[lts.length] = [layout[i].code,layout[i].name];
       }
       return lts.sort();
+  }
+  /**
+   *  Sets the layouts groups, available for operations
+   *  Accepts a serie of strings, supposed to be layout group names
+   *
+   *  @scope public
+   */
+  self.setVisibleLayoutCodes = function () {
+      var codes = isArray(arguments[0])?arguments[0]:arguments
+         ,filter = null
+         ,code
+
+      for (var i=0, cL=codes.length; i<cL; i++) {
+          code = codes[i].toUpperCase();
+          if (!layout.codes.hasOwnProperty(code))
+              continue;
+          if (!filter)
+              filter = {}
+          filter[code] = code;
+      }
+      layout.codeFilter = filter;
+      
+      /*
+      *  reset hash, to be recalculated on options draw
+      */
+      layout.options = null;
+
+      if (!self.switchLayout(nodes.langbox.value)) {
+          /*
+          *  if first try fails, make a second try... on the regenerated list
+          */
+          self.switchLayout(nodes.langbox.value);
+      }
+  }
+  /**
+   *  Returns available layout codes
+   *
+   *  @return {Array} codes
+   */
+  self.getLayoutCodes = function () {
+      var codes = [];
+      for (var i in layout.codes) {
+          if (!layout.codes.hasOwnProperty(i))
+              continue;
+          codes.push(i);
+      }
+      return codes.heapSort();
   }
   //---------------------------------------------------------------------------
   // GLOBAL EVENT HANDLERS
@@ -840,10 +928,12 @@ var VirtualKeyboard = new function () {
     /*
     *  perform initialization...
     */
-    if (!lang)
-        self.switchLayout(options.layout) || self.switchLayout(layout[0].toString());
-    if (!lang)
-        throw new Error ('No layouts available');
+    if (!self.switchLayout(options.layout) && !self.switchLayout(nodes.langbox.value)) {
+         /*
+         *  if both tries fail, go away
+         */
+         throw new Error ('No layouts available');
+    }
 
     /*
     *  detach everything
@@ -1006,25 +1096,35 @@ var VirtualKeyboard = new function () {
               nodes.attachedInput.dir = mode;
       }
   }
+
   /**
    *  Builds options for the layout selection box
    *
    *  @scope private
    */
   var __buildOptionsList = function () {
-      var s = layout.sort()
+      if (null != layout.options)
+          return;
+
+      var s = layout.heapSort()
          ,l,o,n
          ,cc = {};
-      layout.hash = {};
+      layout.options = {};
+
       nodes.langbox.innerHTML = "";
-      for (var i=0,sL=s.length;i<sL;i++) {
+      for (var i=0,sL=s.length,z=0;i<sL;i++) {
           l = layout[i];
+          n = l.code+" "+l.name;
+          layout.hash[n] = i;
+
+          if (layout.codeFilter && !layout.codeFilter.hasOwnProperty(l.code))
+              continue;
+
           if (cc.label!=l.code) {
               cc = document.createElement('optgroup');
               cc.label = l.code;
               nodes.langbox.appendChild(cc);
           }
-          n = l.code+" "+l.name;
           o = document.createElement('option');
           o.value = n;
           o.appendChild(document.createTextNode(l.name));
@@ -1033,7 +1133,7 @@ var VirtualKeyboard = new function () {
           /*
           *  record option position
           */
-          layout.hash[n] = i;
+          layout.options[n] = z++;
       }
   }
   /**
@@ -1072,6 +1172,7 @@ var VirtualKeyboard = new function () {
 
       lt.name = l.name;
       lt.code = l.code;
+      lt.toString = l.toString;
 
       for (var i=0, aL = alpha.length; i<aL; i++) {
          if (shift.hasOwnProperty(i)) {
