@@ -35,6 +35,19 @@
           white-space: nowrap;
       }
 
+      #skins a {
+          position: relative;
+      }
+      #skins a img {
+          border: 0;
+          display: none;
+          left: 0;
+          position: absolute;
+          top:100%;
+      }
+      #skins a:hover img {
+          display: block;
+      }
 
   </style>
  </head>
@@ -48,7 +61,7 @@ Demos: [<a>Plain text</a>] |
   <h1 align="center">VirtualKeyboard demo page</h1>
   <table>
    <tr>
-    <td rowspan="2" style="width: 40%">
+    <td rowspan="3" style="width: 40%">
      <form action="no.cgi" method="get">
       <div>
        <table>
@@ -88,7 +101,14 @@ Demos: [<a>Plain text</a>] |
    <tr>
     <td>
      <strong>Layouts filter:</strong><br />
-     <div id="lfilter" multiple="true" size="10" onclick="setFilter()">
+     <div id="lfilter" onclick="setFilter()">
+     </div>
+    </td>
+   </tr>
+   <tr>
+    <td>
+     <strong>Skins</strong><br />
+     <div id="skins"></div>
      </div>
     </td>
    </tr>
@@ -142,9 +162,22 @@ Demos: [<a>Plain text</a>] |
              for (var i=0,lL=lt.length; i<lL; i++) {
                  var cl = lt[i];
                  cl = cl[0]+" "+cl[1];
-                 lt[i] = "<a href='"+dl+"?vk_layout="+cl+"' onclick='VirtualKeyboard.switchLayout(this.title);return false;' title='"+cl+"' alt='"+cl+"' >"+cl+"</a>&nbsp;| ";
+                 lt[i] = "<a href='"+dl+"?vk_layout="+cl+"' onclick='VirtualKeyboard.switchLayout(this.title);return false;' title='"+cl+"' alt='"+cl+"' >"+cl+"</a>";
              }
-             el.innerHTML += lt.join("");
+             el.innerHTML += lt.join("&nbsp;| ");
+
+             /*
+             *  build the list of skins
+             */
+             var skins = ['winxp','simple','small','soberTouch','textual'].sort()
+                ,html = []
+                ,el = document.getElementById('skins')
+             for (var i=0, sL=skins.length; i<sL; i++) {
+                 var cs = skins[i]
+                 html[i] = "<a href='"+dl+"?vk_skin="+cs+"' title='"+cs+"' alt='"+cs+"' >"+cs+
+                            "<img src='"+dl.replace(/\/[^\/]+.html/i,"")+"/css/"+cs+"/thumbnail.png' title='"+cs+"' alt='"+cs+"' /></a>";
+             }
+             el.innerHTML = html.join("&nbsp;| ");
          });
 
      </script>
