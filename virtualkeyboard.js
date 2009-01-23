@@ -430,6 +430,10 @@ var VirtualKeyboard = new function () {
     *  toggle RTL/LTR state
     */
     __toggleInputDir();
+    /*
+    *  save layout name
+    */
+    DocumentCookie.set('vk_layout', code)
     return true;
   }
 
@@ -904,6 +908,7 @@ var VirtualKeyboard = new function () {
    *  @scope private
    */
   var switchMapping = function (e) {
+      DocumentCookie.set('vk_mapping', e.target.value);
       keymap = keymaps[e.target.value];
   }
   /**********************************************************
@@ -1503,8 +1508,13 @@ var VirtualKeyboard = new function () {
       EM.addEventListener(el,'change', function(e){self.switchLayout(this.value)});
       nodes.langbox = el;
 
-      var el = el.nextSibling;
-      var mapGroup = "";
+      var el = el.nextSibling
+         ,mapGroup = "";
+
+      keymap = DocumentCookie.get('vk_mapping');
+      if (!keymaps.hasOwnProperty(keymap))
+          keymap = keymaps['QWERTY Standard'];
+
       for (var i in keymaps) {
           var map = keymaps[i].split("").map(function(c){return c.charCodeAt(0)});
           /*
@@ -1536,12 +1546,13 @@ var VirtualKeyboard = new function () {
           el.lastChild.appendChild(map);
           map.value = i;
           map.innerHTML = tk[1];
+          map.selected = (i == keymap);
       }
-      keymap = keymaps['QWERTY Standard'];
-
+      keymap = keymaps[keymap];
       EM.addEventListener(el,'change', switchMapping);
+
       /*
-      *  insert some copyright information
+      *  attach some event handlers
       */
       EM.addEventListener(nodes.desk,'mousedown', _btnMousedown_);
       EM.addEventListener(nodes.desk,'mouseup', _btnClick_);
@@ -1562,9 +1573,7 @@ var VirtualKeyboard = new function () {
       *  check url params for the default layout name
       */
       var opts = getScriptQuery('virtualkeyboard.js');
-      if (opts.layout) {
-          options.layout = opts.layout;
-      }
+      options.layout = DocumentCookie.get('vk_layout') || opts.vk_layout || null;
   })();
 }
 /**

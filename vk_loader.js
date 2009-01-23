@@ -39,6 +39,7 @@ VirtualKeyboard = new function () {
                ,'extensions/ext/array.js'
                ,'extensions/eventmanager.js'
                ,'extensions/documentselection.js'
+               ,'extensions/documentcookie.js'
 /*
 * not used by default
 * 
@@ -69,7 +70,7 @@ VirtualKeyboard = new function () {
 
     for (var i=0,dL=dpd.length;i<dL;i++)
         dpd[i] = p+dpd[i];
-    dpd[i++] = p+'virtualkeyboard.js?layout='+q.layout;
+    dpd[i++] = p+'virtualkeyboard.js?vk_layout='+escape(q.layout)+'&vk_skin='+escape(q.skin);
     dpd[i] = p+'layouts/layouts.js';
     if (window.ScriptQueue) {
         ScriptQueue.queue(dpd);
