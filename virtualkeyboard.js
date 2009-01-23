@@ -1152,7 +1152,7 @@ var VirtualKeyboard = new function () {
       if (isString(s))
           return s.match(/\x01.+?\x02|./g).map(function(a){return a.replace(/[\x01-\x03]/g,"")});
       else
-          return s.map(function(a){return isArray(a)?a.map(String.fromCharCode).join(""):String.fromCharCode(a)});
+          return s.map(function(a){return isArray(a)?a.map(function(s){String.fromCharCode(s)}).join(""):String.fromCharCode(a)});
   }
   /**
    *  Prepares layout for typing
