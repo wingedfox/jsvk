@@ -3,8 +3,7 @@
  * $HeadURL$
  *
  * Virtual Keyboard.
- * (C) 2006 Vladislav SHCHapov, phprus@gmail.com
- * (C) 2006-2007 Ilya Lebedev <ilya@lebedev.net>
+ * (c) 2006-2009 Ilya Lebedev <ilya@lebedev.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -12,19 +11,20 @@
  * version 2.1 of the License, or (at your option) any later version.
  * See http://www.gnu.org/copyleft/lesser.html
  *
+ * LGPL licence is applicable when you keep copyrights visible on the keyboard UI.
+ *
  * Do not remove this comment if you want to use script!
  *
- * @author Vladislav SHCHapov <phprus@gmail.com>
  * @author Ilya Lebedev <ilya@lebedev.net>
  * @version $Rev$
  * @lastchange $Author$ $Date$
  */
-/*
-*  The Virtual Keyboard
-*
-*  @class VirtualKeyboard
-*  @constructor
-*/
+/**
+ *  The Virtual Keyboard
+ *
+ *  @class VirtualKeyboard
+ *  @constructor
+ */
 var VirtualKeyboard = new function () {
   var self = this;
   self.$VERSION$ = " $HeadURL$ ".match(/\/[^\.]*[\.\/]([^\/]+)\/[\w\.\s$]+$/)[1]+"."+(" $Rev$ ".replace(/\D/g,""));
