@@ -102,7 +102,7 @@ var TinyMCE_JsvkPlugin = {
                 if (user_interface) {
                     var el
                        ,vk = window[this._vk_mode+'VirtualKeyboard'];
-                    if (this._curId === editor_id) {
+                    if (this._curId === editor_id && vk.isOpen()) {
                         vk.close();
                         this._curId = null;
                     } else {

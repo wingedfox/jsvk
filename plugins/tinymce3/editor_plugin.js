@@ -80,7 +80,7 @@ tinymce.create('tinymce.plugins.VirtualKeyboard', new function () {
     var toggleKeyboard = function (ed) {
         var el
            ,vk = window[_vk_mode+'VirtualKeyboard'];
-        if (this._curId === ed.editorId) {
+        if (this._curId === ed.editorId && vk.isOpen()) {
             vk.close();
             this._curId = null;
         } else {
