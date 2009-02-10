@@ -470,7 +470,7 @@ var VirtualKeyboard = new function () {
           filter[code] = code;
       }
       layout.codeFilter = filter;
-      
+
       /*
       *  reset hash, to be recalculated on options draw
       */
@@ -1097,7 +1097,7 @@ var VirtualKeyboard = new function () {
                                     :'ltr');
           if (nodes.attachedInput.contentWindow)
               nodes.attachedInput.contentWindow.document.body.dir = mode;
-          else 
+          else
               nodes.attachedInput.dir = mode;
       }
   }
@@ -1313,7 +1313,7 @@ var VirtualKeyboard = new function () {
       var s1 = document.getElementById(idPrefix+prefix+'_left')
          ,s2 = document.getElementById(idPrefix+prefix+'_right');
       switch (0+state) {
-          case 0: 
+          case 0:
               s1.className = DOM.CSS(s2).removeClass(cssClasses.buttonDown).getClass();
               break;
           case 1:
@@ -1339,7 +1339,7 @@ var VirtualKeyboard = new function () {
                                             : name);
       if (s) {
           switch (0+state) {
-              case 0: 
+              case 0:
                   DOM.CSS(s).removeClass(cssClasses.buttonDown);
                   break;
               case 1:
@@ -1500,7 +1500,7 @@ var VirtualKeyboard = new function () {
       nodes.keyboard.innerHTML = "<div id=\"kbDesk\"><!-- --></div>"
                                 +"<select id=\"kb_langselector\"></select>"
                                 +"<select id=\"kb_mappingselector\"></select>"
-                                +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank">VirtualKeyboard '+self.$VERSION$+'</a><br />&copy; 2006-2008 <a href="http://debugger.ru" target="_blank">Debugger.ru</a></div>';
+                                +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank" title="&copy;2006-2009 Debugger.ru">VirtualKeyboard '+self.$VERSION$+'</a></div>';
 
       nodes.desk = nodes.keyboard.firstChild;
 
@@ -1586,7 +1586,7 @@ VirtualKeyboard.Langs = {};
 /**
  *  Simple IME thing to show input tips, supplied by the callback
  *
- *  Usage: 
+ *  Usage:
  *   - call VirtualKeyboard.IME.show(suggestionlist); to show the suggestions
  *   - call VirtualKeyboard.IME.show(keep_selection); to hide IME toolbar and keep selectio if needed
  *
@@ -1651,7 +1651,7 @@ VirtualKeyboard.IME = new function () {
         if (ime && 'none' != ime.style.display) {
             ime.style.display = "none";
             EM.removeEventListener(target,'blur',self.blurHandler);
-            if (target && DocumentSelection.getSelection(target) && !keep) 
+            if (target && DocumentSelection.getSelection(target) && !keep)
                 DocumentSelection.deleteSelection(target);
             target = null;
             sg=[];
@@ -1745,7 +1745,7 @@ VirtualKeyboard.IME = new function () {
     }
     /**
      *  Gets called on input field blur then closes IME toolbar and removes the selection
-     *  
+     *
      */
     self.blurHandler = function (e) {
         self.hide();
