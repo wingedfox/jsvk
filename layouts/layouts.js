@@ -10,7 +10,7 @@ VirtualKeyboard.addLayout({code:'BE-BY',name:'Belarusian',keys:'ё1234567890-=\\
 VirtualKeyboard.addLayout({code:'FR-BE',name:'Belgian (Comma)',keys:'²&é"\'(§è!çà)-µazertyuiop^$qsdfghjklmùwxcvbn,;:=',shift: {0:'³123456789°_£',24:'¨*',36:'%',43:'?./+'},alt: {1:'|@#{[^',9:'{}',13:'`',16:'€',24:'[]',36:'´',46:'~'},dk:'`^´~'});
 VirtualKeyboard.addLayout({code:'FR-BE',name:'Belgian French',keys:'²&é"\'(§è!çà)-µazertyuiop^$qsdfghjklmùwxcvbn,;:=',shift: {0:'³123456789°_£',24:'¨*',36:'%',43:'?./+'},alt: {1:'|@#{[^',9:'{}',13:'`',16:'€',24:'[]',36:'´',46:'~'},dk:'`^´~'});
 VirtualKeyboard.addLayout({code:'NL-BE',name:'Belgian (Period)',keys:'²&é"\'(§è!çà)-µazertyuiop^$qsdfghjklmùwxcvbn,;:=',shift: {0:'³123456789°_£',24:'¨*',36:'%',43:'?./+'},alt: {1:'|@#{[^',9:'{}',13:'`',16:'€',24:'[]',36:'´',46:'~'},dk:'`^´~'});
-VirtualKeyboard.addLayout({code:'BN-IN',name:'Baishakhi Inscript',keys:'\u200D১২৩৪৫৬৭৮৯০-ৃ\\ৌ,াীূবহগদজড়োে্িুপরকতচটৎংমনবলস,.য়',shift: {0:'\u200C',9:'()ঃঋ|ঔঐআঈঊভঙঘধঝঢঞওএঅইউফঢ়খথছঠ',38:'ঁণ',43:'শষ।য'}});
+VirtualKeyboard.addLayout({code:'BN-IN',name:'BN Inscript Improved',keys:'\u200D১২৩৪৫৬৭৮৯০-ৃ\\ৌৈাীূবহগদজড়োে্িুপরকতচটৎংমনবলস,.য়',shift: {0:'\u200C',9:'()ঃঋ|ঔঐআঈঊভঙঘধঝঢঞওএঅইউফঢ়খথছঠ?ঁণ',43:'শষ।য'}});
 VirtualKeyboard.addLayout({code:'BN-IN',name:'Bengali (Inscript)',keys:' ১২৩৪৫৬৭৮৯০-ৃ ৌৈাীূবহগদজড়োে্িুপরকতচট ংমনবলস,.য়',shift: {1:'!@',4:'র্জ্ঞত্রক্ষশ্র()ঃঋ',14:'ঔঐআঈঊভঙঘধঝঢঞওএঅইউফ',33:'খথছঠ',38:'ঁণ',43:'শষ',46:'য'}});
 VirtualKeyboard.addLayout({code:'BN-IN',name:'Probhat Phonetic',keys:'\u200D১২৩৪৫৬৭৮৯০-=\u200Cদূীরটএুিওপেোাসডতগহজকল;\'য়শচআবনম,।্',shift: {0:'~!@#৳%^ঞৎ()_+॥ধঊঈড়ঠঐউইঔফৈৌঅষঢথঘঃঝখং:"যঢ়ছঋভণঙৃঁ?'}});
 VirtualKeyboard.addLayout({code:'BN-BD',name:'Unijoy',keys:'\u200C১২৩৪৫৬৭৮৯০-=ৎঙযডপটচজহগড়ৃুিা্বকতদ;\'্োেরনসম,./',shift: {0:'\u200D!@#৳%÷ঁ×()_+ঃংয়ঢফঠছঝঞঘঢ়',26:'্রূীঅ।ভখথধ:"',38:'ৌৈলণষশ<>?'}});
@@ -1146,6 +1146,7 @@ VirtualKeyboard.Langs.JP = new function () {
 VirtualKeyboard.addLayout({code:'JA-JP',name:'Japanese',keys:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./',shift: {0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'},cbk:VirtualKeyboard.Langs.JP.processChar});
 VirtualKeyboard.addLayout({code:'KN-IN',name:'Kannada',keys:'ೊ1234567890-ೃೆೌೈಾೀೂಬಹಗದಜಡೋೇ್ಿುಪರಕತಚಟಂಮನವಲಸ,.ಯ ',shift: {0:'ಒ',3:'್ರರ್ಜ್ಞತ್ರಕ್ಷಶ್ರ()ಃಋಎಔಐಆಈಊಭಙಘಧಝಢಞಓಏಅಇಉಫಱಖಥಛಠ',38:'ಣ',41:'ಳಶಷ|'},alt: {1:'೧೨೩೪೫೬೭೮೯೦',12:'ೄ',15:'ೖ',27:'ೕ'}});
 VirtualKeyboard.addLayout({code:'KK-KZ',name:'Kazakh',keys:'("әіңғ,.үұқөһ\\йцукенгшщзхъфывапролджэячсмитьбю№',shift: {0:')!',6:';:',13:'/',46:'?'}});
+VirtualKeyboard.addLayout({code:'KM',name:'Khmer Unicode Keyboard (NIDA 1.0)',keys:'«១២៣៤៥៦៧៨៩០ឥឲឮឆឹេរតយុិោផៀឪាសដថងហ្កលើ់ឋខចវបនមុំ។៊',shift: {0:'»!ៗ"៛%៍័៏()៌=ឭឈឺែឬទួូីៅភឿឧាំៃឌធអះញគឡោះ៉ឍឃជេះពណំុះ៕?'},alt: {0:'\u200D\u200C@៑$€៙៚*{}x៎\\ៜ៝ឯឫឨ',21:'ឦឱឰឩឳ',33:'ឝ',35:'៖ៈ',41:'ឞ',44:',./'}});
 VirtualKeyboard.Langs.KR = new function () {
     var self = this;
     self.Jamo = {'ㄱ':[14,44032,1],'ㄲ':[6,44620,2],'ㄳ':[4,-1,3],'ㄴ':[14,45208,4],'ㄵ':[4,-1,5],'ㄶ':[4,-1,6],'ㄷ':[6,45796,7],'ㄸ':[2,46384,0],'ㄹ':[14,46972,8],'ㄺ':[4,-1,9],'ㄻ':[4,-1,10],'ㄼ':[4,-1,11],'ㄽ':[4,-1,12],'ㄾ':[4,-1,13],'ㄿ':[4,-1,14],'ㅀ':[4,-1,15],'ㅁ':[6,47560,16],'ㅂ':[14,48148,17],'ㅃ':[2,48736,0],'ㅄ':[4,-1,18],'ㅅ':[14,49324,19],'ㅆ':[6,49912,20],'ㅇ':[6,50500,21],'ㅈ':[6,51088,22],'ㅉ':[2,51676,0],'ㅊ':[6,52264,23],'ㅋ':[6,52852,24],'ㅌ':[6,53440,25],'ㅍ':[6,54028,26],'ㅎ':[6,54616,27],'ㅏ':[1,0,0],'ㅐ':[1,28,0],'ㅑ':[1,56,0],'ㅒ':[1,84,0],'ㅓ':[1,112,0],'ㅔ':[1,140,0],'ㅕ':[1,168,0],'ㅖ':[1,196,0],'ㅗ':[1,224,0],'ㅛ':[1,336,0],'ㅜ':[1,364,0],'ㅠ':[1,476,0],'ㅡ':[1,504,0],'ㅣ':[1,560,0]}
@@ -1441,6 +1442,7 @@ VirtualKeyboard.addLayout({code:'LA',name:'Lakhota Standard',keys:'`1234567890-=
         return VirtualKeyboard.Langs.LA.remap[buf+chr] || [buf+chr, 1]
     }
 }});
+VirtualKeyboard.addLayout({code:'LO-LAO',name:'Lao SengKeo',keys:'@ຢຟໂຖຸູຄຕຈຂຊໍ\\ົໄຳພະິີຣນຍບລັຫກດເ້່າສວງຜປແອຶືທມໃຝ',shift: {0:'©໑໒໓໔໌ຼ໕໖໗໘໙ໍ່ໝົ້໐້ຳ-+ິ້ີ້ຮ່ຳຽ-/ັ້;.,:໊໋!?%',37:'&(ຯໜຶ້ື້ໆ"$)'}});
 VirtualKeyboard.addLayout({code:'ES-MX',name:'Latin American',keys:'|1234567890\'¿}qwertyuiop´+asdfghjklñ{zxcvbnm,.-',shift: {0:'°!"#$%&/()=?¡]',24:'¨*',36:'[',44:';:_'},alt: {0:'¬',11:'\\',13:'`@',25:'~',36:'^'},dk:'`´^'});
 VirtualKeyboard.addLayout({code:'LV',name:'Latvian (QWERTY)',keys:'`1234567890-=°qwertyuiop[]asdfghjkl;\'zxcvbnm,./',shift: {0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'},alt: {0:'\u00AD «»€',6:'’',11:'–',16:'ēŗ',20:'ūīõ',26:'āš',30:'ģ',33:'ķļ',36:'´ž',39:'č',42:'ņ'},dk:'~°´'});
 VirtualKeyboard.addLayout({code:'LV',name:'Latvian',keys:'\u00AD1234567890-fķūgjrmvnzēčžhšusildatec´ņbīkpoā,.ļ',shift: {0:'?!«»$%/&×()_',36:'°',44:';:'},alt: {1:'«',4:'€"’',8:':',11:'–=',14:'qģ',17:'ŗwy',24:'[]',34:'€',38:'x',40:'ķ',42:'õ',44:'<>'},dk:'´°´'});
