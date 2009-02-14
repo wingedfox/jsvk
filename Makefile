@@ -33,6 +33,7 @@ EXT=$(EXT_DIR)/helpers.js \
 		$(EXT_DIR)/eventmanager.js \
 		$(EXT_DIR)/ext/regexp.js \
 		$(EXT_DIR)/ext/string.js \
+		$(EXT_DIR)/documentcookie.js \
 		$(EXT_DIR)/documentselection.js \
 # }}}
 
