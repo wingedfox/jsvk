@@ -1697,13 +1697,8 @@ VirtualKeyboard.IME = new function () {
      *  @scope public
      */
     self.nextPage = function (e) {
-         page = Math.max(Math.min(page+1,(Math.ceil(sg.length/10))-1),0);
-         showPage();
-         if (e) {
-             e.stopPropagation();
-             e.preventDefault();
-             return false;
-         }
+        page = Math.max(Math.min(page+1,(Math.ceil(sg.length/10))-1),0);
+        showPage();
     }
     /**
      *  Shows the previous page from the suggestions list
@@ -1712,13 +1707,8 @@ VirtualKeyboard.IME = new function () {
      *  @scope public
      */
     self.prevPage = function (e) {
-         page = Math.max(page-1,0);
-         showPage();
-         if (e) {
-             e.stopPropagation();
-             e.preventDefault();
-             return false;
-         }
+        page = Math.max(page-1,0);
+        showPage();
     }
     /**
      *  Returns the current page number
@@ -1727,7 +1717,7 @@ VirtualKeyboard.IME = new function () {
      *  @scope public
      */
     self.getPage = function () {
-         return page;
+        return page;
     }
     /**
      *  Returns char by its number in the suggestions array
@@ -1737,11 +1727,11 @@ VirtualKeyboard.IME = new function () {
      *  @scope public
      */
     self.getChar = function (n) {
-         n = --n<0?9:n;
-         return sg[self.getPage()*10+n]
+        n = --n<0?9:n;
+        return sg[self.getPage()*10+n]
     }
     self.isOpen = function () {
-         return ime && 'block' == ime.style.display;
+        return ime && 'block' == ime.style.display;
     }
     /**
      *  Gets called on input field blur then closes IME toolbar and removes the selection
@@ -1765,11 +1755,6 @@ VirtualKeyboard.IME = new function () {
              sa.className = 'showAll';
          }
          showPage();
-         if (e) {
-             e.stopPropagation();
-             e.preventDefault();
-             return false;
-         }
     }
     /**
      *  Shows currently selected page in the IME tooltip
@@ -1830,8 +1815,14 @@ VirtualKeyboard.IME = new function () {
            ,arrr = ime.firstChild.rows[0].cells[2]
            ,arrd = ime.firstChild.rows[1].cells[0].lastChild
         EM.addEventListener(arrl,'mousedown',self.prevPage);
+        EM.addEventListener(arrl,'mousedown',EM.preventDefaultAction);
+        EM.addEventListener(arrl,'mousedown',EM.stopPropagationAction);
         EM.addEventListener(arrr,'mousedown',self.nextPage);
+        EM.addEventListener(arrr,'mousedown',EM.preventDefaultAction);
+        EM.addEventListener(arrr,'mousedown',EM.stopPropagationAction);
         EM.addEventListener(arrd,'mousedown',self.toggleShowAll);
+        EM.addEventListener(arrd,'mousedown',EM.preventDefaultAction);
+        EM.addEventListener(arrd,'mousedown',EM.stopPropagationAction);
         /*
         *  blocks any selection
         */
