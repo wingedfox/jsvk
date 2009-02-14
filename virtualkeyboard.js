@@ -1588,7 +1588,7 @@ VirtualKeyboard.Langs = {};
  *
  *  Usage:
  *   - call VirtualKeyboard.IME.show(suggestionlist); to show the suggestions
- *   - call VirtualKeyboard.IME.show(keep_selection); to hide IME toolbar and keep selectio if needed
+ *   - call VirtualKeyboard.IME.hide(keep_selection); to hide IME toolbar and keep selectio if needed
  *
  *  @scope public
  */
