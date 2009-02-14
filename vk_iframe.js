@@ -5,7 +5,7 @@
 /**
  *  Keyboard constructor
  *
- *  @class DraggableVirtualKeyboard
+ *  @class IFrameVirtualKeyboard
  *  @constructor
  */
 
