@@ -1,3 +1,15 @@
+/**
+ * $Id$
+ *
+ * Chinese simplified PinYin
+ *
+ * This software is protected by patent No.2009611147 issued on 20.02.2009 by Russian Federal Service for Intellectual Property Patents and Trademarks.
+ *
+ * @author Konstantin Wiolowan
+ * @copyright 2007-2009 Konstantin Wiolowan <wiolowan@mail.ru>
+ * @version $Rev$
+ * @lastchange $Author$ $Date$
+ */
 {'load' : function () {
      VirtualKeyboard.Langs.CN.PYArr={a:"阿啊吖嗄锕安爱暗案按",ai:"爱呆挨哀埃碍艾唉矮哎癌嗌嗳嗳嫒捱暧瑷皑砹硙蔼诶锿隘霭",an:"安暗案按岸俺埯庵揞桉氨犴胺腌谙铵鞍鹌黯",ang:"昂盎腌",ao:"奥澳傲熬凹嗷坳媪岙廒懊拗敖燠獒翱聱螯袄遨鏊鏖骜鳌"
                                     ,b:"不本把部便被北并别比",ba:"把八吧巴伯罢爸拔霸坝叭扒岜捌杷湃灞疤笆粑耙芭茇菝萆跋钯钹靶魃鲃鲅鲌",bai:"白百伯败拜摆柏佰呗捭掰稗薜鞴䙓",ban:"反办半版般班板伴搬扮斑颁坂扳拌瓣瘢癍绊舨钣阪",bang:"帮旁邦棒膀绑傍榜梆氆浜磅蒡蚌螃谤镑",bao:"报保包宝抱暴炮薄爆胞饱剥堡鲍刨孢掊煲脬苞苴葆裒褒褓褴豹趵铇雹鸨",be:"本被北备背奔悲辈杯臂",bei:"被北备背悲辈杯臂贝倍碑卑呗埤孛庳悖惫焙狈碚萆蓓蜚褙跋邶鐾钡陂鞴鹎",ben:"本奔笨坌夯畚苯贲锛唪",beng:"唪嘣堋崩抨泵甏甭绷绷蚌蹦迸镚",bi:"比必笔毕秘避臂币壁闭逼鼻彼碧辟拂毙鄙蔽弊俾匕吡哔埤妣婢嬖庇庳弼愎敝枇檗殍毖泌滗濞狴璧畀痹睥瞥秕筚箅篦纰舭芘荜荸菝萆蓖薜蘖蚍裨襞诐贲赑跛跸鐾铋陂陛陴馥髀鲾",bia:"便表边变编标遍彪辩鞭",bian:"便边变编遍辩鞭辨辫扁匾卞弁忭汴煸砭碥稹窆笾缏苄蝙褊贬鳊",biao:"表标彪镖剽婊嫖杓灬焱瘭膘苞裱鏖镳飑飙飚骉骠髟鳔",bie:"别憋瘪蹩鳖",bin:"宾彬滨斌傧摈殡浜濒玢禀缤膑豳镔髌鬓",bing:"并兵病冰柄屏饼丙冫廪摒枋槟炳燹禀秉迸邴",bo:"白百般波伯博播薄勃拨柏剥玻脖泊卜驳搏魄亳佰啵孛帛悖擘檗泺渤溥礴箔簸簿膊舶艴荸菔菠蕃薜蘖袯趵跛踣钵钹铂镈雹饽馎鲅鲌鹁",bu:"不部步布补捕堡怖卜卟卩哺埔埠惚晡溥瓿簿逋醭钚钸鞴"

@@ -1,14 +1,17 @@
 /**
- * @author WingedFox
- */
-
-/**
- *  Keyboard constructor
+ *  $Id$
  *
+ *  Keyboard Iframe mode loader
+ *
+ *  This software is protected by patent No.2009611147 issued on 20.02.2009 by Russian Federal Service for Intellectual Property Patents and Trademarks.
+ *
+ *  @author Ilya Lebedev
+ *  @copyright 2006-2009 Ilya Lebedev <ilya@lebedev.net>
+ *  @version $Rev$
+ *  @lastchange $Author$ $Date$
  *  @class PopupVirtualKeyboard
  *  @constructor
  */
-
 PopupVirtualKeyboard = new function() {
     var self = this;
     /**

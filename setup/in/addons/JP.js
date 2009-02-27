@@ -1,3 +1,15 @@
+/**
+ * $Id$
+ *
+ * Japanese IME implementation
+ *
+ * This software is protected by patent No.2009611147 issued on 20.02.2009 by Russian Federal Service for Intellectual Property Patents and Trademarks.
+ *
+ * @author Konstantin Wiolowan
+ * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
+ * @version $Rev$
+ * @lastchange $Author$ $Date$
+ */
 VirtualKeyboard.Langs.JP = new function () {
     var self = this
        ,INPArr = {a:"日会四上合開明相当海安挙朝在空有足愛英赤歩悪登編厚我称充荒網揚阿遇麻浴亜芦吾晶遭唖娃逢宛或粟庵厭蛙敢窪鹸昂朱讐飽亞會呀哇嗟堊婀惡扛擧舉猗當痾稱辮翕翹褪襾覯覿逅遘邂錏鐚閼齏韲驤鴉",aa:"悪於乎于吁咨嗚嗟噫惡憙猗羌",aba:"発暴發訐",abara:"肋",abu:"危虻蛇炙炮焙煬熹",abumi:"鐙",abura:"油脂膏腴膩",aburaaka:"膩",aburamusi:"蜚",aburana:"薹",ada:"徒仇讐冦婀寇綽讎",ade:"艶艷",ae:"饗喘",aemono:"齏韲",aga:"何我吾崇",agana:"贖",agari:"東揚",agata:"県縣",age:"上",agito:"顎",ago:"顎腮諤頤頷顋齶",agu:"倦",ahiru:"鴨鶩",ahu:"溢",ai:"会合間東相和愛英秋娃哀挨姶逢鮎饗乃廼藍會哇噫埃曖欸瞹矮穢胥藹迺阨隘靄靉鞋",aida:"間",aite:"対對",aka:"明赤厚紅赫垢朱緋淦絳",akagane:"銅",akagire:"皸皹胝",akago:"嬰",akai:"赫",akane:"茜蒐",akara:"赧",akari:"灯燈",akaru:"耀",akarui:"熹",akasi:"証験證驗",akatuki:"暁曉",akatuti:"赭",akaza:"莱藜",ake:"明陽暁朱緋",akebono:"曙",aki:"日明成商天光白秋右清喜昭之陽章照哲徹旭輝啓昌朗鑑鏡晃彰祥顕晶亮穐叡瑛且亨尭暁倦昂燦嗣朱詮爽聡旦諦寧彬斌呆飽璃諒玲奐惘曉曄朖皓睿龝飫",akina:"商估賈",akira:"明現公成審映光史融央昭陽章智哲旭輝啓昌朗鑑晃彰顕晶亮卯瑛侃亨暁慧昂翠聡旦諦瞳彪彬諒玲昶熹皓聰",akiraka:"煕晃顕亮瞭冏杲晄晤晟晢晰暸曠昿渙炯烱炳煥熈顯熙",akitarinai:"歉",akitariru:"慊",akizora:"旻",ako:"赤",akoga:"憧憬",akome:"衵袙",akou:"榕",aku:"悪握唖渥飽堊幄惡扼軛阨鷽齷",akubi:"欠",akuta:"芥",akutu:"圷垰",ama:"海天赤余雨甘剰尼奄甜剩塰蜑餘",amadare:"霤",amane:"周普遍",amanesi:"普弥彌徇洽浹溥",amari:"羨衍贏",amaru:"余",amatu:"天",amatusae:"剰剩",amazake:"醴",ame:"天雨飴穹",ami:"網畢网罔罟罠罨",amigasira:"网",amo:"天",an:"行合安案暗庵按闇鞍杏厭晏殷罨菴諳閹餡鮟黯黶",ana:"穴窟孔坎塹壙嵌竅竇篏",anado:"侮傲妛狎謾",anagura:"窖",anazu:"侮",ane:"姉姐",ani:"兄哥豈",aniyome:"嫂",anzu:"杏",ao:"青仰襖煽蒼碧呷",aoga:"黽",aogiri:"梧",aoguro:"黝",aoi:"上葵",aomono:"蔬",appare:"遖",ara:"新表有非荒洗粗疏匪旌沐沽洒浣滌澣澡瑕盪蘯笨糲麁",aragane:"鉱砿礦鑛",arai:"洗",arakazi:"予豫",araragi:"蘭",arare:"霰",arasi:"嵐悍",araso:"争弁闘辨辧爭瓣諍辯鬪",arata:"改灼悛",aratama:"璞",arato:"砺礪",arawa:"表現著顕顯",areru:"蕪",ari:"家在有順蟻",ariduka:"垤",aru:"有歩",arui:"或",aruiha:"或儻",aruzi:"主",asa:"生朝漁浅麻旦晁晨淺苴",asagao:"蕣",asagara:"莇",asahi:"旭暾",asari:"蜊鯏",ase:"新焦汗",asi:"足愛茨脚芦葦疋葺葭蘆趺",asia:"亜亞",asibue:"笳",asige:"騅",asikase:"桎鐐",asinae:"蹇",asinoura:"跖蹠",asioto:"跫",asita:"旦晨",asiura:"蹠",aso:"朝遊敖游遨",asobime:"娼",asu:"明安足飛遊",ata:"中応防与辺熱仇傭估應沽與邊邉",atai:"価値價",ataka:"宛恰",atama:"頭顱",atara:"新",atarasi:"新",ataru:"中斉齊",atata:"温暖嫗煦煖",atataka:"暄燠",ate:"宛",ategi:"椹",ato:"後跡痕蹟址墟趾蹤踪迹阯",atu:"会集得熱圧安厚",atu:"徳温純充宏昌淳暑敦鳩渥斡纂蒐輯鍾篤惇睦湊亶會壓扎攅聚腆萃軋輳遏閼",atui:"醇",atuka:"扱",atumari:"集",atumono:"羹羮",atumu:"伍侑",atura:"誂",atusi:"温毅淳敦渥竺惇",au:"合",awa:"併阿淡哀粟慌泡沫怜憐勠并怱恊恤愍澹矜粱遽醂閔",awabi:"蚫鮑鰒",aware:"憫",awase:"袷",awatada:"遽",awati:"莱",aya:"理文史危順恵章礼錦奇彩怪紋絢綾郁苑琢斐彪妖冉竒恠愆綺綵黻黼",ayaginu:"綵",ayaka:"肖",ayama:"過誤謝謬繆訛譌",ayamatu:"跌",ayatu:"操",ayaui:"殆",ayu:"歩鮎",aza:"字鮮浅麻痣",azake:"嘲",azami:"莇薊",azamu:"欺詑紿詒誣謾",azana:"字糺",aze:"畦畔畛",azi:"味鯵蝋鰺",azika:"簣",azu:"安預阿",azuka:"与與",azuki:"荅",azuma:"東春",azusa:"梓"

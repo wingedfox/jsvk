@@ -3,7 +3,6 @@
  * $HeadURL$
  *
  * Virtual Keyboard.
- * (c) 2006-2009 Ilya Lebedev <ilya@lebedev.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,15 +14,14 @@
  *
  * Do not remove this comment if you want to use script!
  *
- * @author Ilya Lebedev <ilya@lebedev.net>
+ * This software is protected by patent No.2009611147 issued on 20.02.2009 by Russian Federal Service for Intellectual Property Patents and Trademarks.
+ *
+ * @author Ilya Lebedev
+ * @copyright 2006-2009 Ilya Lebedev <ilya@lebedev.net>
  * @version $Rev$
  * @lastchange $Author$ $Date$
- */
-/**
- *  The Virtual Keyboard
- *
- *  @class VirtualKeyboard
- *  @constructor
+ * @class VirtualKeyboard
+ * @constructor
  */
 var VirtualKeyboard = new function () {
   var self = this;
