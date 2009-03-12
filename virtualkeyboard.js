@@ -57,7 +57,7 @@ var VirtualKeyboard = new function () {
    *  @type Object
    *  @scope private
    */
-  var controlkeys = {14:'backspace'
+  var controlKeys = {14:'backspace'
                     ,15:'tab'
                     ,28:'enter'
                     ,29:'caps'
@@ -142,65 +142,15 @@ var VirtualKeyboard = new function () {
      ,VK_ALT = 2
      ,VK_CTRL = 4
      ,VK_CAPS = 8
+     ,VK_CTRL_CAPS = VK_CTRL|VK_CAPS
+     ,VK_CTRL_SHIFT = VK_CTRL|VK_SHIFT
+     ,VK_ALT_CAPS = VK_ALT|VK_CAPS
      ,VK_ALT_CTRL = VK_ALT|VK_CTRL
+     ,VK_ALT_CTRL_CAPS = VK_ALT|VK_CTRL|VK_CAPS
      ,VK_ALT_SHIFT = VK_ALT|VK_SHIFT
+     ,VK_SHIFT_ALT_CTRL = VK_SHIFT|VK_ALT|VK_CTRL
      ,VK_SHIFT_CAPS = VK_SHIFT|VK_CAPS
      ,VK_ALL = VK_SHIFT|VK_ALT|VK_CTRL|VK_CAPS;
-  /**
-   *  Deadkeys, original and mofified characters
-   *
-   *  @see http://en.wikipedia.org/wiki/Dead_key
-   *  @see http://en.wikipedia.org/wiki/Combining_character
-   *  @type Array
-   *  @scope private
-   */
-  var deadkeys = [
-    // greek tonos
-    ["\u0384", "\u03b1\u03ac \u03b5\u03ad \u03b9\u03af \u03bf\u03cc \u03b7\u03ae \u03c5\u03cd \u03c9\u03ce "+
-               "\u0391\u0386 \u0395\u0388 \u0399\u038a \u039f\u038c \u0397\u0389 \u03a5\u038e \u03a9\u038f"
-    ],
-    // greek dialytika tonos
-    ["\u0385", "\u03c5\u03b0 \u03b9\u0390"],
-    // acute accent
-    ["\xb4", "a\xe1 A\xc1 e\xe9 E\xc9 i\xed I\xcd o\xf3 O\xd3 u\xfa U\xda y\xfd Y\xdd "+
-             "c\u0107 C\u0106 l\u013a L\u0139 n\u0144 N\u0143 r\u0155 R\u0154 s\u015b S\u015a w\u1e83 W\u1e82 z\u017a Z\u0179"
-    ],
-    // diaeresis
-    ["\xa8", "a\xe4 A\xc4 e\xeb E\xcb i\xef I\xcf j\u0135 J\u0134 "+
-             "o\xf6 O\xd6 u\xfc U\xdc y\xff Y\u0178 w\u1e85 W\1e84 "+ //latin
-             "\u03c5\u03cb \u03b9\u03ca \u03a5\u03ab \u0399\u03aa"    //greek
-    ],
-    // circumflex
-    ["\x5e", "a\xe2 A\xc2 e\xea E\xca i\xee I\xce o\xf4 O\xd4 u\xfb U\xdb y\u0176 Y\u0177 "+
-             "c\u0109 C\u0108 h\u0125 H\u0124 g\u011d G\u011c s\u015d S\u015c w\0175 W\0174 "+ //latin
-             "\u0131\xee \u0130\xce " // dotless small i, capital I with dot above
-    ],
-    // grave
-    ["\x60", "a\xe0 A\xc0 e\xe8 E\xc8 i\xec I\xcc o\xf2 O\xd2 u\xf9 U\xd9 y\u1ef3 Y\u1ef2 w\u1e81 W\u1e80"],
-    // tilde
-    ["\x7e", "a\xe3 A\xc3 o\xf5 O\xd5 u\u0169 U\u0168 n\xf1 N\xd1 y\u1ef8 Y\1ef7"],
-    // ring above, degree sign
-    ["\xb0", "a\xe5 A\xc5 u\u016f U\u016e"],
-    // caron
-    ["\u02c7", "e\u011b E\u011a "+
-               "c\u010d C\u010c d\u010f D\u010e l\u013e L\u013d n\u0148 N\u0147 "+
-               "r\u0158 R\u0158 s\u0161 S\u0160 t\u0165 T\u0164 z\u017e Z\u017d"
-    ],
-    // ogonek
-    ["\u02db", "a\u0105 A\u0104 e\u0119 E\u0118 i\u012f I\u012e c\u010b C\u010a g\u0121 G\u0120 u\u0173 U\u0172"],
-    // dot above
-    ["\u02d9", "e\u0117 E\u0116 u0131i I\u0130 z\u017c Z\u017b"],
-    // middle dot
-    ["\xb7", "e\u0117 E\u0116 u0131i I\u0130 z\u017c Z\u017b"],
-    // breve
-    ["\u02d8", "a\u0103 A\u0102 e\u0115 E\u0114 o\0u14f O\0u14e G\u011f g\u011e"],
-    // double acute
-    ["\u02dd", "o\u0151 O\u0150 U\u0170 u\u0171"],
-    // cedilla
-    ["\xb8", "c\xe7 C\xc7 g\u0123 G\u0122 k\u0137 K\u0136 l\u013c L\u013b "+
-             "n\u0146 N\u0145 r\u0157 R\u0156 S\u015e s\u015f T\u0162 t\u0163"
-    ]
-  ]
   /**
    *  CSS classes will be used to style buttons
    *
@@ -208,15 +158,31 @@ var VirtualKeyboard = new function () {
    *  @scope private
    */
   var cssClasses = {
-    'buttonUp'      : 'kbButton'
-   ,'buttonDown'    : 'kbButtonDown'
-   ,'buttonHover'   : 'kbButtonHover'
-   ,'buttonNormal'  : 'normal'
-   ,'buttonShifted' : 'shifted'
-   ,'buttonAlted'   : 'alted'
-   ,'capslock'      : 'capsLock'
-   ,'deadkey'       : 'deadKey'
-   ,'noanim'        : 'VK_no_animate'
+    'buttonUp'        : 'kbButton'
+   ,'buttonDown'      : 'kbButtonDown'
+   ,'buttonHover'     : 'kbButtonHover'
+   ,'hoverShift'      : 'hoverShift'
+   ,'hoverAlt'        : 'hoverAlt'
+   ,'modeAlt'         : 'modeAlt'
+   ,'modeAltCaps'     : 'modeAltCaps'
+   ,'modeCaps'        : 'modeCaps'
+   ,'modeNormal'      : 'modeNormal'
+   ,'modeShift'       : 'modeShift'
+   ,'modeShiftAlt'    : 'modeShiftAlt'
+   ,'modeShiftAltCaps': 'modeShiftAltCaps'
+   ,'modeShiftCaps'   : 'modeShiftCaps'
+   ,'charNormal'      : 'charNormal'
+   ,'charShift'       : 'charShift'
+   ,'charAlt'         : 'charAlt'
+   ,'charShiftAlt'    : 'charShiftAlt'
+   ,'charCaps'        : 'charCaps'
+   ,'charShiftCaps'   : 'charShiftCaps'
+   ,'hiddenAlt'       : 'hiddenAlt'
+   ,'hiddenCaps'      : 'hiddenCaps'
+   ,'hiddenShift'     : 'hiddenShift'
+   ,'hiddenShiftCaps' : 'hiddenShiftCaps'
+   ,'deadkey'         : 'deadKey'
+   ,'noanim'          : 'VK_no_animate'
 
   }
   /**
@@ -303,6 +269,14 @@ var VirtualKeyboard = new function () {
   **  KEYBOARD LAYOUT
   **************************************************************************/
   /**
+   *  Adds a number of layouts, passed as arguments to this function
+   */
+  self.addLayoutList = function () {
+      for (var i=0, aL=arguments.length; i<aL; i++) {
+          self.addLayout(arguments[i]);
+      }
+  }
+  /**
    *  Add layout to the list
    *
    *  @see #layout
@@ -326,7 +300,7 @@ var VirtualKeyboard = new function () {
 
       var code = l.code.entityDecode().split("-")
          ,name = l.name.entityDecode()
-         ,alpha = __doParse(l.keys)
+         ,alpha = __doParse(l.normal)
 
       if (!isArray(alpha) || 47!=alpha.length) throw new Error ('VirtualKeyboard requires \'keys\' property to be an array with 47 items, '+alpha.length+' detected. Layout code: '+code+', layout name: '+name);
 
@@ -335,7 +309,7 @@ var VirtualKeyboard = new function () {
       */
       l.code = (code[1] || code[0]);
       l.name = name;
-      l.keys = alpha;
+      l.normal = alpha;
       l.domain = code[0];
 
       /*
@@ -356,11 +330,6 @@ var VirtualKeyboard = new function () {
       l.toString = function(){return this.code+" "+this.name};
 
       layout.push(l);
-      /*
-      *  call load handler for the current layout
-      */
-      if (l.cbk && isFunction(l.cbk.load))
-          l.cbk.load.call(this);
 
       /*
       *  reset hash, to be recalculated on options draw
@@ -418,6 +387,7 @@ var VirtualKeyboard = new function () {
     *  reset mode for the new layout
     */
     mode = VK_NORMAL;
+    __updateLayout();
     /*
     *  call IME activation method, if exists
     */
@@ -548,22 +518,8 @@ var VirtualKeyboard = new function () {
               chr = "\n";
               break;
           default:
-                  var el = document.getElementById(idPrefix+key);
-                  /*
-                  *  replace is used to strip 'nbsp' base char, when its used to display combining marks
-                  *  @see __getCharHtmlForKey
-                  */
-                  try {
-                      chr = (el.firstChild.childNodes[Math.min(mode&(VK_ALT_SHIFT),VK_ALT)].firstChild || el.firstChild.firstChild.firstChild).nodeValue;
-                      chr = chr.replace("\xa0","").replace("\xa0","");
-                  } catch (err) {
-                      return;
-                  }
-                  /*
-                  *  do uppercase if either caps or shift clicked, not both
-                  *  and only 'normal' key state is active
-                  */
-                  if (((mode&VK_CAPS)>>3) ^ (mode&VK_SHIFT)) chr = chr.toUpperCase();
+              var el = document.getElementById(idPrefix+key);
+              chr = lang[key][mode];
               break;
       }
       if (chr) {
@@ -952,13 +908,13 @@ var VirtualKeyboard = new function () {
         */
         animate = !DOM.CSS(el).hasClass(cssClasses.noanim);
         /*
-        *  set input direction
-        */
-        __toggleInputDir();
-        /*
         *  for iframe target we track its HTML node
         */
         nodes.attachedInput = el;
+        /*
+        *  set input direction
+        */
+        __toggleInputDir();
         if (el.contentWindow) {
             el = el.contentWindow.document.body.parentNode;
         }
@@ -1148,7 +1104,7 @@ var VirtualKeyboard = new function () {
    */
   var __doParse = function(s) {
       if (isString(s))
-          return s.match(/\x01.+?\x02|./g).map(function(a){return a.replace(/[\x01-\x03]/g,"")});
+          return s.match(/\x01.+?\x01|./g).map(function(a){return a.replace(/[\x01\x02]/g,"")});
       else
           return s.map(function(a){return isArray(a)?a.map(function(s){String.fromCharCode(s)}).join(""):String.fromCharCode(a)});
   }
@@ -1162,55 +1118,110 @@ var VirtualKeyboard = new function () {
       /*
       *  convert layout in machine-aware form
       */
-      var alpha = l.keys
-         ,shift = l.shift || {}
-         ,alt   = l.alt || {}
-         ,dk    = l.dk || []
-         ,cbk   = l.cbk
-         ,ca    = null
-         ,cac   = -1
-         ,cs    = null
-         ,csc   = -1
-         ,lt    = []
+      var alpha      = l.normal
+         ,shift      = l.shift        || {}
+         ,alt        = l.alt          || {}
+         ,shift_alt  = l.shift_alt    || {}
+         ,caps       = l.caps         || {}
+         ,shift_caps = l.shift_caps   || {}
+         ,dk         = l.dk
+         ,cbk        = l.cbk
+         ,cs,  ca,  csa,  cc,  csc = null
+         ,ics, ica, icsa, icc, icsc = -1
+         ,lt         = []
 
       lt.name = l.name;
       lt.code = l.code;
       lt.toString = l.toString;
 
       for (var i=0, aL = alpha.length; i<aL; i++) {
+         var char_normal = alpha[i]
+            ,char_alt    = null
+            ,char_caps   = null
+            ,char_shift  = null
+            ,char        = [char_normal] // normal chars
+
          if (shift.hasOwnProperty(i)) {
-           cs = __doParse(shift[i]);
-           csc = i;
+             cs = __doParse(shift[i]);
+             ics = i;
          }
+         if (ics>-1 && cs[i-ics]) {
+             char_shift = cs[i-ics];
+             char[VK_SHIFT] = char_shift;
+         } else if (char_normal && char_normal != (char_normal = char_normal.toUpperCase())) {
+             char[VK_SHIFT] = char_normal;
+         }
+
          if (alt.hasOwnProperty(i)) {
-           ca = __doParse(alt[i]);
-           cac = i;
+             ca = __doParse(alt[i]);
+             ica = i;
          }
-         lt[i] = [alpha[i],                                          // normal chars
-                  (csc>-1&&cs.hasOwnProperty(i-csc)?cs[i-csc]:null), // shift chars
-                  (cac>-1&&ca.hasOwnProperty(i-cac)?ca[i-cac]:null)  // alt chars
-                 ];
-      }
-      /*
-      *  add control keys
-      */
-      for (var i in controlkeys) {
-          if (controlkeys.hasOwnProperty(i)) {
-              lt.splice(i,0,controlkeys[i]);
-          }
+         if (ica>-1 && ca[i-ica]) {
+             char_alt = ca[i-ica];
+             char[VK_ALT_CTRL] = char_alt;
+         }
+
+         if (shift_alt.hasOwnProperty(i)) {
+             csa = __doParse(shift_alt[i]);
+             icsa = i;
+         }
+         if (icsa>-1 && csa[i-icsa]) {
+             char[VK_SHIFT_ALT_CTRL] = csa[i-icsa];
+         } else if (char_alt && char_alt != (char_alt = char_alt.toUpperCase())) {
+             char[VK_SHIFT_ALT_CTRL] = char_alt;
+         }
+
+         if (caps.hasOwnProperty(i)) {
+             cc = __doParse(caps[i]);
+             icc = i;
+         }
+         if (icc>-1 && cc[i-icc]) {
+             char_caps = cc[i-icc];
+             char[VK_CAPS] = char_caps;
+         } else if (!char_caps && char_normal) {
+             char[VK_CAPS] = char_normal.toUpperCase();
+         }
+
+         if (shift_caps.hasOwnProperty(i)) {
+             csc = __doParse(shift_caps[i]);
+             icsc = i;
+         }
+         if (icsc>-1 && csc[i-icsc]) {
+             char[VK_SHIFT_CAPS] = csc[i-icsc];
+         } else if (char_caps && char_caps != (char_caps = char_caps.toUpperCase())) {
+             char[VK_SHIFT_CAPS] = char_caps;
+         } else if (char_shift) {
+             char[VK_SHIFT_CAPS] = char_shift.toLowerCase();
+         } else if (char_normal) {
+             char[VK_SHIFT_CAPS] = char_normal.toLowerCase();
+         }
+
+         lt[i] = char;
       }
 
-      lt.dk = __doParse(dk)
+      if (dk) {
+          lt.dk = {};
+          for (var i in dk) {
+              if (dk.hasOwnProperty(i)) {
+                  /*
+                  * last replace is used to simplify char processor
+                  * deadkey found in the deadkey list will be substituted with itself on +1 position
+                  */
+                  lt.dk[i] = __doParse(dk[i]).join("").replace(i,i+i);
+              }
+          }
+      }
 
       /*
       *  check for right-to-left languages
       */
-      lt.rtl = !!lt.toString().match(/[\u05b0-\u06ff]/)
+      lt.rtl = !!lt.join("").match(/[\u05b0-\u06ff]/)
 
       /*
       *  this CSS will be set on kbDesk
       */
       lt.domain = l.domain
+
       /*
       *  finalize things by calling loading callback, if exists
       */
@@ -1227,53 +1238,26 @@ var VirtualKeyboard = new function () {
    *
    *  @scope private
    */
-  __updateLayout = function () {
-    /*
-    *  now, process to layout toggle
-    */
-    var bi = -1
-       /*
-       *  0 - normal keys
-       *  1 - shift keys
-       *  2 - alt keys (has priority, when it pressed together with shift)
-       */
-       ,sh = 0
-       ,ca = [cssClasses.buttonNormal,cssClasses.buttonShifted,cssClasses.buttonAlted];
+  var __updateLayout = function () {
+    var ca = [];
+    ca[VK_NORMAL]         = cssClasses.modeNormal;
+    ca[VK_SHIFT]          = cssClasses.modeShift;
+    ca[VK_ALT_CTRL]       = cssClasses.modeAlt;
+    ca[VK_SHIFT_ALT_CTRL] = cssClasses.modeShiftAlt;
+    ca[VK_CAPS]           = cssClasses.modeCaps;
+    ca[VK_SHIFT_CAPS]     = cssClasses.modeShiftCaps;
+    // these ones are the subject to change
+    ca[VK_ALT]            = cssClasses.modeNormal;
+    ca[VK_CTRL]           = cssClasses.modeNormal;
+    ca[VK_ALT_SHIFT]      = cssClasses.modeShift;
+    ca[VK_CTRL_SHIFT]     = cssClasses.modeShift;
+    ca[VK_ALT_CAPS]       = cssClasses.modeCaps;
+    ca[VK_CTRL_CAPS]      = cssClasses.modeCaps;
+    // below ones are not used and should
+    ca[VK_ALT_CTRL_CAPS]  = cssClasses.modeShiftAltCaps;
+    ca[VK_ALL]            = cssClasses.modeShiftAltCaps;
 
-    if ((mode&VK_ALT_CTRL)==VK_ALT_CTRL) {
-        sh = 2;
-    } else if (mode&VK_SHIFT) {
-        sh = 1;
-    }
-    DOM.CSS(nodes.desk).removeClass(ca).addClass(ca[sh]);
-
-    if (animate) {
-        /*
-        *  toggle caps state only when animation is allowed
-        */
-        if (((mode&VK_CAPS)>>3) ^ (mode&VK_SHIFT)) {
-            DOM.CSS(nodes.desk).addClass(cssClasses.capslock);
-        } else {
-            DOM.CSS(nodes.desk).removeClass(cssClasses.capslock);
-        }
-    }
-    for (var i=0, lL=lang.length; i<lL; i++) {
-        if (isString(lang[i])) continue;
-        bi++;
-        var btn = document.getElementById(idPrefix+bi).firstChild.childNodes;
-        /*
-        *  swap symbols and its CSS classes
-        */
-        if (btn[sh].firstChild && btn[sh].firstChild.nodeValue.length) {
-            DOM.CSS(btn[0]).removeClass(ca).addClass(ca[sh]);
-            DOM.CSS(btn[1]).removeClass(ca).addClass([cssClasses.buttonShifted
-                                                     ,cssClasses.buttonNormal
-                                                     ,cssClasses.buttonShifted][sh]);
-            DOM.CSS(btn[2]).removeClass(ca).addClass([cssClasses.buttonAlted
-                                                     ,cssClasses.buttonAlted
-                                                     ,cssClasses.buttonNormal][sh]);
-        }
-    }
+    DOM.CSS(nodes.desk).removeClass(ca).addClass(ca[mode]);
   }
   /**
    *  Sets specified state on dual keys (like Alt, Ctrl)
@@ -1315,12 +1299,23 @@ var VirtualKeyboard = new function () {
               s1.className = DOM.CSS(s2).removeClass(cssClasses.buttonDown).getClass();
               break;
           case 1:
+              DOM.CSS(nodes.desk).removeClass([cssClasses.hoverShift, cssClasses.hoverAlt]);
               s1.className = DOM.CSS(s2).addClass(cssClasses.buttonDown).getClass();
               break;
           case 2:
+              if (KEY.SHIFT==prefix && mode ^ VK_SHIFT) {
+                  DOM.CSS(nodes.desk).addClass(cssClasses.hoverShift);
+              } else if (KEY.ALT==prefix && mode ^ VK_ALT_CTRL) {
+                  DOM.CSS(nodes.desk).addClass(cssClasses.hoverAlt);
+              }
               s1.className = DOM.CSS(s2).addClass(cssClasses.buttonHover).getClass();
               break;
           case 3:
+              if (KEY.SHIFT==prefix) {
+                  DOM.CSS(nodes.desk).removeClass(cssClasses.hoverShift);
+              } else if (KEY.ALT==prefix) {
+                  DOM.CSS(nodes.desk).removeClass(cssClasses.hoverAlt);
+              }
               s1.className = DOM.CSS(s2).removeClass(cssClasses.buttonHover).getClass();
               break;
       }
@@ -1363,7 +1358,7 @@ var VirtualKeyboard = new function () {
    *  @scope private
    */
   var __charProcessor = function (tchr, buf) {
-    var res = [];
+    var res = [tchr, 0];
     if (isFunction(lang.charProcessor)) {
       /*
       *  call user-supplied converter
@@ -1371,24 +1366,26 @@ var VirtualKeyboard = new function () {
       res = lang.charProcessor(tchr,buf);
     } else if (tchr == "\x08") {
       res = ['',0];
-    } else {
+    } else if (lang.dk && buf.length <= 1) {
       /*
       *  process char in buffer first
       *  buffer size should be exactly 1 char to don't mess with the occasional selection
       */
-      var fc = buf.charAt(0);
-      if ( buf.length==1 && lang.dk.indexOf(fc)>-1 ) {
+      if (lang.dk.hasOwnProperty(buf)) {
         /*
         *  dead key found, no more future processing
         *  if new key is not an another deadkey
         */
-        res[1] = tchr != fc & lang.dk.indexOf(tchr)>-1;
-        res[0] = deadkeys[fc][tchr]?deadkeys[fc][tchr]:tchr;
-      } else {
+        res[1] = 0;
+        var dks = lang.dk[buf]
+            idx = dks.indexOf(tchr)+1;
+        res[0] = idx?dks.charAt(idx)
+                    :tchr;
+      } else if (lang.dk.hasOwnProperty(tchr)) {
         /*
         *  in all other cases, process char as usual
         */
-        res[1] = lang.dk.indexOf(tchr)>-1 && deadkeys.hasOwnProperty(tchr);
+        res[1] = 1;
         res[0] = tchr;
       }
     }
@@ -1402,94 +1399,98 @@ var VirtualKeyboard = new function () {
    * @scope private
    */
   var __getKeyboardHtml = function (lang) {
-    var inp = document.createElement('span');
-    /*
-    *  inp is used to calculate real char width and detect combining symbols
-    *  @see __getCharHtmlForKey
-    */
-    document.body.appendChild(inp);
-    inp.style.position = 'absolute';
-    inp.style.left = '-1000px';
+      var inp = document.createElement('span');
+      /*
+      *  inp is used to calculate real char width and detect combining symbols
+      *  @see __getCharHtmlForKey
+      */
+      document.body.appendChild(inp);
+      inp.style.position = 'absolute';
+      inp.style.left = '-1000px';
 
-    for (var i=0, aL=lang.length, btns = [], zcnt = 0, chr, title; i<aL; i++) {
-      chr = lang[i];
-      title = isArray(chr)?chr[0]:chr.replace(/_.+/,'');
-      btns.push("<div id='",idPrefix,(isArray(chr)?zcnt++:chr)
-               ,"' class='",cssClasses.buttonUp
-               ,"'><a "
-               ,"title='",title,"'"
-               ,">",(isArray(chr)?(__getCharHtmlForKey(lang,chr[0],cssClasses.buttonNormal,inp)
-                                  +__getCharHtmlForKey(lang,chr[1],cssClasses.buttonShifted,inp)
-                                  +__getCharHtmlForKey(lang,chr[2],cssClasses.buttonAlted,inp))
-                                 :"<span class='title'>"+title+"</span>")
-               ,"</a></div>");
-    }
-    document.body.removeChild(inp);
-    return btns.join("");
+      for (var i=0, aL=lang.length, btns = [], chr, title; i<aL; i++) {
+          chr = lang[i];
+          btns.push(["<div id='",idPrefix,i
+                    ,"' class='",cssClasses.buttonUp
+                    ,"'><a>",__getCharHtmlForKey(lang, chr, VK_NORMAL,         cssClasses.charNormal,    inp)
+                            ,__getCharHtmlForKey(lang, chr, VK_SHIFT,          cssClasses.charShift,     inp)
+                            ,__getCharHtmlForKey(lang, chr, VK_ALT_CTRL,       cssClasses.charAlt,       inp)
+                            ,__getCharHtmlForKey(lang, chr, VK_SHIFT_ALT_CTRL, cssClasses.charShiftAlt,  inp)
+                            ,__getCharHtmlForKey(lang, chr, VK_CAPS,           cssClasses.charCaps,      inp)
+                            ,__getCharHtmlForKey(lang, chr, VK_SHIFT_CAPS,     cssClasses.charShiftCaps, inp)
+                    ,"</a></div>"].join(""));
+
+      }
+      for (var i in controlKeys) {
+          if (controlKeys.hasOwnProperty(i)) {
+              chr = controlKeys[i];
+              title = chr.replace(/_.+/,'');
+              btns.splice(i,0,["<div id='",idPrefix,chr
+                              ,"' class='",cssClasses.buttonUp
+                              ,"'><a title='",title,"'"
+                              ,"><span class='title'>",title,"</span>"
+                              ,"</a></div>"].join(""));
+          }
+      }
+      document.body.removeChild(inp);
+      return btns.join("");
   }
   /**
    *  Char html constructor
    *
    *  @param {Object} lyt layout object
    *  @param {String} chr char code
+   *  @param {Number} mode char modifier
    *  @param {String} css optional additional class names
    *  @param {HTMLInputElement} i input field to test char length against
    *  @return {String} resulting html
    *  @scope private
    */
-  var __getCharHtmlForKey = function (lyt, chr, css, inp) {
+  var __getCharHtmlForKey = function (lyt, chr, mode, css, inp) {
       var html = []
-         ,dk = isArray(lyt.dk) && lyt.dk.indexOf(chr)>-1
-         ,i = 0
+         ,dk = lyt.dk && lyt.dk.hasOwnProperty(chr[mode])
+         ,char = chr[mode] || ""
 
       /*
       *  if key matches agains current deadchar list
       */
-      if (dk) css = css+" "+cssClasses.deadkey;
+      if (dk) css += " "+cssClasses.deadkey;
 
-      inp.innerHTML = chr;
       /*
-      *  this is used to detect true combining chars, like THAI CHARACTER SARA I
-      *  NBSPs are appended on the both sides to handle ltr and rtl chars at once
+      *  the following css classes define hiding of the chars which should not be shown together
       */
-      if (chr && inp.offsetWidth < 4) inp.innerHTML = "\xa0"+chr+"\xa0";
-
-      html[i++] = "<span";
-      if (css) {
-          html[i++] = " class=\""+css+"\"";
+      if ((mode == VK_SHIFT_CAPS && chr[VK_CAPS] && char.toLowerCase() == chr[VK_CAPS].toLowerCase())
+       || (mode == VK_CAPS && chr[VK_SHIFT_CAPS] && char.toLowerCase() == chr[VK_SHIFT_CAPS].toLowerCase())) {
+          css += " "+cssClasses.hiddenCaps;
       }
-      html[i++] = " >"+(chr?inp.innerHTML:"")+"</span>";
+      if ((mode == VK_SHIFT && chr[VK_NORMAL] && char.toLowerCase() == chr[VK_NORMAL].toLowerCase())
+       || (mode == VK_NORMAL && chr[VK_SHIFT] && char.toLowerCase() == chr[VK_SHIFT].toLowerCase())) {
+          css += " "+cssClasses.hiddenShift;
+      }
+      if ((mode == VK_SHIFT && chr[VK_SHIFT_CAPS] && char.toLowerCase() == chr[VK_SHIFT_CAPS].toLowerCase())
+       || (mode == VK_SHIFT_CAPS && chr[VK_SHIFT] && char.toLowerCase() == chr[VK_SHIFT].toLowerCase())) {
+          css += " "+cssClasses.hiddenShiftCaps;
+      }
+      if ((mode == VK_CAPS && chr[VK_NORMAL] && char.toLowerCase() == chr[VK_NORMAL].toLowerCase())
+       || (mode == VK_NORMAL && chr[VK_CAPS] && char.toLowerCase() == chr[VK_CAPS].toLowerCase())) {
+          css += " "+cssClasses.hiddenCaps;
+      }
+      if ((mode == VK_SHIFT_ALT_CTRL && chr[VK_ALT_CTRL] && char.toLowerCase() == chr[VK_ALT_CTRL].toLowerCase())
+       || (mode == VK_ALT_CTRL && chr[VK_SHIFT] && char.toLowerCase() == chr[VK_SHIFT].toLowerCase())) {
+          css += " "+cssClasses.hiddenAlt;
+      }
+
+      html.push("<span");
+      if (css) {
+          html.push(" class=\""+css+"\"");
+      }
+      html.push(" >\xa0"+char+"\xa0</span>");
       return html.join("");
   }
   /**
    *  Keyboard initializer
    */
   ;(function() {
-      /*
-      *  process the deadkeys, to make more usable, but non-editable object
-      */
-      var dk = {};
-      for (var i=0, dL=deadkeys.length; i<dL; i++) {
-        if (!deadkeys.hasOwnProperty(i)) continue;
-        /*
-        *  got correct deadkey symbol
-        */
-        dk[deadkeys[i][0]] = {};
-        var chars = deadkeys[i][1].split(" ");
-        /*
-        *  process char:mod_char pairs
-        */
-        for (var z=0, cL=chars.length; z<cL; z++) {
-          dk[deadkeys[i][0]][chars[z].charAt(0)] = chars[z].charAt(1);
-        }
-      }
-      /*
-      *  resulting array:
-      *
-      *  { '<dead_char>' : { '<key>' : '<modification>', }
-      */
-      deadkeys = dk;
-
       /*
       *  create keyboard UI
       */

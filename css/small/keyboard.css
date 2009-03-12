@@ -54,9 +54,6 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         text-decoration: none;
         width: 100%;
 }
-#virtualKeyboard #kbDesk.capsLock div.kbButton span.normal {
-        text-transform: uppercase;
-}
 
 #virtualKeyboard #kbDesk div.kbButtonHover a {
         background-position: 0 -21px;
@@ -77,16 +74,69 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard #kbDesk div.kbButton span.title {
         display: none;
 }
-#virtualKeyboard #kbDesk div.kbButton span.shifted,
-#virtualKeyboard #kbDesk div.kbButton span.alted {
-        position: absolute;
-        right: -5px;
-        top: 0;
-        visibility: hidden;
+
+/**
+ *  General definitions for the characters
+ */
+#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charAlt,
+#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charCaps,
+#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charNormal,
+#virtualKeyboard #kbDesk.modeShift div.kbButton span.charShift,
+#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charShiftAlt,
+#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charShiftCaps {
+        color: black;
+        bottom: 1px;
+        left: -1px;
 }
+#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charCaps,
+#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charNormal,
+#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charShift,
+#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charShiftAlt,
+#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charShiftCaps,
+#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charAlt,
+#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charCaps,
+#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charShift,
+#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charShiftAlt,
+#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charShiftCaps,
+#virtualKeyboard #kbDesk.modeShift div.kbButton span.charAlt,
+#virtualKeyboard #kbDesk.modeShift div.kbButton span.charCaps,
+#virtualKeyboard #kbDesk.modeShift div.kbButton span.charNormal,
+#virtualKeyboard #kbDesk.modeShift div.kbButton span.charShiftAlt,
+#virtualKeyboard #kbDesk.modeShift div.kbButton span.charShiftCaps,
+#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charAlt,
+#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charNormal,
+#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charShift,
+#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charShiftAlt,
+#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charShiftCaps,
+#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charAlt,
+#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charCaps,
+#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charNormal,
+#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charShift,
+#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charShiftAlt,
+#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charAlt,
+#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charCaps,
+#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charNormal,
+#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charShift,
+#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charShiftCaps {
+        display: none;
+}
+
+/**
+ *  When each char class should be visible
+ */
+#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charAlt,
+#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charCaps,
+#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charNormal,
+#virtualKeyboard #kbDesk.modeShift div.kbButton span.charShift,
+#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charShiftAlt,
+#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charShiftCaps {
+        display: block !important;
+}
+
 #virtualKeyboard #kbDesk span.deadKey {
-        color: red;
+        color: red !important;
 }
+
 #virtualKeyboard #kbDesk div#kb_benter {
         margin-top: -18px;
         position: relative;
