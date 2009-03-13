@@ -1106,7 +1106,7 @@ var VirtualKeyboard = new function () {
       if (isString(s))
           return s.match(/\x01.+?\x01|./g).map(function(a){return a.replace(/[\x01\x02]/g,"")});
       else
-          return s.map(function(a){return isArray(a)?a.map(function(s){String.fromCharCode(s)}).join(""):String.fromCharCode(a)});
+          return s.map(function(a){return isArray(a)?a.map(function(s){String.fromCharCode(s)}).join(""):String.fromCharCode(a).replace(/[\x01\x02]/g,"")});
   }
   /**
    *  Prepares layout for typing
@@ -1203,11 +1203,15 @@ var VirtualKeyboard = new function () {
           lt.dk = {};
           for (var i in dk) {
               if (dk.hasOwnProperty(i)) {
+                  var key = i;
+                  if (parseInt(i) && i>9) {
+                      key = String.fromCharCode(i);
+                  }
                   /*
                   * last replace is used to simplify char processor
                   * deadkey found in the deadkey list will be substituted with itself on +1 position
                   */
-                  lt.dk[i] = __doParse(dk[i]).join("").replace(i,i+i);
+                  lt.dk[key] = __doParse(dk[i]).join("").replace(key,key+key);
               }
           }
       }

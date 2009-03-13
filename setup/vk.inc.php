@@ -322,8 +322,9 @@ class VirtualKeyboardLayout {
         // LAYOUT block
         // String format: ScanCode \t KeyId \t CapsFlag \t NormalKey \t ShiftKey       \t (and so on)
         // [SGCaps]:      -1       \t -1    \t 0        \t SGCapsKey \t ShiftSGCapsKey
-        $strings = preg_split("#[\\r\\n]+#",preg_replace(array("#^.+?//SC[^\\r\\n]+[/\\s-]+#smi","#\\s+(^DEADKEY|^LIGATURE|^KEYNAME).+#sm"),"",$str));
-        $strings = array_map(create_function('$a','return preg_split("#\\t+#",$a);'),$strings);
+        preg_match("/^LAYOUT.+?--[\\r\\n]+(.+?)(?:^DEADKEY|^LIGATURE|^KEYNAME)/sm",$str,$m);
+        $strings = preg_split("#[\\r\\n]+#",$m[1]);
+        $strings = array_map(create_function('$a','return preg_split("#\\t+#",$a);'),array_filter($strings));
 
         // Column values
         // 0 - normal key state
@@ -437,6 +438,13 @@ class VirtualKeyboardLayout {
      */
     function getDomain () {
         return $this->domain;
+    }
+
+    /**
+     *  @return layout copyright
+     */
+    function getCopyright () {
+        return $this->copyright;
     }
 
     /**
@@ -564,6 +572,6 @@ class VirtualKeyboardLayout {
             $serArr[] = "'cbk':".trim(file_get_contents($add),"\r\n; ");
         }
 
-        return "{".join("\r\n,",array_filter($serArr))."}";
+        return "{".join("\n,",array_filter($serArr))."}";
     }
 }

@@ -19,6 +19,7 @@ require "vk.inc.php";
 define ('LAYOUT_ROOT', dirname(__FILE__)."/in/");
 define ('LAYOUT_MASK', '*.klc');
 define ('LAYOUT_OUT', dirname(__FILE__)."/out/layouts.js");
+define ('LAYOUT_REPORT', dirname(__FILE__)."/out/layouts.tsv");
 define ('LAYOUT_INSTALL', dirname(__FILE__)."/../layouts/layouts.js");
 
 /*
@@ -89,6 +90,7 @@ function getLayoutList () {
        <?php
 
          $layouts = array();
+         $report = array();
 
          $kbdl = getLayoutList();
          $saved = false;
@@ -101,15 +103,16 @@ function getLayoutList () {
                 $saved = "<span style=\"color:green\">Yes</span>";
 //                       "<span style=\"color:red\">No</span>"
                 $layouts[] = convertKbd($kl);
+                $report[] = $kl->getCode()."\t".$kl->getName()."\t".$kl->getCopyright();
             } else {
                 $saved = "<span></span>";
             }
        ?>
         <tr class="<?=$cls?>">
          <td><input type="checkbox" name="<?=$cname?>" <?=$checked?> /></td>
-         <td><?=$kl->code?></td>
-         <td><?=$kl->name?></td>
-         <td><?=$kl->copyright?></td>
+         <td><?=$kl->getCode()?></td>
+         <td><?=$kl->getName()?></td>
+         <td><?=$kl->getCopyright()?></td>
          <td><?=$saved?></td>
         </tr>
        <?php
@@ -123,6 +126,12 @@ function getLayoutList () {
              $fd = fopen(LAYOUT_OUT,"ab");
              fwrite($fd,'﻿');
              fwrite($fd,$s);
+             fclose($fd);
+
+             // save report
+             @unlink(LAYOUT_REPORT);
+             $fd = fopen(LAYOUT_REPORT,"ab");
+             fwrite($fd,join("\r\n",$report));
              fclose($fd);
 
              if (isset($_POST['doinstall'])) {
