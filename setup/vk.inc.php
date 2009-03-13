@@ -43,6 +43,12 @@ class VirtualKeyboardLayout {
                              ,0x2061,0x2062,0x2063,0x206A,0x206B,0x206C,0x206D,0x206E,0x206F);
 
     /**
+     *  List of the chars to be not skipped in the layout
+     */
+    var $problemChars = array('021e','021f' // from Lakhota Standard, windows does not uppercase them properly
+                             );
+
+    /**
      *  Keys mapping as used in the US keyboard layout
      *  it might follow in the different order to the mapping described in the KLC file
      */
@@ -152,6 +158,8 @@ class VirtualKeyboardLayout {
 
     function VirtualKeyboardLayout($fname) {
 	$this->controlCodes = join("", $this->controlCodes);
+
+	$this->problemChars = array_map(create_function('$a','return code2utf(hexdec($a));'), $this->problemChars);
 
         $this->root = dirname($fname);
         $this->fname = $fname;
@@ -502,35 +510,35 @@ class VirtualKeyboardLayout {
             $anc[$i_anc++] = $nc;
 
             //shift
-            if (is_string($sc) && mb_strtoupper($sc) != mb_strtoupper($nc)) {
+            if (is_string($sc) && (in_array($sc, $this->problemChars) || mb_strtoupper($sc) != mb_strtoupper($nc))) {
                 $asc[$i_asc][] = $sc;
             } else {
                 // key not exists
                 $i_asc = $i_anc;
             }
             // alt
-            if (is_string($ac) && mb_strtoupper($ac) != mb_strtoupper($nc)) {
+            if (is_string($ac) && (in_array($ac, $this->problemChars) || mb_strtoupper($ac) != mb_strtoupper($nc))) {
                 $aac[$i_aac][] = $ac;
             } else {
                 // key not exists
                 $i_aac = $i_anc;
             }
             // shift+alt
-            if (is_string($sac) && mb_strtoupper($sac) != mb_strtoupper($nc) && mb_strtoupper($sac) != mb_strtoupper($ac)) {
+            if (is_string($sac) && ((in_array($sc, $this->problemChars) || mb_strtoupper($sac) != mb_strtoupper($ac)))) {
                 $asac[$i_asac][] = $sac;
             } else {
                 // key not exists
                 $i_asac = $i_anc;
             }
             // caps
-            if (is_string($cc) && mb_strtoupper($cc) != mb_strtoupper($nc)) {
+            if (is_string($cc) && (in_array($sc, $this->problemChars) || mb_strtoupper($cc) != mb_strtoupper($nc))) {
                 $acc[$i_acc][] = $cc;
             } else {
                 // key not exists
                 $i_acc = $i_anc;
             }
             // shift+caps
-            if (is_string($scc) && mb_strtoupper($scc) != mb_strtoupper($nc) && mb_strtoupper($scc) != mb_strtoupper($cc)) {
+            if (is_string($scc) && (in_array($sc, $this->problemChars) || (mb_strtoupper($scc) != mb_strtoupper($nc) && mb_strtoupper($scc) != mb_strtoupper($cc)))) {
                 $ascc[$i_ascc][] = $scc;
             } else {
                 // key not exists

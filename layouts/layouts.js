@@ -1933,7 +1933,7 @@ function (chr, buf) {
 {code:'LA'
 ,name:'Lakhota Standard'
 ,normal:'`1234567890-=\\ǧweštyuiop[]asdŋghȟkl;\'zžčvbnm,./'
-,shift:{0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'}
+,shift:{0:'~!@#$%^&*()_+|',24:'{}',32:'Ȟ',35:':"',44:'<>?'}
 ,'cbk':/**
  * $Id$
  *
