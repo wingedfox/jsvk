@@ -380,7 +380,7 @@ var VirtualKeyboard = new function () {
     /*
     *  set layout-dependent class names
     */
-    nodes.desk.className = lang.domain
+    nodes.keyboard.className = lang.domain
     self.IME.css = lang.domain
 
     /*

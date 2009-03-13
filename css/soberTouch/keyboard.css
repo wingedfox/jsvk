@@ -446,15 +446,38 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 *
 * Language-dependend class name is equal to uppercased language domain code (ZH in zh-CN)
 */
-#virtualKeyboard #kbDesk.ZH div.kbButton span {
+#virtualKeyboard.ZH div.kbButton span {
         font-family: MingLiU, SimSun, "Arial Unicode MS";
         font-size: 13px;
 }
-#virtualKeyboard #kbDesk.ZH div.kbButton span.charAlt,
-#virtualKeyboard #kbDesk.ZH div.kbButton span.charShift {
+#virtualKeyboard.ZH div.kbButton span.charAlt,
+#virtualKeyboard.ZH div.kbButton span.charShift {
         font-size: 9px;
 }
 #VirtualKeyboardIME.ZH div.IMEContent {
         font-family: SimSun, "Arial Unicode MS";
         font-size: 16px;
 }
+
+/**
+ *  Settings for Tamil group
+ */
+#virtualKeyboard.TA #kbDesk div.kbButton span {
+        bottom: 2px !important;
+        font-size: 9.5pt;
+        left: -4px !important;
+}
+#virtualKeyboard.TA #kbDesk.modeAlt div.kbButton span.charShiftAlt,
+#virtualKeyboard.TA #kbDesk.modeCaps div.kbButton span.charShiftCaps,
+#virtualKeyboard.TA #kbDesk.modeNormal div.kbButton span.charAlt,
+#virtualKeyboard.TA #kbDesk.modeNormal div.kbButton span.charShift,
+#virtualKeyboard.TA #kbDesk.modeShift div.kbButton span.charShiftAlt,
+#virtualKeyboard.TA #kbDesk.modeShift div.kbButton span.charShiftCaps {
+        font-size: 9pt !important;
+        left: 4px !important;
+}
+#virtualKeyboard.TA #kbDesk.modeNormal div.kbButton span.charAlt,
+#virtualKeyboard.TA #kbDesk.modeShift div.kbButton span.charShiftAlt {
+        left: -9px !important;
+}
+
