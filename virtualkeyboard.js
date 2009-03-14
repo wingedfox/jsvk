@@ -1150,6 +1150,7 @@ var VirtualKeyboard = new function () {
              char[VK_SHIFT] = char_shift;
          } else if (char_normal && char_normal != (char_normal = char_normal.toUpperCase())) {
              char[VK_SHIFT] = char_normal;
+             char_shift = char_normal;
          }
 
          if (alt.hasOwnProperty(i)) {
@@ -1192,7 +1193,7 @@ var VirtualKeyboard = new function () {
              char[VK_SHIFT_CAPS] = char_caps;
          } else if (char_shift) {
              char[VK_SHIFT_CAPS] = char_shift.toLowerCase();
-         } else if (char_normal) {
+         } else if (char_normal && char_shift) {
              char[VK_SHIFT_CAPS] = char_normal.toLowerCase();
          }
 
