@@ -67,7 +67,7 @@
               }
               llist.push(layouts[i].serialize(type));
               report.push(layouts[i].getCode()+'\t'+layouts[i].getName()+'\t'+layouts[i].getCopyright())
-              tb.rows[cnt].cells[5].innerHTML = "<b style=\"color: green\">Yes</b>";
+              tb.rows[cnt].cells[4].innerHTML = "<b style=\"color: green\">Yes</b>";
           }
           cnt++;
       }
@@ -103,7 +103,6 @@
     <th>Layout Code</th>
     <th>Layout Name</th>
     <th>Copyright</th>
-    <th>Verified</th>
     <th>Saved</th>
    </tr>
   </thead>
@@ -150,8 +149,6 @@
       td.innerHTML = layouts[of.Name].getName();
       td = tr.insertCell();
       td.innerHTML = layouts[of.Name].getCopyright();
-      td = tr.insertCell();
-      td.innerHTML = "<b style=\"color: red\">No</b>";
       td = tr.insertCell();
       td.innerHTML = "<b style=\"color: red\">No</b>";
 
