@@ -1308,7 +1308,7 @@ var VirtualKeyboard = new function () {
               s1.className = DOM.CSS(s2).addClass(cssClasses.buttonDown).getClass();
               break;
           case 2:
-              if (KEY.SHIFT==prefix && mode ^ VK_SHIFT && mode ^ VK_SHIFT_CAPS) {
+              if (KEY.SHIFT==prefix && mode&VK_SHIFT^VK_SHIFT) {
                   DOM.CSS(nodes.desk).addClass(cssClasses.hoverShift);
               } else if (KEY.ALT==prefix && mode ^ VK_ALT_CTRL) {
                   DOM.CSS(nodes.desk).addClass(cssClasses.hoverAlt);
