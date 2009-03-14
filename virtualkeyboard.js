@@ -364,10 +364,14 @@ var VirtualKeyboard = new function () {
     lang = layout[layout.hash[code]];
     if (!isArray(lang)) lang = layout[layout.hash[code]] = __prepareLayout(lang);
 
+    if (!isArray(lang)) {
+        lang = layout[layout.hash[code]] = __prepareLayout(lang);
+        lang.html = __getKeyboardHtml(lang);
+    }
     /*
     *  overwrite layout
     */
-    nodes.desk.innerHTML = __getKeyboardHtml(lang);
+    nodes.desk.innerHTML = lang.html;
 
     /*
     *  set layout-dependent class names
