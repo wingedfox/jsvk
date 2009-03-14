@@ -366,6 +366,8 @@ var VirtualKeyboard = new function () {
 
     if (!isArray(lang)) {
         lang = layout[layout.hash[code]] = __prepareLayout(lang);
+    }
+    if (!lang.html) {
         lang.html = __getKeyboardHtml(lang);
     }
     /*
@@ -1102,7 +1104,7 @@ var VirtualKeyboard = new function () {
       if (isString(s))
           return s.match(/\x01.+?\x01|./g).map(function(a){return a.replace(/[\x01\x02]/g,"")});
       else
-          return s.map(function(a){return isArray(a)?a.map(function(s){String.fromCharCode(s)}).join(""):String.fromCharCode(a).replace(/[\x01\x02]/g,"")});
+          return s.map(function(a){return isArray(a)?a.map(function(s){String.fromCharCodeExt(s)}).join(""):String.fromCharCodeExt(a).replace(/[\x01\x02]/g,"")});
   }
   /**
    *  Prepares layout for typing
