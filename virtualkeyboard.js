@@ -370,14 +370,6 @@ var VirtualKeyboard = new function () {
     nodes.desk.innerHTML = __getKeyboardHtml(lang);
 
     /*
-    *  prevent IE from selecting anything here, otherwise it drops any existing selection
-    */
-    var els = nodes.desk.getElementsByTagName("*");
-    for (var i=0, eL=els.length; i<eL; i++) {
-        els[i].unselectable = "on";
-    }
-
-    /*
     *  set layout-dependent class names
     */
     nodes.keyboard.className = lang.domain
@@ -1438,7 +1430,7 @@ var VirtualKeyboard = new function () {
           }
       }
       document.body.removeChild(inp);
-      return btns.join("");
+      return btns.join("").replace(/(<\w+)/g,"$1 unselectable='on' ");
   }
   /**
    *  Char html constructor
@@ -1500,12 +1492,14 @@ var VirtualKeyboard = new function () {
       *  create keyboard UI
       */
       nodes.keyboard = document.createElement('div');
+      nodes.keyboard.unselectable = "on";
       nodes.keyboard.id = 'virtualKeyboard';
-      nodes.keyboard.innerHTML = "<div id=\"kbDesk\"><!-- --></div>"
+      nodes.keyboard.innerHTML =("<div id=\"kbDesk\"><!-- --></div>"
                                 +"<select id=\"kb_langselector\"></select>"
                                 +"<select id=\"kb_mappingselector\"></select>"
-                                +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank" title="&copy;2006-2009 Debugger.ru">VirtualKeyboard '+self.$VERSION$+'</a></div>';
-
+                                +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank" title="&copy;2006-2009 Debugger.ru">VirtualKeyboard '+self.$VERSION$+'</a></div>'
+                                ).replace(/(<\w+)/g,"$1 unselectable='on' ");
+                                
       nodes.desk = nodes.keyboard.firstChild;
 
       var el = nodes.keyboard.childNodes.item(1);
@@ -1566,12 +1560,9 @@ var VirtualKeyboard = new function () {
       EM.addEventListener(nodes.desk,'click', EM.preventDefaultAction);
 
       /*
-      *  prevent IE from selecting anything here, otherwise it drops any existing selection
+      *  selection and reset of the selection in the target input
+      *  Safari likes to have some checks against 'select' node
       */
-      var els = nodes.keyboard.getElementsByTagName("*");
-      for (var i=0, eL=els.length; i<eL; i++) {
-          els[i].unselectable = "on";
-      }
       nodes.keyboard.onmousedown = function (e) {if (!e || !e.target.tagName || 'select' != e.target.tagName.toLowerCase()) return false}
 
       /*
