@@ -25,7 +25,7 @@
  */
 var VirtualKeyboard = new function () {
   var self = this;
-  self.$VERSION$ = " $HeadURL$ ".match(/\/[^\.]*[\.\/]([^\/]+)\/[\w\.\s$]+$/)[1]+"."+(" $Rev$ ".replace(/\D/g,""));
+  self.$VERSION$ = "{{VERSION}}";
   /**
    *  Some configurable stuff
    *

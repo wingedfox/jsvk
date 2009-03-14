@@ -10,6 +10,8 @@ TS = /bin/ts
 TAR = tar --group=users --owner=wingedfox
 # Grep version
 DIST_VERSION = $(shell perl -ne 'm/$$HeadURL.*?\/(tags\/[^.]+.v([\w.]+)|trunk)/ && print ($$2||$$1) && exit' ./virtualkeyboard.js)
+DIST_BUILD = $(shell perl -ne 'm/\$$Id[^\d]+(\d+)/ && print ($$1) && exit' ./virtualkeyboard.js)
+$(shell perl -pi -e 's/{{VERSION}}/$(DIST_VERSION).$(DIST_BUILD)/' ./virtualkeyboard.js)
 # Distribution name
 DIST_NAME = VirtualKeyboard.$@.$(DIST_VERSION)
 DIST_NAME_ARC = VirtualKeyboard.$@.$(DIST_VERSION).tar.gz
