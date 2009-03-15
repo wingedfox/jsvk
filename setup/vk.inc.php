@@ -487,12 +487,12 @@ class VirtualKeyboardLayout {
 
         foreach ($keys as $k => $v) {
 
-            $nc  = @$v['normal'];
-            $sc  = @$v['shift'];
-            $ac  = @$v['alt'];
-            $sac = @$v['shift_alt'];
-            $cc  = @$v['caps'];
-            $scc = @$v['shift_caps'];
+            $nc  = @$v[$this->colmap[0]];
+            $sc  = @$v[$this->colmap[1]];
+            $ac  = @$v[$this->colmap[6]];
+            $sac = @$v[$this->colmap[7]];
+            $cc  = @$v[$this->colmap[8]];
+            $scc = @$v[$this->colmap[9]];
 
             if (!is_string($nc)) {
                 // key not exists
