@@ -522,7 +522,7 @@ var VirtualKeyboardLayout = function ($fname) {
                 $i_acc = $i_anc;
             }
             // shift+caps
-            if (is_string($scc) && (in_array($sc, $problemChars) || (mb_strtoupper($scc) != mb_strtoupper($nc) && mb_strtoupper($scc) != mb_strtoupper($cc)))) {
+            if (is_string($scc) && (in_array($sc, $problemChars) || mb_strtoupper($scc) != mb_strtoupper($cc))) {
                 if (!$ascc[$i_ascc]) $ascc[$i_ascc] = [];
                 $ascc[$i_ascc].push($scc);
             } else {
