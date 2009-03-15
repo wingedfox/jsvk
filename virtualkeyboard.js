@@ -623,6 +623,9 @@ var VirtualKeyboard = new function () {
           case 27:
               if (self.IME.isOpen()) {
                   self.IME.hide();
+              } else {
+                  var start = DocumentSelection.getStart(nodes.attachedInput);
+                  DocumentSelection.setRange(nodes.attachedInput, start, start);
               }
               return false;
           default:
