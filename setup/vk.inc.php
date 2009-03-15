@@ -546,7 +546,7 @@ class VirtualKeyboardLayout {
                 $i_acc = $i_anc;
             }
             // shift+caps
-            if (is_string($scc) && (in_array($sc, $this->problemChars) || (mb_strtoupper($scc) != mb_strtoupper($nc) && mb_strtoupper($scc) != mb_strtoupper($cc)))) {
+            if (is_string($scc) && (in_array($sc, $this->problemChars) || (mb_strtoupper($scc) != mb_strtoupper($cc)))) {
                 $ascc[$i_ascc][] = $scc;
             } else {
                 // key not exists
