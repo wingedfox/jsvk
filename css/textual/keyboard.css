@@ -149,7 +149,8 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard #kbDesk.modeCaps div.kbButton span.hiddenCaps,
 #virtualKeyboard #kbDesk.modeCaps div.kbButton span.charAlt,
 #virtualKeyboard #kbDesk.modeCaps div.kbButton span.charNormal,
-#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charShift {
+#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charShift,
+#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charShiftAlt {
         display: none;
 }
 #virtualKeyboard #kbDesk.modeAlt div.kbButton span.charAlt,
