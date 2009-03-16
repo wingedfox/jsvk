@@ -1103,7 +1103,7 @@ var VirtualKeyboard = new function () {
    */
   var __doParse = function(s) {
       if (isString(s))
-          return s.match(/\x01.+?\x01|./g).map(function(a){return a.replace(/[\x01\x02]/g,"")});
+          return s.match(/\x01.+?\x01|[\ud800-\udbff][\udc00-\udfff]|./g).map(function(a){return a.replace(/[\x01\x02]/g,"")});
       else
           return s.map(function(a){return isArray(a)?a.map(function(s){String.fromCharCodeExt(s)}).join(""):String.fromCharCodeExt(a).replace(/[\x01\x02]/g,"")});
   }

@@ -178,7 +178,7 @@ class VirtualKeyboardLayout {
      */
     function __chr2utf ($chr) {
 
-        if (preg_match("/^[\\da-f]{4}$/i", $chr)) {
+        if (preg_match("/^[\\da-f]{4,6}$/i", $chr)) {
             return code2utf(hexdec($chr));
         } else {
             return $chr;
