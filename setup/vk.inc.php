@@ -494,12 +494,12 @@ class VirtualKeyboardLayout {
             $cc  = @$v[$this->colmap[8]];
             $scc = @$v[$this->colmap[9]];
 
-            if (!is_string($nc)) {
-                // key not exists
-                $nc = chr(0x02);
-            } else if (is_array($nc)) {
+            if (is_array($nc)) {
                 // ligature
                 $nc = chr(0x01).join($nc).chr(0x01);
+            } else if (!is_string($nc)) {
+                // key not exists
+                $nc = chr(0x02);
             }
             if (is_array($sc)) {
                 // ligature
