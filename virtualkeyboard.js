@@ -196,21 +196,18 @@ var VirtualKeyboard = new function () {
    *  Available layouts
    *
    *  Structure:
-   *   [
-   *    {'name' : {String} layout name to find it using switchLayout
-   *     'keys' : {Array} 3-dimensional array of the keyboard codes [normal, shift, alt] keys
-   *     'css' : {String} css class to be set on kbDesk when layout is activated
-   *     'dk' : {String} list of the active dead keys
-   *     'cbk' : {Function} custom input transformations
+   *   [ <char1>, <charN>]
+   *  with the additional properties:
+   *   .name : {String} layout name to find it using switchLayout
+   *   .dk   : {String} list of the active dead keys, matches and replacements
+   *   .cbk  : {Function} custom input transformations
    *               OR
-   *             {Object} { 'load' : optional on load callback
-   *                        'activate' : optional activation callback
-   *                        'charProcessor' : required input transformation callback
-   *                      }
-   *     'rtl' : true means the layout is right-to-left
+   *           {Object} { 'activate' : optional activation (on layout select) callback
+   *                      'charProcessor' : required input transformation callback
+   *                    }
+   *   .rtl  : right-to-left or left-to-right input flag
    *
-   *    }
-   *   ]
+   *  Where <char> is the array of the chars ['<normal>','<shift>','<alt>','<shift_alt>','<caps>','<shift_caps>']
    *
    *  @type Array
    *  @scope private
@@ -281,19 +278,31 @@ var VirtualKeyboard = new function () {
    *
    *  @see #layout
    *  @param {Object} l layout description hash:
-   *    { 'code' : {String} layout code
-   *     ,'name' : {String} layout name
-   *     ,'keys' : {String,Array} keycodes
-   *     ,'shift': {Object} optional shift keys, array of string
-   *     ,'alt'  : {Array} optional altgr keys
-   *     ,'dk'   : {String} list of the active deadkeys
+   *    { 'code'       : {String} layout code in form {language-COUNTRY}
+   *     ,'name'       : {String} layout name
+   *     ,'normal'     : {String,Array} keycodes without any modifiers, empty key should be set to 0x02 in array or char from this code in string
+   *     ,'shift'      : {Object} optional shift keys, in form of <offset> : <codes>
+   *     ,'alt'        : {Object} optional altgr keys, in form of <offset> : <codes>
+   *     ,'shift_alt'  : {Object} optional shift+altgr keys, in form of <offset> : <codes>
+   *     ,'caps'       : {Object} optional caps keys, in form of <offset> : <codes>
+   *     ,'shift_caps' : {Object} optional shift+caps keys, in form of <offset> : <codes>
+   *     ,'dk'   : {String} list of the active deadkeys in form of <char> : <deadkeys>
    *     ,'cbk' : {Function} char processing callback
    *                OR
-   *              { 'load' : {Function} optional load callback (called from addLayout)
-   *               ,'activate' : {Function} optional activation callback (called from switchLayout)
+   *              { 'activate' : {Function} optional activation callback (called from switchLayout)
    *               ,'charProcessor' : {Function} required char processing callback
    *              }
    *    }
+   *
+   *  <codes> is the array or string of the symbols. Codes might contain a ligatures in the form:
+   *   string: substring of '0x01<char1><charN>0x01'
+   *   array:  array of [<charCode1>,<charCodeN>]
+   *
+   *  <deadkeys> is the string or array of the matches and replacements
+   *   string: string of '<match1><replacement1><matchN><replacementN>
+   *   array: array of [<matchCharCode1><replacementCharCode1><matchCharCodeN><replacementCharCodeN>]
+   *
+   *
    *  @scope public
    */
   self.addLayout = function(l) {
