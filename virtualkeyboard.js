@@ -1187,10 +1187,10 @@ var VirtualKeyboard = new function () {
          if (icc>-1 && cc[i-icc]) {
              char_caps = cc[i-icc];
          }
-         if (char_shift && /[a-z]/i.test(char_shift)) {
-             char[VK_CAPS] = char_shift;
-         } else if (char_caps) {
+         if (char_caps) {
              char[VK_CAPS] = char_caps;
+         } else if (char_shift && char_shift.toUpperCase() != char_shift.toLowerCase()) {
+             char[VK_CAPS] = char_shift;
          } else if (char_normal) {
              char[VK_CAPS] = char_normal.toUpperCase();
          }
@@ -1201,8 +1201,6 @@ var VirtualKeyboard = new function () {
          }
          if (icsc>-1 && csc[i-icsc]) {
              char[VK_SHIFT_CAPS] = csc[i-icsc];
-         } else if (char_shift && /[a-z]/i.test(char_shift)) {
-             char[VK_SHIFT_CAPS] = char_normal.toLowerCase();
          } else if (char_shift) {
              char[VK_SHIFT_CAPS] = char_shift.toLowerCase();
          } else if (char_normal) {
