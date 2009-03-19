@@ -43,8 +43,8 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         float: left;
         height: 38px;
         overflow: hidden;
-        padding: 0;
-        margin: 1px;
+        padding: 1px;
+        margin: 0;
         position: relative;
         width: 38px;
         z-index: 2;
@@ -177,8 +177,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 
 #virtualKeyboard #kbDesk div#kb_benter {
         background-position: -303px 0px;
-        margin-top: -39px;
-        margin-bottom: 1px;
+        margin-top: -40px;
         position: relative;
         float: right;
         height: 78px;
