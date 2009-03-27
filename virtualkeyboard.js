@@ -203,7 +203,10 @@ var VirtualKeyboard = new function () {
    *   .cbk  : {Function} custom input transformations
    *               OR
    *           {Object} { 'activate' : optional activation (on layout select) callback
-   *                      'charProcessor' : required input transformation callback
+   *                      'charProcessor' : required input transformation callback, receiving 3 parameters:
+   *                       - current input buffer (selection)
+   *                       - processed char
+   *                       - keyboard mode object, containing fields 'shift', 'alt', 'ctrl' and 'caps' where true means this modifier active
    *                    }
    *   .rtl  : right-to-left or left-to-right input flag
    *
@@ -1378,7 +1381,13 @@ var VirtualKeyboard = new function () {
       /*
       *  call user-supplied converter
       */
-      res = lang.charProcessor(tchr,buf);
+      var state = {
+          shift : mode & VK_SHIFT
+         ,alt   : mode & VK_ALT
+         ,ctrl  : mode & VK_CTRL
+         ,caps  : mode & VK_CAPS
+      }
+      res = lang.charProcessor(tchr,buf,state);
     } else if (tchr == "\x08") {
       res = ['',0];
     } else if (lang.dk && buf.length <= 1) {
