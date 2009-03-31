@@ -757,7 +757,8 @@ var VirtualKeyboard = new function () {
         __updateControlKeys(newMode);
         __updateLayout();
     }
-
+    e.preventDefault();
+    e.stopPropagation();
   }
   /**
    *  Handle mousedown event
@@ -1437,12 +1438,12 @@ var VirtualKeyboard = new function () {
           chr = lang[i];
           btns.push(["<div id='",idPrefix,i
                     ,"' class='",cssClasses.buttonUp
-                    ,"'><a>",__getCharHtmlForKey(lang, chr, VK_NORMAL,         cssClasses.charNormal,    inp)
-                            ,__getCharHtmlForKey(lang, chr, VK_SHIFT,          cssClasses.charShift,     inp)
-                            ,__getCharHtmlForKey(lang, chr, VK_ALT_CTRL,       cssClasses.charAlt,       inp)
-                            ,__getCharHtmlForKey(lang, chr, VK_SHIFT_ALT_CTRL, cssClasses.charShiftAlt,  inp)
-                            ,__getCharHtmlForKey(lang, chr, VK_CAPS,           cssClasses.charCaps,      inp)
-                            ,__getCharHtmlForKey(lang, chr, VK_SHIFT_CAPS,     cssClasses.charShiftCaps, inp)
+                    ,"'><a href='#'>",__getCharHtmlForKey(lang, chr, VK_NORMAL,         cssClasses.charNormal,    inp)
+                                     ,__getCharHtmlForKey(lang, chr, VK_SHIFT,          cssClasses.charShift,     inp)
+                                     ,__getCharHtmlForKey(lang, chr, VK_ALT_CTRL,       cssClasses.charAlt,       inp)
+                                     ,__getCharHtmlForKey(lang, chr, VK_SHIFT_ALT_CTRL, cssClasses.charShiftAlt,  inp)
+                                     ,__getCharHtmlForKey(lang, chr, VK_CAPS,           cssClasses.charCaps,      inp)
+                                     ,__getCharHtmlForKey(lang, chr, VK_SHIFT_CAPS,     cssClasses.charShiftCaps, inp)
                     ,"</a></div>"].join(""));
 
       }
@@ -1586,12 +1587,6 @@ var VirtualKeyboard = new function () {
       EM.addEventListener(nodes.desk,'mouseover', _btnMouseInOut_);
       EM.addEventListener(nodes.desk,'mouseout', _btnMouseInOut_);
       EM.addEventListener(nodes.desk,'click', EM.preventDefaultAction);
-
-      /*
-      *  selection and reset of the selection in the target input
-      *  Safari likes to have some checks against 'select' node
-      */
-      nodes.keyboard.onmousedown = function (e) {if (!e || !e.target.tagName || 'select' != e.target.tagName.toLowerCase()) return false}
 
       /*
       *  check url params for the default layout name
