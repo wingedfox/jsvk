@@ -929,6 +929,7 @@ var VirtualKeyboard = new function () {
         if (el.contentWindow) {
             el = el.contentWindow.document.body.parentNode;
         }
+        el.focus();
         EM.addEventListener(el,'keydown',_keydownHandler_);
         EM.addEventListener(el,'keyup',_keydownHandler_);
         EM.addEventListener(el,'keypress',_keydownHandler_);
