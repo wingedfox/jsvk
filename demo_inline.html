@@ -41,9 +41,12 @@
       #skins a img {
           border: 0;
           display: none;
-          left: 0;
+          left: 0%;
           position: absolute;
-          top:100%;
+          top: 100%;
+      }
+      #skins a:hover {
+          z-index: 2;
       }
       #skins a:hover img {
           display: block;
@@ -169,7 +172,7 @@ Demos: [<a>Plain text</a>] |
              /*
              *  build the list of skins
              */
-             var skins = ['winxp','simple','small','soberTouch','textual'].sort()
+             var skins = ['winxp','small','soberTouch','textual','flat_gray','air_large','air_mid','air_small'].sort()
                 ,html = []
                 ,el = document.getElementById('skins')
              for (var i=0, sL=skins.length; i<sL; i++) {
