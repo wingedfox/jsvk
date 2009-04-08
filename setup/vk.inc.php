@@ -38,7 +38,7 @@ class VirtualKeyboardLayout {
     var $SERIALIZE_USE_DOMAIN = "domain";
     var $SERIALIZE_USE_CODE   = "code";
 
-    var $controlCodes = array(0x00AD,0x0600,0x0601,0x0602,0x0603,0x06DD,0x070F,0x17B4,0x17B5,0x200B
+    var $controlCodes = array(0x0600,0x0601,0x0602,0x0603,0x06DD,0x070F,0x17B4,0x17B5,0x200B
                              ,0x200C,0x200D,0x200E,0x200F,0x202A,0x202B,0x202C,0x202D,0x202E,0x2060
                              ,0x2061,0x2062,0x2063,0x206A,0x206B,0x206C,0x206D,0x206E,0x206F);
 
@@ -157,10 +157,9 @@ class VirtualKeyboardLayout {
     var $fname = "";
 
     function VirtualKeyboardLayout($fname) {
-	$this->controlCodes = join("", $this->controlCodes);
+	$this->convertControlCodes();
 
 	$this->problemChars = array_map(create_function('$a','return code2utf(hexdec($a));'), $this->problemChars);
-
         $this->root = dirname($fname);
         $this->fname = $fname;
 
@@ -168,6 +167,18 @@ class VirtualKeyboardLayout {
         $this->layoutText = mb_convert_encoding(file_get_contents($fname), "UTF-8", "UCS-2");
 
         $this->parseHeader();
+    }
+
+    /**
+     *  Converts @{link #controlCodes} array to fast-replacement hash
+     */
+    function convertControlCodes() {
+        $tmp = array();
+        foreach ($this->controlCodes as $v) {
+             $k = code2utf($v);
+	     $tmp[$k] = "\u".str_pad(dechex($v),4,0,STR_PAD_LEFT);
+        }
+        $this->controlCodes = $tmp;
     }
 
     /**
@@ -192,12 +203,18 @@ class VirtualKeyboardLayout {
      *  @return serialized row
      */
     function __serializeRow ($data, $token) {
+        $uni_keys = array_keys($this->controlCodes);
+        $uni_vals = array_values($this->controlCodes);
         if ($this->colmap[0] == $token) {
-            return $token.":'".addcslashes(join('',$data),"\\'"/*.$this->controlCodes*/)."'";
+            $charset = addcslashes(join('',$data),"\\'");
+            $charset = str_replace($uni_keys, $uni_vals, $charset);
+            return $token.":'".$charset."'";
         } else if (!empty($data) && in_array($token, $this->colmap)) {
             $str = $token.":{";
             foreach ($data as $k => $v) {
-                $data[$k] = $k.":'".addcslashes(join('',$v),"\\'"/*.$this->controlCodes*/)."'";
+                $charset = addcslashes(join('',$v),"\\'");
+                $charset = str_replace($uni_keys, $uni_vals, $charset);
+                $data[$k] = $k.":'".$charset."'";
             }
             $str .= join(",",$data)."}";
             return $str;
