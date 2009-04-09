@@ -273,7 +273,11 @@ var VirtualKeyboard = new function () {
    */
   self.addLayoutList = function () {
       for (var i=0, aL=arguments.length; i<aL; i++) {
-          self.addLayout(arguments[i]);
+          try {
+              self.addLayout(arguments[i]);
+          } catch (e) {
+              // error, skip it
+          }
       }
   }
   /**
