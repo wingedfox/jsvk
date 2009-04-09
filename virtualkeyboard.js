@@ -26,6 +26,14 @@
 var VirtualKeyboard = new function () {
   var self = this;
   self.$VERSION$ = "{{VERSION}}";
+
+  /**
+   *  Regexp to test a char against to prove it is a dead key
+   *
+   *  @type RegExp
+   *  @scope private
+   */
+  var DK_REG = /\x03/;
   /**
    *  Some configurable stuff
    *
@@ -532,7 +540,6 @@ var VirtualKeyboard = new function () {
               chr = "\n";
               break;
           default:
-              var el = document.getElementById(idPrefix+key);
               chr = lang[key][mode];
               break;
       }
@@ -1121,9 +1128,9 @@ var VirtualKeyboard = new function () {
    */
   var __doParse = function(s) {
       if (isString(s))
-          return s.match(/\x01.+?\x01|[\ud800-\udbff][\udc00-\udfff]|./g).map(function(a){return a.replace(/[\x01\x02]/g,"")});
+          return s.match(/\x01.+?\x01|\x03.|[\ud800-\udbff][\udc00-\udfff]|./g).map(function(a){return a.replace(/[\x01\x02]/g,"")});
       else
-          return s.map(function(a){return isArray(a)?a.map(function(s){String.fromCharCodeExt(s)}).join(""):String.fromCharCodeExt(a).replace(/[\x01\x02]/g,"")});
+          return s.map(function(a){return isArray(a)?a.map(function(s){return String.fromCharCodeExt(s)}).join(""):String.fromCharCodeExt(a).replace(/[\x01\x02]/g,"")});
   }
   /**
    *  Prepares layout for typing
@@ -1401,7 +1408,9 @@ var VirtualKeyboard = new function () {
       *  process char in buffer first
       *  buffer size should be exactly 1 char to don't mess with the occasional selection
       */
-      if (lang.dk.hasOwnProperty(buf)) {
+      var isDk = DK_REG.test(tchr);
+      tchr = tchr.replace(DK_REG,"");
+      if (buf && lang.dk.hasOwnProperty(buf)) {
         /*
         *  dead key found, no more future processing
         *  if new key is not an another deadkey
@@ -1411,7 +1420,7 @@ var VirtualKeyboard = new function () {
             idx = dks.indexOf(tchr)+1;
         res[0] = idx?dks.charAt(idx)
                     :tchr;
-      } else if (lang.dk.hasOwnProperty(tchr)) {
+      } else if (isDk && lang.dk.hasOwnProperty(tchr)) {
         /*
         *  in all other cases, process char as usual
         */
@@ -1478,9 +1487,8 @@ var VirtualKeyboard = new function () {
    */
   var __getCharHtmlForKey = function (lyt, chr, mode, css, inp) {
       var html = []
-         ,dk = lyt.dk && lyt.dk.hasOwnProperty(chr[mode])
          ,char = chr[mode] || ""
-
+         ,dk = DK_REG.test(char) && lyt.dk && lyt.dk.hasOwnProperty(char = char.replace(DK_REG,""));
       /*
       *  if key matches agains current deadchar list
       */

@@ -327,7 +327,7 @@ var VirtualKeyboardLayout = function ($fname) {
                        $lKey[$col] = $ligature[$keyName][$v];
                     } else if ($sym.indexOf('@') == 4) {
                        $sym = $sym.replace('@','');
-                       $lKey[$col] = __chr2utf($sym);
+                       $lKey[$col] = ["\x03",__chr2utf($sym)];
                        parseDeadkey($sym);
                     } else {
                        $lKey[$col] = __chr2utf($sym);

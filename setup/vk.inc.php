@@ -368,7 +368,7 @@ class VirtualKeyboardLayout {
                        $lKey[$col] = $this->ligature[$keyName][$v];
                     } else if (strpos($sym, '@') == 4) {
                        $sym = str_replace('@','',$sym);
-                       $lKey[$col] = $this->__chr2utf($sym);
+                       $lKey[$col] = "\x03".$this->__chr2utf($sym);
                        $this->parseDeadkey($sym);
                     } else {
                        $lKey[$col] = $this->__chr2utf($sym);
