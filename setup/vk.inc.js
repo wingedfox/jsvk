@@ -167,7 +167,7 @@ var VirtualKeyboardLayout = function ($fname) {
      */
     var __serializeRow = function ($data, $token) {
         if ($colmap[0] == $token) {
-            return $token + ":[" + addcslashes($data.map(function(a){if (!a.match(/^\[.+\]$/)) return a.charCodeAt(0)}).join(',')/*.$controlCodes*/) + "]";
+            return $token + ":[" + addcslashes($data.map(function(a){if (!a.match(/^\[.+\]$/)) return a.charCodeAt(0); else return a}).join(',')/*.$controlCodes*/) + "]";
         } else if ($data && in_array($token, $colmap)) {
             var $str = $token + ":{";
             for (var $k=0, $dL=$data.length; $k<$dL; $k++) {
@@ -211,6 +211,10 @@ var VirtualKeyboardLayout = function ($fname) {
      */
     var parseDeadkey = function ($sym) {
         var $char = __chr2utf($sym);
+
+        if ($sym.length==1) {
+            $sym = $sym.charCodeAt(0).hex();
+        }
 
         if (!$deadkey[$char]) {
             // DEADKEY xxx block
@@ -325,7 +329,7 @@ var VirtualKeyboardLayout = function ($fname) {
                        continue;
                     } else if ('%%' == $sym) {
                        $lKey[$col] = $ligature[$keyName][$v];
-                    } else if ($sym.indexOf('@') == 4) {
+                    } else if ($sym.match(/@$/)) {
                        $sym = $sym.replace('@','');
                        $lKey[$col] = ["\x03",__chr2utf($sym)];
                        parseDeadkey($sym);
@@ -490,7 +494,7 @@ var VirtualKeyboardLayout = function ($fname) {
             $anc[$i_anc++] = $nc;
 
             //shift
-            if (is_string($sc) && (in_array($sc, $problemChars) || mb_strtoupper($sc) != mb_strtoupper($nc))) {
+            if (is_string($sc) && ($sc.match(/^\[3,/) || in_array($sc, $problemChars) || mb_strtoupper($sc) != mb_strtoupper($nc))) {
                 if (!$asc[$i_asc]) $asc[$i_asc] = [];
                 $asc[$i_asc].push($sc);
             } else {
@@ -498,7 +502,7 @@ var VirtualKeyboardLayout = function ($fname) {
                 $i_asc = $i_anc;
             }
             // alt
-            if (is_string($ac) && (in_array($ac, $problemChars) || mb_strtoupper($ac) != mb_strtoupper($nc))) {
+            if (is_string($ac) && ($ac.match(/^\[3,/) || in_array($ac, $problemChars) || mb_strtoupper($ac) != mb_strtoupper($nc))) {
                 if (!$aac[$i_aac]) $aac[$i_aac] = [];
                 $aac[$i_aac].push($ac);
             } else {
@@ -506,7 +510,7 @@ var VirtualKeyboardLayout = function ($fname) {
                 $i_aac = $i_anc;
             }
             // shift+alt
-            if (is_string($sac) && ((in_array($sc, $problemChars) || mb_strtoupper($sac) != mb_strtoupper($ac)))) {
+            if (is_string($sac) && ($sac.match(/^\[3,/) || (in_array($sac, $problemChars) || mb_strtoupper($sac) != mb_strtoupper($ac)))) {
                 if (!$asac[$i_asac]) $asac[$i_asac] = [];
                 $asac[$i_asac].push($sac);
             } else {
@@ -514,7 +518,7 @@ var VirtualKeyboardLayout = function ($fname) {
                 $i_asac = $i_anc;
             }
             // caps
-            if (is_string($cc) && (in_array($sc, $problemChars) || mb_strtoupper($cc) != mb_strtoupper($nc))) {
+            if (is_string($cc) && (in_array($cc, $problemChars) || mb_strtoupper($cc) != mb_strtoupper($nc))) {
                 if (!$acc[$i_acc]) $acc[$i_acc] = [];
                 $acc[$i_acc].push($cc);
             } else {
@@ -522,7 +526,7 @@ var VirtualKeyboardLayout = function ($fname) {
                 $i_acc = $i_anc;
             }
             // shift+caps
-            if (is_string($scc) && (in_array($sc, $problemChars) || mb_strtoupper($scc) != mb_strtoupper($cc))) {
+            if (is_string($scc) && (in_array($scc, $problemChars) || mb_strtoupper($scc) != mb_strtoupper($cc))) {
                 if (!$ascc[$i_ascc]) $ascc[$i_ascc] = [];
                 $ascc[$i_ascc].push($scc);
             } else {

@@ -250,6 +250,10 @@ class VirtualKeyboardLayout {
         $str = &$this->layoutText;
         $char = $this->__chr2utf($sym);
 
+        if (mb_strlen($sym) == 1) {
+            $sym = str_pad(dechex(ord($sym)),4,0,STR_PAD_LEFT);
+        }
+
         if (!key_exists($char, $this->deadkey)) {
             // DEADKEY xxx block
             if (preg_match("/^DEADKEY\s+".$sym."(.+?)(?:^KEYNAME|^DEADKEY)/ms", $str, $m)) {
@@ -366,7 +370,7 @@ class VirtualKeyboardLayout {
                        continue;
                     } else if ('%%' == $sym) {
                        $lKey[$col] = $this->ligature[$keyName][$v];
-                    } else if (strpos($sym, '@') == 4) {
+                    } else if (mb_substr($sym, -1) == '@') {
                        $sym = str_replace('@','',$sym);
                        $lKey[$col] = "\x03".$this->__chr2utf($sym);
                        $this->parseDeadkey($sym);
@@ -535,27 +539,28 @@ class VirtualKeyboardLayout {
             $anc[$i_anc++] = $nc;
 
             //shift
-            if (is_string($sc) && (in_array($sc, $this->problemChars) || mb_strtoupper($sc) != mb_strtoupper($nc))) {
+            if (is_string($sc) && (preg_match("/^\\x03./",$sc) || in_array($sc, $this->problemChars) || mb_strtoupper($sc) != mb_strtoupper($nc))) {
                 $asc[$i_asc][] = $sc;
             } else {
                 // key not exists
                 $i_asc = $i_anc;
             }
             // alt
-            if (is_string($ac) && (in_array($ac, $this->problemChars) || mb_strtoupper($ac) != mb_strtoupper($nc))) {
+            if (is_string($ac) && (preg_match("/^\\x03./",$ac) || in_array($ac, $this->problemChars) || mb_strtoupper($ac) != mb_strtoupper($nc))) {
                 $aac[$i_aac][] = $ac;
             } else {
                 // key not exists
                 $i_aac = $i_anc;
             }
             // shift+alt
-            if (is_string($sac) && ((in_array($sc, $this->problemChars) || mb_strtoupper($sac) != mb_strtoupper($ac)))) {
+            if (is_string($sac) && (preg_match("/^\\x03./",$sac) || (in_array($sac, $this->problemChars) || mb_strtoupper($sac) != mb_strtoupper($ac)))) {
                 $asac[$i_asac][] = $sac;
             } else {
                 // key not exists
                 $i_asac = $i_anc;
             }
             // caps
+            // could not have deadkeys
             if (is_string($cc) && (in_array($sc, $this->problemChars) || mb_strtoupper($cc) != mb_strtoupper($nc))) {
                 $acc[$i_acc][] = $cc;
             } else {
@@ -563,6 +568,7 @@ class VirtualKeyboardLayout {
                 $i_acc = $i_anc;
             }
             // shift+caps
+            // could not have deadkeys
             if (is_string($scc) && (in_array($sc, $this->problemChars) || mb_strtoupper($scc) != mb_strtoupper($cc))) {
                 $ascc[$i_ascc][] = $scc;
             } else {
