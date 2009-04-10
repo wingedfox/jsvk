@@ -358,6 +358,8 @@ class VirtualKeyboardLayout {
         // 7 - Shift+SGCaps
         for ($i=0; $i<sizeof($strings); $i++) {
             $sgcaps  = 'SGCap' == $strings[$i][2];
+            $shiftlock = 1 == $strings[$i][2];
+
             $keyCode = $strings[$i][0];
             $keyName = $strings[$i][1];
             $string  = $strings[$i];
@@ -366,16 +368,25 @@ class VirtualKeyboardLayout {
                 foreach ($this->columns as $z => $v) {
                     $sym = trim($string[$z+3]);
                     $col = $this->colmap[$v];
+                    $res;
                     if ('-1' == $sym) {
                        continue;
                     } else if ('%%' == $sym) {
-                       $lKey[$col] = $this->ligature[$keyName][$v];
+                       $res = $this->ligature[$keyName][$v];
                     } else if (mb_substr($sym, -1) == '@') {
                        $sym = str_replace('@','',$sym);
-                       $lKey[$col] = "\x03".$this->__chr2utf($sym);
+                       $res = "\x03".$this->__chr2utf($sym);
                        $this->parseDeadkey($sym);
                     } else {
-                       $lKey[$col] = $this->__chr2utf($sym);
+                       $res = $this->__chr2utf($sym);
+                    }
+                    $lKey[$col] = $res;
+                    if ($shiftlock) {
+                        if (0 == $z) {
+                            $lKey[$this->colmap[9]] = $res;
+                        } else if (1 == $z) {
+                            $lKey[$this->colmap[8]] = $res;
+                        }
                     }
                 }
                 if ($sgcaps) {

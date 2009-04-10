@@ -316,6 +316,7 @@ var VirtualKeyboardLayout = function ($fname) {
         // 7 - Shift+SGCaps
         for (var $i=0, $sL=$strings.length; $i<$sL; $i++) {
             var $sgcaps  = 'SGCap' == $strings[$i][2]
+               ,$shiftlock = 1 == $strings[$i][2]
                ,$keyCode = $strings[$i][0]
                ,$keyName = $strings[$i][1]
                ,$string  = $strings[$i];
@@ -324,17 +325,26 @@ var VirtualKeyboardLayout = function ($fname) {
                 for (var $z=0, $cL=$columns.length; $z<$cL; $z++) {
                     var $v = $columns[$z]
                        ,$sym = $string[$z+3].trim()
-                       ,$col = $colmap[$v];
+                       ,$col = $colmap[$v]
+                       ,$res;
                     if ('-1' == $sym) {
                        continue;
                     } else if ('%%' == $sym) {
-                       $lKey[$col] = $ligature[$keyName][$v];
+                       $res = $ligature[$keyName][$v];
                     } else if ($sym.match(/@$/)) {
                        $sym = $sym.replace('@','');
-                       $lKey[$col] = ["\x03",__chr2utf($sym)];
+                       $res = ["\x03",__chr2utf($sym)];
                        parseDeadkey($sym);
                     } else {
-                       $lKey[$col] = __chr2utf($sym);
+                       $res = __chr2utf($sym);
+                    }
+                    $lKey[$col] = $res;
+                    if ($shiftlock) {
+                        if (0 == $z) {
+                            $lKey[$colmap[9]] = $res;
+                        } else if (1 == $z) {
+                            $lKey[$colmap[8]] = $res;
+                        }
                     }
                 }
                 if ($sgcaps) {
