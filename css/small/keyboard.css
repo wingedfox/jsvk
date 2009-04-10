@@ -70,6 +70,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         position: relative;
         text-align: center;
         top: 2px;
+        white-space: pre;
 }
 #virtualKeyboard #kbDesk div.kbButton span.title {
         display: none;
