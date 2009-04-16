@@ -832,7 +832,7 @@ VirtualKeyboard.addLayoutList(
 ,dk:{'\\':'`̀\'́6̂~̃-̄9̆8̇"̈*̣:̤0̌_̱\\\\'}},
 {code:'BLA'
 ,name:'Blackfoot Phonetic'
-,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,᙮/'
+,normal:'`1234567890-=\\wetyiop[]ashk;\'nm,᙮/'
 ,shift:{0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'}
 ,'cbk':/**
  * $Id$
@@ -971,7 +971,7 @@ new function () {
 ,shift_caps:{24:'ǝ'}},
 {code:'CHR'
 ,name:'Cherokee Phonetic'
-,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./'
+,normal:'`1234567890-=\\qwetyuio[]asdghjkl;\'cvnm,./'
 ,shift:{0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'}
 ,'cbk':/**
  * $Id$
