@@ -545,6 +545,14 @@ class VirtualKeyboardLayout {
                 // ligature
                 $sac = chr(0x01).join($sac).chr(0x01);
             }
+            if (is_array($cc)) {
+                // ligature
+                $cc = chr(0x01).join($cc).chr(0x01);
+            }
+            if (is_array($scc)) {
+                // ligature
+                $scc = chr(0x01).join($scc).chr(0x01);
+            }
 
             // fill the things
             $anc[$i_anc++] = $nc;
@@ -580,6 +588,7 @@ class VirtualKeyboardLayout {
             }
             // shift+caps
             // could not have deadkeys
+            var_dump($scc, $cc);
             if (is_string($scc) && (in_array($sc, $this->problemChars) || mb_strtoupper($scc) != mb_strtoupper($cc))) {
                 $ascc[$i_ascc][] = $scc;
             } else {

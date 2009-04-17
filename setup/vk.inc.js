@@ -499,6 +499,14 @@ var VirtualKeyboardLayout = function ($fname) {
                 // ligature
                 $sac = "[" + $sac.map(__char2code).join(",") + "]";
             }
+            if ($cc instanceof Array) {
+                // ligature
+                $cc = "[" + $cc.map(__char2code).join(",") + "]";
+            }
+            if ($scc instanceof Array) {
+                // ligature
+                $scc = "[" + $scc.map(__char2code).join(",") + "]";
+            }
 
             // fill the things
             $anc[$i_anc++] = $nc;
