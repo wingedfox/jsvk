@@ -44,7 +44,7 @@ VirtualKeyboard.Langs.KR = new function () {
         arr[2]= code % 28
         return arr
     }
-    self.charProcessor  = function (chr, buf, CVC, rukbd) {
+    self.charProcessor  = function (chr, buf, keystate, CVC, rukbd) {
         var jamo=self.Jamo[chr]
         if (!CVC) CVC=self.parseHangul(buf)
         if (CVC==null) {
