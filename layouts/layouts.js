@@ -528,7 +528,7 @@ VirtualKeyboard.Langs.KR = new function () {
         arr[2]= code % 28
         return arr
     }
-    self.charProcessor  = function (chr, buf, CVC, rukbd) {
+    self.charProcessor  = function (chr, buf, keystate, CVC, rukbd) {
         var jamo=self.Jamo[chr]
         if (!CVC) CVC=self.parseHangul(buf)
         if (CVC==null) {
@@ -2966,7 +2966,7 @@ function (chr, buf) {
  * @version $Rev$
  * @lastchange $Author$ $Date$
  */
-function (chr, buf) {
+function (chr, buf, keystate) {
     var Ru2Kor = {'-':'-','а':'ㅏ','А':'ㅏ','б':'ㅂ','Б':'ㅃ','в':'ㅗ','В':'ㅗ','г':'ㄱ','Г':'ㄲ','д':'ㄷ','Д':'ㄸ','е':'ㅔ','Е':'ㅔ','ё':'ㅛ','Ё':'ㅕ','ж':'ㅈ','Ж':'ㅈ','з':'ㅈ','З':'ㅈ','и':'ㅣ','И':'ㅣ','й':'ㅣ','Й':'ㅣ','к':'ㄱ','К':'ㄲ','л':'ㄹ','Л':'ㄹ','м':'ㅁ','М':'ㅁ','н':'ㄴ','Н':'ㅇ','о':'ㅗ','О':'ㅓ','п':'ㅂ','П':'ㅃ','р':'ㄹ','Р':'ㄹ','с':'ㅅ','С':'ㅆ','т':'ㄷ','Т':'ㄸ','у':'ㅜ','У':'ㅜ','ф':'ㅍ','Ф':'ㅍ','х':'ㅎ','Ч':'ㅎ','ц':'ㅉ','Ц':'ㅉ','ч':'ㅈ','Ч':'ㅉ','ш':'ㅅ','Ш':'ㅅ','щ':'ㅅ','Щ':'ㅅ','ъ':'ъ','ы':'ㅡ','Ы':'ㅡ','ь':'ㅓ','Ь':'ㅓ','э':'ㅐ','Э':'ㅐ','ю':'ㅠ','Ю':'ㅠ','я':'ㅑ','Я':'ㅑ'}
        ,RuVowels = "ьЬаАеЕёЁиИйЙОоуУыЫэЭюЮяЯ"
        ,Ru2KorJotVowels = "ㅕㅕㅑㅑㅖㅖㅕㅛㅣㅣㅣㅣㅕㅛㅠㅠㅡㅡㅒㅒㅠㅠㅑㅑ"
@@ -3034,7 +3034,7 @@ function (chr, buf) {
             }
         }
     }
-    return Korean.charProcessor(Ru2Kor[chr]||chr, buf, CVC, 1)
+    return Korean.charProcessor(Ru2Kor[chr]||chr, buf, keystate, CVC, 1);
 }},
 {code:'KRI-SL'
 ,name:'Krio'
