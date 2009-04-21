@@ -588,7 +588,6 @@ class VirtualKeyboardLayout {
             }
             // shift+caps
             // could not have deadkeys
-            var_dump($scc, $cc);
             if (is_string($scc) && (in_array($sc, $this->problemChars) || mb_strtoupper($scc) != mb_strtoupper($cc))) {
                 $ascc[$i_ascc][] = $scc;
             } else {
