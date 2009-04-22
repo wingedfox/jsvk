@@ -22,6 +22,13 @@ PopupVirtualKeyboard = new function() {
      */
     var hWnd = null;
     /**
+     *  Unload handler
+     *
+     *  @type {Function}
+     *  @scope private
+     */
+    var unloadHandler;
+    /**
      *  path to this file
      * 
      *  @type {String}
@@ -60,13 +67,15 @@ PopupVirtualKeyboard = new function() {
      *  Shows keyboard
      *
      *  @param {HTMLElement, String} input element or it to bind keyboard to
+     *  @param {Function} unload monitor
      *  @return {Boolean} operation state
      *  @scope public
      */
     self.open =
-    self.show = function (target) {
+    self.show = function (target, unload) {
         if (!hWnd || hWnd.closed) {
-          hWnd = (window.showModelessDialog||window.open)(p+"vk_popup.html",window.showModelessDialog?window:"_blank","status=0,title=0,dependent=yes,resizable=no,scrollbars=no,width=500,height=500");
+          hWnd = (window.showModelessDialog||window.open)(p+"vk_popup.html",window.showModelessDialog?window:"_blank","status=0,title=0,dependent=yes,dialog=yes,resizable=no,scrollbars=no,width=500,height=500");
+          unloadHandler = unload;
           tgt = target;
           return true;
         }
@@ -83,6 +92,9 @@ PopupVirtualKeyboard = new function() {
         if (hWnd.VirtualKeyboard.isOpen()) hWnd.VirtualKeyboard.hide();
         hWnd.close();
         hWnd = null;
+        if ('function' == typeof unloadHandler) {
+            unloadHandler();
+        }
     }
     /**
      *  Toggles keyboard state
