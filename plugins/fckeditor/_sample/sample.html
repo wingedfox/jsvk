@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * VirtualKeyboard plugin - native input method for web apps - http://debugger.ru/projects/virtualkeyboard
+ * Copyright (C) 2009 Ilya Lebedev <ilya@lebedev.net>
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
+ *
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * == END LICENSE ==
+ *
+ * Sample page.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>FCKeditor - Virtual Keyboard plugin sample</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link href="../sample.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../../../../fckeditor.js"></script>
+    <script type="text/javascript">
+        var sBasePath = document.location.pathname.substring(0,document.location.pathname.lastIndexOf('editor'));
+        var oFCKeditor = new FCKeditor( 'FCKeditor_1' ) ;
+
+
+        // some default options for the plugin
+        var _FCK_VK_PLUGIN = {
+            skin : "flat_gray"
+           ,layout : "RU Russian"
+        }
+    </script>
+</head>
+<body>
+    <div>
+     Demo pages:
+     [<a href="../../../../../demo_inline.html">Plain text</a>] |
+     [<a href="../../../../tinymce/plugins/Jsvk/examples/simple.html">TinyMCE</a>] |
+     [<a href="../../../../tinymce3/plugins/Jsvk/examples/simple.html">TinyMCE 3</a>] |
+     [<a href="../../../../xinha/plugins/Jsvk/examples/simple.html">Xinha</a>] |
+     [<a>FCKEditor</a>]
+    </div>
+    <h3>FCKeditor - Sample use of Javascript Virtual Keyboard plugin</h3>
+    <div>
+     <p>This page shows <a href="http://debugger.ru/projects/virtualkeyboard">VirtualKeyboard</a> plugin usage for the FCK rich-text editor.</p>
+     <ul><strong>Known issues</strong>
+      <li>Plugin does support only popup mode, due to overwhelming complexity of FCK configurations</li>
+      <li>Virtual "Del" and "BackSpace" keys does not delete elements: images, tables, paragraphs, etc</li>
+      <li>Deletion does not take in count continuos whitespaces, like real backspace does</li>
+      <li>Plugin has only partial Opera support because of its weird selection implementation and incorrect <a href="http://www.quirksmode.org/js/keys.html" target="_blank">key events processing</a></li>
+     </ul>
+    </div>
+    <hr />
+    <form action="sampleposteddata.asp" method="post" target="_blank">
+        <div>
+            FCKeditor 1:
+            <script type="text/javascript">
+                <!--
+                oFCKeditor = new FCKeditor( 'FCKeditor_1' ) ;
+                oFCKeditor.BasePath = sBasePath ;
+
+                // Set the custom configurations file path (in this way the original file is mantained).
+                oFCKeditor.Config['CustomConfigurationsPath'] = sBasePath + 'editor/plugins/Jsvk/_sample/sample.config.js' ;
+
+                oFCKeditor.Value    = '<p>This is some <strong>sample text<\/strong>. You are using <a href="http://www.fckeditor.net/">FCKeditor<\/a>.<\/p>' ;
+                oFCKeditor.Create() ;
+                //-->
+            </script>
+            <br />
+            FCKeditor 2:
+            <script type="text/javascript">
+                <!--
+                oFCKeditor = new FCKeditor( 'FCKeditor_2' ) ;
+
+                oFCKeditor.BasePath    = sBasePath ;
+
+                // Set the custom configurations file path (in this way the original file is mantained).
+                oFCKeditor.Config['CustomConfigurationsPath'] = sBasePath + 'editor/plugins/Jsvk/_sample/sample.config.js' ;
+
+                oFCKeditor.Value    = '<p>This is some <strong>sample text<\/strong>. You are using <a href="http://www.fckeditor.net/">FCKeditor<\/a>.<\/p>' ;
+                oFCKeditor.Create() ;
+                //-->
+            </script>
+            <br />
+            <input type="submit" value="Submit" />
+        </div>
+    </form>
+</body>
+</html>
