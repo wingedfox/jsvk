@@ -45,6 +45,8 @@ LAYOUTS=$(CURDIR)/layouts/layouts.js
 
 # {{{ SKINS
 SKINS=$(CSS_DIR)/*/button_set.gif \
+		$(CSS_DIR)/*/button_set.png \
+		$(CSS_DIR)/*/thumbnail.png \
 		$(CSS_DIR)/*/keyboard.css
 # }}}
 
