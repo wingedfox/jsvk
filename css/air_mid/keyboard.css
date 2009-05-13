@@ -451,7 +451,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard.ZH div.kbButton span.charShift {
         font-size: 8pt;
 }
-#VirtualKeyboardIME.ZH div.IMEContent {
+#VirtualKeyboardIME.ZH td.IMEContent {
         font-family: SimSun, "Arial Unicode MS";
         font-size: 16px;
 }
