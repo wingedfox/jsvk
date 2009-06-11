@@ -57,10 +57,12 @@ new function () {
                 }
             }
         }
-        for(k in CJincomplete) {
+        for (k in CJincomplete) {
             if (CJArr.hasOwnProperty(k)) {
                 if (CJArr[k].length < 10)
                     CJArr[k] = CJArr[k].concat(CJincomplete[k].slice(0,10-CJArr[k].length))
+            } else {
+                CJArr[k] = [].concat(CJincomplete[k]);
             }
         }
      })();
