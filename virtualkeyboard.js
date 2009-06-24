@@ -1217,6 +1217,8 @@ var VirtualKeyboard = new function () {
          }
          if (icsc>-1 && csc[i-icsc]) {
              char[VK_SHIFT_CAPS] = csc[i-icsc];
+         } else if (char_caps) {
+             char[VK_SHIFT_CAPS] = char_caps.toLowerCase();
          } else if (char_shift) {
              char[VK_SHIFT_CAPS] = char_shift.toLowerCase();
          } else if (char_normal) {
