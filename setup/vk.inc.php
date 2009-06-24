@@ -580,7 +580,7 @@ class VirtualKeyboardLayout {
             }
             // caps
             // could not have deadkeys
-            if (is_string($cc) && (in_array($sc, $this->problemChars) || mb_strtoupper($cc) != mb_strtoupper($nc))) {
+            if (is_string($cc) && (in_array($cc, $this->problemChars) || mb_strtoupper($cc) != mb_strtoupper($nc))) {
                 $acc[$i_acc][] = $cc;
             } else {
                 // key not exists
@@ -588,7 +588,7 @@ class VirtualKeyboardLayout {
             }
             // shift+caps
             // could not have deadkeys
-            if (is_string($scc) && (in_array($sc, $this->problemChars) || mb_strtoupper($scc) != mb_strtoupper($cc))) {
+            if (is_string($scc) && (in_array($scc, $this->problemChars) || mb_strtoupper($scc) != mb_strtoupper($cc))) {
                 $ascc[$i_ascc][] = $scc;
             } else {
                 // key not exists
