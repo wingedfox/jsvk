@@ -626,8 +626,14 @@ VirtualKeyboard.Langs.LA = new function () {
 ,pha:'p\u021fa',pho:'p\u021fo',Pha:'P\u021fa',Pho:'P\u021fo',PHA:'P\u021ea',PHo:'P\u021eo'
 ,tha:'t\u021fa',tho:'t\u021fo',Tha:'T\u021fa',Tho:'T\u021fo',THa:'T\u021ea',THo:'T\u021eo'
 ,kha:'k\u021fa',kho:'k\u021fo',Kha:'K\u021fa',Kho:'K\u021fo',KHa:'K\u021ea',KHo:'K\u021eo'
-,"a'":'á',"A'":'Á',"e'":'é',"E'":'É',"i'":'í',"I'":'Í',"u'":'ú',"U'":'Ú',"o'":'ó',"O'":'Ó'
+,"a'":'á',"A'":'Á',"i'":'í',"I'":'Í',"u'":'ú',"U'":'Ú'
+,hwa:'\u021fwa',hwi:'\u021fwi',hwu:'\u021fwu'
+,Hwa:'\u021ewa',Hwi:'\u021ewi',Hwu:'\u021ewu'
+,HWA:'\u021eWA',HWI:'\u021eWI',HWU:'\u021eWU'
+,hwe:'\u021fwe',Hwe:'\u021ewe',HWE:'\u021eWE'
     }
+
+    ,remap4cp={'hwo':'\u021fwo','Hwo':'\u021ewo','\u021eWO':'HWO'}
 
     ,remap4c = {
  'phun':'pȟuŋ','Phun':'Pȟuŋ','PHUN':'PȞUŊ'
@@ -652,14 +658,16 @@ VirtualKeyboard.Langs.LA = new function () {
 ,'phúŋ':'pȟúŋ','Phúŋ':'Pȟú','PHÚ':'PȞÚ'
 ,'thúŋ':'tȟúŋ','Thúŋ':'Tȟú','THÚŊ':'TȞÚ'
 ,'khúŋ':'kȟúŋ','Khúŋ':'Kȟú','KHÚŊ':'KȞÚ'
-,"p'":'pʼ',"P'":'Pʼ'
-,"k'":'kʼ',"K'":'Kʼ'
-,"t'":'tʼ',"T'":'Tʼ'
-,"c'":'cʼ',"C'":'Cʼ'
-,"s'":'sʼ',"S'":'Sʼ'
-,"š'":'šʼ',"Š'":'Šʼ'
-,"\u021f'":'\u021fʼ',"\u021e'":'\u021eʼ'
-,"h'":'\u021fʼ',"H'":'\u021eʼ'
+,"p'":'p’',"P'":'P’'
+,"k'":'k’',"K'":'K’'
+,"t'":'t’',"T'":'T’'
+,"č'":'č’',"Č'":'Č’'
+,"s'":'s’',"S'":'S’'
+,"š'":'š’',"Š'":'Š’'
+,"\u021f'":'\u021f’',"\u021e'":'\u021e’'
+,"h'":'\u021f’',"H'":'\u021e’'
+,"e'":'é',"E'":'É',"o'":'ó',"O'":'Ó'
+,'hwo\'':'\u021fwó','Hwo\'':'\u021ewó','\u021eWO\'':'HWÓ'
     }
 
     ,remap2 = {
@@ -672,6 +680,7 @@ VirtualKeyboard.Langs.LA = new function () {
 ,'án':'án','Án':'Án','ÁN':'ÁN'
 ,'ín':'ín','Ín':'Ín','ÍN':'ÍN'
 ,'ún':'ún','Ún':'Ún','ÚN':'ÚN'
+,hw:'hw',Hw:'Hw',HW:'HW'
     }
 
     ,remap3 = {
@@ -681,6 +690,7 @@ VirtualKeyboard.Langs.LA = new function () {
 ,"phu'":'phú',"Phu'":'Phú',"PHU'":'PHÚ'
 ,"thu'":'thú',"Thu'":'Thú',"THU'":'THÚ'
 ,"khu'":'khú',"Khu'":'Khú',"KHU'":'KHÚ'
+,hwo:'hwo',Hwo:'Hwo',HWO:'HWO'
     }
 
     ,remap4 = {
@@ -694,10 +704,10 @@ VirtualKeyboard.Langs.LA = new function () {
 
     ,remap = {};
 
-    var __construct = function() {
+    (function() {
         var i,k
         var cons ="ǧwštypsdghȟkl'zžčbnmǦWŠTPSDGH\u021eKLZŽČBNM".split('')
-        var punct =" .,<>;:\"?`~1!2@3#4$5%6^7&8*9(0)-_=+\|\u00A0".split('')
+        var punct =" [].,<>;:\"?`~1!2@3#4$5%6^7&8*9(0)-_=+\|\u00A0".split('')
         for(k in remap0) remap[k]=[remap0[k],0]
         for(k in remap1) remap[k]=[remap1[k],1]
         for(k in remap2) remap[k]=[remap2[k],2]
@@ -705,15 +715,33 @@ VirtualKeyboard.Langs.LA = new function () {
         for(k in remap4) remap[k]=[remap4[k],4]
         for(k in remap4c) {
             for(var i=0,cL=cons.length; i<cL; i++) 
-                remap[k+cons[i]]=[remap4c[k]+(cons[i]=="'"? "ʼ": cons[i]),1];
+                remap[k+cons[i]]=[remap4c[k]+(cons[i]=="'"? "’": cons[i]),1];
             for(var i=0,pL=punct.length; i<pL; i++)
                 remap[k+punct[i]]=[remap4c[k]+punct[i],0];
         }
+        for(k in remap4cp) {
+            for(var i=0,cL=cons.length; i<cL; i++) 
+                if(cons[i]!="'")remap[k+cons[i]]=[remap4cp[k]+cons[i],1]
+        }
+        remap['hw']=['hw',2]
         // clear come memory
         remap0=remap1=remap2=remap3=remap4=remap4c = null
         self.remap = remap;
+    })();
+
+    self.charProcessor = function(chr, buf, kstate){
+        if (chr=='\u0008') {
+            if (buf.length) {
+                return [buf.slice(0,-1),buf.length-1]
+            } 
+        } else if(kstate.caps){
+            return [buf+chr,0]
+        }  else if(/[^A-z'ŋčǧȟšžŊČǦȞŠ]/.test(chr)){
+            return remap[buf+chr] || [buf+chr, 0]
+        } else {
+            return remap[buf+chr] || [buf+chr, 1]
+        }
     }
-    __construct();
 };
 VirtualKeyboard.addLayoutList(
 {code:'AKA-GH'
@@ -1113,10 +1141,12 @@ new function () {
                 }
             }
         }
-        for(k in CJincomplete) {
+        for (k in CJincomplete) {
             if (CJArr.hasOwnProperty(k)) {
                 if (CJArr[k].length < 10)
                     CJArr[k] = CJArr[k].concat(CJincomplete[k].slice(0,10-CJArr[k].length))
+            } else {
+                CJArr[k] = [].concat(CJincomplete[k]);
             }
         }
      })();
@@ -3066,6 +3096,7 @@ function (chr, buf, keystate) {
 ,name:'Lakhota Standard'
 ,normal:'`1234567890-=\\ǧweštyuiop[]asdŋghȟkl;\'zžčvbnm,./'
 ,shift:{0:'~!@#$%^&*()_+|',24:'{}',32:'Ȟ',35:':"',44:'<>?'}
+,caps:{14:'Q',17:'R',32:'J',38:'XC'}
 ,'cbk':/**
  * $Id$
  *
@@ -3078,17 +3109,7 @@ function (chr, buf, keystate) {
  * @version $Rev$
  * @lastchange $Author$ $Date$
  */
-function(chr, buf){
-    if (chr=='\u0008') { // backspace
-        if (buf.length) {
-            return [buf.slice(0,-1),buf.length-1]
-        } 
-    } else if(/[^A-z']/.test(chr)){
-        return VirtualKeyboard.Langs.LA.remap[buf+chr] || [buf+chr, 0]
-    } else { //non backspace
-        return VirtualKeyboard.Langs.LA.remap[buf+chr] || [buf+chr, 1]
-    }
-}},
+VirtualKeyboard.Langs.LA.charProcessor},
 {code:'LO-LAO'
 ,name:'Lao SengKeo'
 ,normal:'@ຢຟໂຖຸູຄຕຈຂຊໍ\\ົໄຳພະິີຣນຍບລັຫກດເ້່າສວງຜປແອຶືທມໃຝ'
