@@ -1,5 +1,5 @@
 ﻿/**
- * $Id: CN.js 546 2009-02-27 08:53:11Z wingedfox $
+ * $Id: CN.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Chinese char processor implementation
  *
@@ -7,8 +7,8 @@
  *
  * @author Konstantin Wiolowan
  * @copyright 2007-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev: 546 $
- * @lastchange $Author: wingedfox $ $Date: 2009-02-27 11:53:11 +0300 (Пт, 27 фев 2009) $
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 VirtualKeyboard.Langs.CN = new function () {
     var self = this;
@@ -130,7 +130,7 @@ VirtualKeyboard.Langs.ET = {
 }
 
 /**
- * $Id$
+ * $Id: IKU.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Inuktitut IME implementation
  *
@@ -138,8 +138,8 @@ VirtualKeyboard.Langs.ET = {
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 VirtualKeyboard.Langs.IKU = new function () {
     var reNotIKU = /[^acefghijklłmnopqrstuvwxyᖃᐁᕋᑕᐂᐅᐃᐸᐊᓴᖕᒐᕼᔭᑲᓚᖤᕙᓇᒪ]/
@@ -255,7 +255,141 @@ VirtualKeyboard.Langs.IKU = new function () {
 }
 
 /**
- * $Id: JP.js 546 2009-02-27 08:53:11Z wingedfox $
+ * $Id: IPA.js 643 2009-07-09 15:19:14Z wingedfox $
+ *
+ * IPA Phonetic
+ *
+ * This software is protected by patent No.2009611147 issued on 20.02.2009 by Russian Federal Service for Intellectual Property Patents and Trademarks.
+ *
+ * @author Konstantin Wiolowan
+ * @copyright  Konstantin Wiolowan <wiolowan@mail.ru>
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
+ */
+VirtualKeyboard.Langs.IPA = new function () {
+    var self = this;
+    var INPArr = {
+        '˧':'˥|˦|˧|˨|˩|a\u1dc4|a\u1dc5|a\u1dc7|a\u1dc6|a\u1dc8|a\u1dc9|˹|˺|˻|˼|˽|˾|˿'
+       ,':':':ːˑ'
+       ,'`':'ʼ`ʹʺʻʽʾʿˀˁ˂˃˄˅ˆˇˈˉˊˋˌˍˎˏːˑ˒˓˔˕˖˗˘˙˚˛˜˝˞˟ˬ˭ˮ˯˰˱˲˳˴˵˶˷˸'
+       ,'Α':';|á|a\u031f|a\u0320|a\u0318|a\u0319|a\u031d|a\u031e|a\u0339|a\u031c|a\u0308|a\u033D|a\u0303|a\u032F|a\u0324|a\u0330|à|á|â|ã|ā|a̅|ă|ȧ|ä|ả|å|a̋|ǎ|a̍|a̎|ȁ|a̐|ȃ|a̒|a̓|a̔|a̕|a̖|a̗|a̘|a̙|a̚|a̛|a̜|a̡|a̢|ạ|a̤|ḁ|a̦|a̧|ą|a̩|a̪|a̫|a̬|a̭|a̮|a̯|a̰|a̱|a̲|a̳|i̴|i̵|i̶|i̷|a̸|a̹|a̺|a̻|a̼|a̽|a̾|a̿|à|á|a͂|a̓|ä́|aͅ|a͆|a͇|a͈|a͉|a͊|a͋|a͌|a͍|a͎|a͐|a͑|a͒|a͓|a͔|a͕|a͖|a͗|a͘|a͙|a͚|a͛|a͜|a͝|a͞|a͟|a͠|a͡|a͢|aͣ|aͤ|aͥ|aͦ|aͧ|aͨ|aͩ|aͪ|aͫ|aͬ|aͭ|aͮ|aͯͮ'
+       ,'Β':'\'|b̓|b̥|b̬|b̻|b\u033c|b\u0329|b\u031a|b\u0324|b\u0330|b̪|b̺|b\u031f|b\u0320|b\u031d|b\u031e|b\u0339|b\u031c|b\u0303'
+       ,m:'m|ᵐ|m\u0325|ɱ|ᶬ|ɯ|ᵯ|ᶆ|ḿ|ṁ|ṃ'
+       ,n:'n|ɳ|ɲ|ŋ|ɴ|ñ|ṇ|n\u032a|ŋ̑|ŋ̇|ⁿ|ᶯ|ᶮ|ᵑ|ᶰ|n\u033a|n\u0325|ŋ̇̕|ƞ|ň|ń|ǹ|ņ|ŉ|ǌ|ȵ|ᵰ|ᶇ|ṅ|ṉ|ṋ'
+       ,p:'p|ᵖ|pʰ|pʷ|p\u032A|p̓|pᶠ|ƥ|ᵱ|ᵽ|ᶈ|ṕ|ṗ'
+       ,b:'b|ᵇ|b̪|b\u0325|b̓|bᵛ|β|β̞|ʙ|ɓ|ɓ̥|ᵬ|ᶀ|ḃ|ḅ|ḇ'
+       ,t:'t|tʰ|t\u032a|t̕|tᶿ|ṭ|ʦ|ʧ|ʨ|ʈ|ᵗ|t̯|ƭ|t̪̕|t̕|ṭ̕|t̯̕|t͡s|t͡ʃ|t͡ɕ|ţ|ť|ŧ|ƫ|ᶵ|ƭ|ț|ȶ|ᵵ|ᵺ|ṫ|ṯ|ṱ|ẗ|ⱦ'
+       ,d:'d|d̪|d\u0325|d̓|dᶞ|ḍ|ɖ|ʣ|ʤ|ʥ|ᵈ|d̯|ɗ|ɗ̥|d\u033a|ƃ|ď|đ|ƌ|ǆ|ǳ|ƍ|ȡ|ᵭ|ᶁ|ḋ|ḏ|ḑ|ḓ|ȸ|d͡z|d͡ʒ|d͡ʑ'
+       ,k:'k|ᵏ|kʰ|kˣ|kʷ|k̓|k̯|ƙ|ķ|ĸ|ǩ|ʞ|ᶄ|ḱ|ḳ|ḵ|ⱪ'
+       ,g:'g|ɣ|ˠ|ɰ|ɢ|ɢ̆|g̑|ġ|gˠ|ǧ|ᵍ|ᶭ|ɡ̊|ɠ|ʛ|ɠ̊|ʛ̥|ɡ|ᶢ|ᵷ|ɤ|ĝ|ğ|ģ|ǥ|ǵ|ᶃ|ḡ|ȝ'
+       ,'ʘ':'ʘǀǃǂǁʗʭ'
+       ,c:'c|ᶜ|cʰ|ç|ɕ|ᶝ|ɧ|ç|č|čʰ|ƈ|ć|ĉ|ċ|ȼ|ḉ'
+       ,j:'jʲɟʝᶨɥĵǰȷɉɟⱼ'
+       ,q:'q|qʰ|qʷ|ʠ|ȹ|ɋ'
+       ,'?':'?|ʡ|ˀ|ʔ|ʕ|ˁ|ˤ|ʢ|ʡ̯|ʖ|ᵜ|Ɂ|ɂ'
+       ,f:'fᶠɸᶲƒʩᵮᶂḟᶡⱷﬀﬁﬂﬃﬄﬅ'
+       ,v:'v|ᵛ|v\u0325|ʋ|ᶹ|ⱱ|ⱱ̟|ᶌ|ṽ|ṿ|ⱴ|ᵥ'
+       ,s:'s|ˢ|sʰ|ʃ|ᶴ|ʂ|ᶳ|θ|ᶿ|ɕ|ʄ|ʄ̊|ᴤ|ʅ|ʆ|ᶋ|ᶘ|ʇ|ſ|ẛ|ᵳ|þ|ś|ŝ|š|ş|ș|ȿ|ᶊ|ᵴ|ṡ|ṣ|ṩ|ṥ|ṧ|ﬆ'
+       ,z:'zᶻʒᶾǯʐʑðᶞžᶼᶽᴣʓźżẓẑƶᵶẕȥⱬɀᶎƹƺᵹᶚ'
+       ,x:'xˣχɧᶍẋẍ'
+       ,r:'rʁɹɻʀяɾɿřɽʳɼɺᵣʴʵʶⱹŕŗȑȓɍᵲᶉṙṛṝṟ'
+       ,h:'hʰħʜɥᶣɦʱɧȟĥħḣḥḧḩḫẖⱨⱶʮʯ'
+       ,l:'l|ɬ|ɮ|ɭ|ʎ|ʎ̯|ʟ|ʟ̆|ł|ƛ|ˡ|l̪|ḷ|ɫ|ʪ|ʫ|ĺ|ļ|ľ|ŀ|ƚ|ǉ|ȴ|ᶅ|ᶩ|ᶪ|ḷ|ḹ|ḻ|ḽ|ⱡ|\uf266|\uf267|\uf268|\uf260'
+       ,w:'wʷʍʬʭŵẁẃẅẇẉẘⱳ'
+       ,a:'aʌæɐɑɒāáǎàᵃᵄᵅᶛᵆᶺâãäǟåǻḁăąȁȃȧǡᴂǣǽᴂᶏᶐᶑẚảạấầẩẫậắằẳẵặⱥ'
+       ,e:'eəɚɛɜɝéēěèêëĕėęɘɞʚᵊᵉᵋᵌᶟᴈḕḗḙḛɇȅȇᶒȩḝᶓᶔᶕẹẻẽếềểễệⱸ'
+       ,i:'iɨɪîïįīíǐìĩĭıĳᴉᵎᵻᶧᶤᶦᶥȉȋᶖḭḯᵢỉị'
+       ,o:'oøɵœɔɶōóǒòᵒᶱᵓôõöŏȏőȍǿǫǭᶗᵔᵕɷȫȭȯȱṍṏṑṓọỏốồổỗộơớờởỡợⱺƣȣ'
+       ,u:'uʉɯʊüųūúǔùûũŭůűᵘᶷᶸᵚᵙᶶᵤȕȗṻǖǘǚǜṳṵṷṹᴝᴞᴟᵾᵿᶙủụưứừửữựᵫ'
+       ,y:'yʸʏɤýẏÿẙŷȳɏỳỵỷỹƴ'
+       ,A:'AᴀᴬÆᴁᴭɅÀÁÂÃÄÅĀĂĄǍǞǠǢǺǼȀȂȦȺḀẠẢẤẦẨẪẬẮẰẲẴẶⱭⱯ'
+       ,B:'BʙᴮƁƂɃᴃᴯḂḄḆ'
+       ,C:'CᴄÇĆĈĊČƇȻḈ'
+       ,D:'DᴅᴰÐÞĎĐƉᴆƊƋǄǅǱǲḊḌḎḐḒ'
+       ,E:'EᴇᴱÈÉÊËĒĔĖĘĚƎⱻᴲƏƐȄȆȨɆḔḖḘḚḜẸẺẼẾỀỂỄỆ'
+       ,F:'FƑḞ'
+       ,G:'GᴳĜĞĠĢƓƔǤǦǴȜḠ'
+       ,H:'HʜᴴĤĦƕǶȞḢḤḦḨḪⱧⱵ'
+       ,I:'IᴵÌÍÎÏĨĪĬĮİĲƖƗǏȈȊḬḮỈỊ'
+       ,J:'JᴊᴶĴɈ'
+       ,K:'KᴋᴷĶƘǨḰḲḴⱩ'
+       ,L:'LʟᴸᶫĹĻĽĿŁᴌȽḶḸḺḼⱠⱢ'
+       ,M:'MᴍᴹⱮḾṀṂƜ'
+       ,N:'NᴺÑṆŃŅŇŊƝǊǋǸȠṄṈṊᴎᴻ'
+       ,O:'OᴏᴼÒÓÔÕÖØŌŎŐŒᴔƆᴐƟƠƢǑǪǬǾȌȎȢᴕᴽȪȬȮȰṌṎṐṒỌỎỐỒỔỖỘỚỜỞỠỢᴑᴓᴒ'
+       ,P:'PᴘᴾṔṖƤⱣ'
+       ,Q:'QɊ'
+       ,R:'RᴿŔŖŘƦṘṚṜṞȐȒɌᴙᴚⱤ'
+       ,S:'SŚŜŞŠƧƩȘṠṢṤṦṨ'
+       ,T:'TᴛᵀŢŤŦƬƮȚȾṪṬṮṰ'
+       ,U:'UᴜᵁÙÚÛÜŨŪŬŮŰŲƱƲǓǕǗǙǛȔȖɄỤỦƯỨỪỬỮỰ'
+       ,V:'VᴠⱽṼṾɅ'
+       ,W:'WᴡᵂẀẂŴẄẆẈⱲ'
+       ,X:'XẊẌ'
+       ,Y:'YʏŶŸƳɎẎỲỴỶỸ'
+       ,Z:'ZᴢŹŻŽƵƷǮȤɀẐẒẔⱫ'
+    }
+
+    /**
+     *  Callback to process keyboard input in the current IME style
+     *
+     *  @see VirtualKeyboard.processChar
+     *  @param {String} chr current input char
+     *  @param {String} buf actual processing buffer
+     *  @return {Array} new buffer contents and length
+     *  @scope protected
+     */
+    self.charProcessor = function (chr, buf) {
+        var n, s, a
+           ,prefixReg = /[ΑΒ˧]/;
+
+        if (chr=='\u0008') { // backspace
+             VirtualKeyboard.IME.hide();
+             return ['',0];
+        } else if (VirtualKeyboard.IME.getSuggestions().length) {
+                if (isFinite(n=parseInt(chr))) {
+                    s = VirtualKeyboard.IME.getChar(n);
+                    if (!s) {
+                        return[buf,buf.length];
+                    } else {
+                        VirtualKeyboard.IME.hide();
+                        if (prefixReg.test(buf)) {
+                            s=s.slice(-1);
+                        }
+                        return[s,0];
+                    }
+                } else if ((a = INPArr[chr] || []).length) {
+                    s=VirtualKeyboard.IME.getSuggestions()[0];
+                    VirtualKeyboard.IME.setSuggestions((typeof a=='string')?INPArr[chr]=a.split( a.indexOf('|')!=-1?'|'
+                                                                                                                   :'')
+                                                                           :a);
+                    if (prefixReg.test(buf)) {
+                        s=s.slice(-1);
+                    }
+                    return [s+chr,1]
+                } else {
+                    s=VirtualKeyboard.IME.getSuggestions()[0];
+                    VirtualKeyboard.IME.hide();
+                    if (prefixReg.test(buf)) {
+                        s=s.slice(-1);
+                    }
+                    return [s+(chr.charCodeAt()==10? '': chr),0];
+                }
+        } else {
+            a = INPArr[chr] || [];
+            if (a.length) {
+                VirtualKeyboard.IME.show((typeof a=='string')?INPArr[chr]=a.split( a.indexOf('|')!=-1?'|'
+                                                                                                     :'')
+                                                             :a);
+                return [buf+chr,1];
+            }
+        }
+        return [buf+chr,0];
+    }
+};
+
+/**
+ * $Id: JP.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Japanese IME implementation
  *
@@ -263,8 +397,8 @@ VirtualKeyboard.Langs.IKU = new function () {
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev: 546 $
- * @lastchange $Author: wingedfox $ $Date: 2009-02-27 11:53:11 +0300 (Пт, 27 фев 2009) $
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 VirtualKeyboard.Langs.JP = new function () {
     var self = this
@@ -483,7 +617,7 @@ VirtualKeyboard.Langs.JP = new function () {
 };
 
 /**
- * $Id$
+ * $Id: KR.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Korean IME implementation
  *
@@ -491,8 +625,8 @@ VirtualKeyboard.Langs.JP = new function () {
  *
  * @author Konstantin Wiolowan
  * @copyright 2007-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 VirtualKeyboard.Langs.KR = new function () {
     var self = this;
@@ -608,7 +742,7 @@ VirtualKeyboard.Langs.KR = new function () {
 };
 
 /**
- * $Id$
+ * $Id: LA.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Lakhota IME implementation
  *
@@ -616,8 +750,8 @@ VirtualKeyboard.Langs.KR = new function () {
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 VirtualKeyboard.Langs.LA = new function () {
     var self = this;
@@ -863,7 +997,7 @@ VirtualKeyboard.addLayoutList(
 ,normal:'`1234567890-=\\wetyiop[]ashk;\'nm,᙮/'
 ,shift:{0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'}
 ,'cbk':/**
- * $Id$
+ * $Id: blackfoot.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Blackfoot char processor
  *
@@ -871,8 +1005,8 @@ VirtualKeyboard.addLayoutList(
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 new function () {
     var reNotBLA = /[^aehikmnopstwy]/
@@ -1002,7 +1136,7 @@ new function () {
 ,normal:'`1234567890-=\\qwetyuio[]asdghjkl;\'cvnm,./'
 ,shift:{0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'}
 ,'cbk':/**
- * $Id$
+ * $Id: cherokee.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Cherokee char processor
  *
@@ -1010,8 +1144,8 @@ new function () {
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 new function () {
     var reNotCHR = /[^adeghik-oqs-wyz]/
@@ -1083,7 +1217,7 @@ new function () {
 ,normal:'`1234567890-=\\手田水口廿卜山戈人心[]日尸木火土竹十大中;\'重難金女月弓一,./'
 ,shift:{0:'~!@#$%^&*()_+|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?'}
 ,'cbk':/**
- * $Id$
+ * $Id: chinese-cangjie.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Chinese Cangjie IME
  *
@@ -1091,8 +1225,8 @@ new function () {
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 new function () {
     var self = this;
@@ -1156,7 +1290,7 @@ new function () {
 ,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,。/'
 ,shift:{0:'~！·#￥%…—*（）—+|',24:'{}',35:'："',44:'《》？'}
 ,'cbk':/**
- * $Id$
+ * $Id: chinese-pynsimpl.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Chinese simplified PinYin
  *
@@ -1164,8 +1298,8 @@ new function () {
  *
  * @author Konstantin Wiolowan
  * @copyright 2007-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 new function () {
     var self = this;
@@ -1205,7 +1339,7 @@ new function () {
 ,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,。/'
 ,shift:{0:'~！·#￥%…—*（）—+|',24:'{}',35:'："',44:'《》？'}
 ,'cbk':/**
- * $Id$
+ * $Id: chinese-pyntrad.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Chinese Traditional PinYin
  *
@@ -1213,8 +1347,8 @@ new function () {
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 new function () {
     var self = this;
@@ -1819,11 +1953,11 @@ new function () {
 ,dk:{'´':'nńcćzźsśeéoóNŃCĆZŹSŚEÉOÓ ´','`':'aàeèuùoòAÀEÈUÙOÒ `','^':'aâgĝeêuûiîAÂGĜEÊUÛIÎ ^','ˇ':'cčzžsšCČZŽSŠ ˇ','~':'oõOÕ ~'}},
 {code:'EM-ET'
 ,name:'Ethiopic  Pan-Amharic'
-,normal:'`፩፪፫፬፭፮፯፰፱0-=\\ቀወeረተየuioፐ[]aሰደፈገሀጀከለ፤\'ዘሸቸቨበነመ፣./'
+,normal:'`1234567890-=\\ቀወeረተየuioፐ[]aሰደፈገሀጀከለ፤\'ዘሸቸቨበነመ፣./'
 ,shift:{0:'~!@#$%^&*()_+|ቐ',18:'ጠ',21:'ዕ',23:'ጰ{}',27:'ጸዻ',30:'ጘሐ',33:'ኸ',35:'፡"ዠ',39:'ጨ',42:'ኘ',44:'«»፧'}
-,alt:{7:'፨፠',14:'ቍቝ',27:'ⶥ',30:'ጕ',33:'ኵዅ፦',37:'ⶵኍⶭⶽ',46:'፧'}
+,alt:{7:'፨፠'}
 ,'cbk':/**
- * $Id$
+ * $Id: ethiopic-pan-amharic.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Ethiopian Pan-Amharic layout
  *
@@ -1831,743 +1965,162 @@ new function () {
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 (function () {
     var vowelsEZ = {e:1,i:2,a:3,ie:4,u:5,o:6,ua:7,Y:8}
-       ,EZnonfinal = {
-            "'":"'", '`':'`'
-           ,'፤':'፤'
-           ,'፣':'፣'
-           ,'፣፣':'፥'
-           ,'፡':'፡'
-           ,'_':'_'
+       ,EZfinal
+       ,EZnonfinal;
 
-           ,'ጭ':'ጭ'     // 'C':'ጭ'
-           ,'`ጭ':'ⶽ'    // 'C:ⶽ
-           ,'ጭጭ':'ⶽ'  // 'CC':'ⶽ'
-           ,'ጭች':'ⶽ'  // 'Cc':'ⶽ'
-           ,'ጭo':'ጮ'    // 'Co':'ጮ'
-           ,'ጭu':'ጩ'    // 'Cu':'ጩ'
+    var getEthDD = function (s) {
+        if (!s)
+            return 1;
 
-           ,'ዽ':'ዽ'     // 'D':'ዽ'
-           ,'ዽo':'ዾ'    // 'Do':'ዾ'
-           ,'ዽu':'ዹ'    // 'Du':'ዹ'
-
-           ,'ጝ':'ጝ'     // 'G':'ጝ'
-           ,'ጝu':'ጙ'    // 'Gu':'ጙ'
-
-           ,'ሕ':'ሕ'     // 'J':'ሕ'
-           ,'ሕu':'ሑ'    // 'Ju':'ሑ'
-
-           ,'ኽ':'ኽ'     // 'K':'ኽ'
-           ,'ኽu':'ኹ'    // 'Ku':'ኹ'
-           ,'ኽይ':'ⷕ'  // 'Ky':'ⷕ'
-
-           ,'ኝ':'ኝ'     // 'N':'ኝ'
-           ,'ኝo':'ኞ'    // 'No':'ኞ'
-           ,'ኝu':'ኙ'    // 'Nu':'ኙ'
-
-           ,'ጵ':'ጵ'     // 'P':'ጵ'
-           ,'ጵo':'ጶ'    // 'Po':'ጶ'
-           ,'ጵu':'ጱ'    // 'Pu':'ጱ'
-
-           ,'ቕ':'ቕ'     // 'Q':'ቕ'
-           ,'ቕu':'ቑ'    // 'Qu':'ቑ'
-
-           ,'ጽ':'ጽ'     // 'S':'ጽ'
-           ,'ጽu':'ጹ'    // 'Su':'ጹ'
-           ,'`ጽ':'ፅ'    // 'S:'ፅ'
-           ,'ጽጽ':'ፅ'  // 'SS':'ፅ'
-           ,'ጽስ':'ፅ'  // 'Ss':'ፅ'
-           ,'ፅo':'ፆ'    // 'SSo':'ፆ'
-
-           ,'ጥ':'ጥ'     // 'T':'ጥ'
-           ,'ጥo':'ጦ'    // 'To':'ጦ'
-           ,'ጥu':'ጡ'    // 'Tu':'ጡ'
-
-           ,'ዥ':'ዥ'     // 'Z':'ዥ'
-           ,'ዥu':'ዡ'    // 'Zu':'ዡ'
-           ,'`ዥ':'ⶵ'    // 'Z:'ⶵ'
-           ,'ዥዥ':'ⶵ'  // 'ZZ':'ⶵ'
-           ,'ዥዝ':'ⶵ'  // 'Zz':'ⶵ'
-
-           ,'ብ':'ብ'     // 'b':'ብ'
-           ,'ብo':'ቦ'    // 'bo':'ቦ'
-           ,'ብu':'ቡ'    // 'bu':'ቡ'
-
-           ,'ች':'ች'     // 'c':'ች'
-           ,'ችu':'ቹ'    // 'cu':'ቹ'
-           ,'ችo':'ቾ'    // 'co':'ቾ'
-           ,'ችች':'ⶭ'  // 'cc':'ⶭ'
-
-           ,'ድ':'ድ'     // 'd':'ድ'
-           ,'ድo':'ዶ'    // 'do':'ዶ'
-           ,'ድu':'ዱ'    // 'du':'ዱ'
-
-           ,'ፍ':'ፍ'     // 'f':'ፍ'
-           ,'ፍu':'ፉ'    // 'fu':'ፉ'
-
-           ,'ግ':'ግ'     // 'g':'ግ'
-           ,'ግo':'ጎ'    // 'go':'ጎ'
-           ,'ግu':'ጉ'    // 'gu':'ጉ'
-           ,'ግይ':'ⷝ'  // 'gy':'ⷝ'
-
-           ,'ህ':'ህ'     // 'h':'ህ'
-           ,'ህo':'ሆ'    // 'ho':'ሆ'
-           ,'ህu':'ሁ'    // 'hu':'ሁ'
-
-           ,'`ህ':'ኅ'    // 'h:'ኅ'
-           ,'ህህ':'ኅ'  // 'hh':'ኅ'
-           ,'ኅo':'ኆ'    // 'hho':'ኆ'
-           ,'ኅu':'ኁ'    // 'hhu':'ኁ'
-
-           ,'ጅ':'ጅ'     // 'j':'ጅ'
-           ,'ጅo':'ጆ'    // 'jo':'ጆ'
-           ,'ጅu':'ጁ'    // 'ju':'ጁ'
-
-           ,'ክ':'ክ'     // 'k':'ክ'
-           ,'ክo':'ኮ'    // 'ko':'ኮ'
-           ,'ክu':'ኩ'    // 'ku':'ኩ'
-           ,'ክይ':'ⷍ'  // 'ky':'ⷍ'
-
-           ,'ል':'ል'     // 'l':'ል'
-           ,'ልo':'ሎ'    // 'lo':'ሎ'
-           ,'ልu':'ሉ'    // 'lu':'ሉ'
-
-           ,'ም':'ም'     // 'm':'ም'
-           ,'ምo':'ሞ'    // 'mo':'ሞ'
-           ,'ን':'ን'     // 'n':'ን'
-           ,'ንo':'ኖ'    // 'no':'ኖ'
-           ,'ንu':'ኑ'    // 'nu':'ኑ'
-
-           ,'ፕ':'ፕ'     // 'p':'ፕ'
-           ,'ፕo':'ፖ'    // 'po':'ፖ'
-           ,'ፕu':'ፑ'    // 'pu':'ፑ'
-           ,'ምu':'ሙ'    // 'mu':'ሙ'
-
-           ,'ቅ':'ቅ'     // 'q':'ቅ'
-           ,'ቅo':'ቆ'    // 'qo':'ቆ'
-           ,'ቅu':'ቁ'    // 'qu':'ቁ'
-           ,'ቅይ':'ⷅ'  // 'qy':'ⷅ'
-
-           ,'ር':'ር'     // 'r':'ር'
-           ,'ርo':'ሮ'    // 'ro':'ሮ'
-           ,'ርu':'ሩ'    // 'ru':'ሩ'
-
-           ,'ስ':'ስ'     // 's':'ስ'
-           ,'ስo':'ሶ'    // 'so':'ሶ'
-           ,'ስu':'ሱ'    // 'su':'ሱ'
-           ,'`ስ':'ሥ'    // 's:'ሥ'
-           ,'ስስ':'ሥ'  // 'ss':'ሥ'
-           ,'ሥu':'ሡ'    // 'ssu':'ሡ'
-
-           ,'ት':'ት'     // 't':'ት'
-           ,'ትo':'ቶ'    // 'to':'ቶ'
-           ,'ትu':'ቱ'    // 'tu':'ቱ'
-
-           ,'ቭ':'ቭ'     // 'v':'ቭ'
-           ,'ቭu':'ቩ'    // 'vu':'ቩ'
-
-           ,'ው':'ው'     // 'w':'ው'
-           ,'ውo':'ዎ'    // 'wo':'ዎ'
-
-           ,'ሽ':'ሽ'     // 'x':'ሽ'
-           ,'ሽo':'ሾ'    // 'xo':'ሾ'
-           ,'ሽu':'ሹ'    // 'xu':'ሹ'
-
-           ,'`ሽ':'ⶥ'    // 'x:'ⶥ'
-           ,'ሽሽ':'ⶥ'  // 'xx':'ⶥ'
-
-           ,'ይ':'ይ'     // 'y':'ይ'
-           ,'ይo':'ዮ'    // 'yo':'ዮ'
-
-           ,'ዝ':'ዝ'     // 'z':'ዝ'
-           ,'ዝo':'ዞ'    // 'zo':'ዞ'
-           ,'ዝu':'ዙ'    // 'zu':'ዙ'
-
-           ,'a':'አ'       // 'a':'አ'
-           ,'አa':'ዓ'    // 'aa':'ዓ'
-           ,'u':'ኡ'       // 'u':'ኡ'
-           ,'o':'ኦ'       // 'o':'ኦ'
-           ,'i':'ኢ'       // 'i':'ኢ'
-           ,'ኢi':'ዒ'    // 'ii':'ዒ'
-           ,'e':'እ'       // 'e':'እ'
-
-           ,'ጭe':'ጨ'    // 'Ce':'ጨ'
-           ,'ⶽe':'ⶸ'    // 'CCe':'ⶸ'
-           ,'ዽe':'ዸ'    // 'De':'ዸ'
-           ,'ጝe':'ጘ'    // 'Ge':'ጘ'
-           ,'ጙe':'ⶓ'    // 'Gue':'ⶓ'
-           ,'ሕe':'ሐ'    // 'He':'ሐ'
-           ,'ኽe':'ኸ'    // 'Ke':'ኸ'
-           ,'ኹe':'ዀ'    // 'Kue':'ዀ'
-           ,'ⷕe':'ⷐ'    // 'Kye':'ⷐ'
-           ,'ኝe':'ኘ'    // 'Ne':'ኘ'
-           ,'ጵe':'ጰ'    // 'Pe':'ጰ'
-           ,'ቕe':'ቐ'    // 'Qe':'ቐ'
-           ,'ቑe':'ቘ'    // 'Que':'ቘ'
-           ,'ጽe':'ጸ'    // 'Se':'ጸ'
-           ,'ፅe':'ፀ'    // 'SSe':'ፀ'
-           ,'ጥe':'ጠ'    // 'Te':'ጠ'
-           ,'ዥe':'ዠ'    // 'Ze':'ዠ'
-           ,'ⶵe':'ⶰ'    // 'ZZe':'ⶰ'
-           ,'ብe':'በ'    // 'be':'በ'
-           ,'ቡe':'ᎄ'    // 'bue':'ᎄ'
-           ,'ⶭe':'ⶨ'    // 'cce':'ⶨ'
-           ,'ችe':'ቸ'    // 'ce':'ቸ'
-           ,'ድe':'ደ'    // 'de':'ደ'
-           ,'ፍe':'ፈ'    // 'fe':'ፈ'
-           ,'ፉe':'ᎈ'    // 'fue':'ᎈ'
-           ,'ግe':'ገ'    // 'ge':'ገ'
-           ,'ጉe':'ጐ'    // 'gue':'ጐ'
-           ,'ⷝe':'ⷘ'    // 'gye':'ⷘ'
-           ,'ህe':'ሀ'    // 'he':'ሀ'
-           ,'ኅe':'ኀ'    // 'hhe':'ኀ'
-           ,'ኁe':'ኈ'    // 'hhue':'ኈ'
-           ,'ጅe':'ጀ'    // 'je':'ጀ'
-           ,'ክe':'ከ'    // 'ke':'ከ'
-           ,'ኩe':'ኰ'    // 'kue':'ኰ'
-           ,'ⷍe':'ⷈ'    // 'kye':'ⷈ'
-           ,'ልe':'ለ'    // 'le':'ለ'
-           ,'ምe':'መ'    // 'me':'መ'
-           ,'ሙe':'ᎀ'    // 'mue':'ᎀ'
-           ,'ንe':'ነ'    // 'ne':'ነ'
-           ,'ፕe':'ፐ'    // 'pe':'ፐ'
-           ,'ፑe':'ᎌ'    // 'pue':'ᎌ'
-           ,'ቅe':'ቀ'    // 'qe':'ቀ'
-           ,'ⷅe':'ⷀ'    // 'qye':'ⷀ'
-           ,'ርe':'ረ'    // 're':'ረ'
-           ,'ስe':'ሰ'    // 'se':'ሰ'
-           ,'ሥe':'ሠ'    // 'sse':'ሠ'
-           ,'ትe':'ተ'    // 'te':'ተ'
-           ,'ቭe':'ቨ'    // 've':'ቨ'
-           ,'ውe':'ወ'    // 'we':'ወ'
-           ,'ሽe':'ሸ'    // 'xe':'ሸ'
-           ,'ⶥe':'ⶠ'    // 'xxe':'ⶠ'
-           ,'ይe':'የ'    // 'ye':'የ'
-           ,'ዝe':'ዘ'    // 'ze':'ዘ'
-
-           ,'ⶽi':'ⶺ'    // 'CCi':'ⶺ'
-           ,'ጭi':'ጪ'    // 'Ci':'ጪ'
-           ,'ዽi':'ዺ'    // 'Di':'ዺ'
-           ,'ጝi':'ጚ'    // 'Gi':'ጚ'
-           ,'ሕi':'ሒ'    // 'Ji':'ሒ'
-           ,'ኽi':'ኺ'    // 'Ki':'ኺ'
-           ,'ኝi':'ኚ'    // 'Ni':'ኚ'
-           ,'ጵi':'ጲ'    // 'Pi':'ጲ'
-           ,'ቕi':'ቒ'    // 'Qi':'ቒ'
-           ,'ጽi':'ጺ'    // 'Si':'ጺ'
-           ,'ፅi':'ፂ'    // 'SSi':'ፂ'
-           ,'ጥi':'ጢ'    // 'Ti':'ጢ'
-           ,'ዥi':'ዢ'    // 'Zi':'ዢ'
-           ,'ⶵi':'ⶲ'    // 'ZZi':'ⶲ'
-           ,'ብi':'ቢ'    // 'bi':'ቢ'
-           ,'ችi':'ቺ'    // 'ci':'ቺ'
-           ,'ⶭi':'ⶪ'    // 'cci':'ⶪ'
-           ,'ድi':'ዲ'    // 'di':'ዲ'
-           ,'ፍi':'ፊ'    // 'fi':'ፊ'
-           ,'ግi':'ጊ'    // 'gi':'ጊ'
-           ,'ህi':'ሂ'    // 'hi':'ሂ'
-           ,'ኅi':'ኂ'    // 'hhi':'ኂ'
-           ,'ጅi':'ጂ'    // 'ji':'ጂ'
-           ,'ክi':'ኪ'    // 'ki':'ኪ'
-           ,'ልi':'ሊ'    // 'li':'ሊ'
-           ,'ምi':'ሚ'    // 'mi':'ሚ'
-           ,'ንi':'ኒ'    // 'ni':'ኒ'
-           ,'ፕi':'ፒ'    // 'pi':'ፒ'
-           ,'ቅi':'ቂ'    // 'qi':'ቂ'
-           ,'ርi':'ሪ'    // 'ri':'ሪ'
-           ,'ስi':'ሲ'    // 'si':'ሲ'
-           ,'ሥi':'ሢ'    // 'ssi':'ሢ'
-           ,'ትi':'ቲ'    // 'ti':'ቲ'
-           ,'ቭi':'ቪ'    // 'vi':'ቪ'
-           ,'ውi':'ዊ'    // 'wi':'ዊ'
-           ,'ሽi':'ሺ'    // 'xi':'ሺ'
-           ,'ⶥi':'ⶢ'    // 'xxi':'ⶢ'
-           ,'ይi':'ዪ'    // 'yi':'ዪ'
-           ,'ዝi':'ዚ'    // 'zi':'ዚ'
-
-           ,'ጙi':'ⶔ'    // 'Gui':'ⶔ'
-           ,'ኹi':'ዂ'    // 'Kui':'ዂ'
-           ,'ቑi':'ቚ'    // 'Qui':'ቚ'
-           ,'ቡi':'ᎅ'    // 'bui':'ᎅ'
-           ,'ፉi':'ᎉ'    // 'fui':'ᎉ'
-           ,'ጉi':'ጒ'    // 'gui':'ጒ'
-           ,'ሁi':'ኊ'    // 'hui':'ኊ'
-           ,'ኁi':'ኊ'    // 'hhui':'ኊ'
-           ,'ኩi':'ኲ'    // 'kui':'ኲ'
-           ,'ሙi':'ᎁ'    // 'mui':'ᎁ'
-           ,'ፑi':'ᎍ'    // 'pui':'ᎍ'
-           ,'ቁi':'ቊ'    // 'qui':'ቊ'
-
-           ,'ⷕi':'ⷒ'    // 'Kyi':'ⷒ'
-           ,'ⷝi':'ⷚ'    // 'gyi':'ⷚ'
-           ,'ⷍi':'ⷊ'    // 'kyi':'ⷊ'
-           ,'ⷅi':'ⷂ'    // 'qyi':'ⷂ'
-
-
-           ,"'1":'፩'      // "'1":'፩'
-           ,"'2":'፪'      // "'2":'፪'
-           ,"'3":'፫'      // "'3":'፫'
-           ,"'4":'፬'      // "'4":'፬'
-           ,"'5":'፭'      // "'5":'፭'
-           ,"'6":'፮'      // "'6":'፮'
-           ,"'7":'፯'      // "'7":'፯'
-           ,"'8":'፰'      // "'8":'፰'
-           ,"'9":'፱'      // "'9":'፱'
-           ,'`1':'፩'      // '`1':'፩'
-           ,'`2':'፪'      // '`2':'፪'
-           ,'`3':'፫'      // '`3':'፫'
-           ,'`4':'፬'      // '`4':'፬'
-           ,'`5':'፭'      // '`5':'፭'
-           ,'`6':'፮'      // '`6':'፮'
-           ,'`7':'፯'      // '`7':'፯'
-           ,'`8':'፰'      // '`8':'፰'
-           ,'`9':'፱'      // '`9':'፱'
-
-
-           ,"፩0":'፲'    // "፩0":'፲'
-           ,'፲0':'፻'    // '፲0':'፻'
-           ,'፻0':'፲፻'
+        var dd=/([፲-፺]?)([፩-፱]?)/
+           ,m=s.match(dd)
+        s=0;
+        if (m[1]) {
+            s = (m[1].charCodeAt(0)-0x1371)*10;
         }
-       ,EZfinal = {
-            'ጪe':'ጬ'    // 'Cie':'ጬ'
-           ,'ⶺe':'ⶼ'    // 'CCie':'ⶼ'
-           ,'ዺe':'ዼ'    // 'Die':'ዼ'
-           ,'ጚe':'ጜ'    // 'Gie':'ጜ'
-           ,'ⶔe':'ⶕ'    // 'Guie':'ⶕ'
-           ,'ሒe':'ሔ'    // 'Hie':'ሔ'
-           ,'ኺe':'ኼ'    // 'Kie':'ኼ'
-           ,'ዂe':'ዄ'    // 'Kuie':'ዄ'
-           ,'ⷒe':'ⷔ'    // 'Kyie':'ⷔ'
-           ,'ኚe':'ኜ'    // 'Nie':'ኜ'
-           ,'ጲe':'ጴ'    // 'Pie':'ጴ'
-           ,'ቒe':'ቔ'    // 'Qie':'ቔ'
-           ,'ቚe':'ቜ'    // 'Quie':'ቜ'
-           ,'ጺe':'ጼ'    // 'Sie':'ጼ'
-           ,'ፂe':'ፄ'    // 'SSie':'ፄ'
-           ,'ጢe':'ጤ'    // 'Tie':'ጤ'
-           ,'ዢe':'ዤ'    // 'Zie':'ዤ'
-           ,'ⶲe':'ⶴ'    // 'ZZie':'ⶴ'
-           ,'ቢe':'ቤ'    // 'bie':'ቤ'
-           ,'ᎅe':'ᎆ'    // 'buie':'ᎆ'
-           ,'ⶪe':'ⶬ'    // 'ccie':'ⶬ'
-           ,'ቺe':'ቼ'    // 'cie':'ቼ'
-           ,'ዲe':'ዴ'    // 'die':'ዴ'
-           ,'ፊe':'ፌ'    // 'fie':'ፌ'
-           ,'ᎉe':'ᎊ'    // 'fuie':'ᎊ'
-           ,'ጊe':'ጌ'    // 'gie':'ጌ'
-           ,'ጒe':'ጔ'    // 'guie':'ጔ'
-           ,'ⷚe':'ⷜ'    // 'gyie':'ⷜ'
-           ,'ሂe':'ሄ'    // 'hie':'ሄ'
-           ,'ኂe':'ኄ'    // 'hhie':'ኄ'
-           ,'ኊe':'ኌ'    // 'hhuie':'ኌ'
-           ,'ጂe':'ጄ'    // 'jie':'ጄ'
-           ,'ኪe':'ኬ'    // 'kie':'ኬ'
-           ,'ኲe':'ኴ'    // 'kuie':'ኴ'
-           ,'ⷊe':'ⷌ'    // 'kyie':'ⷌ'
-           ,'ሊe':'ሌ'    // 'lie':'ሌ'
-           ,'ሚe':'ሜ'    // 'mie':'ሜ'
-           ,'ᎁe':'ᎂ'    // 'muie':'ᎂ'
-           ,'ኒe':'ኔ'    // 'nie':'ኔ'
-           ,'ፒe':'ፔ'    // 'pie':'ፔ'
-           ,'ᎍe':'ᎎ'    // 'puie':'ᎎ'
-           ,'ቁe':'ቈ'    // 'que':'ቈ'
-           ,'ቂe':'ቄ'    // 'qie':'ቄ'
-           ,'ቊe':'ቌ'    // 'quie':'ቌ'
-           ,'ⷂe':'ⷄ'    // 'qyie':'ⷄ'
-           ,'ሪe':'ሬ'    // 'rie':'ሬ'
-           ,'ሲe':'ሴ'    // 'sie':'ሴ'
-           ,'ሢe':'ሤ'    // 'ssie':'ሤ'
-           ,'ቲe':'ቴ'    // 'tie':'ቴ'
-           ,'ቪe':'ቬ'    // 'vie':'ቬ'
-           ,'ዊe':'ዌ'    // 'wie':'ዌ'
-           ,'ሺe':'ሼ'    // 'xie':'ሼ'
-           ,'ⶢe':'ⶤ'    // 'xxie':'ⶤ'
-           ,'ዪe':'ዬ'    // 'yie':'ዬ'
-           ,'ዚe':'ዜ'    // 'zie':'ዜ'
+        if (m[2]) {
+            s+= m[2].charCodeAt(0)-0x1368;
+        }
+        return s;
+    }
 
-           ,'ጭE':'ጬ'    // 'Ce':'ጨ'
-           ,'ⶽE':'ⶼ'    // 'CCE':'ⶼ'
-           ,'ዽE':'ዼ'    // 'DE':'ዼ'
-           ,'ጝE':'ጜ'    // 'GE':'ጜ'
-           ,'ጙE':'ⶕ'    // 'GuE':'ⶕ'
-           ,'ሕE':'ሔ'    // 'HE':'ሔ'
-           ,'ኽE':'ኼ'    // 'KE':'ኼ'
-           ,'ኹE':'ዄ'    // 'KuE':'ዄ'
-           ,'ⷕE':'ⷔ'    // 'KyE':'ⷔ'
-           ,'ኝE':'ኜ'    // 'NE':'ኜ'
-           ,'ጵE':'ጴ'    // 'PE':'ጴ'
-           ,'ቕE':'ቔ'    // 'QE':'ቔ'
-           ,'ቑE':'ቜ'    // 'QuE':'ቜ'
-           ,'ጽE':'ጼ'    // 'SE':'ጼ'
-           ,'ፅE':'ፄ'    // 'SSE':'ፄ'
-           ,'ጥE':'ጤ'    // 'TE':'ጤ'
-           ,'ዥE':'ዤ'    // 'ZE':'ዤ'
-           ,'ⶵE':'ⶴ'    // 'ZZE':'ⶴ'
-           ,'ብE':'ቤ'    // 'bE':'ቤ'
-           ,'ቡE':'ᎆ'    // 'buE':'ᎆ'
-           ,'ⶭE':'ⶬ'    // 'ccE':'ⶬ'
-           ,'ችE':'ቼ'    // 'cE':'ቼ'
-           ,'ድE':'ዴ'    // 'dE':'ዴ'
-           ,'ፍE':'ፌ'    // 'fE':'ፌ'
-           ,'ፉE':'ᎊ'    // 'fuE':'ᎊ'
-           ,'ግE':'ጌ'    // 'gE':'ጌ'
-           ,'ጉE':'ጔ'    // 'guE':'ጔ'
-           ,'ⷝE':'ⷜ'    // 'gyE':'ⷜ'
-           ,'ህE':'ሄ'    // 'hE':'ሄ'
-           ,'ኅE':'ኄ'    // 'hhE':'ኄ'
-           ,'ኁE':'ኌ'    // 'hhuE':'ኌ'
-           ,'ጅE':'ጄ'    // 'jE':'ጄ'
-           ,'ክE':'ኬ'    // 'kE':'ኬ'
-           ,'ኩE':'ኴ'    // 'kuE':'ኴ'
-           ,'ⷍE':'ⷌ'    // 'kyE':'ⷌ'
-           ,'ልE':'ሌ'    // 'lE':'ሌ'
-           ,'ምE':'ሜ'    // 'mE':'ሜ'
-           ,'ሙE':'ᎂ'    // 'muE':'ᎂ'
-           ,'ንE':'ኔ'    // 'nE':'ኔ'
-           ,'ፕE':'ፔ'    // 'pE':'ፔ'
-           ,'ፑE':'ᎌ'    // 'puE':'ᎌ'
-           ,'ቅE':'ቄ'    // 'qE':'ቄ'
-           ,'ⷅE':'ⷄ'    // 'qyE':'ⷄ'
-           ,'ርE':'ሬ'    // 'rE':'ሬ'
-           ,'ስE':'ሴ'    // 'sE':'ሴ'
-           ,'ሥE':'ሤ'    // 'ssE':'ሤ'
-           ,'ትE':'ቴ'    // 'tE':'ቴ'
-           ,'ቭE':'ቬ'    // 'vE':'ቬ'
-           ,'ውE':'ዌ'    // 'wE':'ዌ'
-           ,'ሽE':'ሼ'    // 'xE':'ሼ'
-           ,'ⶥE':'ⶤ'    // 'xxE':'ⶤ'
-           ,'ይE':'ዬ'    // 'yE':'ዬ'
-           ,'ዝE':'ዜ'    // 'zE':'ዜ'
+    var setEthDD = function (dd,lone1) {
+        var s = ''
+           ,n;
 
-           ,'ጨe':'ጬ'    // 'Cee':'ጬ'
-           ,'ⶸe':'ⶼ'    // 'CCee':'ⶼ'
-           ,'ዸe':'ዼ'    // 'Dee':'ዼ'
-           ,'ጘe':'ጜ'    // 'Gee':'ጜ'
-           ,'ⶓe':'ⶕ'    // 'Guee':'ⶕ'
-           ,'ሐe':'ሔ'    // 'Hee':'ሔ'
-           ,'ኸe':'ኼ'    // 'Kee':'ኼ'
-           ,'ዀe':'ዄ'    // 'Kuee':'ዄ'
-           ,'ⷐe':'ⷔ'    // 'Kyee':'ⷔ'
-           ,'ኘe':'ኜ'    // 'Nee':'ኜ'
-           ,'ጰe':'ጴ'    // 'Pee':'ጴ'
-           ,'ቐe':'ቔ'    // 'Qee':'ቔ'
-           ,'ቘe':'ቜ'    // 'Quee':'ቜ'
-           ,'ጸe':'ጼ'    // 'See':'ጼ'
-           ,'ፀe':'ፄ'    // 'SSee':'ፄ'
-           ,'ጠe':'ጤ'    // 'Tee':'ጤ'
-           ,'ዠe':'ዤ'    // 'Zee':'ዤ'
-           ,'ⶰe':'ⶴ'    // 'ZZee':'ⶴ'
-           ,'በe':'ቤ'    // 'bee':'ቤ'
-           ,'ᎄe':'ᎆ'    // 'buee':'ᎆ'
-           ,'ⶨe':'ⶬ'    // 'ccee':'ⶬ'
-           ,'ቸe':'ቼ'    // 'cee':'ቼ'
-           ,'ደe':'ዴ'    // 'dee':'ዴ'
-           ,'ፈe':'ፌ'    // 'fee':'ፌ'
-           ,'ᎈe':'ᎊ'    // 'fuee':'ᎊ'
-           ,'ገe':'ጌ'    // 'gee':'ጌ'
-           ,'ጐe':'ጔ'    // 'guee':'ጔ'
-           ,'ⷘe':'ⷜ'    // 'gyee':'ⷜ'
-           ,'ሀe':'ሄ'    // 'hee':'ሄ'
-           ,'ኀe':'ኄ'    // 'hhee':'ኄ'
-           ,'ኈe':'ኌ'    // 'hhuee':'ኌ'
-           ,'ጀe':'ጄ'    // 'jee':'ጄ'
-           ,'ከe':'ኬ'    // 'kee':'ኬ'
-           ,'ኰe':'ኴ'    // 'kuee':'ኴ'
-           ,'ⷈe':'ⷌ'    // 'kyee':'ⷌ'
-           ,'ለe':'ሌ'    // 'lee':'ሌ'
-           ,'መe':'ሜ'    // 'mee':'ሜ'
-           ,'ᎀe':'ᎂ'    // 'muee':'ᎂ'
-           ,'ነe':'ኔ'    // 'nee':'ኔ'
-           ,'ፐe':'ፔ'    // 'pee':'ፔ'
-           ,'ᎌe':'ᎌ'    // 'puee':'ᎌ'
-           ,'ቀe':'ቄ'    // 'qee':'ቄ'
-           ,'ⷀe':'ⷄ'    // 'qyee':'ⷄ'
-           ,'ረe':'ሬ'    // 'ree':'ሬ'
-           ,'ሰe':'ሴ'    // 'see':'ሴ'
-           ,'ሠe':'ሤ'    // 'ssee':'ሤ'
-           ,'ተe':'ቴ'    // 'tee':'ቴ'
-           ,'ቨe':'ቬ'    // 'vee':'ቬ'
-           ,'ወe':'ዌ'    // 'wee':'ዌ'
-           ,'ሸe':'ሼ'    // 'xee':'ሼ'
-           ,'ⶠe':'ⶤ'    // 'xxee':'ⶤ'
-           ,'የe':'ዬ'    // 'yee':'ዬ'
-           ,'ዘe':'ዜ'    // 'zee':'ዜ'
+        if (dd!='00') {
+            if ((n=dd.charAt(0)) != '0') {
+                s = String.fromCharCode(parseInt(n)+0x1371);
+            }
+            if ((n=dd.charAt(1)) != '0') {
+                s+= String.fromCharCode(parseInt(n)+0x1368);
+            }
+            if (s=='፩' && !lone1) {
+                s = '';
+            }
+        }
 
+        return s;
+    }
 
+    var convertEth2Arab = function (s) {
+        var sum = ''
+           ,m = s.match(/(([፲-፺]?[፩-፱]?)፼፼)?(([፲-፺]?[፩-፱]?)፻፼)?(([፲-፺]?[፩-፱]?)፼)?(([፲-፺]?[፩-፱]?)፻)?([፲-፺]?[፩-፱]?)?$/);
 
-           ,'ጭa':'ጫ'    // 'Ca':'ጫ'
-           ,'ጮa':'ⶐ'    // 'Coa':'ⶐ'
-           ,'ጩa':'ጯ'    // 'Cua':'ጯ'
-           ,'ⶽa':'ⶻ'    // 'CCa':'ⶻ'
-           ,'ⶽo':'ⶾ'    // 'CCo':'ⶾ'
-           ,'ⶽu':'ⶹ'    // 'CCu':'ⶹ'
+        if (m) {
+            sum=0;
+            if (m[1]) sum = getEthDD(m[2])*100000000;
+            if (m[3]) sum+= getEthDD(m[4])*1000000;
+            if (m[5]) sum+= getEthDD(m[6])*10000;
+            if (m[7]) sum+= getEthDD(m[8])*100;
+            if (m[9]) sum+= getEthDD(m[9]);
+        }
+        return sum.toString();
+    }
 
-           ,'ዽa':'ዻ'    // 'Da':'ዻ'
-           ,'ዾa':'ⶍ'    // 'Doa':'ⶍ'
-           ,'ዹa':'ዿ'    // 'Dua':'ዿ'
+    var convertArab2Eth = function (s) {
+        if (s.length==1)
+            return setEthDD('0'+s,1);
 
-           ,'ጝa':'ጛ'    // 'Ga':'ጛ'
-           ,'ጝo':'ጞ'    // 'Go':'ጞ'
-           ,'ጙa':'ጟ'    // 'Gua':'ጟ'
-           ,'ጙu':'ⶖ'    // 'Guu':'ⶖ'
+        var sum = ''
+           ,m = s.split(/(?=(?:..)+$)/g)
+        if (m.length!=1) {
+            if (m[0].length==1)
+                m[0] = '0'+m[0];
+            m = m.reverse();
+        }
+        if (m[0] && m[0]!='00')
+            sum = setEthDD(m[0],1);
+        if (m[1]) {
+            if (m[1]!='00')
+                sum = setEthDD(m[1])+'፻'+sum;
+            if (m[2]) {
+                if (m[2]!='00')
+                    sum = setEthDD(m[2])+'፼'+sum;
+                if (m[3]) {
+                    if (m[3]!='00')
+                        sum = setEthDD(m[3])+'፻፼'+sum;
+                    if( m[4] && m[4] != '00')
+                        sum = setEthDD(m[4])+'፼፼'+sum;
+                }
+            }
+        }
+        return sum;
+    }
 
-           ,'ሕa':'ሓ'    // 'Ha':'ሓ'
-           ,'ሕo':'ሖ'    // 'Ho':'ሖ'
-           ,'ሑa':'ሗ'    // 'Hua':'ሗ'
-
-           ,'ኽa':'ኻ'    // 'Ka':'ኻ'
-           ,'ኽo':'ኾ'    // 'Ko':'ኾ'
-
-           ,'ⷕa':'ⷓ'    // 'Kya':'ⷓ'
-           ,'ኹu':'ዅ'    // 'Kuu':'ዅ'
-           ,'ኹa':'ዃ'    // 'Kua':'ዃ'
-           ,'ⷕo':'ⷖ'    // 'Kyo':'ⷖ'
-           ,'ⷕu':'ⷑ'    // 'Kyu':'ⷑ'
-
-           ,'ኝa':'ኛ'    // 'Na':'ኛ'
-           ,'ኞa':'ⶉ'    // 'Noa':'ⶉ'
-           ,'ኙa':'ኟ'    // 'Nua':'ኟ'
-
-           ,'ጵa':'ጳ'    // 'Pa':'ጳ'
-           ,'ጶa':'ⶑ'    // 'Poa':'ⶑ'
-           ,'ጱa':'ጷ'    // 'Pua':'ጷ'
-
-           ,'ቕa':'ቓ'    // 'Qa':'ቓ'
-           ,'ቕo':'ቖ'    // 'Qo':'ቖ'
-           ,'ቑa':'ቛ'    // 'Qua':'ቛ'
-           ,'ቑu':'ቝ'    // 'Quu':'ቝ'
-
-           ,'ጽa':'ጻ'    // 'Sa':'ጻ'
-           ,'ጽo':'ጾ'    // 'So':'ጾ'
-           ,'ጹa':'ጿ'    // 'Sua':'ጿ'
-
-           ,'ፅa':'ፃ'    // 'SSa':'ፃ'
-           ,'ፆa':'ፇ'    // 'SSoa':'ፇ'
-           ,'ፅu':'ፁ'    // 'SSu':'ፁ'
-
-           ,'ጥa':'ጣ'    // 'Ta':'ጣ'
-           ,'ጦa':'ⶏ'    // 'Toa':'ⶏ'
-           ,'ጡa':'ጧ'    // 'Tua':'ጧ'
-
-           ,'ዥa':'ዣ'    // 'Za':'ዣ'
-           ,'ዥo':'ዦ'    // 'Zo':'ዦ'
-           ,'ዡa':'ዧ'    // 'Zua':'ዧ'
-
-           ,'ⶵa':'ⶳ'    // 'ZZa':'ⶳ'
-           ,'ⶵo':'ⶶ'    // 'ZZo':'ⶶ'
-           ,'ⶵu':'ⶱ'    // 'ZZu':'ⶱ'
-
-           ,'ብa':'ባ'    // 'ba':'ባ'
-           ,'ቦa':'ⶅ'    // 'boa':'ⶅ'
-           ,'ቡa':'ቧ'    // 'bua':'ቧ'
-           ,'ቡu':'ᎇ'    // 'buu':'ᎇ'
-
-           ,'ⶭa':'ⶫ'    // 'cca':'ⶫ'
-           ,'ⶭo':'ⶮ'    // 'cco':'ⶮ'
-           ,'ⶭu':'ⶩ'    // 'ccu':'ⶩ'
-
-           ,'ችa':'ቻ'    // 'ca':'ቻ'
-           ,'ቹa':'ቿ'    // 'cua':'ቿ'
-           ,'ቾa':'ⶇ'    // 'coa':'ⶇ'
-
-           ,'ድa':'ዳ'    // 'da':'ዳ'
-           ,'ዶa':'ⶌ'    // 'doa':'ⶌ'
-           ,'ዱa':'ዷ'    // 'dua':'ዷ'
-
-           ,'ፍa':'ፋ'    // 'fa':'ፋ'
-           ,'ፍo':'ፎ'    // 'fo':'ፎ'
-           ,'ፉa':'ፏ'    // 'fua':'ፏ'
-           ,'ፉu':'ᎋ'    // 'fuu':'ᎋ'
-
-           ,'ግa':'ጋ'    // 'ga':'ጋ'
-           ,'ጎa':'ጏ'    // 'goa':'ጏ'
-           ,'ጉa':'ጓ'    // 'gua':'ጓ'
-           ,'ጉu':'ጕ'    // 'guu':'ጕ'
-
-           ,'ⷝa':'ⷛ'    // 'gya':'ⷛ'
-           ,'ⷝo':'ⷞ'    // 'gyo':'ⷞ'
-           ,'ⷝu':'ⷙ'    // 'gyu':'ⷙ'
-
-           ,'ህa':'ሃ'    // 'ha':'ሃ'
-           ,'ሆa':'ሇ'    // 'hoa':'ሇ'
-           ,'ሁa':'ኋ'    // 'hua':'ኋ'
-           ,'ሁe':'ኈ'    // 'hue':'ኈ'
-           ,'ሁu':'ኍ'    // 'huu':'ኍ'
-
-           ,'ኅa':'ኃ'    // 'hha':'ኃ'
-           ,'ኆa':'ኇ'    // 'hhoa':'ኇ'
-           ,'ኁa':'ኋ'    // 'hhua':'ኋ'
-           ,'ኁu':'ኍ'    // 'hhuu':'ኍ'
-
-           ,'ጅa':'ጃ'    // 'ja':'ጃ'
-           ,'ጆa':'ⶎ'    // 'joa':'ⶎ'
-           ,'ጁa':'ጇ'    // 'jua':'ጇ'
-
-           ,'ክa':'ካ'    // 'ka':'ካ'
-           ,'ኮa':'ኯ'    // 'koa':'ኯ'
-           ,'ኩa':'ኳ'    // 'kua':'ኳ'
-           ,'ኩu':'ኵ'    // 'kuu':'ኵ'
-
-           ,'ⷍa':'ⷋ'    // 'kya':'ⷋ'
-           ,'ⷍo':'ⷎ'    // 'kyo':'ⷎ'
-           ,'ⷍu':'ⷉ'    // 'kyu':'ⷉ'
-
-           ,'ልa':'ላ'    // 'la':'ላ'
-           ,'ሎa':'ⶀ'    // 'loa':'ⶀ'
-           ,'ሉa':'ሏ'    // 'lua':'ሏ'
-
-           ,'ምa':'ማ'    // 'ma':'ማ'
-           ,'ሞa':'ⶁ'    // 'moa':'ⶁ'
-           ,'ሙa':'ሟ'    // 'mua':'ሟ'
-           ,'ሙu':'ᎃ'    // 'muu':'ᎃ'
-
-           ,'ንa':'ና'    // 'na':'ና'
-           ,'ኖa':'ⶈ'    // 'noa':'ⶈ'
-           ,'ኑa':'ኗ'    // 'nua':'ኗ'
-
-           ,'ፕa':'ፓ'    // 'pa':'ፓ'
-           ,'ፖa':'ⶒ'    // 'poa':'ⶒ'
-           ,'ፑa':'ፗ'    // 'pua':'ፗ'
-           ,'ፑu':'ᎏ'    // 'puu':'ᎏ'
-
-           ,'ቅa':'ቃ'    // 'qa':'ቃ'
-           ,'ቆa':'ቇ'    // 'qoa':'ቇ'
-           ,'ቁa':'ቋ'    // 'qua':'ቋ'
-           ,'ቁu':'ቍ'    // 'quu':'ቍ'
-
-           ,'ⷅa':'ⷃ'    // 'qya':'ⷃ'
-           ,'ⷅo':'ⷆ'    // 'qyo':'ⷆ'
-           ,'ⷅu':'ⷁ'    // 'qyu':'ⷁ'
-
-           ,'ርa':'ራ'    // 'ra':'ራ'
-           ,'ሮa':'ⶂ'    // 'roa':'ⶂ'
-           ,'ሩa':'ሯ'    // 'rua':'ሯ'
-
-           ,'ስa':'ሳ'    // 'sa':'ሳ'
-           ,'ሶa':'ⶃ'    // 'soa':'ⶃ'
-           ,'ሱa':'ሷ'    // 'sua':'ሷ'
-
-           ,'ሥa':'ሣ'    // 'ssa':'ሣ'
-           ,'ሥo':'ሦ'    // 'sso':'ሦ'
-           ,'ሡa':'ሧ'    // 'ssua':'ሧ'
-
-           ,'ትa':'ታ'    // 'ta':'ታ'
-           ,'ቶa':'ⶆ'    // 'toa':'ⶆ'
-           ,'ቱa':'ቷ'    // 'tua':'ቷ'
-
-           ,'ቭa':'ቫ'    // 'va':'ቫ'
-           ,'ቭo':'ቮ'    // 'vo':'ቮ'
-           ,'ቩa':'ቯ'    // 'vua':'ቯ'
-
-           ,'ውa':'ዋ'    // 'wa':'ዋ'
-           ,'ዎa':'ዏ'    // 'woa':'ዏ'
-           ,'ውu':'ዉ'    // 'wu':'ዉ'
-
-           ,'ሽa':'ሻ'    // 'xa':'ሻ'
-           ,'ሾa':'ⶄ'    // 'xoa':'ⶄ'
-           ,'ሹa':'ሿ'    // 'xua':'ሿ'
-
-
-           ,'ⶥa':'ⶣ'    // 'xxa':'ⶣ'
-           ,'ⶥo':'ⶦ'    // 'xxo':'ⶦ'
-           ,'ⶥu':'ⶡ'    // 'xxu':'ⶡ'
-
-           ,'ይa':'ያ'    // 'ya':'ያ'
-           ,'ዮa':'ዯ'    // 'yoa':'ዯ'
-           ,'ይu':'ዩ'    // 'yu':'ዩ'
-
-           ,'ዝa':'ዛ'    // 'za':'ዛ'
-           ,'ዞa':'ⶋ'    // 'zoa':'ⶋ'
-           ,'ዙa':'ዟ'    // 'zua':'ዟ'
-
-           ,'እa':'ኣ'    // 'ea':'ኣ'
-           ,'ኢe':'ኤ'    // 'ie':'ኤ'
-           ,'አe':'ኧ'    // 'ae':'ኧ'
-           ,'ዓa':'ዐ'    // 'aaa':'ዐ'
-           ,'`e':'ዐ'      //
-           ,'ኡu':'ዑ'    // 'uu':'ዑ'
-           ,'`u':'ዑ'      //
-           ,'`i':'ዒ'      //
-           ,'`a':'ዓ'      //
-           ,'ዒe':'ዔ'    // 'iie':'ዔ'
-           ,'`E':'ዔ'      //
-           ,'እe':'ዕ'    // 'ee':'ዕ'
-           ,'`ዕ':'ዕ'    //
-           ,'ኦo':'ዖ'    // 'oo':'ዖ'
-           ,'`o':'ዖ'      //
-           ,'ኦa':'ⶊ'    // 'oa':'ⶊ'
-
-
-           ,'፲፻0':'፼' // '፲፻0':'፼'
-           ,"''":"'"        // "''":"'"
-           ,'፤፤':';'    // '፤፤':';'
-           ,'፥፣':','    // '፥፣':'
-
-           ,'፡፡':'።'  // '፡፡':'።'
-           ,'፡-':'፦'    // '፡-':'፦'
-           ,'፡+':'፠'    // '፡+':'፠'
-           ,'፡#':'፨'    // '፡#':'፨'
-
-           ,'_1':'᎐'      // '_1':'᎐'
-           ,'_2':'᎑'      // '_2':'᎑'
-           ,'_3':'᎒'      // '_3':'᎒'
-           ,'_4':'᎓'      // '_4':'᎓'
-           ,'_5':'᎔'      // '_5':'᎔'
-           ,'_6':'᎕'      // '_6':'᎕'
-           ,'_7':'᎖'      // '_7':'᎖'
-           ,'_8':'᎘'      // '_8':'᎘'
-           ,'_0':'᎙'      // '_0':'᎙'
-           ,'__':'_'        // '__':'_'
-
-           ,'፪0':'፳'    // '፪0':'፳'
-           ,'፫0':'፴'    // '፫0':'፴'
-           ,'፬0':'፵'    // '፬0':'፵'
-           ,'፭0':'፶'    // '፭0':'፶'
-           ,'፮0':'፷'    // '፮0':'፷'
-           ,'፯0':'፸'    // '፯0':'፸'
-           ,'፰0':'፹'    // '፰0':'፹'
-           ,'፱0':'፺'
-        };
-
-    return function (chr, buf) {
-        var str = buf+chr
-           ,len = 1;
-        if (chr=='\u0008') { // backspace
-            if (buf.length) {
-                for (var key in EZnonfinal) {
-                    if (EZnonfinal[key] == buf) {
-                        return (key==buf || /^[A-z]/.test(key) ? ['',0]
-                                                               : [key.charAt(0),1]);
+    return {
+        activate : function () {
+            if (!EZfinal) {
+                var nonfK = "'|'1|'2|'3|'4|'5|'6|'7|'8|'9|:፡|_|`|`1|`2|`3|`4|`5|`6|`7|`8|`9|`ህ|`ስ|`ሽ|`ዥ|`ጭ|`ጽ|a|e|i|o|u|ሁi|ህ|ህe|ህi|ህo|ህu|ህህ|ል|ልe|ልi|ልo|ልu|ሕ|ሕe|ሕi|ሕu|ሙe|ሙi|ም|ምe|ምi|ምo|ምu|ሥe|ሥi|ሥu|ር|ርe|ርi|ርo|ርu|ስ|ስe|ስi|ስo|ስu|ስስ|ሽ|ሽe|ሽi|ሽo|ሽu|ሽሽ|ቁi|ቅ|ቅe|ቅi|ቅo|ቅu|ቅይ|ቑe|ቑi|ቕ|ቕe|ቕi|ቕu|ቡe|ቡi|ብ|ብe|ብi|ብo|ብu|ቭ|ቭe|ቭi|ቭu|ት|ትe|ትi|ትo|ትu|ች|ችe|ችi|ችo|ችu|ችች|ኁe|ኁi|ኅe|ኅi|ኅo|ኅu|ን|ንe|ንi|ንo|ንu|ኝ|ኝe|ኝi|ኝo|ኝu|አa|አe|ኢi|ኩe|ኩi|ክ|ክe|ክi|ክo|ክu|ክይ|ኹe|ኹi|ኽ|ኽe|ኽi|ኽu|ኽይ|ው|ውe|ውi|ውo|ዓa|ዝ|ዝe|ዝi|ዝo|ዝu|ዥ|ዥe|ዥi|ዥu|ዥዝ|ዥዥ|ይ|ይe|ይi|ይo|ድ|ድe|ድi|ድo|ድu|ዽ|ዽe|ዽi|ዽo|ዽu|ጅ|ጅe|ጅi|ጅo|ጅu|ጉe|ጉi|ግ|ግe|ግi|ግo|ግu|ግይ|ጙe|ጙi|ጝ|ጝe|ጝi|ጝu|ጥ|ጥe|ጥi|ጥo|ጥu|ጭ|ጭe|ጭi|ጭo|ጭu|ጭች|ጭጭ|ጵ|ጵe|ጵi|ጵo|ጵu|ጽ|ጽe|ጽi|ጽu|ጽስ|ጽጽ|ፅe|ፅi|ፅo|ፉe|ፉi|ፍ|ፍe|ፍi|ፍu|ፑe|ፑi|ፕ|ፕe|ፕi|ፕo|ፕu|፡|፡፡|።፡|፣|፣፣|፤|፧|‹|‹‹|›|››|ⶥe|ⶥi|ⶭe|ⶭi|ⶵe|ⶵi|ⶽe|ⶽi|ⷅe|ⷅi|ⷍe|ⷍi|ⷕe|ⷕi|ⷝe|ⷝi"
+                           .split('|')
+                   ,nonfV = "'፩፪፫፬፭፮፯፰፱፠_`፩፪፫፬፭፮፯፰፱ኅሥⶥⶵⶽፅአእኢኦኡኊህሀሂሆሁኅልለሊሎሉሕሐሒሑᎀᎁምመሚሞሙሠሢሡርረሪሮሩስሰሲሶሱሥሽሸሺሾሹⶥቊቅቀቂቆቁⷅቘቚቕቐቒቑᎄᎅብበቢቦቡቭቨቪቩትተቲቶቱችቸቺቾቹⶭኈኊኀኂኆኁንነኒኖኑኝኘኚኞኙዓኧዒኰኲክከኪኮኩⷍዀዂኽኸኺኹⷕውወዊዎዐዝዘዚዞዙዥዠዢዡⶵⶵይየዪዮድደዲዶዱዽዸዺዾዹጅጀጂጆጁጐጒግገጊጎጉⷝⶓⶔጝጘጚጙጥጠጢጦጡጭጨጪጮጩⶽⶽጵጰጲጶጱጽጸጺጹፅፅፀፂፆᎈᎉፍፈፊፉᎌᎍፕፐፒፖፑ፡።:፣፥፤፧‹«›»ⶠⶢⶨⶪⶰⶲⶸⶺⷀⷂⷈⷊⷐⷒⷘⷚ"
+                           .split('')
+                   ,finK = "ጪeⶺeዺeጚeⶔeሒeኺeዂeⷒeኚeጲeቒeቚeጺeፂeጢeዢeⶲeቢeᎅeⶪeቺeዲeፊeᎉeጊeጒeⷚeሂeኂeኊeጂeኪeኲeⷊeሊeሚeᎁeኒeፒeᎍeቁeቂeቊeⷂeሪeሲeሢeቲeቪeዊeሺeⶢeዪeዚeጨeⶸeዸeጘeⶓeሐeኸeዀeⷐeኘeጰeቐeቘeጸeፀeጠeዠeⶰeበeᎄeⶨeቸeደeፈeᎈeገeጐeⷘeሀeኀeኈeጀeከeኰeⷈeለeመeᎀeነeፐeᎌeቀeⷀeረeሰeሠeተeቨeወeሸeⶠeየeዘeጭaጮaጩaⶽaⶽoⶽuዽaዾaዹaጝaጝoጙaጙuሕaሕoሑaኽaኽoⷕaኹuኹaⷕoⷕuኝaኞaኙaጵaጶaጱaቕaቕoቑaቑuጽaጽoጹaፅaፆaፅuጥaጦaጡaዥaዥoዡaⶵaⶵoⶵuብaቦaቡaቡuⶭaⶭoⶭuችaቹaቾaድaዶaዱaፍaፍoፉaፉuግaጎaጉaጉuⷝaⷝoⷝuህaሆaሁaሁeሁuኅaኆaኁaኁuጅaጆaጁaክaኮaኩaኩuⷍaⷍoⷍuልaሎaሉaምaሞaሙaሙuንaኖaኑaፕaፖaፑaፑuቅaቆaቁaቁuⷅaⷅoⷅuርaሮaሩaስaሶaሱaሥaሥoሡaትaቶaቱaቭaቭoቩaውaዎaውuሽaሾaሹaⶥaⶥoⶥuይaዮaይuዝaዞaዙaዐaእaኢeኧe`eኡu`u`i`aዒe`Eእe`ዕኦo`oኦaቆoኆoኮoጎo«‹»›'!፠፡፤፤፧፧፥፣፡፣፡-፡+፡#_1_2_3_4_5_6_7_8_0__"
+                          .split(/(?=(?:..)+$)/g)
+                   ,finV = "ጬⶼዼጜⶕሔኼዄⷔኜጴቔቜጼፄጤዤⶴቤᎆⶬቼዴፌᎊጌጔⷜሄኄኌጄኬኴⷌሌሜᎂኔፔᎎቈቄቌⷄሬሴሤቴቬዌሼⶤዬዜጬⶼዼጜⶕሔኼዄⷔኜጴቔቜጼፄጤዤⶴቤᎆⶬቼዴፌᎊጌጔⷜሄኄኌጄኬኴⷌሌሜᎂኔፔᎌቄⷄሬሴሤቴቬዌሼⶤዬዜጫⶐጯⶻⶾⶹዻⶍዿጛጞጟⶖሓሖሗኻኾⷓዅዃⷖⷑኛⶉኟጳⶑጷቓቖቛቝጻጾጿፃፇፁጣⶏጧዣዦዧⶳⶶⶱባⶅቧᎇⶫⶮⶩቻቿⶇዳⶌዷፋፎፏᎋጋጏጓጕⷛⷞⷙሃሇኋኈኍኃኇኋኍጃⶎጇካኯኳኵⷋⷎⷉላⶀሏማⶁሟᎃናⶈኗፓⶒፗᎏቃቇቋቍⷃⷆⷁራⶂሯሳⶃሷሣሦሧታⶆቷቫቮቯዋዏዉሻⶄሿⶣⶦⶡያዯዩዛⶋዟኣኣኤእዐዑዑዒዓዔዔዕዕዖዖⶊቈኈኰጐ<>¡:;?,፥፦፠፨᎐᎑᎒᎓᎔᎕᎖᎘᎙_"
+                          .split('');
+                EZfinal = {};
+                EZnonfinal = {};
+                for (var i=0,nonfVL=nonfV.length; i<nonfVL; i++) EZnonfinal[nonfK[i]]=nonfV[i];
+                for (var i=0,finVL=finV.length; i<finVL; i++) EZfinal[finK[i]]=finV[i];
+                nonfK=nonfV=finK=finV=null;
+            }
+        }
+       ,charProcessor : function (chr, buf) {
+            var str = buf+chr
+               ,m ,sum
+               ,len = 1;
+            if (chr=='\u0008') { // backspace
+                if (buf.length) {
+                    if (m=convertEth2Arab(buf)) {
+                        str = convertArab2Eth(m.slice(0,-1));
+                        len = str.length;
+                    } else {
+                        str = '';
+                        len = 0;
+                        for (var key in EZnonfinal) {
+                            if (EZnonfinal[key] == buf) {
+                                if (key!=buf && !/^[A-z]/.test(key)) {
+                                    str = key.charAt(0);
+                                    len = 1;
+                                }
+                                break;
+                            }
+                        }
                     }
                 }
-                str = '';
+            } else if (buf && chr=="'" && buf!="'") {
+                if (!/[፻፩፪፫፬፭፮፯፰፱፼፲፳፴፵፶፷፸፹፺]/.test(buf)) {
+                    str = buf;
+                    len = 0;
+                }
+            } else if(buf && buf!="'" && buf!="_" && /\d/.test(chr)) {
+                sum = convertEth2Arab(buf)+chr;
                 len = 0;
-            }
-        } else if (buf && chr=="'" && buf!="'") {
-            if (/[፻፩፪፫፬፭፮፯፰፱፼፲፳፴፵፶፷፸፹፺]/.test(buf)) {
-                str = buf+chr;
+                str = convertArab2Eth(sum);
+                if (sum.length != 10) {
+                    len = str.length;
+                }
             } else {
-                str = buf;
-                len = 0;
+                chr = VirtualKeyboard.Langs.ET.conv[chr]||chr;
+                if (str = EZnonfinal[buf+chr]) {
+                    len = str.length;
+                } else if (str = EZfinal[buf+chr]) {
+                    len = 0;
+                } else if (str = EZnonfinal[chr]) {
+                    str = buf + str;
+                } else {
+                    str = buf + chr;
+                    len = 0;
+                }
             }
-        } else {
-            chr = VirtualKeyboard.Langs.ET.conv[chr]||chr;
-            if (str = EZnonfinal[buf+chr]) {
-                len = str.length;
-            } else if (str = EZfinal[buf+chr]) {
-                len = 0;
-            } else if (str = EZnonfinal[chr]) {
-                str = buf + str;
-            } else {
-                str = buf + chr;
-                len = 0;
-            }
-       }
-       return [str, len];
+            return [str, len];
+        }
     }
 })()},
 {code:'AM-ET'
@@ -2575,7 +2128,7 @@ new function () {
 ,normal:'`1234567890-=\\ቀወeረተኀሸየዐፐ«»አሰደፈገሀጀከለ፤፣ዘጠቸጸበነመ,።/'
 ,shift:{0:'~!@#$%^&*()_+|ቐ',19:'YUIOጰ{}Aሠዻ',30:'ጘሐ',33:'ኸ',35:'፦፥ዠ',39:'ጨፀቨኘ',44:'፠፨፧'}
 ,'cbk':/**
- * $Id$
+ * $Id: ethiopic-washra.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Ethiopian WashRa layout
  *
@@ -2583,8 +2136,8 @@ new function () {
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 function (chr, buf) {
     var vow
@@ -2643,7 +2196,7 @@ function (chr, buf) {
 ,shift:{0:'~፲፳፴፵፶፷፸፹፺)_+|ቐW',18:'ጠY',23:'ጰ{}',27:'ሸዻ',30:'ጘሐ',33:'ኸ',35:'፥ዐዠሠጨ',42:'ኘ',44:'«»?'}
 ,alt:{7:'፨፠',14:'ቈቘ',27:'ⶠ',30:'ጐ',33:'ኰዀ፦',37:'ⶰኈⶨⶸ',46:'፧'}
 ,'cbk':/**
- * $Id$
+ * $Id: ethiopic-xtt.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Ethiopian Xenotype XXT layout
  *
@@ -2651,8 +2204,8 @@ function (chr, buf) {
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 function (chr, buf) {
     var vow
@@ -2917,6 +2470,23 @@ function (chr, buf) {
 ,shift:{0:'~!@#$%^&*()_+|',24:'{}',35:':"',44:'<>?'}
 ,shift_caps:{20:'ᐅᐃ'}
 ,'cbk':VirtualKeyboard.Langs.IKU.charProcessor},
+{code:'EN-IPA'
+,name:'IPA Phonetic'
+,normal:'`1234567890-͡\\qwertyuiop[]asdfghjklΑΒzxcvbnm,.?'
+,shift:{0:'~!‖↗↘ꜛꜜ&*()_+|',24:'{}',35:':"',44:'ʘ˧/'}
+,'cbk':/**
+ * $Id: ipa.js 643 2009-07-09 15:19:14Z wingedfox $
+ *
+ * IPA char processor
+ *
+ * This software is protected by patent No.2009611147 issued on 20.02.2009 by Russian Federal Service for Intellectual Property Patents and Trademarks.
+ *
+ * @author Konstantin Wiolowan
+ * @copyright 2009 Konstantin Wiolowan <wiolowan@mail.ru>
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
+ */
+VirtualKeyboard.Langs.IPA.charProcessor},
 {code:'EN-IE'
 ,name:'Irish'
 ,normal:'`1234567890-=#qwertyuiop[]asdfghjkl;\'zxcvbnm,./'
@@ -2985,7 +2555,7 @@ function (chr, buf) {
 ,normal:'ё1234567890-=\\йцукенгшщзхъфывапролджэячсмитьбю.'
 ,shift:{1:'!"№;%:?*()_+/',46:','}
 ,'cbk':/**
- * $Id$
+ * $Id: korean-ru2kor.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Korean phonetic IME
  *
@@ -2993,8 +2563,8 @@ function (chr, buf) {
  *
  * @author Konstantin Wiolowan
  * @copyright 2007-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 function (chr, buf, keystate) {
     var Ru2Kor = {'-':'-','а':'ㅏ','А':'ㅏ','б':'ㅂ','Б':'ㅃ','в':'ㅗ','В':'ㅗ','г':'ㄱ','Г':'ㄲ','д':'ㄷ','Д':'ㄸ','е':'ㅔ','Е':'ㅔ','ё':'ㅛ','Ё':'ㅕ','ж':'ㅈ','Ж':'ㅈ','з':'ㅈ','З':'ㅈ','и':'ㅣ','И':'ㅣ','й':'ㅣ','Й':'ㅣ','к':'ㄱ','К':'ㄲ','л':'ㄹ','Л':'ㄹ','м':'ㅁ','М':'ㅁ','н':'ㄴ','Н':'ㅇ','о':'ㅗ','О':'ㅓ','п':'ㅂ','П':'ㅃ','р':'ㄹ','Р':'ㄹ','с':'ㅅ','С':'ㅆ','т':'ㄷ','Т':'ㄸ','у':'ㅜ','У':'ㅜ','ф':'ㅍ','Ф':'ㅍ','х':'ㅎ','Ч':'ㅎ','ц':'ㅉ','Ц':'ㅉ','ч':'ㅈ','Ч':'ㅉ','ш':'ㅅ','Ш':'ㅅ','щ':'ㅅ','Щ':'ㅅ','ъ':'ъ','ы':'ㅡ','Ы':'ㅡ','ь':'ㅓ','Ь':'ㅓ','э':'ㅐ','Э':'ㅐ','ю':'ㅠ','Ю':'ㅠ','я':'ㅑ','Я':'ㅑ'}
@@ -3098,7 +2668,7 @@ function (chr, buf, keystate) {
 ,shift:{0:'~!@#$%^&*()_+|',24:'{}',32:'Ȟ',35:':"',44:'<>?'}
 ,caps:{14:'Q',17:'R',32:'J',38:'XC'}
 ,'cbk':/**
- * $Id$
+ * $Id: lakhota-standard.js 643 2009-07-09 15:19:14Z wingedfox $
  *
  * Lakhota char processor
  *
@@ -3106,8 +2676,8 @@ function (chr, buf, keystate) {
  *
  * @author Konstantin Wiolowan
  * @copyright 2008-2009 Konstantin Wiolowan <wiolowan@mail.ru>
- * @version $Rev$
- * @lastchange $Author$ $Date$
+ * @version $Rev: 643 $
+ * @lastchange $Author: wingedfox $ $Date: 2009-07-09 19:19:14 +0400 (Чт, 09 июл 2009) $
  */
 VirtualKeyboard.Langs.LA.charProcessor},
 {code:'LO-LAO'
