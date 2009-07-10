@@ -618,13 +618,27 @@ var VirtualKeyboard = new function () {
           case 37:
               if (self.IME.isOpen()) {
                   self.IME.prevPage(e);
-                  return;
+                  e.preventDefault();
               }
               break;
           case 39:
               if (self.IME.isOpen()) {
                   self.IME.nextPage(e);
-                  return;
+                  e.preventDefault();
+              }
+              break;
+          case 38:
+              if (self.IME.isOpen()) {
+                  if (!self.IME.showPaged())
+                      self.IME.prevPage(e);
+                  e.preventDefault();
+              }
+              break;
+          case 40:
+              if (self.IME.isOpen()) {
+                  if (!self.IME.showAllPages())
+                      self.IME.nextPage(e);
+                  e.preventDefault();
               }
               break;
           case 8: // backspace
@@ -1779,15 +1793,41 @@ VirtualKeyboard.IME = new function () {
      *  @scope public
      */
     self.toggleShowAll = function (e) {
-         var sa = ime.firstChild.rows[1].cells[0].lastChild;
-         if (showAll = !showAll) {
-             page = 0;
-             sa.className = 'showPage';
-         } else {
-             sa.className = 'showAll';
-         }
-         showPage();
+        var sa = ime.firstChild.rows[1].cells[0].lastChild;
+        if (showAll = !showAll) {
+            sa.className = 'showPage';
+        } else {
+            sa.className = 'showAll';
+        }
+        showPage();
     }
+    /**
+     *  Shows all IME pages
+     *
+     *  @return false if already all pages are shown
+     *  @scope public
+     */
+    self.showAllPages = function () {
+        if (!showAll) {
+             self.toggleShowAll();
+             return true;
+        }
+        return false;
+    }
+    /**
+     *  Shows IME in paged mode
+     *
+     *  @return false if already in paged mode
+     *  @scope public
+     */
+    self.showPaged = function () {
+        if (showAll) {
+             self.toggleShowAll();
+             return true;
+        }
+        return false;
+    }
+
     /**
      *  Shows currently selected page in the IME tooltip
      *
