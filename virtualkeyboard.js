@@ -1712,7 +1712,7 @@ VirtualKeyboard.IME = new function () {
         var xy = DOM.getOffset(target);
         ime.style.left = xy.x+'px';
         var co = DocumentSelection.getSelectionOffset(target);
-        ime.style.top = xy.y+co.y+co.h+'px';
+        ime.style.top = xy.y+co.y+co.h-target.scrollTop+'px';
     }
     /**
      *  Imports suggestions and applies them
