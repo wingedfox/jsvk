@@ -1003,7 +1003,7 @@ var VirtualKeyboard = new function () {
    *  @return {HTMLInputElement, Null}
    *  @scope public
    */
-  self.getAttachedInput = function (el) {
+  self.getAttachedInput = function () {
       return nodes.attachedInput;
   }
   /**
@@ -1063,7 +1063,7 @@ var VirtualKeyboard = new function () {
    *  @scope public
    */
   self.toggle = function (input, holder, kpTarget) {
-      self.isOpen()?self.close():self.show(input, holder, kpTarget);
+      self.isOpen()&&nodes.attachedInput==self.attachInput(input)?self.close():self.show(input, holder, kpTarget);
   }
   /**
    *  Returns true if keyboard is opened
