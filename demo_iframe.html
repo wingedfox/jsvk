@@ -5,6 +5,15 @@
   <meta http-equiv="Content-Type" content="text/html; charset=windows-1251" />
 
   <script type="text/javascript" src="vk_iframe.js?vk_sking=flat_gray&vk_layout=IN Devanagari" ></script>
+  <style type="text/css">
+      h1 {
+          font-size: 150%;
+      }
+      h2 {
+          font-size: 130%;
+          padding: 0 6px;
+      }
+  </style>
  </head>
  <body>
 <center><b><a href="http://allanguages.info">Official site</a></b><br /></center>
@@ -12,6 +21,7 @@
 Demos: [<a href="demo_inline.html">Plain text</a>] |
 [<a href="demo_popup.html">Popup mode</a>] |
 [<a>IFrame mode (isolated from page)</a>] |
+[<a href="demo_easy.html">Lite install</a>] |
 [<a href="richedit/tinymce/plugins/Jsvk/examples/simple.html">TinyMCE</a>] |
 [<a href="richedit/tinymce3/plugins/Jsvk/examples/simple.html">TinyMCE 3</a>] |
 [<a href="richedit/xinha/plugins/Jsvk/examples/simple.html">Xinha</a>] |
@@ -23,34 +33,37 @@ Demos: [<a href="demo_inline.html">Plain text</a>] |
      <form action="no.cgi" method="get">
       <div>
        Subject:<br />
-       <input name="testa" id="testa" type="text" onfocus="IFrameVirtualKeyboard.attachInput(this)"><br />
+       <input type="text" onfocus="IFrameVirtualKeyboard.attachInput(this)" /><br />
        Password (has keyboard animation disabled):<br />
-       <input name="test_pwd" id="test_pwd" type="password" class="VK_no_animate" onfocus="IFrameVirtualKeyboard.attachInput(this)" /><br />
+       <input type="password" class="VK_no_animate" onfocus="IFrameVirtualKeyboard.attachInput(this)" /><br />
        Text:<br />
-       <textarea name="testb" id="testb" type="text" cols="55" rows="10" wrap="soft" onfocus="IFrameVirtualKeyboard.attachInput(this)"></textarea>
+       <textarea id="text" cols="55" rows="10" wrap="soft" onfocus="IFrameVirtualKeyboard.attachInput(this)"></textarea>
        <div id="td"></div>
-       <input id="showkb" type="button" value="Keyboard" onclick="IFrameVirtualKeyboard.toggle('testb','td'); return false;" />
+       <button onclick="IFrameVirtualKeyboard.toggle('text','td'); return false;" >Keyboard</button>
       </div>
      </form>
     </td>
     <td valign="top">
-     <ul><strong>Resources:</strong>
-      <li><a href="http://bts.debugger.ru/index.php?tasks=all&project=5">Bugtracker</a></li>
-      <li><a href="http://debugger.ru/projects/virtualkeyboard">Russian article</a></li>
-      <li><a href="http://forum.dklab.ru/js/advises/VirtualKeyboard.html">Support forum</a></li>
-      <li><a href="http://www.codeproject.com/jscript/jsvk.asp">English article @CodeProject</a></li>
-     </ul>
-     <ol><strong>How to use this demo:</strong>
-      <li>Click the 'keyboard' button below</li>
-      <li>Click virtual buttons with mouse or press physical keyboard buttons to input text</li>
-      <li>Focus another field to switch keyboard to another input target</li>
+     &nbsp;<strong>Tip: </strong><em>Click on the "Keyboard" button to open the keyboard.</em>
+     <h2>Installation</h2>
+     <ol>
+      <li>Add <code>&lt;script type="text/javascript" src="vk_iframe.js" &gt;&lt;/script&gt;</code>
+          to the page's HEAD section</li>
+      <li>Add container to place keyboard <code>&lt;div id="keyboard"&gt;&lt;/div&gt;</code></li>
+      <li>Add button to open the keyboard <code>&lt;button onclick="IFrameVirtualKeyboard.toggle('default_input_id', 'keyboard');"&gt;Keyboard&lt;/button&gt;</code>
+      <li>Add attribute <code>onfocus="IFrameVirtualKeyboard.attachInput(this)"</code> to any fields which should receive keyboard input
+      <li>Click on the field to open the keyboard</li>
      </ol>
-     <ul id="sul"><strong>Supported languagues:</strong>
-       <li>Not supported for IFrame keyboard. See the <a href="demo_inline.html">Inline keyboard</a> demo</li>
+     <h2>Resources</h2>
+     <ul>
+      <li><a href="http://bts.debugger.ru/index.php?tasks=all&project=5">Bugtracker</a></li>
+      <li><a href="http://allanguages.info/forum">Support forum</a></li>
+      <li><a href="http://debugger.ru/projects/virtualkeyboard">Project page</a></li>
+      <li><a href="http://www.codeproject.com/jscript/jsvk.asp">Project page @CodeProject</a></li>
+      <li><a href="http://freshmeat.net/project/jsvk">Project page @Freshmeat</a></li>
      </ul>
     </td>
    </tr>
-
   </table>
  </body>
 </html>

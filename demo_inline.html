@@ -52,6 +52,20 @@
           display: block;
       }
 
+      h1 {
+          font-size: 150%;
+      }
+      h2 {
+          font-size: 130%;
+          padding: 0 6px;
+      }
+      table form input {
+          width: 247px;
+      }
+      table form textarea {
+          width: 500px;
+      }
+
   </style>
  </head>
  <body><!-- test -->
@@ -60,6 +74,7 @@
 Demos: [<a>Plain text</a>] |
 [<a href="demo_popup.html">Popup mode</a>] |
 [<a href="demo_iframe.html">IFrame mode (isolated from page)</a>] |
+[<a href="demo_easy.html">Lite install</a>] |
 [<a href="richedit/tinymce/plugins/Jsvk/examples/simple.html">TinyMCE</a>] |
 [<a href="richedit/tinymce3/plugins/Jsvk/examples/simple.html">TinyMCE 3</a>] |
 [<a href="richedit/xinha/plugins/Jsvk/examples/simple.html">Xinha</a>] |
@@ -74,54 +89,52 @@ Demos: [<a>Plain text</a>] |
         <tr>
          <td>
           Simple input:<br />
-          <input name="testa" id="testa" type="text" onfocus="VirtualKeyboard.attachInput(this)" />
+          <input type="text" onfocus="VirtualKeyboard.attachInput(this)" />
          </td>
          <td>
           Password (no keyboard animation):<br />
-          <input name="test_pwd" id="test_pwd" type="password" class="VK_no_animate" onfocus="VirtualKeyboard.attachInput(this)" />
+          <input type="password" class="VK_no_animate" onfocus="VirtualKeyboard.attachInput(this)" />
          </td>
         </tr>
         <tr>
          <td colspan="2">
           Text area:<br />
-          <textarea name="testb" id="testb" type="text" cols="35" rows="6" style="font-size: 150%" wrap="soft" onfocus="VirtualKeyboard.attachInput(this)"></textarea>
+          <textarea id="text" rows="6" wrap="soft" onfocus="VirtualKeyboard.attachInput(this)"></textarea>
          </td>
         </tr>
        </table>
-      <div id="td"></div>
-      <br />
-      <input id="showkb" type="button" value="Keyboard" onclick="VirtualKeyboard.toggle('testb','td'); return false;" />
+       <div id="td"></div>
       </div>
      </form>
     </td>
     <td>
-     <strong>Resources:</strong>
+     <h2>Resources</h2>
      <ul>
       <li><a href="http://bts.debugger.ru/index.php?tasks=all&project=5">Bugtracker</a></li>
-      <li><a href="http://debugger.ru/projects/virtualkeyboard">Russian article</a></li>
-      <li><a href="http://forum.dklab.ru/js/advises/VirtualKeyboard.html">Support forum</a></li>
-      <li><a href="http://www.codeproject.com/jscript/jsvk.asp">English article</a></li>
+      <li><a href="http://allanguages.info/forum">Support forum</a></li>
+      <li><a href="http://debugger.ru/projects/virtualkeyboard">Project page</a></li>
+      <li><a href="http://www.codeproject.com/jscript/jsvk.asp">Project page @CodeProject</a></li>
+      <li><a href="http://freshmeat.net/project/jsvk">Project page @Freshmeat</a></li>
      </ul>
     </td>
    </tr>
    <tr>
     <td>
-     <strong>Layouts filter:</strong><br />
+     <h2>Layouts filter</h2>
      <div id="lfilter" onclick="setFilter()">
      </div>
     </td>
    </tr>
    <tr>
     <td>
-     <strong>Skins</strong><br />
+     <h2>Skins</h2>
      <div id="skins"></div>
      </div>
     </td>
    </tr>
    <tr>
     <td colspan="2" class="layouts">
-     <br />
-     <strong>Supported languagues:</strong><em>Links are persistent</em>
+     <h2>Supported languagues</h2>
      <div id="layouts"></div>
     </td>
      <script type="text/javascript">
@@ -156,7 +169,7 @@ Demos: [<a>Plain text</a>] |
              /*
              *  open the keyboard
              */
-             VirtualKeyboard.toggle('testb','td');
+             VirtualKeyboard.toggle('text','td');
 
              /*
              *  building the list of layouts
@@ -184,6 +197,7 @@ Demos: [<a>Plain text</a>] |
                             "<img src='"+dl.replace(/\/[^\/]+.html/i,"")+"/css/"+cs+"/thumbnail.png' title='"+cs+"' alt='"+cs+"' /></a>";
              }
              el.innerHTML = html.join("&nbsp;| ");
+
          });
 
      </script>
