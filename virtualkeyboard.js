@@ -878,14 +878,14 @@ var VirtualKeyboard = new function () {
         __toggleControlKeysState(mtd[e.type], KEY.CTRL);
         __toggleControlKeysState(mtd[e.type], KEY.ALT);
     } else if (el.id.indexOf('caps')>-1) {
-        __toggleKeyState(mtd[e.type], null, el.id);
+        __toggleKeyState(mtd[e.type], el);
     } else if (animate) {
-        __toggleKeyState(mtd[e.type], null, el.id);
+        __toggleKeyState(mtd[e.type], el);
         if ('mouseout' == e.type.toLowerCase()) {
             /*
             *  reset 'hover' state
             */
-            __toggleKeyState(0, null, el.id);
+            __toggleKeyState(0, el);
         }
     }
     e.preventDefault();
@@ -1328,7 +1328,7 @@ var VirtualKeyboard = new function () {
           __toggleControlKeysState(!!(newMode&VK_CTRL), KEY.CTRL);
       }
       if (changes&VK_CAPS) {
-          __toggleKeyState(!!(newMode&VK_CAPS), KEY.CAPS);
+          __toggleKeyState(!!(newMode&VK_CAPS), null, KEY.CAPS);
       }
       mode = newMode;
   }
@@ -1370,13 +1370,12 @@ var VirtualKeyboard = new function () {
   /**
    *  Toggles key state
    *
-   *  @param {Number, Boolean} state one of raised (0), down (1), hover (2)
-   *  @param {String} suffix optional key suffix
-   *  @param {String} name optional key name
+   *  @param {String} name key suffix
+   *  @param {Number, Boolean} state one of raised (0), down (1), hover (2), out (3)
+   *  @param {HTMLElement} element key element
    */
-  var __toggleKeyState = function (state, suffix, name) {
-      var s = document.getElementById(suffix? idPrefix+suffix
-                                            : name);
+  var __toggleKeyState = function (state, element, name) {
+      var s = element || document.getElementById(idPrefix+name);
       if (s) {
           switch (0+state) {
               case 0:
