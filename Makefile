@@ -66,7 +66,8 @@ SETUP=$(CURDIR)/setup
 # }}}
 
 # {{{ ICON
-ICON=$(CURDIR)/img/jsvk.gif
+ICON=$(CURDIR)/img/jsvk.gif \
+		$(CURDIR)/img/jsvk_off.gif
 # }}}
 
 # {{{ TINY_MCE
@@ -85,7 +86,7 @@ XINHA=$(CURDIR)/plugins/xinha/*
 FCKEDITOR=$(CURDIR)/plugins/fckeditor/*
 # }}}
 
-FILES_LITE = $(DOCS) $(LAYOUTS) $(SKINS) $(SOURCES) $(DEMO)
+FILES_LITE = $(DOCS) $(LAYOUTS) $(SKINS) $(SOURCES) $(DEMO) $(ICON)
 FILES_COMPACT = $(FILES_LITE) $(SETUP)
 FILES_FULL  = $(FILES_COMPACT) $(EXT)
 FILES_TINYMCE = $(TINYMCE)
