@@ -25,26 +25,32 @@
      *  @scope private
      */
     var scriptInfo = (function (sname){var h =document.getElementsByTagName('html')[0].innerHTML,sr=new RegExp('<scr'+'ipt[^>]+?src\\s*=\\s*["\']?([^>]+?/|)('+sname+')([^"\'\\s]*)[^>]*>(.|[\r\n])*?</scr'+'ipt>','i'),m =h.match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return [m[1],m[3]];if (m[1].indexOf("/")==0) return [m[1],m[3]];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return [b[0].href+m[1],m[3]];return [(document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,""),m[3]];}return null;})
-                      ('vk_easy.js');
+                      ('vk_easy.js')
 
     /** 
      *  Currently focused node
      *
      *  @scope private
      */
-    var currentTarget;
+       ,currentTarget
 
     /**
      *  CSS class name used to turn VK on
      *
-     *  @scope public
+     *  @scope private
      */
-    var cssClass = 'keyboardInput';
+       ,cssClass = 'keyboardInput'
 
+    /**
+     *  Timeout id for hiding an keyboard icon
+     *
+     *  @scope private
+     */
+       ,iconHideTimeout
     /**
      *  Final fields - icon and VK container
      */
-    var icon,vk;
+       ,icon,vk;
         
     /**
      *  Places icon to the right-bottom corner of the input field
@@ -60,12 +66,28 @@
         if (el.parentNode != icon.parentNode) {
             el.parentNode.insertBefore(icon,el);
         }
+        updateIconState();
+
         var offEl = DOM.getOffset(el)
            ,offImg = DOM.getOffset(img);
 
         img.style.top = offEl.y-offImg.y+offEl.height-offImg.height+"px";
         img.style.left = offEl.x-offImg.x+offEl.width+"px";
         img.style.visibility = 'visible';
+    }
+
+    /**
+     *  Simply switches icon image on/off state
+     *
+     *  @scope private
+     */
+    var updateIconState = function() {
+        var img = icon.firstChild;
+        if (currentTarget != VirtualKeyboard.getAttachedInput()) {
+            img.src = img.src.replace(/jsvk[^.]*/,"jsvk");
+        } else {
+            img.src = img.src.replace(/jsvk[^.]*/,"jsvk_off");
+        }
     }
 
     /**
@@ -89,10 +111,10 @@
 
             placeIcon(el);
 
-            clearTimeout(arguments.callee.iconHideTimeout);
-            arguments.callee.iconHideTimeout = null;
-        } else if (!arguments.callee.iconHideTimeout && el != icon.firstChild) {
-            arguments.callee.iconHideTimeout = setTimeout(iconHide, 200);
+            clearTimeout(iconHideTimeout);
+            iconHideTimeout = null;
+        } else if (!iconHideTimeout && el != icon.firstChild) {
+            iconHideTimeout = setTimeout(iconHide, 200);
         }
     }
 
@@ -105,8 +127,8 @@
         if (VirtualKeyboard.isOpen()) {
             var ct = VirtualKeyboard.getAttachedInput();
             if (currentTarget != ct) {
-                placeIcon(ct);
                 currentTarget = ct;
+                placeIcon(ct);
             }
         } else if (currentTarget) {
             icon.parentNode.removeChild(icon);
@@ -131,11 +153,14 @@
             container.style.top = offCt.y-offVk.y+offCt.height+"px";
             container.style.left = offCt.x-offVk.x+"px";
             VirtualKeyboard.toggle(currentTarget, container);
+            clearTimeout(iconHideTimeout);
+            iconHideTimeout = null;
         } else {
             VirtualKeyboard.close();
             vk.parentNode.removeChild(vk);
-            inputHover.iconHideTimeout = setTimeout(iconHide, 500);
+            iconHideTimeout = setTimeout(iconHide, 1000);
         }
+        updateIconState();
         return false;
     }
 
@@ -147,7 +172,7 @@
         icon.id = "VirtualKeyboardIcon";
         icon.style.cssText = "width: 0px; height: 0px; position: relative; overflow: visible";
         icon.innerHTML = "<img src='"+scriptPath+"img/jsvk.gif' alt='VirtualKeyboard' style='position:absolute; border:0; margin:0; padding:0; display: block; z-index: 1;' />";
-        icon.firstChild.onmousedown = iconClick;
+        icon.firstChild.onmouseup = iconClick;
 
         // keyboard itself
         vk = document.createElement('span');
