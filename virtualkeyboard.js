@@ -485,7 +485,7 @@ var VirtualKeyboard = new function () {
               continue;
           codes.push(i);
       }
-      return codes.heapSort();
+      return codes.sort();
   }
   //---------------------------------------------------------------------------
   // GLOBAL EVENT HANDLERS
@@ -1113,7 +1113,7 @@ var VirtualKeyboard = new function () {
       if (null != layout.options)
           return;
 
-      var s = layout.heapSort()
+      var s = layout.sort()
          ,l,o,n
          ,cc = {};
       layout.options = {};
