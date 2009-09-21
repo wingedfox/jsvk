@@ -74,7 +74,8 @@ PopupVirtualKeyboard = new function() {
     self.open =
     self.show = function (target, unload) {
         if (!hWnd || hWnd.closed) {
-          hWnd = (window.showModelessDialog||window.open)(p+"vk_popup.html",window.showModelessDialog?window:"_blank","status=0,title=0,dependent=yes,dialog=yes,resizable=no,scrollbars=no,width=500,height=500");
+          var features = ["status=0","title=0","dependent=yes","dialog=yes","resizable=no","scroll=no","scrollbars=no","width=500","height=500"];
+          hWnd = (window.showModelessDialog||window.open)(p+"vk_popup.html",window,features.join(window.showModelessDialog?";":","));
           unloadHandler = unload;
           tgt = target;
           return true;
