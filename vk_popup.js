@@ -116,7 +116,6 @@ PopupVirtualKeyboard = new function() {
             tgt = document.getElementById(tgt);
         hWnd.VirtualKeyboard.show( tgt
                                   ,hWnd.document.body
-                                  ,hWnd.document.body.parentNode
                                  );
         /*
         *  set class names to add some styling to html, body

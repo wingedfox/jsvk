@@ -960,6 +960,17 @@ var VirtualKeyboard = new function () {
         EM.addEventListener(el,'keyup',_keydownHandler_);
         EM.addEventListener(el,'keypress',_keydownHandler_);
         EM.addEventListener(el,'mousedown',self.IME.blurHandler);
+
+        /*
+        *  if current input target does stay in some other document, bind
+        *  events processing to the current document to keep key translation working
+        */
+        var html = document.body.parentNode;
+        if (document.body.parentNode != DOM.getParent(el,'html')) {
+            EM.addEventListener(html,'keydown', _keydownHandler_);
+            EM.addEventListener(html,'keyup', _keydownHandler_);
+            EM.addEventListener(html,'keypress', _keydownHandler_);
+        }
     }
     return nodes.attachedInput;
   }
@@ -992,6 +1003,15 @@ var VirtualKeyboard = new function () {
           EM.removeEventListener(oe,'keypress',_keydownHandler_);
           EM.removeEventListener(oe,'keyup',_keydownHandler_);
           EM.removeEventListener(oe,'mousedown',self.IME.blurHandler);
+
+          /*
+          *  remove any available event handlers from the current document
+          *  don't check whether they exists, it's just doesn't matter
+          */
+          var html = document.body.parentNode;
+          EM.addEventListener(html,'keydown', _keydownHandler_);
+          EM.addEventListener(html,'keyup', _keydownHandler_);
+          EM.addEventListener(html,'keypress', _keydownHandler_);
       }
       nodes.attachedInput = null;
       return true;
@@ -1011,13 +1031,11 @@ var VirtualKeyboard = new function () {
    *
    *  @param {HTMLElement, String} input element or it to bind keyboard to
    *  @param {String} holder keyboard holder container, keyboard won't have drag-drop when holder is specified
-   *  @param {HTMLElement} kpTarget optional target to bind key* event handlers to,
-   *                       is useful for frame and popup keyboard placement
    *  @return {Boolean} operation state
    *  @scope public
    */
   self.open =
-  self.show = function (input, holder, kpTarget){
+  self.show = function (input, holder){
     if ( !(input = self.attachInput(nodes.attachedInput || input)) || !nodes.keyboard || !document.body ) return false;
 
     /*
@@ -1027,14 +1045,6 @@ var VirtualKeyboard = new function () {
         if (isString(holder)) holder = document.getElementById(holder);
         if (!holder.appendChild) return false;
         holder.appendChild(nodes.keyboard);
-        /*
-        *  we'll bind event handler here
-        */
-        if (!isUndefined(kpTarget) && input != kpTarget && kpTarget.appendChild) {
-            EM.addEventListener(kpTarget,'keydown', _keydownHandler_);
-            EM.addEventListener(kpTarget,'keyup', _keydownHandler_);
-            EM.addEventListener(kpTarget,'keypress', _keydownHandler_);
-        }
     }
 
     return true;
