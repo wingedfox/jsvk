@@ -34,7 +34,7 @@ IFrameVirtualKeyboard = new function() {
      * 
      *  @type {String}
      */
-    var p = (function (sname){var sc = document.getElementsByTagName('script'),sr = new RegExp('^(.*/|)('+sname+')([#?]|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return m[1];if (m[1].indexOf("/")==0) return m[1];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+(?=\w:)/,"");}}return null;})('vk_iframe.js');
+    var p = (function (sname) {var h =document.getElementsByTagName('html')[0].innerHTML,sr=new RegExp('<scr'+'ipt[^>]+?src\\s*=\\s*["\']?([^>]+?/|)'+sname+'([^"\'\\s]*)[^>]*>(.|[\r\n])*?</scr'+'ipt>','i'),m =h.match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return [m[1],m[2]];if (m[1].indexOf("/")==0) return [m[1],m[2]];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return [b[0].href+m[1],m[2]];return [(document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,""),m[2]];}return [null,null];})('vk_iframe.js');
     /**
      *  Tells, if the keyboard is open
      * 
@@ -80,7 +80,7 @@ IFrameVirtualKeyboard = new function() {
 
         if (!hWnd) {
             hWnd = document.createElement('div');
-            hWnd.innerHTML = "<iframe frameborder=\"0\" src=\""+p+"vk_iframe.html\"></iframe>";
+            hWnd.innerHTML = "<iframe frameborder=\"0\" src=\""+p[0]+"vk_iframe.html"+p[1]+"\"></iframe>";
             holder.appendChild(hWnd);
             iFrame=hWnd.firstChild;
             retval = true;
