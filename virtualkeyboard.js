@@ -28,6 +28,13 @@ var VirtualKeyboard = new function () {
   self.$VERSION$ = "{{VERSION}}";
 
   /**
+   *  Path to the keyboard install root
+   *
+   *  @type String
+   *  @scope private
+   */
+  var basePath = findPath('vk_loader.js');
+  /**
    *  Regexp to test a char against to prove it is a dead key
    *
    *  @type RegExp
@@ -42,6 +49,7 @@ var VirtualKeyboard = new function () {
    */
   var options = {
      'layout' : null
+    ,'skin'   : 'winxp'
   }
   /**
    *  ID prefix
@@ -971,6 +979,7 @@ var VirtualKeyboard = new function () {
             EM.addEventListener(html,'keyup', _keydownHandler_);
             EM.addEventListener(html,'keypress', _keydownHandler_);
         }
+        __toggleStylesheet(true);
     }
     return nodes.attachedInput;
   }
@@ -1013,6 +1022,7 @@ var VirtualKeyboard = new function () {
           EM.addEventListener(html,'keyup', _keydownHandler_);
           EM.addEventListener(html,'keypress', _keydownHandler_);
       }
+      __toggleStylesheet(false);
       nodes.attachedInput = null;
       return true;
   }
@@ -1087,6 +1097,27 @@ var VirtualKeyboard = new function () {
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
   //---------------------------------------------------------------------------
+  /**
+   *  Attaches and detaches stylesheet
+   *
+   *  @param {Boolean} attach true to attach style, false to detach
+   */
+  var __toggleStylesheet = function (attach) {
+      if (attach) {
+          var ss = DOM.StyleSheet(basePath+'css/'+options.skin+'/keyboard.css');
+          ss.add();
+      }
+      var twin = DOM.getWindow(nodes.attachedInput);
+
+      if (window != twin) {
+          var ss = DOM.StyleSheet(basePath+'css/'+options.skin+'/keyboard.css', twin);
+          if (attach) {
+              ss.add();
+          } else {
+              ss.remove();
+          }
+      }
+  }
   /**
    *  Sets input direction mode
    *
@@ -1565,7 +1596,7 @@ var VirtualKeyboard = new function () {
                                 +"<select id=\"kb_mappingselector\"></select>"
                                 +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank" title="&copy;2006-2009 Debugger.ru">VirtualKeyboard '+self.$VERSION$+'</a></div>'
                                 ).replace(/(<\w+)/g,"$1 unselectable='on' ");
-                                
+
       nodes.desk = nodes.keyboard.firstChild;
 
       var el = nodes.keyboard.childNodes.item(1);
@@ -1625,11 +1656,19 @@ var VirtualKeyboard = new function () {
       EM.addEventListener(nodes.desk,'mouseout', _btnMouseInOut_);
       EM.addEventListener(nodes.desk,'click', EM.preventDefaultAction);
 
+
       /*
-      *  check url params for the default layout name
+      *  check external parameters
       */
-      var opts = getScriptQuery('virtualkeyboard.js');
-      options.layout = DocumentCookie.get('vk_layout') || opts.vk_layout || null;
+      var opts = getScriptQuery('vk_loader.js')
+         ,win_opts = parseQuery((window.opener || window.dialogArguments || window.top).location.search.slice(1));
+
+      options.layout = DocumentCookie.get('vk_layout') || win_opts.vk_layout || opts.vk_layout || options.layout;
+      options.skin = win_opts.vk_skin || opts.vk_skin || options.skin;
+      /*
+      *  attach stylesheet in the load time
+      */
+      __toggleStylesheet(true);
   })();
 }
 /**
