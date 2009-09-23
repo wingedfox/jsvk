@@ -623,6 +623,8 @@ var VirtualKeyboard = new function () {
     switch (e.type) {
       case 'keydown' :
         switch (keyCode) {
+          case 9: // don't touch the default behavior of Tab key,
+              break;
           case 37:
               if (self.IME.isOpen()) {
                   self.IME.prevPage(e);
@@ -650,7 +652,6 @@ var VirtualKeyboard = new function () {
               }
               break;
           case 8: // backspace
-          case 9: // tab
           case 46: // del
               var el = nodes.desk.childNodes[keymap[keyCode]];
               /*
