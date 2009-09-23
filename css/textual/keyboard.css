@@ -242,11 +242,11 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         border: 1px solid black;
         bottom: 2px;
         position: absolute;
-        right: 2px;
+        left: 301px;
         width: 125px;
 }
 #virtualKeyboard select#kb_mappingselector {
-        right: 140px;
+        left: 173px;
 }
 #virtualKeyboard select,
 #virtualKeyboard select option {
