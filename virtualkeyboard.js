@@ -524,7 +524,7 @@ var VirtualKeyboard = new function () {
               */
               if (isFunction(lang.charProcessor) && DocumentSelection.getSelection(nodes.attachedInput).length) {
                   chr = "\x08";
-              } else if (evt) {
+              } else if (evt && evt.currentTarget == nodes.attachedInput) {
                   self.IME.hide(true);
                   return true;
               } else {
