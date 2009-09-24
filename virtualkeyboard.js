@@ -1922,6 +1922,7 @@ VirtualKeyboard.IME = new function () {
             self.hide();
         }
         e.preventDefault();
+        e.stopPropagation()
     }
 
     /**
@@ -1954,5 +1955,7 @@ VirtualKeyboard.IME = new function () {
         }
 
         EM.addEventListener(ime,'mousedown',pasteSuggestion);
+        EM.addEventListener(ime,'mouseup',EM.preventDefaultAction);
+        EM.addEventListener(ime,'click',EM.preventDefaultAction);
     }
 }
