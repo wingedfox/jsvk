@@ -298,6 +298,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 #VirtualKeyboardIME table td.IMEControl {
    padding: 1px;
+   vertical-align: middle;
 }
 
 #VirtualKeyboardIME td.IMEContent {
