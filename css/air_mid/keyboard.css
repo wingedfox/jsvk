@@ -354,6 +354,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
    background: #fff;
    border: 0;
    position: absolute;
+   z-index: 2;
 }
 #VirtualKeyboardIME div {
    font-size: 11px;
