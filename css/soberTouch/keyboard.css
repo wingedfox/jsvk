@@ -371,6 +371,14 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
    text-align: right;
    white-space: nowrap;
 }
+#VirtualKeyboardIME table td.IMEContent table {
+   height: 20px;
+}
+#VirtualKeyboardIME table td.IMEContent table tr,
+#VirtualKeyboardIME table td.IMEContent table td {
+   height: 100%;
+   padding: 0;
+}
 #VirtualKeyboardIME table td.IMEControl {
    border: 1px solid #000;
    padding: 1px;
@@ -380,17 +388,18 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
    border: 1px solid #333;
    border-top: 0;
    border-bottom: 0;
-   margin: 0 12px;
    overflow: auto;
-   padding: 0 3px;
+   padding: 0;
    white-space: nowrap;
 }
 #VirtualKeyboardIME td.IMEContent a {
-   text-decoration: none;
    color: #000;
+   display: block;
+   height: 100%;
+   text-decoration: none;
 }
 #VirtualKeyboardIME td.IMEContent a:hover {
-   text-decoration: underline;
+   background-color: #ececec;
 }
 #VirtualKeyboardIME div.left,
 #VirtualKeyboardIME div.right {
