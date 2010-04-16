@@ -1019,9 +1019,9 @@ var VirtualKeyboard = new function () {
           *  don't check whether they exists, it's just doesn't matter
           */
           var html = document.body.parentNode;
-          EM.addEventListener(html,'keydown', _keydownHandler_);
-          EM.addEventListener(html,'keyup', _keydownHandler_);
-          EM.addEventListener(html,'keypress', _keydownHandler_);
+          EM.removeEventListener(html,'keydown', _keydownHandler_);
+          EM.removeEventListener(html,'keyup', _keydownHandler_);
+          EM.removeEventListener(html,'keypress', _keydownHandler_);
       }
       __toggleStylesheet(false);
       nodes.attachedInput = null;
