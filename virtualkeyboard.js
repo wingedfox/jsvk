@@ -556,40 +556,59 @@ var VirtualKeyboard = new function () {
           *  process current selection and new symbol with __charProcessor, it might update them
           */
           if (!(chr = __charProcessor(chr, DocumentSelection.getSelection(nodes.attachedInput)))) return ret;
+
           /*
           *  try to create an event, then fallback to DocumentSelection, if something fails
           */
-          try {
-              /*
-              *  throw an error when selection is required or multiple chars submitted
-              *  it's simpler than write number of nesting if..else statements
-              */
-              if (chr[1] || chr[0].length>1 || chr.charCodeAt(0)>0x7fff || nodes.attachedInput.contentDocument || '\t' == chr[0]) {
-                  throw new Error;
-              }
+          var virtualprint = false;
+          var win = DOM.getWindow(nodes.attachedInput);
+          /*
+          *  throw an error when selection is required or multiple chars submitted
+          *  it's simpler than write number of nesting if..else statements
+          */
+          if (!chr[1] 
+          && chr[0].length<=1 
+          && chr[0].charCodeAt(0)<=0x7fff 
+//          && nodes.attachedInput.contentDocument 
+//          && '\t' != chr[0]
+          ) {
               var ck = chr[0].charCodeAt(0);
               /*
               *  trying to create an event, borrowed from YAHOO.util.UserAction
               */
-              if (isFunction(document.createEvent)) {
+              if (isFunction(win.document.createEvent)) {
                   var evt = null;
                   try {
-                      evt = document.createEvent("KeyEvents");
+                      evt = win.document.createEvent("KeyEvents");
                       evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, 0, ck);
+                      evt.VK_bypass = true;
+                      nodes.attachedInput.dispatchEvent(evt);
                   } catch (ex) {
                       /*
                       *  Safari implements
                       */
-                      evt = document.createEvent("KeyboardEvents");
-                      evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, ck, 0);
+                      try {
+                          evt = win.document.createEvent("KeyboardEvents");
+                          evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, ck, 0);
+                          evt.VK_bypass = true;
+                          nodes.attachedInput.dispatchEvent(evt);
+                      } catch (ex) {
+                          virtualprint = true;
+                      }
                   }
-                  evt.VK_bypass = true;
-                  nodes.attachedInput.dispatchEvent(evt);
               } else {
-                  evt.keyCode = 10==ck?13:ck;
-                  ret = true;
+                  try {
+                      evt.keyCode = 10==ck?13:ck;
+                      ret = true;
+                  } catch (ex) {
+                      virtualprint = true;
+                  }
               }
-          } catch (e) {
+          } else {
+              virtualprint = true;
+          }
+
+          if (virtualprint) {
               DocumentSelection.insertAtCursor(nodes.attachedInput,chr[0]);
               /*
               *  select as much, as __charProcessor callback requested
