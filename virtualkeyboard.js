@@ -563,8 +563,10 @@ var VirtualKeyboard = new function () {
           var virtualprint = false;
           var win = DOM.getWindow(nodes.attachedInput);
           /*
-          *  throw an error when selection is required or multiple chars submitted
-          *  it's simpler than write number of nesting if..else statements
+          * there are some global exceptions, when createEvent won't work properly
+          *  - selection to set does exists
+          *  - multiple symbols should be inserted
+          *  - multibyte unicode symbol should be inserted
           */
           if (!chr[1] 
           && chr[0].length<=1 
