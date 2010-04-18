@@ -315,8 +315,13 @@ class VirtualKeyboardLayout {
 //        $this->name = array_shift(preg_split("/\\s-\\s/",$m[1]));
 
         preg_match("/^LOCALENAME\\t\"(\\w+)-(\\w+)/m", $str, $m);
-        $this->code = $m[2];
-        $this->domain = mb_strtoupper($m[1]);
+        if (empty($m)) {
+            $this->code = "US";
+            $this->domain = "EN";
+        } else {
+            $this->code = $m[2];
+            $this->domain = mb_strtoupper($m[1]);
+        }
 
         preg_match("/^COMPANY\\t\"([^\"]*)/m", $str, $m);
         $this->company = $m[1];

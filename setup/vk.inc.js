@@ -276,8 +276,13 @@ var VirtualKeyboardLayout = function ($fname) {
 //        $name = array_shift(preg_split("/\\s-\\s/",$m[1]));
 
         $m = $layoutText.match(/^LOCALENAME\t"(\w+)-(\w+)/m);
-        $code = $m[2];
-        $domain = mb_strtoupper($m[1]);
+        if ($m && $m.length) {
+            $code = $m[2];
+            $domain = mb_strtoupper($m[1]);
+        } else {
+            $code = "US";
+            $domain = "EN";
+        }
 
         $m = $layoutText.match(/^COMPANY\t"([^"]*)/m);
         $company = $m[1];
