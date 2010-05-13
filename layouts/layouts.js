@@ -3162,11 +3162,6 @@ VirtualKeyboard.Langs.LA.charProcessor},
 ,name:'Thai'
 ,normal:'_ๅ/-ภถุึคตจขชฃๆไำพะัีรนยบลฟหกดเ้่าสวงผปแอิืทมใฝ'
 ,shift:{0:'%+๑๒๓๔ู฿๕๖๗๘๙ฅ๐"ฎฑธํ๊ณฯญฐมฤฆฏโฌ็๋ษศซใ()ฉฮฺ์?ฒฬฦ'}},
-{code:'EN-US'
-,name:'Transliteration Scheme used by Chitrapur Math'
-,normal:'lṛtjūī=@āsdgḥykḷ+cnṁ%'
-,shift:{24:'>!',37:'$',44:'&'}
-,alt:{17:'ṝ',19:'5',24:'?1',27:'*',33:'#ḹ',37:'4',39:'<'}},
 {code:'TSN-BW'
 ,name:'Tswana'
 ,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./'
