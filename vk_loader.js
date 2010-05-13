@@ -57,6 +57,7 @@ VirtualKeyboard = new function () {
             s = document.createElement('script');
             s.type="text/javascript";
             s.src = p+'extensions/scriptqueue.js';
+            var head = document.getElementsByTagName("head")[0];
             head.appendChild(s);
         } else {
             document.write("<scr"+"ipt type=\"text/javascript\" src=\""+p+'extensions/scriptqueue.js'+"\"></scr"+"ipt>");
