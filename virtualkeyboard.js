@@ -567,11 +567,13 @@ var VirtualKeyboard = new function () {
           *  - selection to set does exists
           *  - multiple symbols should be inserted
           *  - multibyte unicode symbol should be inserted
+          *  - rich text editor attached
+          * note, we will skip the default behavior of the TAB
           */
           if (!chr[1] 
           && chr[0].length<=1 
           && chr[0].charCodeAt(0)<=0x7fff 
-//          && nodes.attachedInput.contentDocument 
+          && !nodes.attachedInput.contentDocument 
 //          && '\t' != chr[0]
           ) {
               var ck = chr[0].charCodeAt(0);
