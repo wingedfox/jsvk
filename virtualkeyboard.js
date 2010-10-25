@@ -875,47 +875,46 @@ var VirtualKeyboard = new function () {
   /**
    *  Handle mouseout and mouseover events
    *
-   *  Method is used to remove 'pressed' button state
+   *  Method is used to update button states, based on the focused button
    *
-   *  @param {Event} mouseup event
+   *  @param {Event} mouse event
    *  @scope protected
    */
   var _btnMouseInOut_ = function (e) {
     /*
     *  either pressed key or something new
     */
-    var el = DOM.getParent(e.srcElement||e.target, 'a')
-       ,mtd = {'mouseover': 2, 'mouseout' : 3}
+    var el = DOM.getParent(e.srcElement||e.target, 'div')
+       ,type = e.type=='mouseover'?2:/*'mouseout'*/3;
     /*
     *  skip invalid nodes
     */
-    if (!el || el.parentNode.id.indexOf(idPrefix)<0) return;
-    el = el.parentNode;
+    if (el && (id = el.id).indexOf(idPrefix)>-1) {
 
-    /*
-    *  hard-to-avoid IE bug cleaner. if 'hover' state is get removed, button looses it's 'down' state
-    *  should be applied for every button, needed to save 'pressed' state on mouseover/out
-    */
-    if (el.id.indexOf('shift')>-1) {
-        /*
-        *  both shift keys should be blurred
-        */
-        __toggleControlKeysState(mtd[e.type], KEY.SHIFT);
-    } else if (el.id.indexOf('alt')>-1 || el.id.indexOf('ctrl')>-1) {
-        /*
-        *  both alt and ctrl keys should be blurred
-        */
-        __toggleControlKeysState(mtd[e.type], KEY.CTRL);
-        __toggleControlKeysState(mtd[e.type], KEY.ALT);
-    } else if (el.id.indexOf('caps')>-1) {
-        __toggleKeyState(mtd[e.type], el);
-    } else if (animate) {
-        __toggleKeyState(mtd[e.type], el);
-        if ('mouseout' == e.type.toLowerCase()) {
+        if (id.indexOf(KEY.SHIFT)>-1) {
             /*
-            *  reset 'hover' state
+            *  both shift keys should be blurred
             */
-            __toggleKeyState(0, el);
+            __toggleControlKeysState(type, KEY.SHIFT);
+        } else if (id.indexOf(KEY.ALT)>-1 || id.indexOf(KEY.CTRL)>-1) {
+            /*
+            *  both alt and ctrl keys should be blurred
+            */
+            __toggleControlKeysState(type, KEY.CTRL);
+            __toggleControlKeysState(type, KEY.ALT);
+        } else if (id.indexOf(KEY.CAPS)>-1) {
+            /*
+            *  CAPS should not loose it's 'down' state
+            */
+            __toggleKeyState(type, el);
+        } else if (animate) {
+            __toggleKeyState(type, el);
+            if (3 == type) {
+                /*
+                *  reset 'hover' state
+                */
+                __toggleKeyState(0, el);
+            }
         }
     }
     e.preventDefault();
