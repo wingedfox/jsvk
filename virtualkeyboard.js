@@ -1240,7 +1240,7 @@ var VirtualKeyboard = new function () {
             ,char_alt    = null
             ,char_caps   = null
             ,char_shift  = null
-            ,char        = [char_normal] // normal chars
+            ,chr         = [char_normal] // normal chars
 
          if (shift.hasOwnProperty(i)) {
              cs = __doParse(shift[i]);
@@ -1248,9 +1248,9 @@ var VirtualKeyboard = new function () {
          }
          if (ics>-1 && cs[i-ics]) {
              char_shift = cs[i-ics];
-             char[VK_SHIFT] = char_shift;
+             chr[VK_SHIFT] = char_shift;
          } else if (char_normal && char_normal != (char_normal = char_normal.toUpperCase())) {
-             char[VK_SHIFT] = char_normal;
+             chr[VK_SHIFT] = char_normal;
              char_shift = char_normal;
          }
 
@@ -1260,7 +1260,7 @@ var VirtualKeyboard = new function () {
          }
          if (ica>-1 && ca[i-ica]) {
              char_alt = ca[i-ica];
-             char[VK_ALT_CTRL] = char_alt;
+             chr[VK_ALT_CTRL] = char_alt;
          }
 
          if (shift_alt.hasOwnProperty(i)) {
@@ -1268,9 +1268,9 @@ var VirtualKeyboard = new function () {
              icsa = i;
          }
          if (icsa>-1 && csa[i-icsa]) {
-             char[VK_SHIFT_ALT_CTRL] = csa[i-icsa];
+             chr[VK_SHIFT_ALT_CTRL] = csa[i-icsa];
          } else if (char_alt && char_alt != (char_alt = char_alt.toUpperCase())) {
-             char[VK_SHIFT_ALT_CTRL] = char_alt;
+             chr[VK_SHIFT_ALT_CTRL] = char_alt;
          }
 
          if (caps.hasOwnProperty(i)) {
@@ -1281,11 +1281,11 @@ var VirtualKeyboard = new function () {
              char_caps = cc[i-icc];
          }
          if (char_caps) {
-             char[VK_CAPS] = char_caps;
+             chr[VK_CAPS] = char_caps;
          } else if (char_shift && char_shift.toUpperCase() != char_shift.toLowerCase()) {
-             char[VK_CAPS] = char_shift;
+             chr[VK_CAPS] = char_shift;
          } else if (char_normal) {
-             char[VK_CAPS] = char_normal.toUpperCase();
+             chr[VK_CAPS] = char_normal.toUpperCase();
          }
 
          if (shift_caps.hasOwnProperty(i)) {
@@ -1293,16 +1293,16 @@ var VirtualKeyboard = new function () {
              icsc = i;
          }
          if (icsc>-1 && csc[i-icsc]) {
-             char[VK_SHIFT_CAPS] = csc[i-icsc];
+             chr[VK_SHIFT_CAPS] = csc[i-icsc];
          } else if (char_caps) {
-             char[VK_SHIFT_CAPS] = char_caps.toLowerCase();
+             chr[VK_SHIFT_CAPS] = char_caps.toLowerCase();
          } else if (char_shift) {
-             char[VK_SHIFT_CAPS] = char_shift.toLowerCase();
+             chr[VK_SHIFT_CAPS] = char_shift.toLowerCase();
          } else if (char_normal) {
-             char[VK_SHIFT_CAPS] = char_normal;
+             chr[VK_SHIFT_CAPS] = char_normal;
          }
 
-         lt[i] = char;
+         lt[i] = chr;
       }
 
       if (dk) {
@@ -1565,8 +1565,8 @@ var VirtualKeyboard = new function () {
    */
   var __getCharHtmlForKey = function (lyt, chr, mode, css, inp) {
       var html = []
-         ,char = chr[mode] || ""
-         ,dk = DK_REG.test(char) && lyt.dk && lyt.dk.hasOwnProperty(char = char.replace(DK_REG,""));
+         ,ch = chr[mode] || ""
+         ,dk = DK_REG.test(ch) && lyt.dk && lyt.dk.hasOwnProperty(ch = ch.replace(DK_REG,""));
       /*
       *  if key matches agains current deadchar list
       */
@@ -1575,24 +1575,24 @@ var VirtualKeyboard = new function () {
       /*
       *  the following css classes define hiding of the chars which should not be shown together
       */
-      if ((mode == VK_SHIFT_CAPS && chr[VK_CAPS] && char.toLowerCase() == chr[VK_CAPS].toLowerCase())
-       || (mode == VK_CAPS && chr[VK_SHIFT_CAPS] && char.toLowerCase() == chr[VK_SHIFT_CAPS].toLowerCase())) {
+      if ((mode == VK_SHIFT_CAPS && chr[VK_CAPS] && ch.toLowerCase() == chr[VK_CAPS].toLowerCase())
+       || (mode == VK_CAPS && chr[VK_SHIFT_CAPS] && ch.toLowerCase() == chr[VK_SHIFT_CAPS].toLowerCase())) {
           css += " "+cssClasses.hiddenCaps;
       }
-      if ((mode == VK_SHIFT && chr[VK_NORMAL] && char.toLowerCase() == chr[VK_NORMAL].toLowerCase())
-       || (mode == VK_NORMAL && chr[VK_SHIFT] && char.toLowerCase() == chr[VK_SHIFT].toLowerCase())) {
+      if ((mode == VK_SHIFT && chr[VK_NORMAL] && ch.toLowerCase() == chr[VK_NORMAL].toLowerCase())
+       || (mode == VK_NORMAL && chr[VK_SHIFT] && ch.toLowerCase() == chr[VK_SHIFT].toLowerCase())) {
           css += " "+cssClasses.hiddenShift;
       }
-      if ((mode == VK_SHIFT && chr[VK_SHIFT_CAPS] && char.toLowerCase() == chr[VK_SHIFT_CAPS].toLowerCase())
-       || (mode == VK_SHIFT_CAPS && chr[VK_SHIFT] && char.toLowerCase() == chr[VK_SHIFT].toLowerCase())) {
+      if ((mode == VK_SHIFT && chr[VK_SHIFT_CAPS] && ch.toLowerCase() == chr[VK_SHIFT_CAPS].toLowerCase())
+       || (mode == VK_SHIFT_CAPS && chr[VK_SHIFT] && ch.toLowerCase() == chr[VK_SHIFT].toLowerCase())) {
           css += " "+cssClasses.hiddenShiftCaps;
       }
-      if ((mode == VK_CAPS && chr[VK_NORMAL] && char.toLowerCase() == chr[VK_NORMAL].toLowerCase())
-       || (mode == VK_NORMAL && chr[VK_CAPS] && char.toLowerCase() == chr[VK_CAPS].toLowerCase())) {
+      if ((mode == VK_CAPS && chr[VK_NORMAL] && ch.toLowerCase() == chr[VK_NORMAL].toLowerCase())
+       || (mode == VK_NORMAL && chr[VK_CAPS] && ch.toLowerCase() == chr[VK_CAPS].toLowerCase())) {
           css += " "+cssClasses.hiddenCaps;
       }
-      if ((mode == VK_SHIFT_ALT_CTRL && chr[VK_ALT_CTRL] && char.toLowerCase() == chr[VK_ALT_CTRL].toLowerCase())
-       || (mode == VK_ALT_CTRL && chr[VK_SHIFT] && char.toLowerCase() == chr[VK_SHIFT].toLowerCase())) {
+      if ((mode == VK_SHIFT_ALT_CTRL && chr[VK_ALT_CTRL] && ch.toLowerCase() == chr[VK_ALT_CTRL].toLowerCase())
+       || (mode == VK_ALT_CTRL && chr[VK_SHIFT] && ch.toLowerCase() == chr[VK_SHIFT].toLowerCase())) {
           css += " "+cssClasses.hiddenAlt;
       }
 
@@ -1600,7 +1600,7 @@ var VirtualKeyboard = new function () {
       if (css) {
           html.push(" class=\""+css+"\"");
       }
-      html.push(" >\xa0"+char+"\xa0</span>");
+      html.push(" >\xa0"+ch+"\xa0</span>");
       return html.join("");
   }
   /**
@@ -1979,4 +1979,8 @@ VirtualKeyboard.IME = new function () {
         EM.addEventListener(ime,'mouseup',EM.preventDefaultAction);
         EM.addEventListener(ime,'click',EM.preventDefaultAction);
     }
+}
+
+VirtualKeyboard.Layout = function () {
+
 }
