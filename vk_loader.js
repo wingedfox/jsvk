@@ -21,8 +21,16 @@ VirtualKeyboard = new function () {
   }
 };
 (function () {
-    var p = (function (sname){var sc=document.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?]|$)');for (var i=0,scL=sc.length; i<scL; i++) {var m = String(sc[i].src).match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return m[1];if (m[1].indexOf("/")==0) return m[1];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,"");}}return null;})
-             ('vk_loader.js');
+    var p = (function (sname){var sc=document.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?]|$)');
+    	for (var i=0,scL=sc.length; i<scL; i++) {
+    	    var m = String(sc[i].src).match(sr);
+    	    if (m) {
+    	        if (!m[1]) m[1] = "";
+                if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return m[1];
+    		if (m[1].indexOf("/")==0) return m[1];
+    		b = document.getElementsByTagName('base');
+    		if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,"");}}return null;
+    })('vk_loader.js');
 
     var dpd = [ 'extensions/helpers.js'
                ,'extensions/dom.js'
