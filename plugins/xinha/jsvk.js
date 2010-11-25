@@ -21,7 +21,7 @@
 
 function Jsvk(editor, args) {
     var self = this;
-    var static = arguments.callee;
+    var st = arguments.callee;
     /**
      *  Editor config
      *
@@ -64,14 +64,14 @@ function Jsvk(editor, args) {
      *  @type Xinha
      *  @scope protected
      */
-    static.editor = null;
+    st.editor = null;
     /**
      *  Personal panel for each editor instance
      *
      *  @type HTMLDivElement
      *  @scope protected
      */
-    static.panel = null;
+    st.panel = null;
 
     /**
      *  Changes attach point 
@@ -99,21 +99,21 @@ function Jsvk(editor, args) {
      */
     var toggleKeyboard = function (ed) {
         var vk = window[type+"VirtualKeyboard"];
-        if (null == static.editor) {
+        if (null == st.editor) {
             // attach keyboard
-            static.editor = ed;
-            static.panel = panel;
+            st.editor = ed;
+            st.panel = panel;
             ed.showPanel(panel);
             self.onMode(ed._editMode);
-        } else if (ed == static.editor) {
-            static.editor = null;
-            static.panel = null;
+        } else if (ed == st.editor) {
+            st.editor = null;
+            st.panel = null;
             ed.hidePanel(panel);
             vk.close();
         } else {
-            static.editor.hidePanel(static.panel);
-            static.panel = panel;
-            static.editor = ed;
+            st.editor.hidePanel(st.panel);
+            st.panel = panel;
+            st.editor = ed;
             ed.showPanel(panel);
             vk.close();
             self.onMode(ed._editMode);
@@ -130,8 +130,8 @@ function Jsvk(editor, args) {
         /*
         *  load files only once
         */
-        if (!static.loaded) {
-            static.loaded = true;
+        if (!st.loaded) {
+            st.loaded = true;
             Xinha._loadback(_editor_url+"plugins/Jsvk/jscripts/vk_"+(type.toLowerCase()||"loader")+".js?vk_skin="+skin+"&vk_layout="+layout);
         }
     }
