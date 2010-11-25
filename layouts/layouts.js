@@ -558,11 +558,11 @@ VirtualKeyboard.Langs.JP = new function () {
         }
         INPArr.aduma= "東";
         INPArr.du   = "連付頭積図詰尽鶴漬";
-        INPArr.idu  = "出厳";　
+        INPArr.idu  = "出厳";
         INPArr.kadu = "一和";
         INPArr.di   = "治痔";
         var addKanas = function (hira, kata, sokuon){
-            var kanas　= [dbi[1]+hira, dbi[2]+kata]
+            var kanas= [dbi[1]+hira, dbi[2]+kata]
             if(dbi.length > 4) kanas.push(dbi[3]+hira, dbi[4]+kata)
             else if(dbi.length > 3) kanas.push(dbi[3]+kata)
                     Rom[dbi0+'k']=Rom[dbi0+'s']=Rom[dbi0+'t']=Rom[dbi0+'p']=Rom[dbi0+'c']= kanas
