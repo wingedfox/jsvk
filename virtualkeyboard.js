@@ -1,4 +1,4 @@
-﻿/**
+/**
  * $Id$
  * $HeadURL$
  *
@@ -1683,8 +1683,10 @@ var VirtualKeyboard = new function () {
       /*
       *  check external parameters
       */
+      var windowOpener;
+      try{ windowOpener = window.opener } catch(e){}
       var opts = getScriptQuery('vk_loader.js')
-         ,win_opts = parseQuery((window.opener || window.dialogArguments || window.top).location.search.slice(1));
+         ,win_opts = parseQuery((windowOpener || window.dialogArguments || window.top).location.search.slice(1));
 
       options.layout = DocumentCookie.get('vk_layout') || win_opts.vk_layout || opts.vk_layout || options.layout;
       options.skin = win_opts.vk_skin || opts.vk_skin || options.skin;
