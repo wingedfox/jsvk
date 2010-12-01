@@ -23,13 +23,9 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         padding: 0;
 }
 #virtualKeyboard #kbDesk {
-        display: inline-block;
-        margin: 0;
-        padding: 4px 2px 0 2px;
-/*IE5.5 will ignore the rule below */
-        margin/**/:/**/ 4px 2px 0 4px;
-        padding/**/:/**/ 0;
-/*--*/
+        display: block;
+        margin: 4px 2px 0 4px;
+        padding: 0;
         position: relative;
         font-size: 1px;
         overflow: hidden;
@@ -37,7 +33,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         -khtml-user-select: none;
 }
 
-#virtualKeyboard #kbDesk div.kbButton {
+#kbDesk div.kbButton {
         float: left;
         height: 18px;
         overflow: hidden;
@@ -46,7 +42,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         width: 18px;
         z-index: 2;
 }
-#virtualKeyboard #kbDesk div.kbButton a {
+#kbDesk div.kbButton a {
         background: url(button_set.gif) 0 0 no-repeat;
         display: block;
         height: 100%;
@@ -55,13 +51,13 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         width: 100%;
 }
 
-#virtualKeyboard #kbDesk div.kbButtonHover a {
+#kbDesk div.kbButtonHover a {
         background-position: 0 -21px;
 }
-#virtualKeyboard #kbDesk div.kbButtonDown a {
+#kbDesk div.kbButtonDown a {
         background-position: 0 -42px;
 }
-#virtualKeyboard #kbDesk div.kbButton span {
+#kbDesk div.kbButton span {
         display: block;
         font-family: Verdana;
         font-size: 11px;
@@ -72,73 +68,73 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         top: 2px;
         white-space: pre;
 }
-#virtualKeyboard #kbDesk div.kbButton span.title {
+#kbDesk div.kbButton span.title {
         display: none;
 }
 
 /**
  *  General definitions for the characters
  */
-#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charAlt,
-#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charCaps,
-#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charNormal,
-#virtualKeyboard #kbDesk.modeShift div.kbButton span.charShift,
-#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charShiftAlt,
-#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charShiftCaps {
+#kbDesk.modeAlt span.charAlt,
+#kbDesk.modeCaps span.charCaps,
+#kbDesk.modeNormal span.charNormal,
+#kbDesk.modeShift span.charShift,
+#kbDesk.modeShiftAlt span.charShiftAlt,
+#kbDesk.modeShiftCaps span.charShiftCaps {
         color: black;
         bottom: 1px;
         left: -1px;
 }
-#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charCaps,
-#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charNormal,
-#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charShift,
-#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charShiftAlt,
-#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charShiftCaps,
-#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charAlt,
-#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charCaps,
-#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charShift,
-#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charShiftAlt,
-#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charShiftCaps,
-#virtualKeyboard #kbDesk.modeShift div.kbButton span.charAlt,
-#virtualKeyboard #kbDesk.modeShift div.kbButton span.charCaps,
-#virtualKeyboard #kbDesk.modeShift div.kbButton span.charNormal,
-#virtualKeyboard #kbDesk.modeShift div.kbButton span.charShiftAlt,
-#virtualKeyboard #kbDesk.modeShift div.kbButton span.charShiftCaps,
-#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charAlt,
-#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charNormal,
-#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charShift,
-#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charShiftAlt,
-#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charShiftCaps,
-#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charAlt,
-#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charCaps,
-#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charNormal,
-#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charShift,
-#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charShiftAlt,
-#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charAlt,
-#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charCaps,
-#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charNormal,
-#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charShift,
-#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charShiftCaps {
+#kbDesk.modeAlt span.charCaps,
+#kbDesk.modeAlt span.charNormal,
+#kbDesk.modeAlt span.charShift,
+#kbDesk.modeAlt span.charShiftAlt,
+#kbDesk.modeAlt span.charShiftCaps,
+#kbDesk.modeNormal span.charAlt,
+#kbDesk.modeNormal span.charCaps,
+#kbDesk.modeNormal span.charShift,
+#kbDesk.modeNormal span.charShiftAlt,
+#kbDesk.modeNormal span.charShiftCaps,
+#kbDesk.modeShift span.charAlt,
+#kbDesk.modeShift span.charCaps,
+#kbDesk.modeShift span.charNormal,
+#kbDesk.modeShift span.charShiftAlt,
+#kbDesk.modeShift span.charShiftCaps,
+#kbDesk.modeCaps span.charAlt,
+#kbDesk.modeCaps span.charNormal,
+#kbDesk.modeCaps span.charShift,
+#kbDesk.modeCaps span.charShiftAlt,
+#kbDesk.modeCaps span.charShiftCaps,
+#kbDesk.modeShiftCaps span.charAlt,
+#kbDesk.modeShiftCaps span.charCaps,
+#kbDesk.modeShiftCaps span.charNormal,
+#kbDesk.modeShiftCaps span.charShift,
+#kbDesk.modeShiftCaps span.charShiftAlt,
+#kbDesk.modeShiftAlt span.charAlt,
+#kbDesk.modeShiftAlt span.charCaps,
+#kbDesk.modeShiftAlt span.charNormal,
+#kbDesk.modeShiftAlt span.charShift,
+#kbDesk.modeShiftAlt span.charShiftCaps {
         display: none;
 }
 
 /**
  *  When each char class should be visible
  */
-#virtualKeyboard #kbDesk.modeAlt div.kbButton span.charAlt,
-#virtualKeyboard #kbDesk.modeCaps div.kbButton span.charCaps,
-#virtualKeyboard #kbDesk.modeNormal div.kbButton span.charNormal,
-#virtualKeyboard #kbDesk.modeShift div.kbButton span.charShift,
-#virtualKeyboard #kbDesk.modeShiftAlt div.kbButton span.charShiftAlt,
-#virtualKeyboard #kbDesk.modeShiftCaps div.kbButton span.charShiftCaps {
+#kbDesk.modeAlt span.charAlt,
+#kbDesk.modeCaps span.charCaps,
+#kbDesk.modeNormal span.charNormal,
+#kbDesk.modeShift span.charShift,
+#kbDesk.modeShiftAlt span.charShiftAlt,
+#kbDesk.modeShiftCaps span.charShiftCaps {
         display: block !important;
 }
 
-#virtualKeyboard #kbDesk span.deadKey {
+#kbDesk span.deadKey {
         color: red !important;
 }
 
-#virtualKeyboard #kbDesk div#kb_benter {
+#kbDesk div#kb_benter {
         margin-top: -18px;
         position: relative;
         float: right;
@@ -146,130 +142,126 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         width: 38px;
         z-index: -1;
 }
-#virtualKeyboard #kbDesk div#kb_benter[id] {
+#kbDesk div#kb_benter[id] {
         z-index: 0;
 }
-#virtualKeyboard #kbDesk div#kb_benter a {
+#kbDesk div#kb_benter a {
         background-position: -150px 0;
 }
-#virtualKeyboard #kbDesk div#kb_benter.kbButtonHover a {
+#kbDesk div#kb_benter.kbButtonHover a {
         background-position: -150px -42px;
 }
-#virtualKeyboard #kbDesk div#kb_benter.kbButtonDown a {
+#kbDesk div#kb_benter.kbButtonDown a {
         background-position: -150px -84px;
 }
-#virtualKeyboard #kbDesk div#kb_bbackspace a {
+#kbDesk div#kb_bbackspace a {
         background-position: -21px -63px;
 }
-#virtualKeyboard #kbDesk div#kb_bbackspace.kbButtonHover a {
+#kbDesk div#kb_bbackspace.kbButtonHover a {
         background-position: -21px -84px;
 }
-#virtualKeyboard #kbDesk div#kb_bbackspace.kbButtonDown a {
+#kbDesk div#kb_bbackspace.kbButtonDown a {
         background-position: -21px -105px;
 }
-#virtualKeyboard #kbDesk div#kb_btab {
+#kbDesk div#kb_btab {
         width: 29px;
 }
-#virtualKeyboard #kbDesk div#kb_btab a {
+#kbDesk div#kb_btab a {
         background-position: -117px -63px;
 }
-#virtualKeyboard #kbDesk div#kb_btab.kbButtonHover a {
+#kbDesk div#kb_btab.kbButtonHover a {
         background-position: -117px -84px;
 }
-#virtualKeyboard #kbDesk div#kb_btab.kbButtonDown a {
+#kbDesk div#kb_btab.kbButtonDown a {
         background-position: -117px -105px;
 }
-#virtualKeyboard #kbDesk div#kb_bcaps {
+#kbDesk div#kb_bcaps {
         width: 33px;
 }
-#virtualKeyboard #kbDesk div#kb_bcaps a {
+#kbDesk div#kb_bcaps a {
         background-position: -81px -63px;
 }
-#virtualKeyboard #kbDesk div#kb_bcaps.kbButtonHover a {
+#kbDesk div#kb_bcaps.kbButtonHover a {
         background-position: -81px -84px;
 }
-#virtualKeyboard #kbDesk div#kb_bcaps.kbButtonDown a {
+#kbDesk div#kb_bcaps.kbButtonDown a {
         background-position: -81px -105px;
 }
-#virtualKeyboard #kbDesk div#kb_bshift_left,
-#virtualKeyboard #kbDesk div#kb_bshift_right {
+#kbDesk div#kb_bshift_left,
+#kbDesk div#kb_bshift_right {
         width: 36px;
 }
-#virtualKeyboard #kbDesk div#kb_bshift_left a,
-#virtualKeyboard #kbDesk div#kb_bshift_right a {
+#kbDesk div#kb_bshift_left a,
+#kbDesk div#kb_bshift_right a {
         background-position: -42px -63px;
 }
-#virtualKeyboard #kbDesk div#kb_bshift_left.kbButtonHover a,
-#virtualKeyboard #kbDesk div#kb_bshift_right.kbButtonHover a {
+#kbDesk div#kb_bshift_left.kbButtonHover a,
+#kbDesk div#kb_bshift_right.kbButtonHover a {
         background-position: -42px -84px;
 }
-#virtualKeyboard #kbDesk div#kb_bshift_left.kbButtonDown a,
-#virtualKeyboard #kbDesk div#kb_bshift_right.kbButtonDown a {
+#kbDesk div#kb_bshift_left.kbButtonDown a,
+#kbDesk div#kb_bshift_right.kbButtonDown a {
         background-position: -42px -105px;
 }
-#virtualKeyboard #kbDesk div#kb_balt_left,
-#virtualKeyboard #kbDesk div#kb_balt_right {
+#kbDesk div#kb_balt_left,
+#kbDesk div#kb_balt_right {
         width: 21px;
 }
-#virtualKeyboard #kbDesk div#kb_balt_left {
-        margin-left: -23px;
-        padding-left: 0;
-/*IE5.5 will ignore the rule below */
-        padding-left/**/:/**/ 32px;
-        margin-left/**/:/**/ 0;
-/*--*/
+#kbDesk div#kb_balt_left {
+        padding-left: 32px;
+        margin-left: 0;
 }
-#virtualKeyboard #kbDesk div#kb_balt_left a,
-#virtualKeyboard #kbDesk div#kb_balt_right a {
+#kbDesk div#kb_balt_left a,
+#kbDesk div#kb_balt_right a {
         background-position: -192px 0;
 }
-#virtualKeyboard #kbDesk div#kb_balt_left.kbButtonHover a,
-#virtualKeyboard #kbDesk div#kb_balt_right.kbButtonHover a {
+#kbDesk div#kb_balt_left.kbButtonHover a,
+#kbDesk div#kb_balt_right.kbButtonHover a {
         background-position: -192px -21px;
 }
-#virtualKeyboard #kbDesk div#kb_balt_left.kbButtonDown a,
-#virtualKeyboard #kbDesk div#kb_balt_right.kbButtonDown a {
+#kbDesk div#kb_balt_left.kbButtonDown a,
+#kbDesk div#kb_balt_right.kbButtonDown a {
         background-position: -192px -42px;
 }
-#virtualKeyboard #kbDesk div#kb_bctrl_left,
-#virtualKeyboard #kbDesk div#kb_bctrl_right {
+#kbDesk div#kb_bctrl_left,
+#kbDesk div#kb_bctrl_right {
         float: left;
         width: 29px;
 }
-#virtualKeyboard #kbDesk div#kb_bctrl_right {
+#kbDesk div#kb_bctrl_right {
         float: right;
 }
-#virtualKeyboard #kbDesk div#kb_bctrl_left a,
-#virtualKeyboard #kbDesk div#kb_bctrl_right a {
+#kbDesk div#kb_bctrl_left a,
+#kbDesk div#kb_bctrl_right a {
         background-position: -191px -63px;
 }
-#virtualKeyboard #kbDesk div#kb_bctrl_left.kbButtonHover a,
-#virtualKeyboard #kbDesk div#kb_bctrl_right.kbButtonHover a {
+#kbDesk div#kb_bctrl_left.kbButtonHover a,
+#kbDesk div#kb_bctrl_right.kbButtonHover a {
         background-position: -191px -84px;
 }
-#virtualKeyboard #kbDesk div#kb_bctrl_left.kbButtonDown a,
-#virtualKeyboard #kbDesk div#kb_bctrl_right.kbButtonDown a {
+#kbDesk div#kb_bctrl_left.kbButtonDown a,
+#kbDesk div#kb_bctrl_right.kbButtonDown a {
         background-position: -191px -105px;
 }
-#virtualKeyboard #kbDesk div#kb_bdel a {
+#kbDesk div#kb_bdel a {
         background-position: 0 -63px;
 }
-#virtualKeyboard #kbDesk div#kb_bdel.kbButtonHover a {
+#kbDesk div#kb_bdel.kbButtonHover a {
         background-position: 0 -84px;
 }
-#virtualKeyboard #kbDesk div#kb_bdel.kbButtonDown a {
+#kbDesk div#kb_bdel.kbButtonDown a {
         background-position: 0 -105px;
 }
-#virtualKeyboard #kbDesk div#kb_bspace {
+#kbDesk div#kb_bspace {
         width: 100px;
 }
-#virtualKeyboard #kbDesk div#kb_bspace a {
+#kbDesk div#kb_bspace a {
         background-position: -21px 0;
 }
-#virtualKeyboard #kbDesk div#kb_bspace.kbButtonHover a {
+#kbDesk div#kb_bspace.kbButtonHover a {
         background-position: -21px -21px;
 }
-#virtualKeyboard #kbDesk div#kb_bspace.kbButtonDown a {
+#kbDesk div#kb_bspace.kbButtonDown a {
         background-position: -21px -42px;
 }
 
