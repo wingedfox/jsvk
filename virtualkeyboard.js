@@ -431,7 +431,9 @@ var VirtualKeyboard = new function () {
     /*
     *  save layout name
     */
-    DocumentCookie.set('vk_layout', code)
+    DocumentCookie.set('vk_layout', code);
+    options.layout = code;
+
     return true;
   }
 
