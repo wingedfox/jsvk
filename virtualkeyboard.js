@@ -1,4 +1,4 @@
-/**
+﻿/**
  * $Id$
  * $HeadURL$
  *
@@ -225,6 +225,7 @@ var VirtualKeyboard = new function () {
    *                       - keyboard mode object, containing fields 'shift', 'alt', 'ctrl' and 'caps' where true means this modifier active
    *                    }
    *   .rtl  : right-to-left or left-to-right input flag
+   *   .keys : multi-dimensional array of the key mapping
    *
    *  Where <char> is the array of the chars ['<normal>','<shift>','<alt>','<shift_alt>','<caps>','<shift_caps>']
    *
@@ -347,8 +348,24 @@ var VirtualKeyboard = new function () {
       /*
       *  don't touch already existing layout
       */
-      if (layout.hash.hasOwnProperty(l.code+" "+l.name))
+      var langCode = l.code+" "+l.name;
+      if (layout.hash.hasOwnProperty(langCode))
           return;
+
+      /*
+      *  update list of the layout codes
+      */
+      var code;
+      if (!layout.codes.hasOwnProperty(l.code)) {
+          code = {'name' : l.code, 'layout' : []};
+          layout.codes[l.code] = code;
+      } else {
+          code = layout.codes[l.code];
+      }
+
+      layout.push(l);
+      code.layout.push(l);
+      layout.hash[langCode] = l;
 
       /*
       *  update list of the layout codes
@@ -360,8 +377,6 @@ var VirtualKeyboard = new function () {
       *  nice print of the layout
       */
       l.toString = function(){return this.code+" "+this.name};
-
-      layout.push(l);
 
       /*
       *  reset hash, to be recalculated on options draw
@@ -393,15 +408,12 @@ var VirtualKeyboard = new function () {
     */
     nodes.langbox.options[layout.options[code]].selected = true;
 
-    lang = layout[layout.hash[code]];
-    if (!isArray(lang)) lang = layout[layout.hash[code]] = __prepareLayout(lang);
+    lang = layout.hash[code];
 
-    if (!isArray(lang)) {
-        lang = layout[layout.hash[code]] = __prepareLayout(lang);
+    if (!lang.keys) {
+        lang.html = __getKeyboardHtml(__prepareLayout(lang));
     }
-    if (!lang.html) {
-        lang.html = __getKeyboardHtml(lang);
-    }
+
     /*
     *  overwrite layout
     */
@@ -410,14 +422,15 @@ var VirtualKeyboard = new function () {
     /*
     *  set layout-dependent class names
     */
-    nodes.keyboard.className = lang.domain
-    self.IME.css = lang.domain
+    nodes.keyboard.className = lang.domain;
+    self.IME.css = lang.domain;
 
     /*
     *  reset mode for the new layout
     */
     mode = VK_NORMAL;
     __updateLayout();
+
     /*
     *  call IME activation method, if exists
     */
@@ -431,7 +444,8 @@ var VirtualKeyboard = new function () {
     /*
     *  save layout name
     */
-    DocumentCookie.set('vk_layout', code);
+    DocumentCookie.set('vk_layout', code)
+
     options.layout = code;
 
     return true;
@@ -459,15 +473,17 @@ var VirtualKeyboard = new function () {
   self.setVisibleLayoutCodes = function () {
       var codes = isArray(arguments[0])?arguments[0]:arguments
          ,filter = null
-         ,code
+         ,code;
 
-      for (var i=0, cL=codes.length; i<cL; i++) {
-          code = codes[i].toUpperCase();
-          if (!layout.codes.hasOwnProperty(code))
-              continue;
-          if (!filter)
-              filter = {}
-          filter[code] = code;
+      for (var i in layout.codes) {
+          if (layout.codes.hasOwnProperty(i)) {
+              code = i.toUpperCase();
+              if (codes.indexOf(code) > -1) {
+                  if (!filter)
+                      filter = {};
+                  filter[code] = code;
+              }
+          }
       }
       layout.codeFilter = filter;
 
@@ -550,7 +566,7 @@ var VirtualKeyboard = new function () {
               chr = "\n";
               break;
           default:
-              chr = lang[key][mode];
+              chr = lang.keys[key][mode];
               break;
       }
       if (chr) {
@@ -566,7 +582,7 @@ var VirtualKeyboard = new function () {
           var win = DOM.getWindow(nodes.attachedInput);
           /*
           * there are some global exceptions, when createEvent won't work properly
-          *  - selection to set does exists
+          *  - selection to set exists
           *  - multiple symbols should be inserted
           *  - multibyte unicode symbol should be inserted
           *  - rich text editor attached
@@ -1178,7 +1194,6 @@ var VirtualKeyboard = new function () {
       for (var i=0,sL=s.length,z=0;i<sL;i++) {
           l = layout[i];
           n = l.code+" "+l.name;
-          layout.hash[n] = i;
 
           if (layout.codeFilter && !layout.codeFilter.hasOwnProperty(l.code))
               continue;
@@ -1233,10 +1248,6 @@ var VirtualKeyboard = new function () {
          ,cs,  ca,  csa,  cc,  csc = null
          ,ics, ica, icsa, icc, icsc = -1
          ,lt         = []
-
-      lt.name = l.name;
-      lt.code = l.code;
-      lt.toString = l.toString;
 
       for (var i=0, aL = alpha.length; i<aL; i++) {
          var char_normal = alpha[i]
@@ -1309,7 +1320,7 @@ var VirtualKeyboard = new function () {
       }
 
       if (dk) {
-          lt.dk = {};
+          l.dk = {};
           for (var i in dk) {
               if (dk.hasOwnProperty(i)) {
                   var key = i;
@@ -1320,7 +1331,7 @@ var VirtualKeyboard = new function () {
                   * last replace is used to simplify char processor
                   * deadkey found in the deadkey list will be substituted with itself on +1 position
                   */
-                  lt.dk[key] = __doParse(dk[i]).join("").replace(key,key+key);
+                  l.dk[key] = __doParse(dk[i]).join("").replace(key,key+key);
               }
           }
       }
@@ -1328,22 +1339,27 @@ var VirtualKeyboard = new function () {
       /*
       *  check for right-to-left languages
       */
-      lt.rtl = !!lt.join("").match(/[\u05b0-\u06ff]/)
-
-      /*
-      *  this CSS will be set on kbDesk
-      */
-      lt.domain = l.domain
+      l.rtl = !!lt.join("").match(/[\u05b0-\u06ff]/)
 
       /*
       *  finalize things by calling loading callback, if exists
       */
       if (isFunction(cbk)) {
-          lt.charProcessor = cbk
+          l.charProcessor = cbk
       } else if (cbk) {
-          lt.activate = cbk.activate;
-          lt.charProcessor = cbk.charProcessor;
+          l.activate = cbk.activate;
+          l.charProcessor = cbk.charProcessor;
       }
+      l.keys = lt;
+
+      delete l.normal;
+      delete l.shift;
+      delete l.alt;
+      delete l.shift_alt;
+      delete l.caps;
+      delete l.shift_caps;
+      delete l.cbk;
+
       return lt;
   }
   /**
