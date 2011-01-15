@@ -1702,9 +1702,13 @@ var VirtualKeyboard = new function () {
       *  check external parameters
       */
       var windowOpener;
-      try{ windowOpener = window.opener } catch(e){}
+      var dialogArguments;
+      var windowTop;
+      try{ windowOpener = window.opener.location.search }catch(e){}
+      try{ dialogArguments = window.dialogArguments.location.search }catch(e){}
+      try{ windowTop = window.top.location.search }catch(e){}
       var opts = getScriptQuery('vk_loader.js')
-         ,win_opts = parseQuery((windowOpener || window.dialogArguments || window.top).location.search.slice(1));
+         ,win_opts = parseQuery((windowOpener || dialogArguments || windowTop || window.location.search).slice(1));
 
       options.layout = DocumentCookie.get('vk_layout') || win_opts.vk_layout || opts.vk_layout || options.layout;
       options.skin = win_opts.vk_skin || opts.vk_skin || options.skin;
