@@ -68,6 +68,13 @@ var VirtualKeyboard = new function () {
    */
   var animate = true;
   /**
+   *  This flag is used to check if keyboard is availble for operations (i.e. it does not wait for resource loading)
+   *
+   *  @type Boolean
+   *  @scope private
+   */
+  var enabled = true;
+  /**
    *  list of the control keys to be shown
    *
    *  @type Object
@@ -271,6 +278,7 @@ var VirtualKeyboard = new function () {
   var nodes = {
       keyboard : null     // Keyboard container @type HTMLDivElement
      ,desk : null         // Keyboard desk @type HTMLDivElement
+     ,progressbar : null  // Progressbar @type HTMLDivElement
      ,langbox : null      // Language selector @type HTMLSelectElement
      ,attachedInput : null// Field, keyboard attached to
   }
@@ -344,44 +352,49 @@ var VirtualKeyboard = new function () {
       l.name = name;
       l.normal = alpha;
       l.domain = code[0];
-
+      l.id = l.code+" "+l.name;
       /*
-      *  don't touch already existing layout
+      *  don't rearrange already existing layouts
       */
-      var langCode = l.code+" "+l.name;
-      if (layout.hash.hasOwnProperty(langCode))
-          return;
-
-      /*
-      *  update list of the layout codes
-      */
-      var code;
-      if (!layout.codes.hasOwnProperty(l.code)) {
-          code = {'name' : l.code, 'layout' : []};
-          layout.codes[l.code] = code;
+      if (layout.hash.hasOwnProperty(l.id)) {
+          var lt = layout.hash[l.id];
+          for (var z in l) {
+              lt[z] = l[z];
+          }
       } else {
-          code = layout.codes[l.code];
+          /*
+          *  update list of the layout codes
+          */
+          var code;
+          if (!layout.codes.hasOwnProperty(l.code)) {
+              code = {'name' : l.code, 'layout' : []};
+              layout.codes[l.code] = code;
+          } else {
+              code = layout.codes[l.code];
+          }
+
+          layout.push(l);
+
+          code.layout.push(l);
+
+          layout.hash[l.id] = l;
+
+          /*
+          *  update list of the layout codes
+          */
+          if (!layout.codes.hasOwnProperty(l.code))
+              layout.codes[l.code] = l.code;
+
+          /*
+          *  nice print of the layout
+          */
+          l.toString = function(){return this.id};
+
+          /*
+          *  reset hash, to be recalculated on options draw
+          */
+          layout.options = null;
       }
-
-      layout.push(l);
-      code.layout.push(l);
-      layout.hash[langCode] = l;
-
-      /*
-      *  update list of the layout codes
-      */
-      if (!layout.codes.hasOwnProperty(l.code))
-          layout.codes[l.code] = l.code;
-
-      /*
-      *  nice print of the layout
-      */
-      l.toString = function(){return this.code+" "+this.name};
-
-      /*
-      *  reset hash, to be recalculated on options draw
-      */
-      layout.options = null;
   }
   /**
    *  Set current layout
@@ -391,64 +404,48 @@ var VirtualKeyboard = new function () {
    *  @scope public
    */
   self.switchLayout = function (code) {
-    /*
-    *  trying to regenerate options list
-    */
-    __buildOptionsList();
+      var res = enabled;
+      if (enabled) {
+          /*
+          *  trying to regenerate options list
+          */
+          __buildOptionsList();
 
-    if (!layout.options.hasOwnProperty(code)) return false;
+          if (!layout.options.hasOwnProperty(code)) return false;
 
-    /*
-    *  hide IME on layout switch
-    */
-    self.IME.hide();
+          __setProgress(0);
 
-    /*
-    *  touch the dropdown box
-    */
-    nodes.langbox.options[layout.options[code]].selected = true;
+          /*
+          *  hide IME on layout switch
+          */
+          self.IME.hide();
 
-    lang = layout.hash[code];
+          /*
+          *  touch the dropdown box
+          */
+          nodes.langbox.options[layout.options[code]].selected = true;
 
-    if (!lang.keys) {
-        lang.html = __getKeyboardHtml(__prepareLayout(lang));
-    }
+          lang = layout.hash[code];
 
-    /*
-    *  overwrite layout
-    */
-    nodes.desk.innerHTML = lang.html;
+          res = !!lang;
 
-    /*
-    *  set layout-dependent class names
-    */
-    nodes.keyboard.className = lang.domain;
-    self.IME.css = lang.domain;
+          if (res) {
+              __setProgress(10);
 
-    /*
-    *  reset mode for the new layout
-    */
-    mode = VK_NORMAL;
-    __updateLayout();
-
-    /*
-    *  call IME activation method, if exists
-    */
-    if (isFunction(lang.activate)) {
-        lang.activate();
-    }
-    /*
-    *  toggle RTL/LTR state
-    */
-    __toggleInputDir();
-    /*
-    *  save layout name
-    */
-    DocumentCookie.set('vk_layout', code)
-
-    options.layout = code;
-
-    return true;
+              /*
+              *  trying to load resources before switching layout
+              */
+              if (lang.requires) {
+                  var arr = lang.requires.map(function(path){return basePath+"/layouts/"+path});
+                  ScriptQueue.queue(arr, __layoutLoadMonitor);
+              } else {
+                  __layoutLoadMonitor();
+              }
+          }
+      } else {
+//          window.console.out = "Please wait, keyboard is not available";
+      }
+    return res;
   }
 
   /**
@@ -1139,6 +1136,80 @@ var VirtualKeyboard = new function () {
   // PRIVATE METHODS
   //---------------------------------------------------------------------------
   /**
+   *  Monitors resource loading for {@link #switchLayout}. As of the first release only success route is supported
+   *  This method is callback to ScriptQueue component
+   *  At the same time this method is loaded from the switchLayout, if there's nothing to load
+   *
+   *  @param {String, Null} element - loaded item, null means that all is loaded
+   *  @param {Boolean} success - item load state
+   *  @scope private
+   */
+  var __layoutLoadMonitor = function (element, success) {
+      if (element) {
+          //TODO: add support of a broken loading
+          //lang.requires.splice(lang.requires.indexOf(element))
+      } else {
+          delete lang.requires;
+
+          __setProgress(50)
+          if (!lang.keys) {
+              __prepareLayout(lang);
+              __setProgress(60);
+              lang.html = __getKeyboardHtml(lang.keys);
+          }
+          __setProgress(70);
+
+          /*
+          *  overwrite layout
+          */
+          nodes.desk.innerHTML = lang.html;
+
+          /*
+          *  set layout-dependent class names
+          */
+          nodes.keyboard.className = lang.domain;
+          self.IME.css = lang.domain;
+
+          /*
+          *  reset mode for the new layout
+          */
+          mode = VK_NORMAL;
+          __updateLayout();
+
+          __setProgress(80);
+          /*
+          *  call IME activation method, if exists
+          */
+          if (isFunction(lang.activate)) {
+              lang.activate();
+          }
+          __setProgress(90);
+          /*
+          *  toggle RTL/LTR state
+          */
+          __toggleInputDir();
+          /*
+          *  save layout name
+          */
+          DocumentCookie.set('vk_layout', lang.id)
+
+          options.layout = lang.code;
+          __setProgress(100);
+      }
+  }
+
+  /**
+   *  Sets the progress meter from 0 to 99%, 100% closes progressbar
+   *
+   *  @param {Number} progress
+   */
+  var __setProgress = function (progress) {
+      enabled = progress > 99;
+      nodes.progressbar.style.display = enabled ? "none" : "block";
+      nodes.desk.style.display = enabled ? "block" : "none";
+      nodes.progressbar.innerHTML = progress+"%";
+  }
+  /**
    *  Attaches and detaches stylesheet
    *
    *  @param {Boolean} attach true to attach style, false to detach
@@ -1193,7 +1264,7 @@ var VirtualKeyboard = new function () {
       nodes.langbox.innerHTML = "";
       for (var i=0,sL=s.length,z=0;i<sL;i++) {
           l = layout[i];
-          n = l.code+" "+l.name;
+          n = l.id;
 
           if (layout.codeFilter && !layout.codeFilter.hasOwnProperty(l.code))
               continue;
@@ -1340,6 +1411,11 @@ var VirtualKeyboard = new function () {
       *  check for right-to-left languages
       */
       l.rtl = !!lt.join("").match(/[\u05b0-\u06ff]/)
+
+      /*
+      *  this CSS will be set on kbDesk
+      */
+//      lt.domain = l.domain
 
       /*
       *  finalize things by calling loading callback, if exists
@@ -1633,6 +1709,7 @@ var VirtualKeyboard = new function () {
       nodes.keyboard.unselectable = "on";
       nodes.keyboard.id = 'virtualKeyboard';
       nodes.keyboard.innerHTML =("<div id=\"kbDesk\"><!-- --></div>"
+                                +"<div class=\"progressbar\"><!-- --></div>"
                                 +"<select id=\"kb_langselector\"></select>"
                                 +"<select id=\"kb_mappingselector\"></select>"
                                 +'<div id="copyrights" nofocus="true"><a href="http://debugger.ru/projects/virtualkeyboard" target="_blank" title="&copy;2006-2009 Debugger.ru">VirtualKeyboard '+self.$VERSION$+'</a></div>'
@@ -1640,7 +1717,9 @@ var VirtualKeyboard = new function () {
 
       nodes.desk = nodes.keyboard.firstChild;
 
-      var el = nodes.keyboard.childNodes.item(1);
+      nodes.progressbar = nodes.keyboard.childNodes.item(1);
+
+      var el = nodes.keyboard.childNodes.item(2);
       EM.addEventListener(el,'change', function(e){self.switchLayout(this.value)});
       nodes.langbox = el;
 
