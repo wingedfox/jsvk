@@ -17,8 +17,10 @@ header("Content-Type: text/html; charset=utf-8");
 require "vk.inc.php";
 
 define ('LAYOUT_ROOT', dirname(__FILE__)."/in/");
-define ('LAYOUT_MASK', '*.klc');
-define ('LAYOUT_OUT', dirname(__FILE__)."/out/layouts.js");
+define ('LAYOUT_EXT', '.klc');
+define ('LAYOUT_MASK', '*'.LAYOUT_EXT);
+define ('LAYOUT_OUT_FOLDER', dirname(__FILE__)."/out/");
+define ('LAYOUT_OUT', LAYOUT_OUT_FOLDER."layouts.js");
 define ('LAYOUT_REPORT', dirname(__FILE__)."/out/layouts.tsv");
 define ('LAYOUT_INSTALL', dirname(__FILE__)."/../layouts/layouts.js");
 
@@ -39,15 +41,22 @@ function convertKbd(&$f) {
 
 
     $addon = $f->getAddon();
-    $code = $f->getCode();
+    $aname = basename($addon);
 
-    if (!empty($addon) && !isset($VK_ADDONS[$code])) {
-        $addon = file_get_contents($addon);
-        if (!empty($addon)) {
-            $VK_ADDONS[$code] = $addon;
-        }
+    $fname = $f->getFilename().'.js';
+
+    if (!empty($addon)) {
+        copy($addon, LAYOUT_OUT_FOLDER.$aname);
     }
-    return $f->serialize($_REQUEST['group']);
+
+
+    $data = '﻿'."VirtualKeyboard.addLayout(".$f->serialize($_REQUEST['group']).");";
+
+    $fd = fopen (LAYOUT_OUT_FOLDER.$fname, "w");
+    fwrite($fd, $data);
+    fclose($fd);
+
+    return $f->serializeHeader($_REQUEST['group']);
 }
 
 
@@ -95,7 +104,7 @@ function getLayoutList () {
          $kbdl = getLayoutList();
          $saved = false;
          for ($i=0;$i<sizeof($kbdl);$i++) {
-            $kl = & new VirtualKeyboardLayout($kbdl[$i]);
+            $kl = new VirtualKeyboardLayout($kbdl[$i]);
             $cname = str_replace(".","_",urlencode($kl->name));
             $cls = $i%2?"even":"odd";
             $checked = isset($_POST[$cname])?'checked="true"':'';
@@ -108,12 +117,12 @@ function getLayoutList () {
                 $saved = "<span></span>";
             }
        ?>
-        <tr class="<?=$cls?>">
-         <td><input type="checkbox" name="<?=$cname?>" <?=$checked?> /></td>
-         <td><?=$kl->getCode()?></td>
-         <td><?=$kl->getName()?></td>
-         <td><?=$kl->getCopyright()?></td>
-         <td><?=$saved?></td>
+        <tr class="<?php echo($cls)?>">
+         <td><input type="checkbox" name="<?php echo($cname)?>" <?php echo($checked)?> /></td>
+         <td><?php echo($kl->getCode())?></td>
+         <td><?php echo($kl->getName())?></td>
+         <td><?php echo($kl->getCopyright())?></td>
+         <td><?php echo($saved)?></td>
         </tr>
        <?php
          }
@@ -151,8 +160,8 @@ function getLayoutList () {
         <?php if (1==$inst_res) {?>
             <span style="color: green">success</span>
         <?php } else { ?>
-            <span style="color: red">error: <?=$inst_res==0?"New layout file is not accessible. Have you selected any layouts to install?"
-                                                             :"Target file (<b>/layouts/layouts.js</b>) is already exists, remove it before installing new one."?></span>
+            <span style="color: red">error: <?php echo ($inst_res==0?"New layout file is not accessible. Have you selected any layouts to install?"
+                                                                    :"Target file (<b>/layouts/layouts.js</b>) is already exists, remove it before installing new one.")?></span>
         <?php } ?>
     <?php } ?>
     <br />

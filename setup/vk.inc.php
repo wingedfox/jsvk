@@ -456,6 +456,10 @@ class VirtualKeyboardLayout {
         return '';
     }
 
+    function getFilename() {
+        return basename($this->fname, LAYOUT_EXT);
+    }
+
     /**
      *  @return layout name
      */
@@ -614,10 +618,68 @@ class VirtualKeyboardLayout {
            ,$this->__serializeDeadkeys()
         );
 
-        $add = realpath($this->root.$this->addon.$this->callback.preg_replace("/.+[\\/\\\\]+(.+)\\.klc$/i","\\1.js",$this->fname));
-        if (file_exists($add)) {
+        $add = $this->getCallback();
+        if (!empty($add)) {
             $serArr[] = "'cbk':".trim(file_get_contents($add),"\r\n; ");
         }
+
+        return "{".join("\n,",array_filter($serArr))."}";
+    }
+
+    /**
+     *  Serializes layout header in the following way
+     *  1) ligatures are encoded as substrings surrounded with 0x01
+     *  2) 'normal' key state is 47-item length array with the "empty" keys shown as 0x02
+     *
+     *  @param $type one of: SERIALIZE_USE_CODE or SERIALIZE_USE_DOMAIN
+     */
+    function serializeHeader($type) {
+        $domain = mb_strtoupper($this->domain);
+        switch ($type) {
+            case "lng" :
+                $code = $domain==$this->code?$this->code
+                                            :$domain.'-'.$this->code;
+                break;
+            case "domain" :
+                $code = $domain;
+                break;
+            default:
+                return "";
+        }
+
+        $this->parse();
+
+
+        $keys = & $this->keymap;
+        $anc  = array();
+
+        $i_anc = $i_asc = $i_aac = $i_asac = $i_acc = $i_ascc = 0;
+
+        foreach ($keys as $k => $v) {
+
+            $nc  = @$v[$this->colmap[0]];
+
+            if (is_array($nc)) {
+                // ligature
+                $nc = chr(0x01).join($nc).chr(0x01);
+            } else if (!is_string($nc)) {
+                // key not exists
+                $nc = chr(0x02);
+            }
+
+            // fill the things
+            $anc[$i_anc++] = $nc;
+        }
+
+        $serArr = array(
+            "code:'".addslashes($code)."'"
+           ,"name:'".addslashes($this->name)."'"
+           ,$this->__serializeRow($anc, $this->colmap[0])
+           ,"requires:['".
+                          (($this->getAddon()=="")?""
+                                                   :($this->getAddon()."','"))
+                         .($this->getFilename()).".js']"
+        );
 
         return "{".join("\n,",array_filter($serArr))."}";
     }
