@@ -1145,56 +1145,68 @@ var VirtualKeyboard = new function () {
    *  @scope private
    */
   var __layoutLoadMonitor = function (element, success) {
-      if (element) {
-          //TODO: add support of a broken loading
-          //lang.requires.splice(lang.requires.indexOf(element))
-      } else {
-          delete lang.requires;
+      if (!element) {
+          if (success) {
+              /*
+              *  everything is loaded, requires are not needed anymore
+              */
+              delete lang.requires;
 
-          __setProgress(50)
-          if (!lang.keys) {
-              __prepareLayout(lang);
-              __setProgress(60);
-              lang.html = __getKeyboardHtml(lang.keys);
+              __setProgress(50)
+              if (!lang.keys) {
+                  __prepareLayout(lang);
+                  __setProgress(60);
+                  lang.html = __getKeyboardHtml(lang.keys);
+              }
+              __setProgress(70);
+    
+              /*
+              *  overwrite layout
+              */
+              nodes.desk.innerHTML = lang.html;
+    
+              /*
+              *  set layout-dependent class names
+              */
+              nodes.keyboard.className = lang.domain;
+              self.IME.css = lang.domain;
+    
+              /*
+              *  reset mode for the new layout
+              */
+              mode = VK_NORMAL;
+              __updateLayout();
+    
+              __setProgress(80);
+              /*
+              *  call IME activation method, if exists
+              */
+              if (isFunction(lang.activate)) {
+                  lang.activate();
+              }
+              __setProgress(90);
+              /*
+              *  toggle RTL/LTR state
+              */
+              __toggleInputDir();
+              /*
+              *  save layout name
+              */
+              DocumentCookie.set('vk_layout', lang.id)
+    
+              options.layout = lang.code;
+              __setProgress(100);
+          } else {
+              var i = 6;
+              var timeout = setInterval(function() {
+                  var classes = ['loaderror',''];
+                  DOM.CSS(nodes.progressbar).removeClass(classes).addClass(classes[i%2]);
+                  if (!--i) {
+                      clearInterval(timeout);
+                      __layoutLoadMonitor(null, true);
+                  }
+              }, 200);
           }
-          __setProgress(70);
-
-          /*
-          *  overwrite layout
-          */
-          nodes.desk.innerHTML = lang.html;
-
-          /*
-          *  set layout-dependent class names
-          */
-          nodes.keyboard.className = lang.domain;
-          self.IME.css = lang.domain;
-
-          /*
-          *  reset mode for the new layout
-          */
-          mode = VK_NORMAL;
-          __updateLayout();
-
-          __setProgress(80);
-          /*
-          *  call IME activation method, if exists
-          */
-          if (isFunction(lang.activate)) {
-              lang.activate();
-          }
-          __setProgress(90);
-          /*
-          *  toggle RTL/LTR state
-          */
-          __toggleInputDir();
-          /*
-          *  save layout name
-          */
-          DocumentCookie.set('vk_layout', lang.id)
-
-          options.layout = lang.code;
-          __setProgress(100);
       }
   }
 
@@ -1789,7 +1801,7 @@ var VirtualKeyboard = new function () {
       var opts = getScriptQuery('vk_loader.js')
          ,win_opts = parseQuery((windowOpener || dialogArguments || windowTop || window.location.search).slice(1));
 
-      options.layout = DocumentCookie.get('vk_layout') || win_opts.vk_layout || opts.vk_layout || options.layout;
+      options.layout = win_opts.vk_layout || opts.vk_layout || DocumentCookie.get('vk_layout') || options.layout;
       options.skin = win_opts.vk_skin || opts.vk_skin || options.skin;
       /*
       *  attach stylesheet in the load time
