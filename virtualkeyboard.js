@@ -405,7 +405,7 @@ var VirtualKeyboard = new function () {
    */
   self.switchLayout = function (code) {
       var res = enabled;
-      if (enabled) {
+      if (enabled && (!lang || code != lang.toString())) {
           /*
           *  trying to regenerate options list
           */
@@ -439,7 +439,7 @@ var VirtualKeyboard = new function () {
                   var arr = lang.requires.map(function(path){return basePath+"/layouts/"+path});
                   ScriptQueue.queue(arr, __layoutLoadMonitor);
               } else {
-                  __layoutLoadMonitor();
+                  __layoutLoadMonitor(null, true);
               }
           }
       } else {
