@@ -649,7 +649,7 @@ var VirtualKeyboard = new function () {
     /*
     *  it's global event handler. do not process event, if keyboard is closed
     */
-    if (!self.isOpen()) return;
+    if (!self.isEnabled()) return;
     /*
     *  record new keyboard mode
     */
@@ -1131,6 +1131,15 @@ var VirtualKeyboard = new function () {
    */
   self.isOpen = function () /* :Boolean */ {
       return (!!nodes.keyboard.parentNode) && nodes.keyboard.parentNode.nodeType == 1;
+  }
+  /**
+   *  Returns true if keyboard is open and enabled (e.g. not in the middle of layout switching)
+   *
+   *  @return {Boolean}
+   *  @scope public
+   */
+  self.isEnabled = function () /* :Boolean */ {
+      return self.isOpen && enabled;
   }
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
