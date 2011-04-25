@@ -404,12 +404,17 @@ var VirtualKeyboard = new function () {
    *  @scope public
    */
   self.switchLayout = function (code) {
-      var res = enabled;
-      if (enabled && (!lang || code != lang.toString())) {
+      var res = enabled && (!lang || code != lang.toString());
+      
+      if (res) {
           /*
           *  trying to regenerate options list
           */
           __buildOptionsList();
+
+          if (!code) {
+              code = nodes.langbox.value;
+          }
 
           if (!layout.options.hasOwnProperty(code)) return false;
 
@@ -441,6 +446,8 @@ var VirtualKeyboard = new function () {
               } else {
                   __layoutLoadMonitor(null, true);
               }
+          } else {
+              __layoutLoadMonitor(null, false);
           }
       } else {
 //          window.console.out = "Please wait, keyboard is not available";
@@ -488,6 +495,7 @@ var VirtualKeyboard = new function () {
       *  reset hash, to be recalculated on options draw
       */
       layout.options = null;
+      lang = null;
 
       if (!self.switchLayout(nodes.langbox.value)) {
           /*
