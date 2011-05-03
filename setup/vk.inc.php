@@ -43,6 +43,11 @@ class VirtualKeyboardLayout {
                              ,0x2061,0x2062,0x2063,0x206A,0x206B,0x206C,0x206D,0x206E,0x206F);
 
     /**
+     *  Folder name to be used as prefix for building layout requirements
+     */
+    private $addonFolder = "";
+
+    /**
      *  List of the chars to be not skipped in the layout
      */
     var $problemChars = array('021e','021f' // from Lakhota Standard, windows does not uppercase them properly
@@ -489,6 +494,13 @@ class VirtualKeyboardLayout {
     }
 
     /**
+     *  @param $v string addon folder name
+     */
+    function setAddonFolder ($v) {
+        $this->addonFolder = $v;
+    }
+
+    /**
      *  Serializes layout in the following way
      *  1) ligatures are encoded as substrings surrounded with 0x01
      *  2) 'normal' key state is 47-item length array with the "empty" keys shown as 0x02
@@ -677,7 +689,7 @@ class VirtualKeyboardLayout {
            ,$this->__serializeRow($anc, $this->colmap[0])
            ,"requires:['".
                           (($this->getAddon()=="")?""
-                                                   :($this->getAddon()."','"))
+                                                   :($this->addonFolder.basename($this->getAddon())."','"))
                          .($this->getFilename()).".js']"
         );
 

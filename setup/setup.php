@@ -20,6 +20,8 @@ define ('LAYOUT_ROOT', dirname(__FILE__)."/in/");
 define ('LAYOUT_EXT', '.klc');
 define ('LAYOUT_MASK', '*'.LAYOUT_EXT);
 define ('LAYOUT_OUT_FOLDER', dirname(__FILE__)."/out/");
+define ('DICTIONARY_OUT_FOLDER_NAME', "d/");
+define ('DICTIONARY_OUT_FOLDER', LAYOUT_OUT_FOLDER.DICTIONARY_OUT_FOLDER_NAME);
 define ('LAYOUT_OUT', LAYOUT_OUT_FOLDER."layouts.js");
 define ('LAYOUT_REPORT', dirname(__FILE__)."/out/layouts.tsv");
 define ('LAYOUT_INSTALL', dirname(__FILE__)."/../layouts/layouts.js");
@@ -46,9 +48,8 @@ function convertKbd(&$f) {
     $fname = $f->getFilename().'.js';
 
     if (!empty($addon)) {
-        copy($addon, LAYOUT_OUT_FOLDER.$aname);
+        copy($addon, DICTIONARY_OUT_FOLDER.$aname);
     }
-
 
     $data = '﻿'."VirtualKeyboard.addLayout(".$f->serialize($_REQUEST['group']).");";
 
@@ -98,6 +99,10 @@ function getLayoutList () {
       <tbody>
        <?php
 
+         @unlink(LAYOUT_OUT_FOLDER);
+         @mkdir(LAYOUT_OUT_FOLDER);
+         @mkdir(DICTIONARY_OUT_FOLDER);
+
          $layouts = array();
          $report = array();
 
@@ -105,6 +110,7 @@ function getLayoutList () {
          $saved = false;
          for ($i=0;$i<sizeof($kbdl);$i++) {
             $kl = new VirtualKeyboardLayout($kbdl[$i]);
+            $kl->setAddonFolder(DICTIONARY_OUT_FOLDER_NAME);
             $cname = str_replace(".","_",urlencode($kl->name));
             $cls = $i%2?"even":"odd";
             $checked = isset($_POST[$cname])?'checked="true"':'';
@@ -127,6 +133,7 @@ function getLayoutList () {
        <?php
          }
          if (!empty($layouts)) {
+
              $s  = join("\n",$VK_ADDONS);
              $s .= "VirtualKeyboard.addLayoutList(\n".join(",\n",$layouts)."\n);";
 
