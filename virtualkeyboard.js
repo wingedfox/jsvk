@@ -450,6 +450,7 @@ var VirtualKeyboard = new function () {
               __layoutLoadMonitor(null, false);
           }
       } else {
+          res = lang && code == lang.toString();
 //          window.console.out = "Please wait, keyboard is not available";
       }
     return res;
@@ -1211,7 +1212,7 @@ var VirtualKeyboard = new function () {
               */
               DocumentCookie.set('vk_layout', lang.id)
     
-              options.layout = lang.code;
+              options.layout = lang.id;
               __setProgress(100);
           } else {
               var i = 6;
