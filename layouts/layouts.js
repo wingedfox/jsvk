@@ -146,15 +146,15 @@
 {code:'ZH-CN'
 ,name:'Chinese Cangjie'
 ,normal:'`1234567890-=\\手田水口廿卜山戈人心[]日尸木火土竹十大中;\'重難金女月弓一,./'
-,requires:['CN.js','chinese-cangjie.js']},
+,requires:['d/CN.js','chinese-cangjie.js']},
 {code:'ZH-CN'
 ,name:'Chinese Simpl. Pinyin'
 ,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,。/'
-,requires:['CN.js','chinese-pynsimpl.js']},
+,requires:['d/CN.js','chinese-pynsimpl.js']},
 {code:'ZH-CN'
 ,name:'Chinese Trad. Pinyin'
 ,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,。/'
-,requires:['CN.js','chinese-pyntrad.js']},
+,requires:['d/CN.js','chinese-pyntrad.js']},
 {code:'EN-US'
 ,name:'Colemak'
 ,normal:'`1234567890-=\\qwfpgjluy;[]arstdhneio\'zxcvbkm,./'
@@ -222,15 +222,15 @@
 {code:'EM-ET'
 ,name:'Ethiopic  Pan-Amharic'
 ,normal:'`1234567890-=\\ቀወeረተየuioፐ[]aሰደፈገሀጀከለ፤\'ዘሸቸቨበነመ፣./'
-,requires:['ET.js','ethiopic-pan-amharic.js']},
+,requires:['d/ET.js','ethiopic-pan-amharic.js']},
 {code:'AM-ET'
 ,name:'Ethiopic WashRa'
 ,normal:'`1234567890-=\\ቀወeረተኀሸየዐፐ«»አሰደፈገሀጀከለ፤፣ዘጠቸጸበነመ,።/'
-,requires:['ET.js','ethiopic-washra.js']},
+,requires:['d/ET.js','ethiopic-washra.js']},
 {code:'AM-ET'
 ,name:'Ethiopic XTT'
 ,normal:'`፩፪፫፬፭፮፯፰፱0-=\\ቀወeረተየuioፐጸፀaሰደፈገሀጀከለ፤አዘኀቸቨበነመ፣።/'
-,requires:['ET.js','ethiopic-xtt.js']},
+,requires:['d/ET.js','ethiopic-xtt.js']},
 {code:'EWO-CM'
 ,name:'Ewondo'
 ,normal:'`1234567890-=\\ŋwertyuiopɛɔasdfghəkl;\'zxcvbnm,./'
@@ -382,23 +382,23 @@
 {code:'IU-IKU'
 ,name:'Inuktitut latin'
 ,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./'
-,requires:['IKU.js','inuktitut-latin.js']},
+,requires:['d/IKU.js','inuktitut-latin.js']},
 {code:'IU-IKU'
 ,name:'Inuktitut - nakvitot'
 ,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./'
-,requires:['IKU.js','inuktitut-navkitot.js']},
+,requires:['d/IKU.js','inuktitut-navkitot.js']},
 {code:'IU-IKU'
 ,name:'Inuktitut Phonetic'
 ,normal:'`1234567890-=\\qwertyuiop[]asdfghjklł\'zxcvbnm,./'
-,requires:['IKU.js','inuktitut-phonetic.js']},
+,requires:['d/IKU.js','inuktitut-phonetic.js']},
 {code:'IU-IKU'
 ,name:'Inuktitut Syllabic'
 ,normal:'`1234567890-=\\ᖃᐁᕋᑕᐂᐅᐃᐸ[]ᐊᓴᖕᒐᕼᔭᑲᓚᐧ\'ᖤᕙᖯᓇᒪ,.ᖤ'
-,requires:['IKU.js','inuktitut-syllabic.js']},
+,requires:['d/IKU.js','inuktitut-syllabic.js']},
 {code:'EN-IPA'
 ,name:'IPA Phonetic'
 ,normal:'`1234567890-͡\\qwertyuiop[]asdfghjklΑΒzxcvbnm,.?'
-,requires:['IPA.js','ipa.js']},
+,requires:['d/IPA.js','ipa.js']},
 {code:'EN-IE'
 ,name:'Irish'
 ,normal:'`1234567890-=#qwertyuiop[]asdfghjkl;\'zxcvbnm,./'
@@ -414,7 +414,7 @@
 {code:'JA-JP'
 ,name:'Japanese'
 ,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./'
-,requires:['JP.js','japanese.js']},
+,requires:['d/JP.js','japanese.js']},
 {code:'KN-IN'
 ,name:'Kannada'
 ,normal:'ೊ1234567890-ೃೌೈಾೀೂಬಹಗದಜಡೋೇ್ಿುಪರಕತಚಟೆಂಮನವಲಸ,.ಯ'
@@ -442,15 +442,15 @@
 {code:'KO-KR'
 ,name:'2 Beolsik'
 ,normal:'~1234567890-=\\ㅂㅈㄷㄱㅅㅛㅕㅑㅐㅔ[]ㅁㄴㅇㄹㅎㅗㅓㅏㅣ;\'ㅋㅌㅊㅍㅠㅜㅡ,./'
-,requires:['KR.js','korean-2beolsik.js']},
+,requires:['d/KR.js','korean-2beolsik.js']},
 {code:'KO-KR'
 ,name:'3 Beolsik'
 ,normal:'~ㅎㅆㅂㅛㅠㅑㅖㅢㅜㅋ)>:ㅅㄹㅕㅐㅓㄹㄷㅁㅊㅍ(<ㅇㄴㅣㅏㅡㄴㅇㄱㅈㅂㅌㅁㄱㅔㅗㅜㅅㅎ,.ㅗ'
-,requires:['KR.js','korean-3beolsik.js']},
+,requires:['d/KR.js','korean-3beolsik.js']},
 {code:'KO-KR'
 ,name:'Ru-Kor'
 ,normal:'ё1234567890-=\\йцукенгшщзхъфывапролджэячсмитьбю.'
-,requires:['KR.js','korean-ru2kor.js']},
+,requires:['d/KR.js','korean-ru2kor.js']},
 {code:'KRI-SL'
 ,name:'Krio'
 ,normal:'`1234567890-=\\qwertyuiopɛɔasdfghjkl;\'zxcvbnm,./'
@@ -474,7 +474,7 @@
 {code:'LA'
 ,name:'Lakhota Standard'
 ,normal:'`1234567890-=\\ǧweštyuiop[]asdŋghȟkl;\'zžčvbnm,./'
-,requires:['LA.js','lakhota-standard.js']},
+,requires:['d/LA.js','lakhota-standard.js']},
 {code:'LO-LAO'
 ,name:'Lao SengKeo'
 ,normal:'@ຢຟໂຖຸູຄຕຈຂຊໍ\\ົໄຳພະິີຣນຍບລັຫກດເ້່າສວງຜປແອຶືທມໃຝ'
@@ -482,7 +482,7 @@
 {code:'LO-LA'
 ,name:'Lao'
 ,normal:'"ຢຟໂຖຸູຄຕຈຂຊໍ/ົໄຳພະິີຮນຍບລັຫກດເ້່າສວງຜປແອຶືທມໃຝ'
-,requires:['LA.js','lao.js']},
+,requires:['d/LA.js','lao.js']},
 {code:'ES-MX'
 ,name:'Latin American'
 ,normal:'|1234567890\'¿}qwertyuiop´+asdfghjklñ{zxcvbnm,.-'
@@ -582,7 +582,7 @@
 {code:'GAZ-ET'
 ,name:'Oromo'
 ,normal:'`1234567890-=\\qwertyuiop[]asdfghjkl;\'zxcvbnm,./'
-,requires:['ET.js','oromo.js']},
+,requires:['d/ET.js','oromo.js']},
 {code:'AR-EG'
 ,name:'Pashto-FSI'
 ,normal:'ﷲ١٢٣٤٥٦٧٨٩٠­=؛قويرتېعئوپطصاسدفږهجکل;\'زخچځبنم،./'
