@@ -87,6 +87,11 @@ IFrameVirtualKeyboard = new function() {
         }
         if (iFrame&&!self.isOpen()) {
             iFrame.style.display = 'block';
+            if (hWnd.VirtualKeyboard) {
+                hWnd.VirtualKeyboard.show( target
+                                          ,hWnd.document.body
+                                         );
+            }
             retval = true;
         }
         if (retval) {
@@ -103,7 +108,12 @@ IFrameVirtualKeyboard = new function() {
      */
     self.close = 
     self.hide = function (target) {
-        if (self.isOpen()) iFrame.style.display='none';
+        if (self.isOpen()) {
+            iFrame.style.display='none';
+            if (hWnd.VirtualKeyboard) {
+                hWnd.VirtualKeyboard.close();
+            }
+        }
     }
     /**
      *  Returns open state
@@ -142,11 +152,15 @@ IFrameVirtualKeyboard = new function() {
         */
         hWnd.document.body.className = hWnd.document.body.parentNode.className = 'VirtualKeyboardPopup';
         var kbd = hWnd.document.body.firstChild;
-        while ("virtualKeyboard" != kbd.id) {
-            hWnd.document.body.removeChild(kbd);
-            kbd = hWnd.document.body.firstChild;
+        if(!hWnd.document.body.childNodes.length) {
+            this.close();
+        } else {
+            while ("virtualKeyboard" != kbd.id) {
+                hWnd.document.body.removeChild(kbd);
+                kbd = hWnd.document.body.firstChild;
+            }
+            iFrame.style.height = kbd.offsetHeight+'px';
+            iFrame.style.width = kbd.offsetWidth+'px';
         }
-        iFrame.style.height = kbd.offsetHeight+'px';
-        iFrame.style.width = kbd.offsetWidth+'px';
     }
 }
