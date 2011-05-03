@@ -1148,7 +1148,7 @@ var VirtualKeyboard = new function () {
    *  @scope public
    */
   self.isEnabled = function () /* :Boolean */ {
-      return self.isOpen && enabled;
+      return self.isOpen() && enabled;
   }
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
