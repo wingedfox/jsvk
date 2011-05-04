@@ -75,31 +75,45 @@ IFrameVirtualKeyboard = new function() {
         var retval = false;
         if ('string' == typeof holder)
             holder = document.getElementById(holder);
-        if (!holder)
+
+        if ('string' == typeof target) 
+            target = document.getElementById(target);
+        if (target)
+            tgt = target;
+        if (!tgt)
             return false;
 
         if (!hWnd) {
-            hWnd = document.createElement('div');
-            hWnd.innerHTML = "<iframe frameborder=\"0\" src=\""+p[0]+"vk_iframe.html"+p[1]+"\"></iframe>";
-            holder.appendChild(hWnd);
-            iFrame=hWnd.firstChild;
-            retval = true;
-        }
-        if (iFrame&&!self.isOpen()) {
+            if (holder) {
+                /*
+                *  create frame only if holder passed
+                */
+                var div = document.createElement('div');
+                div.innerHTML = "<iframe frameborder=\"0\" src=\""+p[0]+"vk_iframe.html"+p[1]+"\"></iframe>";
+                iFrame = div.firstChild;
+                retval = true;
+            }
+        } else if (!self.isOpen()) {
             iFrame.style.display = 'block';
             if (hWnd.VirtualKeyboard) {
-                hWnd.VirtualKeyboard.show( target
+                hWnd.VirtualKeyboard.show( tgt
                                           ,hWnd.document.body
                                          );
             }
+            iFrame.style.height = hWnd.document.body.firstChild.offsetHeight+'px';
+            iFrame.style.width = hWnd.document.body.firstChild.offsetWidth+'px';
+
             retval = true;
         }
-        if (retval) {
-            if (holder != iFrame.parentNode)
-                holder.appendChild(iFrame);
-            tgt = target;
+
+        if (holder && iFrame && holder != iFrame.parentNode) {
+            /*
+            *  if another valid holder passed, attach keyboard there
+            */
+            holder.appendChild(iFrame);
         }
-        return false;
+
+        return retval;
     }
     /**
      *  Hides keyboard
@@ -142,25 +156,13 @@ IFrameVirtualKeyboard = new function() {
     self.onload = function () {
         hWnd = (iFrame.contentWindow||iFrame.contentDocument.window);
 
-        if ('string' == typeof tgt) 
-            tgt = document.getElementById(tgt);
-        hWnd.VirtualKeyboard.show( tgt
-                                  ,hWnd.document.body
-                                 );
         /*
         *  set class names to add some styling to html, body
         */
         hWnd.document.body.className = hWnd.document.body.parentNode.className = 'VirtualKeyboardPopup';
-        var kbd = hWnd.document.body.firstChild;
-        if(!hWnd.document.body.childNodes.length) {
-            this.close();
-        } else {
-            while ("virtualKeyboard" != kbd.id) {
-                hWnd.document.body.removeChild(kbd);
-                kbd = hWnd.document.body.firstChild;
-            }
-            iFrame.style.height = kbd.offsetHeight+'px';
-            iFrame.style.width = kbd.offsetWidth+'px';
+        while (hWnd.document.body.firstChild) {
+                hWnd.document.body.removeChild(hWnd.document.body.firstChild);
         }
+        this.show();
     }
 }
