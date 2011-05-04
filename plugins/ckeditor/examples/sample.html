@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!--
+ * VirtualKeyboard plugin - native input method for web apps - http://debugger.ru/projects/virtualkeyboard
+ * Copyright (C) 2009-2011 Ilya Lebedev <ilya@lebedev.net>
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *a http://www.gnu.org/licenses/lgpl.html
+ * == END LICENSE ==
+ *
+ * Sample page.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>CKeditor - Virtual Keyboard plugin sample</title>
+	<meta content="text/html; charset=utf-8" http-equiv="content-type" />
+	<script type="text/javascript" src="../../../ckeditor.js"></script>
+	<link href="sample.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+ <div>
+  <center><b><a href="http://allanguages.info">Official site</a></b><br /></center>
+  <hr />
+  Demo pages:
+  [<a href="../../../../../demo_inline.html">Plain text</a>] |
+  [<a href="../../../../tinymce/plugins/Jsvk/examples/simple.html">TinyMCE</a>] |
+  [<a href="../../../../tinymce3/plugins/Jsvk/examples/simple.html">TinyMCE 3</a>] |
+  [<a href="../../../../xinha/plugins/Jsvk/examples/simple.html">Xinha</a>] |
+  [<a href="../../../../fckeditor/plugins/Jsvk/examples/sample.html">FCKEditor</a>] |
+  [<a>CKeditor</a>]
+ </div>
+ <h3>CKeditor - Sample use of Javascript Virtual Keyboard plugin</h3>
+ <div>
+  <p>This page shows <a href="http://debugger.ru/projects/virtualkeyboard">VirtualKeyboard</a> plugin usage for the CK rich-text editor.</p>
+  <ul><strong>Known issues</strong>
+   <li>Plugin works in the dialog mode only</li>
+   <li>Virtual "Del" and "BackSpace" keys does not delete elements: images, tables, paragraphs, etc</li>
+   <li>Deletion does not take in count continuos whitespaces, like real backspace does</li>
+   <li>Plugin has only partial Opera support because of its weird selection implementation and incorrect <a href="http://www.quirksmode.org/js/keys.html" target="_blank">key events processing</a></li>
+  </ul>
+ </div>
+ <hr />
+ <form action="sample_posteddata.asp" method="post" target="_blank">
+  <div>
+   CKEditor1:    
+   <textarea cols="80" id="editor1" name="editor1" rows="10">&lt;p&gt;This is some &lt;strong&gt;sample text&lt;/strong&gt;. You are using &lt;a href="http://ckeditor.com/"&gt;CKEditor&lt;/a&gt;.&lt;/p&gt;</textarea>
+   <script type="text/javascript">//<![CDATA[
+       // Replace the <textarea id="editor"> with an CKEditor
+       // instance, using default configurations.
+       CKEDITOR.replace( 'editor1',
+                         { fullPage : true
+                          ,jsvk_skin : "flat_gray"
+                          ,jsvk_layout : "US US"
+                          ,extraPlugins : 'Jsvk'
+                          ,toolbar : [[ 'Source', 'Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink', 'Jsvk' ]
+                                     ]
+                         });
+   //]]></script>
+  </div>
+  <div>
+   CKEditor2:
+   <textarea cols="80" id="editor2" name="editor2" rows="10">&lt;p&gt;This is some &lt;strong&gt;sample text&lt;/strong&gt;. You are using &lt;a href="http://ckeditor.com/"&gt;CKEditor&lt;/a&gt;.&lt;/p&gt;</textarea>
+   <script type="text/javascript">//<![CDATA[
+       // Replace the <textarea id="editor"> with an CKEditor
+       // instance, using default configurations.
+       CKEDITOR.replace( 'editor2',
+                         { fullPage : true
+                          ,extraPlugins : 'Jsvk'
+                          ,toolbar : [[ 'Source', 'Bold', 'Italic', '-', 'NumberedList', 'BulletedList', '-', 'Link', 'Unlink', 'Jsvk' ]
+                                     ]
+                         });
+   //]]></script>
+  </div>
+ </form>
+</body>
+</html>
