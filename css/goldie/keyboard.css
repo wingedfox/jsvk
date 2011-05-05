@@ -451,11 +451,11 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 #virtualKeyboard div.progressbar {
         color: #666;
         font-family: Verdana, Tahoma;
-        font-size: 1000%;
+        font-size: 120px;
         font-weight: bold;
         position: relative;
         text-align: center;
-        top: 15%;
+        top: 10%;
         width: 100%;
 }
 

@@ -450,6 +450,24 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 }
 
 /************************************
+* Progressbar styling
+*/
+#virtualKeyboard div.progressbar {
+        color: #666;
+        font-family: Verdana, Tahoma;
+        font-size: 110px;
+        font-weight: bold;
+        position: relative;
+        text-align: center;
+        top: 10%;
+        width: 100%;
+}
+
+#virtualKeyboard div.loaderror {
+        color: #a22 !important;
+}
+
+/************************************
 * Place for the locale-dependent styles
 * overload fonts here
 *
