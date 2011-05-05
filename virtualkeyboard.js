@@ -418,7 +418,7 @@ var VirtualKeyboard = new function () {
 
           if (!layout.options.hasOwnProperty(code)) return false;
 
-          __setProgress(0);
+          __setProgress(10);
 
           /*
           *  hide IME on layout switch
@@ -435,8 +435,6 @@ var VirtualKeyboard = new function () {
           res = !!lang;
 
           if (res) {
-              __setProgress(10);
-
               /*
               *  trying to load resources before switching layout
               */
@@ -1170,13 +1168,10 @@ var VirtualKeyboard = new function () {
               */
               delete lang.requires;
 
-              __setProgress(50)
               if (!lang.keys) {
                   __prepareLayout(lang);
-                  __setProgress(60);
                   lang.html = __getKeyboardHtml(lang.keys);
               }
-              __setProgress(70);
     
               /*
               *  overwrite layout
@@ -1195,14 +1190,12 @@ var VirtualKeyboard = new function () {
               mode = VK_NORMAL;
               __updateLayout();
     
-              __setProgress(80);
               /*
               *  call IME activation method, if exists
               */
               if (isFunction(lang.activate)) {
                   lang.activate();
               }
-              __setProgress(90);
               /*
               *  toggle RTL/LTR state
               */
@@ -1225,6 +1218,9 @@ var VirtualKeyboard = new function () {
                   }
               }, 200);
           }
+      } else if (success) {
+          __setProgress(Math.round(100/(lang.requires.length+1)));
+          lang.requires.pop();
       }
   }
 
