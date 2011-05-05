@@ -86,6 +86,10 @@ XINHA=$(CURDIR)/plugins/xinha/*
 FCKEDITOR=$(CURDIR)/plugins/fckeditor/*
 # }}}
 
+# {{{ CKEDITOR
+CKEDITOR=$(CURDIR)/plugins/ckeditor/*
+# }}}
+
 FILES_LITE = $(DOCS) $(LAYOUTS) $(SKINS) $(SOURCES) $(DEMO) $(ICON)
 FILES_COMPACT = $(FILES_LITE) $(SETUP)
 FILES_FULL  = $(FILES_COMPACT) $(EXT)
@@ -93,12 +97,14 @@ FILES_TINYMCE = $(TINYMCE)
 FILES_TINYMCE3 = $(TINYMCE3)
 FILES_XINHA = $(XINHA)
 FILES_FCKEDITOR = $(FCKEDITOR)
+FILES_CKEDITOR = $(CKEDITOR)
 
 # Target names substitution
 tinymce = TINYMCE
 tinymce3 = TINYMCE3
 xinha = XINHA
 fckeditor = FCKEDITOR
+ckeditor = CKEDITOR
 
 full:
 		@echo "Creating full distribution"
@@ -142,7 +148,7 @@ lite:
 		@rm $(DIST_NAME) -Rf
 		@echo "All done"
 
-tinymce tinymce3 xinha fckeditor:: compact
+tinymce tinymce3 xinha fckeditor ckeditor:: compact
 		@echo "Creating $@ plugin from $< distribution"
 		@-rm $(DIST_NAME) -Rf
 		@mkdir $(DIST_NAME)
@@ -165,6 +171,6 @@ endef
 
 all: full compact lite plugins
 
-plugins: tinymce tinymce3 xinha fckeditor 
+plugins: tinymce tinymce3 xinha fckeditor ckeditor 
 
 # setup vim:ts=4:sw=4:fdm:marker:
