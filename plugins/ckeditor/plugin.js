@@ -48,7 +48,7 @@ CKEDITOR.plugins.add( pluginName, {
         editor.ui.addButton(pluginCommand, 
                             { label : pluginName
                              ,command : pluginCommand
-                             ,icon : this.path 'img/jsvk.gif'
+                             ,icon : this.path + 'img/jsvk.gif'
                             });
 
         /*
