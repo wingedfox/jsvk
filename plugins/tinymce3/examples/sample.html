@@ -1,5 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+<!--
+ * VirtualKeyboard plugin - native input method for web apps - http://debugger.ru/projects/virtualkeyboard
+ * Copyright (C) 2009-2011 Ilya Lebedev <ilya@lebedev.net>
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ * http://www.gnu.org/licenses/lgpl.html
+ * == END LICENSE ==
+ *
+ * Sample page.
+-->
  <head>
  <meta http-equiv="content-type" content="application/xhtml+xml; charset=utf-8" />
   <title>Virtual Keyboard plugin demo</title>
@@ -11,7 +23,7 @@
                 mode : "textareas"
                ,theme : "advanced"
                ,plugins : "Jsvk"
-               ,theme_advanced_buttons1_add_before : "Jsvk,tablecontrols,separator"
+               ,theme_advanced_buttons1_add_before : "Jsvk,separator"
         });
   </script>
   <!-- /tinyMCE -->
@@ -21,10 +33,11 @@
 <center><b><a href="http://allanguages.info">Official site</a></b><br /></center>
 <hr />
 Demos: [<a href="../../../../../demo_inline.html">Plain text</a>] |
-[<a>TinyMCE</a>] |
-[<a href="../../../../tinymce3/plugins/Jsvk/examples/simple.html">TinyMCE 3</a>] |
-[<a href="../../../../xinha/plugins/Jsvk/examples/simple.html">Xinha</a>] |
-[<a href="../../../../fckeditor/editor/plugins/Jsvk/_sample/sample.html">FCKEditor</a>]
+[<a href="../../../../tinymce/plugins/Jsvk/examples/sample.html">TinyMCE</a>] |
+[<a>TinyMCE 3</a>] |
+[<a href="../../../../xinha/plugins/Jsvk/examples/sample.html">Xinha</a>] |
+[<a href="../../../../fckeditor/editor/plugins/Jsvk/examples/sample.html">FCKEditor</a>] |
+[<a href="../../../../ckeditor/plugins/Jsvk/examples/sample.html">CKEditor</a>]
   <h3>Virtual Keyboard plugin for TinyMCE</h3>
   <p>This page shows <a href="http://debugger.ru/projects/virtualkeyboard">VirtualKeyboard</a> plugin usage for the TinyMCE rich-text editor.</p>
   <ul><strong>Known issues</strong>
@@ -33,14 +46,14 @@ Demos: [<a href="../../../../../demo_inline.html">Plain text</a>] |
    <li>Plugin has only partial Opera support because of its weird selection implementation and incorrect <a href="http://www.quirksmode.org/js/keys.html" target="_blank">key events processing</a></li>
   </ul>
 
-  <textarea id="elm1" name="elm1" rows="10" cols="60">
+  <textarea id="elm1" name="elm1" rows="10" cols="40">
         Some &lt;b&gt;element&lt;/b&gt;, this is to be editor 1.
         &lt;p&gt;Some paragraph. &lt;a href=&quot;http://www.sourceforge.net&quot;&gt;Some link&lt;/a&gt;&lt;/p&gt;
         &lt;img src=&quot;../images/jsvk.gif&quot;&gt;
   </textarea>
   <br />
 
-  <textarea id="elm2" name="elm2" rows="15" cols="50">
+  <textarea id="elm2" name="elm2" rows="15" cols="32">
         Some &lt;b&gt;element&lt;/b&gt;, this is to be editor 2.
         &lt;p id=&quot;a123&quot;&gt;Some paragraph. &lt;a href=&quot;http://www.sourceforge.net&quot;&gt;Some link&lt;/a&gt;&lt;/p&gt;
         &lt;img src=&quot;../images/jsvk.gif&quot;&gt;
