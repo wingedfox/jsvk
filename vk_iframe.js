@@ -155,6 +155,7 @@ IFrameVirtualKeyboard = new function() {
      */
     self.onload = function () {
         hWnd = (iFrame.contentWindow||iFrame.contentDocument.window);
+        this.close();
 
         /*
         *  set class names to add some styling to html, body
