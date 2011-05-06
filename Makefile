@@ -159,15 +159,16 @@ tinymce tinymce3 xinha fckeditor ckeditor:: compact
 		@echo "Creating archive"
 		@$(TAR) -zxf $(subst $@,$<,$(DIST_NAME_ARC)) -C "$(DIST_PATH)Jsvk/jscripts/" --strip=2 "./$(subst $@,$<,$(DIST_NAME))" 
 		@$(call $(findstring tinymce,$@)_renamer)
+		@echo "Packing plugin"
+		@$(TS) -db $(DIST_PATH)Jsvk
 		@$(TAR) -zcf $(DIST_NAME_ARC) --strip=3 -C "$(DIST_PATH)" Jsvk
 		@rm -Rf $(DIST_NAME)
 		@echo "All done"
 
 define tinymce_renamer
 		@echo "Creating _src copy of plugin script"
-	        @cp $(DIST_PATH)Jsvk/editor_plugin.js $(DIST_PATH)Jsvk/editor_plugin_src.js
-		@echo "Packing plugin"
-	        @$(TS) -r -db $(DIST_PATH)Jsvk/editor_plugin.js
+		@mkdir $(DIST_PATH)Jsvk/_src/
+		@cp $(DIST_PATH)Jsvk/editor_plugin.js $(DIST_PATH)Jsvk/_src/editor_plugin.js
 endef
 
 all: full compact lite plugins
