@@ -40,7 +40,8 @@ EXT=$(EXT_DIR)/helpers.js \
 # }}}
 
 # {{{ LAYOUTS
-LAYOUTS=$(CURDIR)/layouts/layouts.js
+LAYOUTS=$(CURDIR)/layouts/*.js \
+		$(CURDIR)/layouts/d/*.js
 # }}}
 
 # {{{ SKINS
