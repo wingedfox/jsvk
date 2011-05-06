@@ -410,6 +410,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
 * Progressbar styling
 */
 #virtualKeyboard div.progressbar {
+        background: url(button_set.gif) 0 1000px no-repeat;
         color: #666;
         font-family: Verdana, Tahoma;
         font-size: 70px;
