@@ -1733,6 +1733,7 @@ var VirtualKeyboard = new function () {
       */
       nodes.keyboard = document.createElement('div');
       nodes.keyboard.unselectable = "on";
+      nodes.keyboard.style.visibility = "hidden";
       nodes.keyboard.id = 'virtualKeyboard';
       nodes.keyboard.innerHTML =("<div id=\"kbDesk\"><!-- --></div>"
                                 +"<div class=\"progressbar\"><!-- --></div>"

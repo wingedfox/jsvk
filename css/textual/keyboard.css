@@ -10,6 +10,7 @@ html.VirtualKeyboardPopup, body.VirtualKeyboardPopup {
         margin: 0;
         padding: 0;
         position: relative;
+        visibility: visible !important;
         width: 428px;
 }
 /*
