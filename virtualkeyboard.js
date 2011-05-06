@@ -1219,8 +1219,10 @@ var VirtualKeyboard = new function () {
               }, 200);
           }
       } else if (success) {
-          __setProgress(Math.round(100/(lang.requires.length+1)));
-          lang.requires.pop();
+          if (lang.requires) {
+              __setProgress(Math.round(100/(lang.requires.length+1)));
+              lang.requires.pop();
+          }
       }
   }
 
