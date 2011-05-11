@@ -494,6 +494,15 @@ var VirtualKeyboard = new function () {
       *  reset hash, to be recalculated on options draw
       */
       layout.options = null;
+
+      /*
+      *  if keyboard is in the middle of something, rebuild options only
+      */
+      if (!enabled) {
+          __buildOptionsList();
+          return;
+      }
+
       lang = null;
 
       if (!self.switchLayout(nodes.langbox.value)) {
