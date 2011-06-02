@@ -10,6 +10,12 @@
  *  @version $Rev$
  *  @lastchange $Author$ $Date$
  */
+
+/*
+*  Prevent duplicate keyboard loading
+*/
+if (!window.VirtualKeyboard) {
+
 VirtualKeyboard = new function () {
   var self = this, to = null;
   self.show = self.hide = self.toggle = self.attachInput = function () {
@@ -72,3 +78,4 @@ VirtualKeyboard = new function () {
         }
     }
 })();
+}
