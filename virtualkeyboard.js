@@ -971,7 +971,7 @@ var VirtualKeyboard = new function () {
    *  Used to attach keyboard output to specified input
    *
    *  @param {Null, HTMLInputElement,String} element to attach keyboard to
-   *  @return {HTMLInputElement, Null}
+   *  @return {HTMLInputElement}
    *  @scope public
    */
   self.attachInput = function (el) {
@@ -981,7 +981,7 @@ var VirtualKeyboard = new function () {
     if (!el) return nodes.attachedInput;
     if (isString(el)) el = document.getElementById(el);
 
-    if (el == nodes.attachedInput) return nodes.attachedInput;
+    if (el == nodes.attachedInput || !el) return nodes.attachedInput;
 
     /*
     *  perform initialization...
@@ -1094,13 +1094,13 @@ var VirtualKeyboard = new function () {
    *  Shows keyboard
    *
    *  @param {HTMLElement, String} input element or it to bind keyboard to
-   *  @param {String} holder keyboard holder container, keyboard won't have drag-drop when holder is specified
+   *  @param {HTMLInputElement, String} holder keyboard holder container
    *  @return {Boolean} operation state
    *  @scope public
    */
   self.open =
   self.show = function (input, holder){
-    if ( !(input = self.attachInput(nodes.attachedInput || input)) || !nodes.keyboard || !document.body ) return false;
+    if ( !(input = self.attachInput(input || nodes.attachedInput)) || !nodes.keyboard || !document.body ) return false;
 
     /*
     *  check pass means that node is not attached to the body
