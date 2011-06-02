@@ -34,7 +34,7 @@ IFrameVirtualKeyboard = new function() {
      * 
      *  @type {String}
      */
-    var p = (function (sname) {var h =document.getElementsByTagName('html')[0].innerHTML,sr=new RegExp('<scr'+'ipt[^>]+?src\\s*=\\s*["\']?([^>]+?/|)'+sname+'([^"\'\\s]*)[^>]*>(.|[\r\n])*?</scr'+'ipt>','i'),m =h.match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return [m[1],m[2]];if (m[1].indexOf("/")==0) return [m[1],m[2]];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return [b[0].href+m[1],m[2]];return [(document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,""),m[2]];}return [null,null];})('vk_iframe.js');
+    var p = (function (sname) {var h =document.getElementsByTagName('html')[0].innerHTML,sr=new RegExp('<scr'+'ipt[^>]+?src\\s*=\\s*["\']?([^>]+?/|)'+sname+'([^"\'\\s]*)[^>]*>(.|[\r\n])*?</scr'+'ipt>','i'),m =h.match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return [m[1],m[2]];if (m[1].indexOf("/")==0) return [m[1],m[2]];var b = document.getElementsByTagName('base');if (b[0] && b[0].href) return [b[0].href+m[1],m[2]];return [(document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,""),m[2]];}return [null,null];})('vk_iframe.js');
     /**
      *  Tells, if the keyboard is open
      * 

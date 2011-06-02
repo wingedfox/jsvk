@@ -24,7 +24,7 @@
      *
      *  @scope private
      */
-    var scriptInfo = (function (sname){var h =document.getElementsByTagName('html')[0].innerHTML,sr=new RegExp('<scr'+'ipt[^>]+?src\\s*=\\s*["\']?([^>]+?/|)('+sname+')([^"\'\\s]*)[^>]*>(.|[\r\n])*?</scr'+'ipt>','i'),m =h.match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return [m[1],m[3]];if (m[1].indexOf("/")==0) return [m[1],m[3]];b = document.getElementsByTagName('base');if (b[0] && b[0].href) return [b[0].href+m[1],m[3]];return [(document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,""),m[3]];}return null;})
+    var scriptInfo = (function (sname){var h =document.getElementsByTagName('html')[0].innerHTML,sr=new RegExp('<scr'+'ipt[^>]+?src\\s*=\\s*["\']?([^>]+?/|)('+sname+')([^"\'\\s]*)[^>]*>(.|[\r\n])*?</scr'+'ipt>','i'),m =h.match(sr);if (m) {if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return [m[1],m[3]];if (m[1].indexOf("/")==0) return [m[1],m[3]];var b = document.getElementsByTagName('base');if (b[0] && b[0].href) return [b[0].href+m[1],m[3]];return [(document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,""),m[3]];}return null;})
                       ('vk_easy.js')
 
     /** 

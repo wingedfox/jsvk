@@ -26,9 +26,9 @@ VirtualKeyboard = new function () {
     	    var m = String(sc[i].src).match(sr);
     	    if (m) {
     	        if (!m[1]) m[1] = "";
-                if (m[1].match(/^((https?|file)\:\/{2,}|\w:[\\])/)) return m[1];
+                if (m[1].match(/^((https?|file|widget)\:\/{2,}|\w:[\\])/)) return m[1];
     		if (m[1].indexOf("/")==0) return m[1];
-    		b = document.getElementsByTagName('base');
+    		var b = document.getElementsByTagName('base');
     		if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,"");}}return null;
     })('vk_loader.js');
 
@@ -62,7 +62,7 @@ VirtualKeyboard = new function () {
         *  attach script loader
         */
         if (document.body) {
-            s = document.createElement('script');
+            var s = document.createElement('script');
             s.type="text/javascript";
             s.src = p+'extensions/scriptqueue.js';
             var head = document.getElementsByTagName("head")[0];
