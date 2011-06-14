@@ -1627,7 +1627,7 @@ var VirtualKeyboard = new function () {
         */
         res[1] = 0;
         var dks = lang.dk[buf]
-            idx = dks.indexOf(tchr)+1;
+           ,idx = dks.indexOf(tchr)+1;
         res[0] = idx?dks.charAt(idx)
                     :tchr;
       } else if (isDk && lang.dk.hasOwnProperty(tchr)) {
