@@ -1123,6 +1123,7 @@ var VirtualKeyboard = new function () {
   self.hide = function () {
     if (!nodes.keyboard || !self.isOpen()) return false;
     self.detachInput();
+    self.IME.hide();
     nodes.keyboard.parentNode.removeChild(nodes.keyboard);
     return true;
   }
