@@ -1157,6 +1157,15 @@ var VirtualKeyboard = new function () {
   self.isEnabled = function () /* :Boolean */ {
       return self.isOpen() && enabled;
   }
+  /**
+   *  Flag of keyboard readyness
+   *
+   *  @return {Boolean} true when at least one layout is available
+   *  @scope public
+   */
+  self.isReady = function () /* :Boolean */ {
+      return layout.length > 0;
+  }
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
   //---------------------------------------------------------------------------

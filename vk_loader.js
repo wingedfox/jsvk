@@ -25,6 +25,9 @@ VirtualKeyboard = new function () {
   self.isOpen = function () {
       return false;
   }
+  self.isReady = function () {
+      return false;
+  }
 };
 (function () {
     var p = (function (sname){var sc=document.getElementsByTagName('script'),sr=new RegExp('^(.*/|)('+sname+')([#?]|$)');
