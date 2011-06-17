@@ -663,9 +663,9 @@ var VirtualKeyboard = new function () {
    */
   var _keydownHandler_ = function(e) {
     /*
-    *  it's global event handler. do not process event, if keyboard is closed
+    *  it's global event handler. do not process event, if keyboard is not ready to work
     */
-    if (!self.isEnabled()) return;
+    if (!self.isEnabled() || !self.isOpen()) return;
     /*
     *  record new keyboard mode
     */
@@ -1155,7 +1155,7 @@ var VirtualKeyboard = new function () {
    *  @scope public
    */
   self.isEnabled = function () /* :Boolean */ {
-      return self.isOpen() && enabled;
+      return enabled;
   }
   /**
    *  Flag of keyboard readyness
