@@ -1325,6 +1325,7 @@ var VirtualKeyboard = new function () {
           o.value = n;
           o.appendChild(document.createTextNode(l.name));
           o.label = l.name;
+          o.selected = l == lang;
           cc.appendChild(o);
           /*
           *  record option position
