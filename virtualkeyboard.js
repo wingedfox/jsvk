@@ -1777,7 +1777,7 @@ var VirtualKeyboard = new function () {
       keymap = DocumentCookie.get('vk_mapping');
 
       if (!keymaps.hasOwnProperty(keymap))
-          keymap = 'QWERTY Standard';
+          keymap = 'QWERTY Default';
 
       for (var i in keymaps) {
           var map = keymaps[i].split("").map(function(c){return c.charCodeAt(0)});
