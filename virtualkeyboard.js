@@ -404,7 +404,7 @@ var VirtualKeyboard = new function () {
    *  @scope public
    */
   self.switchLayout = function (code) {
-      var res = enabled && (!lang || code != lang.toString());
+      var res = (!lang || code != lang.toString());
       
       if (res) {
           /*
@@ -440,7 +440,15 @@ var VirtualKeyboard = new function () {
               */
               if (lang.requires) {
                   var arr = lang.requires.map(function(path){return basePath+"/layouts/"+path});
-                  ScriptQueue.queue(arr, __layoutLoadMonitor);
+                  var loading = lang.toString();
+                  ScriptQueue.queue(arr, function() {
+                      /*
+                      *  don't notify about script loading if layout was changed in the middle of loading
+                      */
+                      if (lang.toString() == loading) {
+                          __layoutLoadMonitor.apply(self, arguments);
+                      }
+                  });
               } else {
                   __layoutLoadMonitor(null, true);
               }
@@ -494,14 +502,6 @@ var VirtualKeyboard = new function () {
       *  reset hash, to be recalculated on options draw
       */
       layout.options = null;
-
-      /*
-      *  if keyboard is in the middle of something, rebuild options only
-      */
-      if (!enabled) {
-          __buildOptionsList();
-          return;
-      }
 
       lang = null;
 
