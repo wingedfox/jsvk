@@ -1671,11 +1671,11 @@ var VirtualKeyboard = new function () {
   /**
    * Keyboard layout builder
    *
-   * @param {Array} lang keys to put on the keyboard
+   * @param {Array} lng keys to put on the keyboard
    * @return {String} serialized HTML
    * @scope private
    */
-  var __getKeyboardHtml = function (lang) {
+  var __getKeyboardHtml = function (lng) {
       var inp = document.createElement('span');
       /*
       *  inp is used to calculate real char width and detect combining symbols
@@ -1685,8 +1685,8 @@ var VirtualKeyboard = new function () {
       inp.style.position = 'absolute';
       inp.style.left = '-1000px';
 
-      for (var i=0, aL=lang.length, btns = [], chr, title; i<aL; i++) {
-          chr = lang[i];
+      for (var i=0, aL=lng.length, btns = [], chr, title; i<aL; i++) {
+          chr = lng[i];
           btns.push(["<div id='",idPrefix,i
                     ,"' class='",cssClasses.buttonUp
                     ,"'><a href='#'>",__getCharHtmlForKey(lang, chr, VK_NORMAL,         cssClasses.charNormal,    inp)
