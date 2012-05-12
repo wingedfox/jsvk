@@ -592,7 +592,6 @@ var VirtualKeyboard = new function () {
           *  try to create an event, then fallback to DocumentSelection, if something fails
           */
           var virtualprint = false;
-          var win = DOM.getWindow(nodes.attachedInput);
           /*
           * there are some global exceptions, when createEvent won't work properly
           *  - selection to set exists
@@ -608,37 +607,7 @@ var VirtualKeyboard = new function () {
 //          && '\t' != chr[0]
           ) {
               var ck = chr[0].charCodeAt(0);
-              /*
-              *  trying to create an event, borrowed from YAHOO.util.UserAction
-              */
-              if (isFunction(win.document.createEvent)) {
-                  var evt = null;
-                  try {
-                      evt = win.document.createEvent("KeyEvents");
-                      evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, 0, ck);
-                      evt.VK_bypass = true;
-                      nodes.attachedInput.dispatchEvent(evt);
-                  } catch (ex) {
-                      /*
-                      *  Safari implements
-                      */
-                      try {
-                          evt = win.document.createEvent("KeyboardEvents");
-                          evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, ck, 0);
-                          evt.VK_bypass = true;
-                          nodes.attachedInput.dispatchEvent(evt);
-                      } catch (ex) {
-                          virtualprint = true;
-                      }
-                  }
-              } else {
-                  try {
-                      evt.keyCode = 10==ck?13:ck;
-                      ret = true;
-                  } catch (ex) {
-                      virtualprint = true;
-                  }
-              }
+              virtualprint = !__fireKbdEvent(ck, evt);
           } else {
               virtualprint = true;
           }
@@ -1170,6 +1139,54 @@ var VirtualKeyboard = new function () {
   //---------------------------------------------------------------------------
   // PRIVATE METHODS
   //---------------------------------------------------------------------------
+  /**
+   *  Tries to init and fire keyboard event to print new char
+   *
+   *  @param {Number} ck - char code to add to event
+   *  @param {Event} evt - optional current event object
+   *  @return event fire success flag
+   *  @scope private
+   */
+  var __fireKbdEvent = function (ck, evt) {
+      /*
+      *  trying to create an event, borrowed from YAHOO.util.UserAction
+      */
+      if (isFunction(window.document.createEvent)) {
+          var win = DOM.getWindow(nodes.attachedInput);
+          try {
+              evt = win.document.createEvent("KeyEvents");
+              evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, 0, ck);
+              if (false === evt.isTrusted) {
+                  /*
+                  * check for new FireFox bug-o-feature, since 12th generated keyboard events are not trusted
+                  */
+                  return false;
+              }
+              evt.VK_bypass = true;
+              nodes.attachedInput.dispatchEvent(evt);
+          } catch (ex) {
+              /*
+              *  Safari implements
+              */
+              try {
+                  evt = win.document.createEvent("KeyboardEvents");
+                  evt.initKeyEvent('keypress', false, true, nodes.attachedInput.contentWindow, false, false, false, false, ck, 0);
+                  evt.VK_bypass = true;
+                  nodes.attachedInput.dispatchEvent(evt);
+              } catch (ex) {
+                  return false;
+              }
+          }
+      } else {
+          try {
+              evt.keyCode = 10==ck?13:ck;
+              ret = true;
+          } catch (ex) {
+              return false;
+          }
+      }
+      return true;
+  }
   /**
    *  Monitors resource loading for {@link #switchLayout}. As of the first release only success route is supported
    *  This method is callback to ScriptQueue component
