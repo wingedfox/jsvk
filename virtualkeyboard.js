@@ -1178,12 +1178,7 @@ var VirtualKeyboard = new function () {
               }
           }
       } else {
-          try {
-              evt.keyCode = 10==ck?13:ck;
-              ret = true;
-          } catch (ex) {
-              return false;
-          }
+          return false;
       }
       return true;
   }
