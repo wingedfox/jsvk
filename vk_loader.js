@@ -38,7 +38,7 @@ VirtualKeyboard = new function () {
                 if (m[1].match(/^((https?|file|widget)\:\/{2,}|\w:[\\])/)) return m[1];
     		if (m[1].indexOf("/")==0) return m[1];
     		var b = document.getElementsByTagName('base');
-    		if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,"");}}return null;
+    		if (b[0] && b[0].href) return b[0].href+m[1];return (document.location.href.replace(/[?#].+$/,'').match(/(.*[\/\\])/)[0]+m[1]).replace(/^\/+/,"");}}return null;
     })('vk_loader.js');
 
     var dpd = [ 'extensions/helpers.js'
