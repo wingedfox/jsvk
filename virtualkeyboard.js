@@ -439,7 +439,7 @@ var VirtualKeyboard = new function () {
               *  trying to load resources before switching layout
               */
               if (lang.requires) {
-                  var arr = lang.requires.map(function(path){return basePath+"/layouts/"+path});
+                  var arr = lang.requires.map(function(path){return gluePath(basePath,"/layouts/",path)});
                   var loading = lang.toString();
                   ScriptQueue.queue(arr, function() {
                       /*
