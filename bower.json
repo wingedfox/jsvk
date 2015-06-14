@@ -1,0 +1,29 @@
+{
+  "name": "jsvk",
+  "version": "4.0.0",
+  "authors": [
+    "Ilya WingedFox Lebedev <ilya@lebedev.net>"
+  ],
+  "description": "Javascript Virtual Keyboard",
+  "moduleType": [
+    "amd",
+    "globals"
+  ],
+  "keywords": [
+    "virtual",
+    "keyboard",
+    "i10n",
+    "ime",
+    "text",
+    "input"
+  ],
+  "license": "MIT",
+  "homepage": "http://debugger.ru/projects/virtualkeyboard",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
