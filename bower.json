@@ -25,5 +25,10 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "document-selection": "~0.1.0",
+    "requirejs": "~2.1.18",
+    "underscore": "~1.8.3"
+  }
 }
