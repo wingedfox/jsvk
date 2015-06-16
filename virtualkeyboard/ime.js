@@ -31,7 +31,7 @@
  *
  *  @scope public
  */
-define(["underscore", "DocumentSelection"], function (_, DocumentSelection) {
+define(["underscore", "document-selection", "event-manager", "dom"], function (_, DocumentSelection, EM, DOM) {
     return new function IME () {
           var self = this;
           var html = "<div id=\"VirtualKeyboardIME\"><table><tr><td class=\"IMEControl\"><div class=\"left\"><!-- --></div></td>"
@@ -128,7 +128,7 @@ define(["underscore", "DocumentSelection"], function (_, DocumentSelection) {
            *  @scope public
            */
           self.getSuggestions = function (idx) {
-              return isNumber(idx)?sg[idx]:sg;
+              return _.isNumber(idx)?sg[idx]:sg;
           }
           /**
            *  Shows the next page from the suggestions list
@@ -232,7 +232,7 @@ define(["underscore", "DocumentSelection"], function (_, DocumentSelection) {
               for (var z=0,pL=Math.ceil(sg.length/10); z<pL; z++ ) {
                   if (showAll || z == page) {
                       s.push('<tr>');
-                      for (var i=0,p=z*10; i<10 && !isUndefined(sg[p+i]); i++) {
+                      for (var i=0,p=z*10; i<10 && !_.isUndefined(sg[p+i]); i++) {
                           s.push("<td><a href=''>")
                           if (z==page) {
                               s.push("<b>&nbsp;"+((i+1)%10)+": </b>");
@@ -304,5 +304,4 @@ define(["underscore", "DocumentSelection"], function (_, DocumentSelection) {
               EM.addEventListener(ime,'click',EM.preventDefaultAction);
           }
     }
-);
-
+});

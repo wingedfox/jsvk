@@ -29,6 +29,7 @@
   "dependencies": {
     "document-selection": "~0.1.0",
     "requirejs": "~2.1.18",
-    "underscore": "~1.8.3"
+    "underscore": "~1.8.3",
+    "jsvk-utils": "https://github.com/wingedfox/jsvk-utils.git#master"
   }
 }

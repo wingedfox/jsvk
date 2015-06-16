@@ -23,7 +23,7 @@
  * @class VirtualKeyboard
  * @constructor
  */
-define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, DocumentSelection,IME) {
+define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyboard/ime", "string"], function (_, DocumentSelection, EM, DOM, IME) {
     var VirtualKeyboard = new function () {
         var self = this;
         self.$VERSION$ = "{{VERSION}}";
@@ -34,7 +34,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
          *  @type String
          *  @scope private
          */
-        var basePath = findPath('vk_loader.js');
+        //var basePath = findPath('vk_loader.js');
         /**
          *  Regexp to test a char against to prove it is a dead key
          *
@@ -440,9 +440,12 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
                     *  trying to load resources before switching layout
                     */
                     if (lang.requires) {
-                        var arr = lang.requires.map(function(path){return gluePath(basePath,"/layouts/",path)});
+//                        var arr = lang.requires.map(function(path){return gluePath(basePath,"/layouts/",path)});
+                        var arr = lang.requires.map(function(path){return "layouts/" + path});
                         var loading = lang.toString();
-                        ScriptQueue.queue(arr, function() {
+
+//                        ScriptQueue.queue(arr, function() {
+                          require.call(this,arr,function() {
                             /*
                             *  don't notify about script loading if layout was changed in the middle of loading
                             */
@@ -554,7 +557,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
                     /*
                     *  if layout has char processor and there's any selection, ask it for advice
                     */
-                    if (isFunction(lang.charProcessor) && DocumentSelection.getSelection(nodes.attachedInput).length) {
+                    if (_.isFunction(lang.charProcessor) && DocumentSelection.getSelection(nodes.attachedInput).length) {
                         chr = "\x08";
                     } else if (evt && evt.currentTarget == nodes.attachedInput) {
                         IME.hide(true);
@@ -931,7 +934,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
          *  @scope private
          */
         var switchMapping = function (e) {
-            DocumentCookie.set('vk_mapping', e.target.value);
+//            DocumentCookie.set('vk_mapping', e.target.value);
             keymap = keymaps[e.target.value];
         }
         /**********************************************************
@@ -949,7 +952,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
           *  if null is supplied, don't change the target field
           */
           if (!el) return nodes.attachedInput;
-          if (isString(el)) el = document.getElementById(el);
+          if (_.isString(el)) el = document.getElementById(el);
 
           if (el == nodes.attachedInput || !el) return nodes.attachedInput;
 
@@ -1076,7 +1079,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
           *  check pass means that node is not attached to the body
           */
           if (!nodes.keyboard.parentNode || nodes.keyboard.parentNode.nodeType==11) {
-              if (isString(holder)) holder = document.getElementById(holder);
+              if (_.isString(holder)) holder = document.getElementById(holder);
               if (!holder.appendChild) return false;
               holder.appendChild(nodes.keyboard);
           }
@@ -1152,7 +1155,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
             /*
             *  trying to create an event, borrowed from YAHOO.util.UserAction
             */
-            if (isFunction(window.document.createEvent)) {
+            if (_.isFunction(window.document.createEvent)) {
                 var win = DOM.getWindow(nodes.attachedInput);
                 try {
                     evt = win.document.createEvent("KeyEvents");
@@ -1225,7 +1228,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
                     /*
                     *  call IME activation method, if exists
                     */
-                    if (isFunction(lang.activate)) {
+                    if (_.isFunction(lang.activate)) {
                         lang.activate();
                     }
                     /*
@@ -1235,7 +1238,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
                     /*
                     *  save layout name
                     */
-                    DocumentCookie.set('vk_layout', lang.id)
+//                    DocumentCookie.set('vk_layout', lang.id)
           
                     options.layout = lang.id;
                     __setProgress(100);
@@ -1276,13 +1279,13 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
          */
         var __toggleStylesheet = function (attach) {
             if (attach) {
-                var ss = DOM.StyleSheet(basePath+'css/'+options.skin+'/keyboard.css');
+                var ss = DOM.StyleSheet(/*basePath+*/'css/'+options.skin+'/keyboard.css');
                 ss.add();
             }
             var twin = DOM.getWindow(nodes.attachedInput);
 
             if (window != twin) {
-                var ss = DOM.StyleSheet(basePath+'css/'+options.skin+'/keyboard.css', twin);
+                var ss = DOM.StyleSheet(/*basePath+*/'css/'+options.skin+'/keyboard.css', twin);
                 if (attach) {
                     ss.add();
                 } else {
@@ -1354,7 +1357,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
          *  @scope private
          */
         var __doParse = function(s) {
-            if (isString(s))
+            if (_.isString(s))
                 return s.match(/\x01.+?\x01|\x03.|[\ud800-\udbff][\udc00-\udfff]|./g).map(function(a){return a.replace(/[\x01\x02]/g,"")});
             else
                 return s.map(function(a){return _.isArray(a)?a.map(function(s){return String.fromCharCodeExt(s)}).join(""):String.fromCharCodeExt(a).replace(/[\x01\x02]/g,"")});
@@ -1481,7 +1484,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
             /*
             *  finalize things by calling loading callback, if exists
             */
-            if (isFunction(cbk)) {
+            if (_.isFunction(cbk)) {
                 l.charProcessor = cbk
             } else if (cbk) {
                 l.activate = cbk.activate;
@@ -1624,7 +1627,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
          */
         var __charProcessor = function (tchr, buf) {
           var res = [tchr, 0];
-          if (isFunction(lang.charProcessor)) {
+          if (_.isFunction(lang.charProcessor)) {
             /*
             *  call user-supplied converter
             */
@@ -1788,7 +1791,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
             var el = el.nextSibling
                ,mapGroup = "";
 
-            keymap = DocumentCookie.get('vk_mapping');
+//            keymap = DocumentCookie.get('vk_mapping');
 
             if (!keymaps.hasOwnProperty(keymap))
                 keymap = 'QWERTY Default';
@@ -1847,10 +1850,10 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
             try{ windowOpener = window.opener.location.search }catch(e){}
             try{ dialogArguments = window.dialogArguments.location.search }catch(e){}
             try{ windowTop = window.top.location.search }catch(e){}
-            var opts = getScriptQuery('vk_loader.js')
-               ,win_opts = parseQuery((windowOpener || dialogArguments || windowTop || window.location.search).slice(1));
+            var opts = {}//getScriptQuery('vk_loader.js')
+               ,win_opts = {};//parseQuery((windowOpener || dialogArguments || windowTop || window.location.search).slice(1));
 
-            options.layout = win_opts.vk_layout || opts.vk_layout || DocumentCookie.get('vk_layout') || options.layout;
+            options.layout = win_opts.vk_layout || opts.vk_layout || /*DocumentCookie.get('vk_layout') ||*/ options.layout;
             options.skin = win_opts.vk_skin || opts.vk_skin || options.skin;
             /*
             *  attach stylesheet in the load time
@@ -1868,5 +1871,7 @@ define(["underscore", "DocumentSelection","virtualkeyboard/ime"], function (_, D
     VirtualKeyboard.Layout = function () {
     }
 
+    window.VirtualKeyboard = VirtualKeyboard;
+
     return VirtualKeyboard;
-);
+});
