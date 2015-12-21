@@ -44,6 +44,7 @@ define(["underscore", "document-selection", "event-manager", "dom"], function (_
           var showAll = false;
           var sg = [];
           var target = null;
+          var selection = null;
           var targetWindow = null;
 
           /**
@@ -54,6 +55,7 @@ define(["underscore", "document-selection", "event-manager", "dom"], function (_
            */
           self.show = function (s) {
               target = VirtualKeyboard.getAttachedInput();
+              selection = new DocumentSelection(target);
               var win = DOM.getWindow(target);
               /*
               *  if there's no IME or target window is not the same, as before - create new IME
@@ -91,9 +93,10 @@ define(["underscore", "document-selection", "event-manager", "dom"], function (_
               if (ime && 'none' != ime.style.display) {
                   ime.style.display = "none";
                   EM.removeEventListener(target,'blur',self.blurHandler);
-                  if (target && DocumentSelection.getSelection(target) && !keep)
-                      DocumentSelection.deleteSelection(target);
+                  if (target && selection.getSelection() && !keep)
+                      selection.deleteSelection();
                   target = null;
+                  selection = null;
                   sg=[];
               }
           }
@@ -105,7 +108,7 @@ define(["underscore", "document-selection", "event-manager", "dom"], function (_
           self.updatePosition = function () {
               var xy = DOM.getOffset(target);
               ime.style.left = xy.x+'px';
-              var co = DocumentSelection.getSelectionOffset(target);
+              var co = selection.getSelectionOffset();
               ime.style.top = xy.y+co.y+co.h-target.scrollTop+'px';
           }
           /**
@@ -263,7 +266,7 @@ define(["underscore", "document-selection", "event-manager", "dom"], function (_
           var pasteSuggestion = function (e) {
               var el = DOM.getParent(e.target,'a');
               if (el) {
-                  DocumentSelection.insertAtCursor(target,el.lastChild.nodeValue);
+                  selection.insertAtCursor(el.lastChild.nodeValue);
                   self.hide();
               }
               e.preventDefault();

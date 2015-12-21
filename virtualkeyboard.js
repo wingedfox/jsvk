@@ -23,8 +23,9 @@
  * @class VirtualKeyboard
  * @constructor
  */
-define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyboard/ime", "string"], function (_, DocumentSelection, EM, DOM, IME) {
-    var VirtualKeyboard = new function () {
+(function(global){
+
+    function VirtualKeyboard (_, DocumentSelection, EM, DOM, IME) {
         var self = this;
         self.$VERSION$ = "{{VERSION}}";
 
@@ -283,6 +284,15 @@ define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyb
            ,langbox : null      // Language selector @type HTMLSelectElement
            ,attachedInput : null// Field, keyboard attached to
         }
+
+        /**
+         *  DocumentSelection instance
+         *
+         *  @type DocumentSelection
+         *  @scope private
+         */
+        var attachedSelection;
+
         /**
          *  Key code to be inserted on the keypress
          *
@@ -557,13 +567,13 @@ define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyb
                     /*
                     *  if layout has char processor and there's any selection, ask it for advice
                     */
-                    if (_.isFunction(lang.charProcessor) && DocumentSelection.getSelection(nodes.attachedInput).length) {
+                    if (_.isFunction(lang.charProcessor) && attachedSelection.getSelection().length) {
                         chr = "\x08";
                     } else if (evt && evt.currentTarget == nodes.attachedInput) {
                         IME.hide(true);
                         return true;
                     } else {
-                        DocumentSelection.deleteAtCursor(nodes.attachedInput, false);
+                        attachedSelection.deleteAtCursor(false);
                         IME.hide(true);
                     }
                     break;
@@ -571,7 +581,7 @@ define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyb
                     IME.hide(true);
                     if (evt)
                         return true;
-                    DocumentSelection.deleteAtCursor(nodes.attachedInput, true);
+                    attachedSelection.deleteAtCursor(true);
                     break;
                 case 'space':
                     chr = " ";
@@ -590,10 +600,10 @@ define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyb
                 /*
                 *  process current selection and new symbol with __charProcessor, it might update them
                 */
-                if (!(chr = __charProcessor(chr, DocumentSelection.getSelection(nodes.attachedInput)))) return ret;
+                if (!(chr = __charProcessor(chr, attachedSelection.getSelection()))) return ret;
 
                 /*
-                *  try to create an event, then fallback to DocumentSelection, if something fails
+                *  try to create an event, then fallback to attachedSelection, if something fails
                 */
                 var virtualprint = false;
                 /*
@@ -617,12 +627,12 @@ define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyb
                 }
 
                 if (virtualprint) {
-                    DocumentSelection.insertAtCursor(nodes.attachedInput,chr[0]);
+                    attachedSelection.insertAtCursor(chr[0]);
                     /*
                     *  select as much, as __charProcessor callback requested
                     */
                     if (chr[1]) {
-                        DocumentSelection.setRange(nodes.attachedInput,-chr[1],0,true);
+                        attachedSelection.setRange(-chr[1],0,true);
                     }
                 }
             }
@@ -697,8 +707,8 @@ define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyb
                     if (IME.isOpen()) {
                         IME.hide();
                     } else {
-                        var start = DocumentSelection.getStart(nodes.attachedInput);
-                        DocumentSelection.setRange(nodes.attachedInput, start, start);
+                        var start = attachedSelection.getStart();
+                        attachedSelection.setRange(start, start);
                     }
                     return false;
                 default:
@@ -973,6 +983,7 @@ define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyb
 
           if (!el || !el.tagName) {
               nodes.attachedInput = null;
+              attachedSelection = null;
           } else {
 
               /*
@@ -983,6 +994,7 @@ define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyb
               *  for iframe target we track its HTML node
               */
               nodes.attachedInput = el;
+              attachedSelection = new DocumentSelection(el);
               /*
               *  set input direction
               */
@@ -1051,6 +1063,7 @@ define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyb
             }
             __toggleStylesheet(false);
             nodes.attachedInput = null;
+            attachedSelection = null;
             return true;
         }
 
@@ -1861,17 +1874,39 @@ define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyb
             __toggleStylesheet(true);
         })();
     }
-    VirtualKeyboard.IME = IME;
-    /**
-     *  Container for the custom language IMEs, don't mess with the window object
-     *
-     *  @type {Object}
-     */
-    VirtualKeyboard.Langs = {};
-    VirtualKeyboard.Layout = function () {
+
+//    window.VirtualKeyboard = VirtualKeyboard;
+
+//    return VirtualKeyboard;
+
+    // exports to multiple environments
+    if (typeof define === 'function' && define.amd) { //RequireJS
+        define(["underscore", "document-selection", "event-manager", "dom", "virtualkeyboard/ime", "string"], function (_, DocumentSelection, EM, DOM, IME) {
+            /**
+             *  Container for the custom language IMEs, don't mess with the window object
+             *
+             *  @type {Object}
+             */
+            VirtualKeyboard.Langs = {};
+            global.VirtualKeyboard = new VirtualKeyboard(_, DocumentSelection, EM, DOM, IME);
+            return global.VirtualKeyboard;
+        });
+    } else if (typeof module !== 'undefined' && module.exports) { //CommonJS
+        var DocumentSelection = require('document-selection');
+        var _ = require("underscore");
+        var EM = require("event-manager");
+        var DOM = require("dom");
+        var IME = require("virtualkeyboard/ime");
+        global.VirtualKeyboard = new VirtualKeyboard(_, DocumentSelection, EM, DOM, IME);
+        module.exports = global.VirtualKeyboard;
+    } else { //browser
+        global.VirtualKeyboard = new VirtualKeyboard(_, DocumentSelection, EM, DOM, IME);
+
+        /**
+         *  Container for the custom language IMEs, don't mess with the window object
+         *
+         *  @type {Object}
+         */
+        VirtualKeyboard.Langs = {};
     }
-
-    window.VirtualKeyboard = VirtualKeyboard;
-
-    return VirtualKeyboard;
-});
+})(this);

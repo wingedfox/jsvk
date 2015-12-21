@@ -8,6 +8,8 @@
       var require = {
           paths: {
               "document-selection": "bower_components/document-selection/documentselection",
+              "input/plain": "bower_components/document-selection/input/plain",
+              "input/rich": "bower_components/document-selection/input/rich",
               "underscore": "bower_components/underscore/underscore",
               "event-manager": "bower_components/jsvk-utils/eventmanager",
               "dom": "bower_components/jsvk-utils/dom",
@@ -152,7 +154,7 @@ Demos: [<a>Plain text</a>] |
     </td>
     <script type="text/javascript">
       require(["event-manager","virtualkeyboard"], function (EM, VirtualKeyboard) {
-      require(["layouts/layouts"], function () {
+      require(["layouts/layouts","input/plain"], function () {
          /**
           *  Collects all selected filters and changes available layouts
           */
@@ -167,7 +169,7 @@ Demos: [<a>Plain text</a>] |
          }
 
 
-         EM.addEventListener(window,'domload',function(){
+//         EM.addEventListener(window,'load',function(){
              /*
              *  building the list of language codes
              */
@@ -214,8 +216,9 @@ Demos: [<a>Plain text</a>] |
              el.innerHTML = html.join("&nbsp;| ");
 
          });
-     });
-     });
+
+     });
+//     });
      </script>
     </td>
    </tr>
